@@ -15,15 +15,30 @@ namespace Agilent_ExtensionBox.IO
         {
             switch (Channel)
             {
-                case AnalogOutChannelsEnum.AOut1: _channelName = "AOn1"; break;
-                case AnalogOutChannelsEnum.AOut2: _channelName = "AOn2"; break;
+                case AnalogOutChannelsEnum.AOut1: _channelName = ChannelNames.AOUT1; break;
+                case AnalogOutChannelsEnum.AOut2: _channelName = ChannelNames.AOUT2; break;
 
                 default:
                     throw new ArgumentException();
             }
             _driver = Driver;
+
+            _driver.AnalogOut.set_Polarity(_channelName, AgilentU254xAnalogPolarityEnum.AgilentU254xAnalogPolarityBipolar);
         }
 
+        private void _Set_DC_Voltage(double Voltage)
+        {
+            if (Voltage < -10.0)
+                Voltage = -10.0;
+            else if (Voltage > 10.0)
+                Voltage = 10.0;
 
+            _driver.AnalogOut.Generation.set_Voltage(_channelName, Voltage);
+        }
+
+        private void _Set_Enabled(bool Enabled)
+        {
+            _driver.AnalogOut.set_Enabled(_channelName, Enabled);
+        }
     }
 }
