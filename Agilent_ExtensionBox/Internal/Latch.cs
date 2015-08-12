@@ -20,7 +20,7 @@ namespace Agilent_ExtensionBox.Internal
             _LatchPulseBit = LatchPulseBit;
         }
 
-        public void PulseLetchForChannel(AnalogInChannelsEnum channelName)
+        public void PulseLatchForChannel(AnalogInChannelsEnum channelName)
         {
             switch (channelName)
             {
