@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Agilent_ExtensionBox.Internal
 {
-    class ProgrammableGainAmplifier
+    public class ProgrammableGainAmplifier
     {
     }
 }
