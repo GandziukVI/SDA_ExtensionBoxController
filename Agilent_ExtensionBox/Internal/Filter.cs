@@ -27,166 +27,42 @@ namespace Agilent_ExtensionBox.Internal
 
     public enum FilterGain
     {
-        gain1,
-        gain2,
-        gain3,
-        gain4,
-        gain5,
-        gain6,
-        gain7,
-        gain8,
-        gain9,
-        gain10,
-        gain11,
-        gain12,
-        gain13,
-        gain14,
-        gain15,
-        gain16
+        gain1 = 0x00,
+        gain2 = 0x10,
+        gain3 = 0x20,
+        gain4 = 0x30,
+        gain5 = 0x40,
+        gain6 = 0x50,
+        gain7 = 0x60,
+        gain8 = 0x70,
+        gain9 = 0x80,
+        gain10 = 0x90,
+        gain11 = 0xa0,
+        gain12 = 0xb0,
+        gain13 = 0xc0,
+        gain14 = 0xd0,
+        gain15 = 0xe0,
+        gain16 = 0xf0
     }
     public class Filter
     {
-        private DigitalBit _F0;
-        private DigitalBit _F1;
-        private DigitalBit _F2;
-        private DigitalBit _F3;
-
-        private DigitalBit _G0;
-        private DigitalBit _G1;
-        private DigitalBit _G2;
-        private DigitalBit _G3;
-
+        
+        private DigitalChannel _channel;
         private Latch _letch;
 
-        public Filter(DigitalBit F0,DigitalBit F1,DigitalBit F2,DigitalBit F3,DigitalBit G0,DigitalBit G1,DigitalBit G2,DigitalBit G3, Latch letch)
+        public Filter(DigitalChannel controlChannel, Latch letch)
         {
-            if ((F0 == null) || (F1 == null) || (F2 == null) || (F3 == null) || (G0 == null) || (G1 == null) || (G2 == null) || (G3 == null)||(letch == null ))
+            if ((controlChannel==null)||(letch == null ))
                 throw new ArgumentNullException();
-            _F0 = F0;
-            _F1 = F1;
-            _F2 = F2;
-            _F3 = F3;
-
-            _G0 = G0;
-            _G1 = G1;
-            _G2 = G2;
-            _G3 = G3;
-
+            if (controlChannel.Width < 8)
+                throw new ArgumentException("Too narrow channel width");
+            _channel = controlChannel;
             _letch = letch;
         }
 
         public void SetCutOffFrequency(AnalogInChannelsEnum channelName, FilterCutOffFrequencies cutoff, FilterGain gain)
         {
-            switch (cutoff)
-            {
-                case FilterCutOffFrequencies.Freq_0kHz:
-                    {
-                        _F0.Reset();
-                        _F1.Reset();
-                        _F2.Reset();
-                        _F3.Reset();
-                    }
-                    break;
-                case FilterCutOffFrequencies.Freq_10kHz:
-                    {
-                        _F0.Set() ;
-                        _F1.Reset();
-                        _F2.Reset();
-                        _F3.Reset();
-                    }
-                    break;
-                case FilterCutOffFrequencies.Freq_20kHz:
-                    {
-                        _F0.Reset();
-                        _F1.Set() ;
-                        _F2.Reset();
-                        _F3.Reset();
-                    }
-                    break;
-                case FilterCutOffFrequencies.Freq_30kHz:
-                    {
-                        _F0.Set();
-                        _F1.Set();
-                        _F2.Reset();
-                        _F3.Reset();
-                    }
-                    break;
-                case FilterCutOffFrequencies.Freq_40kHz:
-                    {
-                        _F0.Set();
-                        _F1.Set();
-                        _F2.Reset();
-                        _F3.Reset();
-                    }
-                    break;
-                case FilterCutOffFrequencies.Freq_50kHz:
-                    {
-                        _F0.Reset();
-                        _F1.Reset();
-                        _F2.Set();
-                        _F3.Reset();
-                    }
-                    break;
-                case FilterCutOffFrequencies.Freq_60kHz:
-                    break;
-                case FilterCutOffFrequencies.Freq_70kHz:
-                    break;
-                case FilterCutOffFrequencies.Freq_80kHz:
-                    break;
-                case FilterCutOffFrequencies.Freq_90kHz:
-                    break;
-                case FilterCutOffFrequencies.Freq_100kHz:
-                    break;
-                case FilterCutOffFrequencies.Freq_110kHz:
-                    break;
-                case FilterCutOffFrequencies.Freq_120kHz:
-                    break;
-                case FilterCutOffFrequencies.Freq_130kHz:
-                    break;
-                case FilterCutOffFrequencies.Freq_140kHz:
-                    break;
-                case FilterCutOffFrequencies.Freq_150kHz:
-                    break;
-                default:
-                    throw new ArgumentException();
-            }
-            switch (gain)
-            {
-                case FilterGain.gain1:
-                    break;
-                case FilterGain.gain2:
-                    break;
-                case FilterGain.gain3:
-                    break;
-                case FilterGain.gain4:
-                    break;
-                case FilterGain.gain5:
-                    break;
-                case FilterGain.gain6:
-                    break;
-                case FilterGain.gain7:
-                    break;
-                case FilterGain.gain8:
-                    break;
-                case FilterGain.gain9:
-                    break;
-                case FilterGain.gain10:
-                    break;
-                case FilterGain.gain11:
-                    break;
-                case FilterGain.gain12:
-                    break;
-                case FilterGain.gain13:
-                    break;
-                case FilterGain.gain14:
-                    break;
-                case FilterGain.gain15:
-                    break;
-                case FilterGain.gain16:
-                    break;
-                default:
-                    break;
-            }
+            
 
         }
     }
