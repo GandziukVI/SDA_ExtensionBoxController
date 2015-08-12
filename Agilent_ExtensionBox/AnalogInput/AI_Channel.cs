@@ -15,9 +15,9 @@ namespace Agilent_ExtensionBox.IO
         private AnalogInChannelsEnum _channelName;
         private AgilentU254xClass _driver;
         private AgilentU254xAnalogInChannel _channel;
-        private ChannelModeSwitch _modeSwitch;
+        private AI_ChannelModeSwitch _modeSwitch;
 
-        public AI_Channel(AnalogInChannelsEnum channelName, AgilentU254xClass Driver, ChannelModeSwitch ModeSwitch)
+        public AI_Channel(AnalogInChannelsEnum channelName, AgilentU254xClass Driver, AI_ChannelModeSwitch ModeSwitch)
         {
             _channelName = channelName;
             _driver = Driver;
