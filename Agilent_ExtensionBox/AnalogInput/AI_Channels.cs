@@ -11,7 +11,7 @@ namespace Agilent_ExtensionBox
 
         public AI_Channels(BoxController __Controller)
         {
-            _Items = new AI_Channel[] { new AI_Channel(1, __Controller), new AI_Channel(2, __Controller), new AI_Channel(3, __Controller), new AI_Channel(4, __Controller) };
+            _Items = new AI_Channel[] { new AI_Channel(1, __Controller.Driver), new AI_Channel(2, __Controller.Driver), new AI_Channel(3, __Controller.Driver), new AI_Channel(4, __Controller.Driver) };
         }
     }
 }
