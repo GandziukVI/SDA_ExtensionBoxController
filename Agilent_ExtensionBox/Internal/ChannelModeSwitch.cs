@@ -18,7 +18,7 @@ namespace Agilent_ExtensionBox.Internal
         private DigitalBit _SetResetBit;
         private DigitalBit _SelectorA0;
         private DigitalBit _SelectorA1;
-
+        private object SyncRoot = new object();
         public ChannelModeSwitch(DigitalBit PulseBit, DigitalBit SetResetBit, DigitalBit SelectorA0, DigitalBit SelectorA1)
         {
             if ((PulseBit == null) || (SetResetBit == null) && (SelectorA0 == null) || (SelectorA1 == null))
@@ -31,6 +31,7 @@ namespace Agilent_ExtensionBox.Internal
 
         public void SetChannelMode(AnalogInChannelsEnum channel, ChannelMode mode)
         {
+
             switch (channel)
             {
                 case AnalogInChannelsEnum.AIn1:
@@ -68,6 +69,7 @@ namespace Agilent_ExtensionBox.Internal
                     throw new ArgumentException();
             }
             Pulse();
+
         }
 
         private void Pulse()
