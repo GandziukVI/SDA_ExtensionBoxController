@@ -9,20 +9,22 @@ namespace Agilent_ExtensionBox
 
     public class AI_Channel
     {
-        private int ChannelNumber;
-        private BoxController Controller;
+        private int _channelNumber;
+        private AgilentU254xClass _driver;
         private const string AIn1 = "AIn1";
         private const string AIn2 = "AIn2";
         private const string AIn3 = "AIn3";
         private const string AIn4 = "AIn4";
 
 
-        public AI_Channel(int __ChannelNumber, BoxController __Controller)
+        public AI_Channel(int ChannelNumber, AgilentU254xClass Controller)
         {
-            ChannelNumber = __ChannelNumber;
-            Controller = __Controller;
+            ChannelNumber = ChannelNumber;
+            _driver = Controller;
+            //ChannelNumber = __ChannelNumber;
+            //Controller = __Controller;
 
-            _ChannelSettings = new AI_ChannelParams(__ChannelNumber, __Controller);
+           // _ChannelSettings = new AI_ChannelParams(__ChannelNumber, __Controller);
         }
 
         #region Analog input channel functionality implementation

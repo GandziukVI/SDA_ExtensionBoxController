@@ -4,7 +4,10 @@ using System.Text;
 
 namespace Agilent_ExtensionBox.DigitalIO
 {
-    class DigitalBit
+    public class DigitalBit
     {
+        private int _BitNumber;
+        private 
+
     }
 }
