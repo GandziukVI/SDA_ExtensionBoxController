@@ -7,13 +7,52 @@ namespace Agilent_ExtensionBox.Internal
 {
     public class Letch
     {
-        private DigitalBit _Selectro_ADC_A0;
-        private DigitalBit _Selectro_ADC_A1;
+        private DigitalBit _Selector_ADC_A0;
+        private DigitalBit _Selector_ADC_A1;
         private DigitalBit _LetchPulseBit;
 
         public Letch(DigitalBit Selector_ADC_A0,DigitalBit Selector_ADC_A1, DigitalBit LetchPulseBit)
         {
-
+            if ((Selector_ADC_A0 == null) || (Selector_ADC_A1 == null) || (LetchPulseBit == null))
+                throw new ArgumentException();
+            _Selector_ADC_A0 = Selector_ADC_A0;
+            _Selector_ADC_A1 = Selector_ADC_A1;
+            _LetchPulseBit = LetchPulseBit;
         }
+
+        public void PulseLetchForChannel(AnalogInChannelsEnum channelName)
+        {
+            switch (channelName)
+            {
+                case AnalogInChannelsEnum.AIn1:
+                    {
+                        _Selector_ADC_A0.Reset();
+                        _Selector_ADC_A1.Reset();
+                    }
+                    break;
+                case AnalogInChannelsEnum.AIn2:
+                    {
+                        _Selector_ADC_A0.Set();
+                        _Selector_ADC_A1.Reset();
+                    }
+                    break;
+                case AnalogInChannelsEnum.AIn3:
+                    {
+                        _Selector_ADC_A0.Reset();
+                        _Selector_ADC_A1.Set();
+                    }
+                    break;
+                case AnalogInChannelsEnum.AIn4:
+                    {
+                        _Selector_ADC_A0.Set();
+                        _Selector_ADC_A1.Set();
+                    }
+                    break;
+                default:
+                    throw new ArgumentException();
+            }
+            _LetchPulseBit.Pulse();
+        }
+        
     }
 }
