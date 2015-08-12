@@ -4,6 +4,7 @@ using System.Text;
 using Agilent.AgilentU254x.Interop;
 using System.Collections;
 using System.Threading;
+using Agilent_ExtensionBox.Internal;
 
 namespace Agilent_ExtensionBox.IO
 {
@@ -11,71 +12,42 @@ namespace Agilent_ExtensionBox.IO
 
     public class AI_Channel
     {
-        private int _channelNumber;
+        private AnalogInChannelsEnum _channelName;
         private AgilentU254xClass _driver;
-       
+        private AgilentU254xAnalogInChannel _channel;
+        private ChannelModeSwitch _modeSwitch;
 
-        public AI_Channel(int ChannelNumber, AgilentU254xClass Controller)
+        public AI_Channel(AnalogInChannelsEnum channelName, AgilentU254xClass Driver, ChannelModeSwitch ModeSwitch)
         {
-            _channelNumber = ChannelNumber;
-            _driver = Controller;
+            _channelName = channelName;
+            _driver = Driver;
+            _modeSwitch = ModeSwitch;
+            InitDriverChannel(_channelName, out _channel);
         }
 
+        private void InitDriverChannel(AnalogInChannelsEnum ChannelName, out AgilentU254xAnalogInChannel channel)
+        {
+            switch (ChannelName)
+            {
+                case AnalogInChannelsEnum.AIn1:
+                    channel = _driver.AnalogIn.Channels.get_Item(ChannelNames.AIN1);
+                    break;
+                case AnalogInChannelsEnum.AIn2:
+                    channel = _driver.AnalogIn.Channels.get_Item(ChannelNames.AIN1);
+                    break;
+                case AnalogInChannelsEnum.AIn3:
+                    channel = _driver.AnalogIn.Channels.get_Item(ChannelNames.AIN1);
+                    break;
+                case AnalogInChannelsEnum.AIn4:
+                    channel = _driver.AnalogIn.Channels.get_Item(ChannelNames.AIN1);
+                    break;
+                default:
+                        throw new ArgumentException();
+            }
+        }
         #region Analog input channel functionality implementation
 
-        private void _Set_ChannelEnabled(bool Enabled)
-        {
-            switch (_channelNumber)
-            {
-                case 1:
-                    _driver.AnalogIn.Channels.get_Item(ChannelNames.AIN1).Enabled = Enabled; break;
-                case 2:
-                    _driver.AnalogIn.Channels.get_Item(ChannelNames.AIN2).Enabled = Enabled; break;
-                case 3:
-                    _driver.AnalogIn.Channels.get_Item(ChannelNames.AIN3).Enabled = Enabled; break;
-                case 4:
-                    _driver.AnalogIn.Channels.get_Item(ChannelNames.AIN4).Enabled = Enabled; break;
-                default:
-                    break;
-            }
-        }
-
-        private void _Set_ChannelPolarity(AgilentU254xAnalogPolarityEnum Polarity)
-        {
-            switch (_channelNumber)
-            {
-                case 1:
-                    _driver.AnalogIn.Channels.get_Item(ChannelNames.AIN1).Polarity = Polarity; break;
-                case 2:
-                    _driver.AnalogIn.Channels.get_Item(ChannelNames.AIN2).Polarity = Polarity; break;
-                case 3:
-                    _driver.AnalogIn.Channels.get_Item(ChannelNames.AIN3).Polarity = Polarity; break;
-                case 4:
-                    _driver.AnalogIn.Channels.get_Item(ChannelNames.AIN4).Polarity = Polarity; break;
-                default:
-                    break;
-            }
-        }
-
-        private void _Set_ChannelRange(Ranges range)
-        {
-            var r = AvailableRanges.FromRangeEnum(range);
-
-            switch (_channelNumber)
-            {
-                case 1:
-                    _driver.AnalogIn.Channels.get_Item(ChannelNames.AIN1).Range = r; break;
-                case 2:
-                    _driver.AnalogIn.Channels.get_Item(ChannelNames.AIN2).Range = r; break;
-                case 3:
-                    _driver.AnalogIn.Channels.get_Item(ChannelNames.AIN3).Range = r; break;
-                case 4:
-                    _driver.AnalogIn.Channels.get_Item(ChannelNames.AIN4).Range = r; break;
-                default:
-                    break;
-            }
-        }
-
+        
         #endregion
 
         private bool _Enabled;
@@ -84,7 +56,7 @@ namespace Agilent_ExtensionBox.IO
             get { return _Enabled; }
             set
             {
-                _Set_ChannelEnabled(value);
+                _channel.Enabled = value;
                 _Enabled = value;
             }
         }
@@ -96,7 +68,7 @@ namespace Agilent_ExtensionBox.IO
             get { return _Polarity; }
             set
             {
-                _Set_ChannelPolarity(value);
+                _channel.Polarity = value;
                 _Polarity = value;
             }
         }
@@ -107,57 +79,20 @@ namespace Agilent_ExtensionBox.IO
             get { return _Range; }
             set
             {
-                _Set_ChannelRange(value);
+                var r = AvailableRanges.FromRangeEnum(value);
+                _channel.Range = r;
                 _Range = value;
             }
         }
 
-        private SDA_Bit Relay_SetReset;
-        private SDA_Bit Relay_Pulse;
-
-        private void _Select_AI_Channel()
-        {
-            switch (_channelNumber)
-            {
-                case 1: _driver.Digital.WriteByte(ChannelNames.DIOB, 0x00); break;
-                case 2: _driver.Digital.WriteByte(ChannelNames.DIOB, 0x01); break;
-                case 3: _driver.Digital.WriteByte(ChannelNames.DIOB, 0x02); break;
-                case 4: _driver.Digital.WriteByte(ChannelNames.DIOB, 0x03); break;
-                
-                default:
-                    break;
-            }
-        }
-
-        private void _Set_To_AC()
-        {
-            _Select_AI_Channel();
-            Relay_SetReset.Set_ToZero();
-            Relay_Pulse.Pulse();
-        }
-
-        private void _Set_To_DC()
-        {
-            _Select_AI_Channel();
-            Relay_SetReset.Set_ToOne();
-            Relay_Pulse.Pulse();
-        }
-
-        private MeasuringMode _Mode;
-        public MeasuringMode Mode
+       
+        private ChannelMode _Mode;
+        public ChannelMode Mode
         {
             get { return _Mode; }
             set
             {
-                switch (value)
-                {
-                    case MeasuringMode.AC_Mode:
-                        _Set_To_AC();
-                        break;
-                    case MeasuringMode.DC_Mode:
-                        _Set_To_DC();
-                        break;
-                }
+                _modeSwitch.SetChannelMode(_channelName, value);
                 _Mode = value;
             }
         }
