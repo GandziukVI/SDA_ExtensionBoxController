@@ -46,7 +46,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AnalogInput\AI_Channel.cs" />
-    <Compile Include="AnalogInput\AI_ChannelParams.cs" />
     <Compile Include="AnalogInput\AI_Channels.cs" />
     <Compile Include="AnalogOutput\AO_Channel.cs" />
     <Compile Include="AnalogOutput\AO_Channels.cs" />
