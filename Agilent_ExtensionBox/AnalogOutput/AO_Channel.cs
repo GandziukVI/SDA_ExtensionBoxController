@@ -40,5 +40,27 @@ namespace Agilent_ExtensionBox.IO
         {
             _driver.AnalogOut.set_Enabled(_channelName, Enabled);
         }
+
+        private double _Voltage = 0.0;
+        public double Voltage
+        {
+            get { return _Voltage; }
+            set
+            {
+                _Set_DC_Voltage(value);
+                _Voltage = value;
+            }
+        }
+
+        private bool _Enabled = false;
+        public bool Enabled
+        {
+            get { return _Enabled; }
+            set
+            {
+                _Set_Enabled(value);
+                _Enabled = value;
+            }
+        }
     }
 }
