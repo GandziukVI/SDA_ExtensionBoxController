@@ -9,28 +9,48 @@ namespace Agilent_ExtensionBox.IO
 
     public class DigitalChannel
     {
-        public int Width { get; private set; }
+        public int Width { get { return _bitArray.Length; } }
         private DigitalBit[] _bitArray;
         private AgilentU254xClass _driver;
         private string _channelName;
+        
+
 
         public DigitalChannel(DigitalChannelsEnum Channel, AgilentU254xClass Driver)
         {
+            int width = 0;
             switch (Channel)
             {
                 case DigitalChannelsEnum.DIOA:
-                    _channelName = "DIOA"; break;
+                    {
+                        _channelName = "DIOA";
+                        width = 8;
+                    } break;
                 case DigitalChannelsEnum.DIOB:
-                    _channelName = "DIOB";break;
+                    {
+                        _channelName = "DIOB";
+                        width = 8;
+                    } break;
                 case DigitalChannelsEnum.DIOC:
-                    _channelName = "DIOC";break;
+                    {
+                        _channelName = "DIOC";
+                        width = 4;
+                    } break;
                 case DigitalChannelsEnum.DIOD:
-                    _channelName = "DIOD";break;
+                    {
+                        _channelName = "DIOD";
+                        width = 4;
+                    } break;
                 default:
                     throw new ArgumentException();
             }
             _driver = Driver;
             _driver.Digital.Channels.get_Item(_channelName).Direction = AgilentU254xDigitalChannelDirectionEnum.AgilentU254xDigitalChannelDirectionOut;
+            _bitArray = new DigitalBit[width];
+            for (int i = 0; i < width; i++)
+            {
+                _bitArray[i] = new DigitalBit(this, i);
+            }
         }
 
 
