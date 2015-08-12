@@ -45,9 +45,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AI_Channel.cs" />
-    <Compile Include="AI_ChannelParams.cs" />
-    <Compile Include="AI_Channels.cs" />
+    <Compile Include="AnalogInput\AI_Channel.cs" />
+    <Compile Include="AnalogInput\AI_ChannelParams.cs" />
+    <Compile Include="AnalogInput\AI_Channels.cs" />
+    <Compile Include="AnalogOutput\AO_Channels.cs" />
     <Compile Include="BoxController.cs" />
     <Compile Include="DefinitionsAndConstants.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -63,6 +64,9 @@
       <Isolated>False</Isolated>
       <EmbedInteropTypes>True</EmbedInteropTypes>
     </COMReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="DigitalIO\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
