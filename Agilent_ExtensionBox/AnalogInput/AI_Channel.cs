@@ -23,10 +23,6 @@ namespace Agilent_ExtensionBox
         {
             _channelNumber = ChannelNumber;
             _driver = Controller;
-            //ChannelNumber = __ChannelNumber;
-            //Controller = __Controller;
-
-           // _ChannelSettings = new AI_ChannelParams(__ChannelNumber, __Controller);
         }
 
         #region Analog input channel functionality implementation
@@ -330,6 +326,5 @@ namespace Agilent_ExtensionBox
                 Set_ChannelParametersToLatch(_Filter_Frequency, _Filter_Gain, _PGA_Gain);
             }
         }
-    }
     }
 }
