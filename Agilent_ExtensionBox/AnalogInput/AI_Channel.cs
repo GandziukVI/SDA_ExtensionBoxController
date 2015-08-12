@@ -11,7 +11,6 @@ namespace Agilent_ExtensionBox
     {
         private int _channelNumber;
         private AgilentU254xClass _driver;
-
         private const string AIn1 = "AIn1";
         private const string AIn2 = "AIn2";
         private const string AIn3 = "AIn3";
@@ -20,7 +19,7 @@ namespace Agilent_ExtensionBox
 
         public AI_Channel(int ChannelNumber, AgilentU254xClass Controller)
         {
-            _channelNumber = ChannelNumber;
+            ChannelNumber = ChannelNumber;
             _driver = Controller;
             //ChannelNumber = __ChannelNumber;
             //Controller = __Controller;
@@ -68,7 +67,6 @@ namespace Agilent_ExtensionBox
         {
             //if (Array.IndexOf(DefinitionsAndConstants._AvailableRanges, Range) == -1)
             //    Range = DefinitionsAndConstants._GetClosestValueInArray(DefinitionsAndConstants._AvailableRanges, Range);
-
             var r = AvailableRanges.FromRangeEnum(range);
 
             switch (_channelNumber)
