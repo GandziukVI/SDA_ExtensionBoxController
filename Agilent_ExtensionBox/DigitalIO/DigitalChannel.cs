@@ -13,7 +13,6 @@ namespace Agilent_ExtensionBox.IO
         private DigitalBit[] _bitArray;
         private AgilentU254xClass _driver;
         private string _channelName;
-        
 
 
         public DigitalChannel(DigitalChannelsEnum Channel, AgilentU254xClass Driver)
@@ -22,7 +21,7 @@ namespace Agilent_ExtensionBox.IO
             switch (Channel)
             {
                 case DigitalChannelsEnum.DIOA:
-                    {
+                    { 
                         _channelName = ChannelNames.DIOA;
                         width = 8;
                     } break;
