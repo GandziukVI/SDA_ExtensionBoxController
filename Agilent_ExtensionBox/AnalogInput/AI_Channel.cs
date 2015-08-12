@@ -34,13 +34,13 @@ namespace Agilent_ExtensionBox
             switch (_channelNumber)
             {
                 case 1:
-                    Controller.Driver.AnalogIn.Channels.get_Item(AIn1).Enabled = Enabled; break;
+                    _driver.AnalogIn.Channels.get_Item(AIn1).Enabled = Enabled; break;
                 case 2:
-                    Controller.Driver.AnalogIn.Channels.get_Item(AIn2).Enabled = Enabled; break;
+                    _driver.AnalogIn.Channels.get_Item(AIn2).Enabled = Enabled; break;
                 case 3:
-                    Controller.Driver.AnalogIn.Channels.get_Item(AIn3).Enabled = Enabled; break;
+                    _driver.AnalogIn.Channels.get_Item(AIn3).Enabled = Enabled; break;
                 case 4:
-                    Controller.Driver.AnalogIn.Channels.get_Item(AIn4).Enabled = Enabled; break;
+                    _driver.AnalogIn.Channels.get_Item(AIn4).Enabled = Enabled; break;
                 default:
                     break;
             }
@@ -48,16 +48,16 @@ namespace Agilent_ExtensionBox
 
         private void _Set_ChannelPolarity(AgilentU254xAnalogPolarityEnum Polarity)
         {
-            switch (ChannelNumber)
+            switch (_channelNumber)
             {
                 case 1:
-                    Controller.Driver.AnalogIn.Channels.get_Item(AIn1).Polarity = Polarity; break;
+                    _driver.AnalogIn.Channels.get_Item(AIn1).Polarity = Polarity; break;
                 case 2:
-                    Controller.Driver.AnalogIn.Channels.get_Item(AIn2).Polarity = Polarity; break;
+                    _driver.AnalogIn.Channels.get_Item(AIn2).Polarity = Polarity; break;
                 case 3:
-                    Controller.Driver.AnalogIn.Channels.get_Item(AIn3).Polarity = Polarity; break;
+                    _driver.AnalogIn.Channels.get_Item(AIn3).Polarity = Polarity; break;
                 case 4:
-                    Controller.Driver.AnalogIn.Channels.get_Item(AIn4).Polarity = Polarity; break;
+                    _driver.AnalogIn.Channels.get_Item(AIn4).Polarity = Polarity; break;
                 default:
                     break;
             }
@@ -69,16 +69,16 @@ namespace Agilent_ExtensionBox
             //    Range = DefinitionsAndConstants._GetClosestValueInArray(DefinitionsAndConstants._AvailableRanges, Range);
             var r = AvailableRanges.FromRangeEnum(range);
 
-            switch (ChannelNumber)
+            switch (_channelNumber)
             {
                 case 1:
-                    Controller.Driver.AnalogIn.Channels.get_Item(AIn1).Range = r; break;
+                    _driver.AnalogIn.Channels.get_Item(AIn1).Range = r; break;
                 case 2:
-                    Controller.Driver.AnalogIn.Channels.get_Item(AIn2).Range = r; break;
+                    _driver.AnalogIn.Channels.get_Item(AIn2).Range = r; break;
                 case 3:
-                    Controller.Driver.AnalogIn.Channels.get_Item(AIn3).Range = r; break;
+                    _driver.AnalogIn.Channels.get_Item(AIn3).Range = r; break;
                 case 4:
-                    Controller.Driver.AnalogIn.Channels.get_Item(AIn4).Range = r; break;
+                    _driver.AnalogIn.Channels.get_Item(AIn4).Range = r; break;
                 default:
                     break;
             }
