@@ -12,7 +12,7 @@ namespace Agilent_ExtensionBox
     public class AI_Channel
     {
         private int _channelNumber;
-        private AgilentU254xClass Driver;
+        private AgilentU254xClass _driver;
         private const string AIn1 = "AIn1";
         private const string AIn2 = "AIn2";
         private const string AIn3 = "AIn3";
@@ -22,7 +22,7 @@ namespace Agilent_ExtensionBox
         public AI_Channel(int ChannelNumber, AgilentU254xClass Controller)
         {
             _channelNumber = ChannelNumber;
-            Driver = Controller;
+            _driver = Controller;
             //ChannelNumber = __ChannelNumber;
             //Controller = __Controller;
 
@@ -36,13 +36,13 @@ namespace Agilent_ExtensionBox
             switch (_channelNumber)
             {
                 case 1:
-                    Driver.AnalogIn.Channels.get_Item(AIn1).Enabled = Enabled; break;
+                    _driver.AnalogIn.Channels.get_Item(AIn1).Enabled = Enabled; break;
                 case 2:
-                    Driver.AnalogIn.Channels.get_Item(AIn2).Enabled = Enabled; break;
+                    _driver.AnalogIn.Channels.get_Item(AIn2).Enabled = Enabled; break;
                 case 3:
-                    Driver.AnalogIn.Channels.get_Item(AIn3).Enabled = Enabled; break;
+                    _driver.AnalogIn.Channels.get_Item(AIn3).Enabled = Enabled; break;
                 case 4:
-                    Driver.AnalogIn.Channels.get_Item(AIn4).Enabled = Enabled; break;
+                    _driver.AnalogIn.Channels.get_Item(AIn4).Enabled = Enabled; break;
                 default:
                     break;
             }
@@ -53,13 +53,13 @@ namespace Agilent_ExtensionBox
             switch (_channelNumber)
             {
                 case 1:
-                    Driver.AnalogIn.Channels.get_Item(AIn1).Polarity = Polarity; break;
+                    _driver.AnalogIn.Channels.get_Item(AIn1).Polarity = Polarity; break;
                 case 2:
-                    Driver.AnalogIn.Channels.get_Item(AIn2).Polarity = Polarity; break;
+                    _driver.AnalogIn.Channels.get_Item(AIn2).Polarity = Polarity; break;
                 case 3:
-                    Driver.AnalogIn.Channels.get_Item(AIn3).Polarity = Polarity; break;
+                    _driver.AnalogIn.Channels.get_Item(AIn3).Polarity = Polarity; break;
                 case 4:
-                    Driver.AnalogIn.Channels.get_Item(AIn4).Polarity = Polarity; break;
+                    _driver.AnalogIn.Channels.get_Item(AIn4).Polarity = Polarity; break;
                 default:
                     break;
             }
@@ -72,13 +72,13 @@ namespace Agilent_ExtensionBox
             switch (_channelNumber)
             {
                 case 1:
-                    Driver.AnalogIn.Channels.get_Item(AIn1).Range = r; break;
+                    _driver.AnalogIn.Channels.get_Item(AIn1).Range = r; break;
                 case 2:
-                    Driver.AnalogIn.Channels.get_Item(AIn2).Range = r; break;
+                    _driver.AnalogIn.Channels.get_Item(AIn2).Range = r; break;
                 case 3:
-                    Driver.AnalogIn.Channels.get_Item(AIn3).Range = r; break;
+                    _driver.AnalogIn.Channels.get_Item(AIn3).Range = r; break;
                 case 4:
-                    Driver.AnalogIn.Channels.get_Item(AIn4).Range = r; break;
+                    _driver.AnalogIn.Channels.get_Item(AIn4).Range = r; break;
                 default:
                     break;
             }
@@ -134,25 +134,25 @@ namespace Agilent_ExtensionBox
                     {
                         //ChannelSelector_A0.Set_ToZero();
                         //ChannelSelector_A1.Set_ToZero();
-                        Driver.Digital.WriteByte("DIOB", 0x00);
+                        _driver.Digital.WriteByte("DIOB", 0x00);
                     } break;
                 case 2:
                     {
                         //ChannelSelector_A0.Set_ToOne();
                         //ChannelSelector_A1.Set_ToZero();
-                        Driver.Digital.WriteByte("DIOB", 0x01);
+                        _driver.Digital.WriteByte("DIOB", 0x01);
                     } break;
                 case 3:
                     {
                         //ChannelSelector_A0.Set_ToZero();
                         //ChannelSelector_A1.Set_ToOne();
-                        Driver.Digital.WriteByte("DIOB", 0x02);
+                        _driver.Digital.WriteByte("DIOB", 0x02);
                     } break;
                 case 4:
                     {
                         //ChannelSelector_A0.Set_ToOne();
                         //ChannelSelector_A1.Set_ToOne();
-                        Driver.Digital.WriteByte("DIOB", 0x03);
+                        _driver.Digital.WriteByte("DIOB", 0x03);
                     } break;
                 default:
                     break;
@@ -207,9 +207,9 @@ namespace Agilent_ExtensionBox
         {
             var wasWritten = 0x00;
 
-            Driver.Digital.Channels.get_Item(ChannelID).Direction = AgilentU254xDigitalChannelDirectionEnum.AgilentU254xDigitalChannelDirectionIn;
-            Driver.Digital.ReadByte(ChannelID, ref wasWritten);
-            Driver.Digital.Channels.get_Item(ChannelID).Direction = AgilentU254xDigitalChannelDirectionEnum.AgilentU254xDigitalChannelDirectionOut;
+            _driver.Digital.Channels.get_Item(ChannelID).Direction = AgilentU254xDigitalChannelDirectionEnum.AgilentU254xDigitalChannelDirectionIn;
+            _driver.Digital.ReadByte(ChannelID, ref wasWritten);
+            _driver.Digital.Channels.get_Item(ChannelID).Direction = AgilentU254xDigitalChannelDirectionEnum.AgilentU254xDigitalChannelDirectionOut;
 
             var result = new BitArray(new int[] { wasWritten });
 
@@ -225,15 +225,15 @@ namespace Agilent_ExtensionBox
             {
                 case 1:
                     {
-                        Driver.Digital.WriteByte("DIOC", 0x00);
+                        _driver.Digital.WriteByte("DIOC", 0x00);
                     } break;
                 case 10:
                     {
-                        Driver.Digital.WriteByte("DIOC", 0x01);
+                        _driver.Digital.WriteByte("DIOC", 0x01);
                     } break;
                 case 100:
                     {
-                        Driver.Digital.WriteByte("DIOC", 0x02);
+                        _driver.Digital.WriteByte("DIOC", 0x02);
                     } break;
             }
         }
@@ -255,7 +255,7 @@ namespace Agilent_ExtensionBox
                     ToWrite[DefinitionsAndConstants._FilterGain_Bits[i]] = false;
             }
 
-            Driver.Digital.WriteByte("DIOA", _GetIntFromBitArray(ToWrite));
+            _driver.Digital.WriteByte("DIOA", _GetIntFromBitArray(ToWrite));
         }
 
         private void _Set_Filter_Frequency(int Frequency)
@@ -275,7 +275,7 @@ namespace Agilent_ExtensionBox
                     ToWrite[DefinitionsAndConstants._Frequency_Bits[i]] = false;
             }
 
-            Driver.Digital.WriteByte("DIOA", _GetIntFromBitArray(ToWrite));
+            _driver.Digital.WriteByte("DIOA", _GetIntFromBitArray(ToWrite));
         }
 
         public void Set_ChannelParametersToLatch(int Frequency, int FilterGain, int PGA_Gain)
@@ -289,10 +289,10 @@ namespace Agilent_ExtensionBox
             var ToWrite = _GetPreviouslyWrittenValue("DIOD");
 
             ToWrite[2] = true;
-            Driver.Digital.WriteByte("DIOD", _GetIntFromBitArray(ToWrite));
+            _driver.Digital.WriteByte("DIOD", _GetIntFromBitArray(ToWrite));
             Thread.Sleep(100);
             ToWrite[2] = false;
-            Driver.Digital.WriteByte("DIOD", _GetIntFromBitArray(ToWrite));
+            _driver.Digital.WriteByte("DIOD", _GetIntFromBitArray(ToWrite));
         }
 
         private int _PGA_Gain = 1;
