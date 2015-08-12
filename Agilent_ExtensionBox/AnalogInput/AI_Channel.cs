@@ -19,7 +19,7 @@ namespace Agilent_ExtensionBox
 
         public AI_Channel(int ChannelNumber, AgilentU254xClass Controller)
         {
-            ChannelNumber = ChannelNumber;
+            _channelNumber = ChannelNumber;
             _driver = Controller;
             //ChannelNumber = __ChannelNumber;
             //Controller = __Controller;

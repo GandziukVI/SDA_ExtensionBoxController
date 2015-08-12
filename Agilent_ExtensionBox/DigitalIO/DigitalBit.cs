@@ -9,7 +9,7 @@ namespace Agilent_ExtensionBox.DigitalIO
     {
         private int _BitNumber;
         private AgilentU254xClass _driver;
-        private AgilentU254xDigitalChannelClass
+        private AgilentU254xDigitalChannelClass _digitalChannel;
 
     }
 }
