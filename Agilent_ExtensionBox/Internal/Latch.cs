@@ -5,19 +5,19 @@ using System.Text;
 
 namespace Agilent_ExtensionBox.Internal
 {
-    public class Letch
+    public class Latch
     {
         private DigitalBit _Selector_ADC_A0;
         private DigitalBit _Selector_ADC_A1;
-        private DigitalBit _LetchPulseBit;
+        private DigitalBit _LatchPulseBit;
 
-        public Letch(DigitalBit Selector_ADC_A0,DigitalBit Selector_ADC_A1, DigitalBit LetchPulseBit)
+        public Latch(DigitalBit Selector_ADC_A0,DigitalBit Selector_ADC_A1, DigitalBit LatchPulseBit)
         {
-            if ((Selector_ADC_A0 == null) || (Selector_ADC_A1 == null) || (LetchPulseBit == null))
+            if ((Selector_ADC_A0 == null) || (Selector_ADC_A1 == null) || (LatchPulseBit == null))
                 throw new ArgumentException();
             _Selector_ADC_A0 = Selector_ADC_A0;
             _Selector_ADC_A1 = Selector_ADC_A1;
-            _LetchPulseBit = LetchPulseBit;
+            _LatchPulseBit = LatchPulseBit;
         }
 
         public void PulseLetchForChannel(AnalogInChannelsEnum channelName)
@@ -51,8 +51,7 @@ namespace Agilent_ExtensionBox.Internal
                 default:
                     throw new ArgumentException();
             }
-            _LetchPulseBit.Pulse();
+            _LatchPulseBit.Pulse();
         }
-        
     }
 }
