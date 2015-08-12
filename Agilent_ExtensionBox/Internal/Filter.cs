@@ -48,19 +48,19 @@ namespace Agilent_ExtensionBox.Internal
     {
         
         private DigitalChannel _channel;
-        private Latch _latch;
+        //private Latch _latch;
 
-        public Filter(DigitalChannel controlChannel, Latch latch)
+        public Filter(DigitalChannel controlChannel)//, Latch latch)
         {
-            if ((controlChannel==null)||(latch == null ))
+            if ((controlChannel==null))//||(latch == null ))
                 throw new ArgumentNullException();
             if (controlChannel.Width < 8)
                 throw new ArgumentException("Too narrow channel width");
             _channel = controlChannel;
-            _latch = latch;
+            //_latch = latch;
         }
 
-        public void SetCutOffFrequency(AnalogInChannelsEnum channelName, FilterCutOffFrequencies cutoff, FilterGain gain)
+        public void SetCutOffFrequencyAndGain(AnalogInChannelsEnum channelName, FilterCutOffFrequencies cutoff, FilterGain gain)
         {
             if (cutoff < FilterCutOffFrequencies.Freq_0kHz || cutoff > FilterCutOffFrequencies.Freq_150kHz)
                 throw new ArgumentException("Frequency out of range");
@@ -68,7 +68,10 @@ namespace Agilent_ExtensionBox.Internal
                 throw new ArgumentException("Gain out of range");
             var valForLatch = (int)cutoff | (int)gain;
             _channel.WriteByte(valForLatch);
-            _latch.PulseLatchForChannel(channelName);
+
+            //_latch.PulseLatchForChannel(channelName);
+
+            // use latch after calling this method
         }
     }
 }
