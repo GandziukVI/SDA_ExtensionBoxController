@@ -48,9 +48,12 @@
     <Compile Include="AnalogInput\AI_Channel.cs" />
     <Compile Include="AnalogInput\AI_ChannelParams.cs" />
     <Compile Include="AnalogInput\AI_Channels.cs" />
+    <Compile Include="AnalogOutput\AO_Channel.cs" />
     <Compile Include="AnalogOutput\AO_Channels.cs" />
     <Compile Include="BoxController.cs" />
     <Compile Include="DefinitionsAndConstants.cs" />
+    <Compile Include="DigitalIO\DigitalChannel.cs" />
+    <Compile Include="DigitalIO\DigitalChannels.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SDA_Bit.cs" />
   </ItemGroup>
@@ -65,9 +68,7 @@
       <EmbedInteropTypes>True</EmbedInteropTypes>
     </COMReference>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="DigitalIO\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
