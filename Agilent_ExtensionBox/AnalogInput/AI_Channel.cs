@@ -116,40 +116,18 @@ namespace Agilent_ExtensionBox
             }
         }
 
-        private SDA_Bit ChannelSelector_A0;
-        private SDA_Bit ChannelSelector_A1;
-
         private SDA_Bit Relay_SetReset;
         private SDA_Bit Relay_Pulse;
 
-        private void _SelectChannel()
+        private void _Select_AI_Channel()
         {
             switch (_channelNumber)
             {
-                case 1:
-                    {
-                        //ChannelSelector_A0.Set_ToZero();
-                        //ChannelSelector_A1.Set_ToZero();
-                        _driver.Digital.WriteByte("DIOB", 0x00);
-                    } break;
-                case 2:
-                    {
-                        //ChannelSelector_A0.Set_ToOne();
-                        //ChannelSelector_A1.Set_ToZero();
-                        _driver.Digital.WriteByte("DIOB", 0x01);
-                    } break;
-                case 3:
-                    {
-                        //ChannelSelector_A0.Set_ToZero();
-                        //ChannelSelector_A1.Set_ToOne();
-                        _driver.Digital.WriteByte("DIOB", 0x02);
-                    } break;
-                case 4:
-                    {
-                        //ChannelSelector_A0.Set_ToOne();
-                        //ChannelSelector_A1.Set_ToOne();
-                        _driver.Digital.WriteByte("DIOB", 0x03);
-                    } break;
+                case 1: _driver.Digital.WriteByte("DIOB", 0x00); break;
+                case 2: _driver.Digital.WriteByte("DIOB", 0x01); break;
+                case 3: _driver.Digital.WriteByte("DIOB", 0x02); break;
+                case 4: _driver.Digital.WriteByte("DIOB", 0x03); break;
+                
                 default:
                     break;
             }
@@ -157,14 +135,14 @@ namespace Agilent_ExtensionBox
 
         private void _Set_To_AC()
         {
-            _SelectChannel();
+            _Select_AI_Channel();
             Relay_SetReset.Set_ToZero();
             Relay_Pulse.Pulse();
         }
 
         private void _Set_To_DC()
         {
-            _SelectChannel();
+            _Select_AI_Channel();
             Relay_SetReset.Set_ToOne();
             Relay_Pulse.Pulse();
         }
@@ -280,7 +258,7 @@ namespace Agilent_ExtensionBox
             _Set_Filter_Gain(FilterGain);
             _Set_Filter_Frequency(Frequency);
 
-            _SelectChannel();
+            _Select_AI_Channel();
 
             var ToWrite = _GetPreviouslyWrittenValue("DIOD");
 
