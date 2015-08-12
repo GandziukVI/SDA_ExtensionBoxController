@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Agilent_ExtensionBox;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -23,6 +24,10 @@ namespace SDA_ExtensionBoxController
         public MainWindow()
         {
             InitializeComponent();
+
+            BoxController b = new BoxController();
+            b.Init("USB0::0x0957::0x1718::TW54334510::INSTR");
+            b.Close();
         }
     }
 }
