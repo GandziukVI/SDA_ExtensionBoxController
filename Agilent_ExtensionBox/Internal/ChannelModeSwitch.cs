@@ -12,7 +12,7 @@ namespace Agilent_ExtensionBox.Internal
         DC
     }
 
-    public class AI_ChannelModeSwitch
+    public class ChannelModeSwitch
     {
         private DigitalBit _pulseBit;
         private DigitalBit _SetResetBit;
@@ -21,7 +21,7 @@ namespace Agilent_ExtensionBox.Internal
 
         private object SyncRoot = new object();
 
-        public AI_ChannelModeSwitch(DigitalBit PulseBit, DigitalBit SetResetBit, DigitalBit SelectorA0, DigitalBit SelectorA1)
+        public ChannelModeSwitch(DigitalBit PulseBit, DigitalBit SetResetBit, DigitalBit SelectorA0, DigitalBit SelectorA1)
         {
             if ((PulseBit == null) || (SetResetBit == null) && (SelectorA0 == null) || (SelectorA1 == null))
                 throw new ArgumentNullException();
