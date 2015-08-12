@@ -11,6 +11,11 @@ namespace Agilent_ExtensionBox
     {
         private int ChannelNumber;
         private BoxController Controller;
+        private const string AIn1 = "AIn1";
+        private const string AIn2 = "AIn2";
+        private const string AIn3 = "AIn3";
+        private const string AIn4 = "AIn4";
+
 
         public AI_Channel(int __ChannelNumber, BoxController __Controller)
         {
@@ -27,13 +32,13 @@ namespace Agilent_ExtensionBox
             switch (ChannelNumber)
             {
                 case 1:
-                    Controller.Driver.AnalogIn.Channels.get_Item("AIn1").Enabled = Enabled; break;
+                    Controller.Driver.AnalogIn.Channels.get_Item(AIn1).Enabled = Enabled; break;
                 case 2:
-                    Controller.Driver.AnalogIn.Channels.get_Item("AIn2").Enabled = Enabled; break;
+                    Controller.Driver.AnalogIn.Channels.get_Item(AIn2).Enabled = Enabled; break;
                 case 3:
-                    Controller.Driver.AnalogIn.Channels.get_Item("AIn3").Enabled = Enabled; break;
+                    Controller.Driver.AnalogIn.Channels.get_Item(AIn3).Enabled = Enabled; break;
                 case 4:
-                    Controller.Driver.AnalogIn.Channels.get_Item("AIn4").Enabled = Enabled; break;
+                    Controller.Driver.AnalogIn.Channels.get_Item(AIn4).Enabled = Enabled; break;
                 default:
                     break;
             }
@@ -44,33 +49,34 @@ namespace Agilent_ExtensionBox
             switch (ChannelNumber)
             {
                 case 1:
-                    Controller.Driver.AnalogIn.Channels.get_Item("AIn1").Polarity = Polarity; break;
+                    Controller.Driver.AnalogIn.Channels.get_Item(AIn1).Polarity = Polarity; break;
                 case 2:
-                    Controller.Driver.AnalogIn.Channels.get_Item("AIn2").Polarity = Polarity; break;
+                    Controller.Driver.AnalogIn.Channels.get_Item(AIn2).Polarity = Polarity; break;
                 case 3:
-                    Controller.Driver.AnalogIn.Channels.get_Item("AIn3").Polarity = Polarity; break;
+                    Controller.Driver.AnalogIn.Channels.get_Item(AIn3).Polarity = Polarity; break;
                 case 4:
-                    Controller.Driver.AnalogIn.Channels.get_Item("AIn4").Polarity = Polarity; break;
+                    Controller.Driver.AnalogIn.Channels.get_Item(AIn4).Polarity = Polarity; break;
                 default:
                     break;
             }
         }
 
-        private void _Set_ChannelRange(double Range)
+        private void _Set_ChannelRange(Ranges range)
         {
-            if (Array.IndexOf(DefinitionsAndConstants._AvailableRanges, Range) == -1)
-                Range = DefinitionsAndConstants._GetClosestValueInArray(DefinitionsAndConstants._AvailableRanges, Range);
+            //if (Array.IndexOf(DefinitionsAndConstants._AvailableRanges, Range) == -1)
+            //    Range = DefinitionsAndConstants._GetClosestValueInArray(DefinitionsAndConstants._AvailableRanges, Range);
+            var r = AvailableRanges.FromRangeEnum(range);
 
             switch (ChannelNumber)
             {
                 case 1:
-                    Controller.Driver.AnalogIn.Channels.get_Item("AIn1").Range = Range; break;
+                    Controller.Driver.AnalogIn.Channels.get_Item(AIn1).Range = r; break;
                 case 2:
-                    Controller.Driver.AnalogIn.Channels.get_Item("AIn2").Range = Range; break;
+                    Controller.Driver.AnalogIn.Channels.get_Item(AIn2).Range = r; break;
                 case 3:
-                    Controller.Driver.AnalogIn.Channels.get_Item("AIn3").Range = Range; break;
+                    Controller.Driver.AnalogIn.Channels.get_Item(AIn3).Range = r; break;
                 case 4:
-                    Controller.Driver.AnalogIn.Channels.get_Item("AIn4").Range = Range; break;
+                    Controller.Driver.AnalogIn.Channels.get_Item(AIn4).Range = r; break;
                 default:
                     break;
             }
@@ -101,8 +107,8 @@ namespace Agilent_ExtensionBox
             }
         }
 
-        private double _Range;
-        public double Range
+        private Ranges _Range;
+        public Ranges Range
         {
             get { return _Range; }
             set
