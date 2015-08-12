@@ -80,17 +80,52 @@ namespace Agilent_ExtensionBox.Internal
             switch (cutoff)
             {
                 case FilterCutOffFrequencies.Freq_0kHz:
-                    { }
+                    {
+                        _F0.Reset();
+                        _F1.Reset();
+                        _F2.Reset();
+                        _F3.Reset();
+                    }
                     break;
                 case FilterCutOffFrequencies.Freq_10kHz:
+                    {
+                        _F0.Set() ;
+                        _F1.Reset();
+                        _F2.Reset();
+                        _F3.Reset();
+                    }
                     break;
                 case FilterCutOffFrequencies.Freq_20kHz:
+                    {
+                        _F0.Reset();
+                        _F1.Set() ;
+                        _F2.Reset();
+                        _F3.Reset();
+                    }
                     break;
                 case FilterCutOffFrequencies.Freq_30kHz:
+                    {
+                        _F0.Set();
+                        _F1.Set();
+                        _F2.Reset();
+                        _F3.Reset();
+                    }
                     break;
                 case FilterCutOffFrequencies.Freq_40kHz:
+                    {
+                        _F0.Set();
+                        _F1.Set();
+                        _F2.Reset();
+                        _F3.Reset();
+                    }
                     break;
                 case FilterCutOffFrequencies.Freq_50kHz:
+                    {
+                        _F0.Reset();
+                        _F1.Reset();
+                        _F2.Set();
+                        _F3.Reset();
+                    }
                     break;
                 case FilterCutOffFrequencies.Freq_60kHz:
                     break;
