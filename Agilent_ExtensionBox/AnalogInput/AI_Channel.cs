@@ -31,7 +31,7 @@ namespace Agilent_ExtensionBox
 
         private void _Set_ChannelEnabled(bool Enabled)
         {
-            switch (ChannelNumber)
+            switch (_channelNumber)
             {
                 case 1:
                     Controller.Driver.AnalogIn.Channels.get_Item(AIn1).Enabled = Enabled; break;
