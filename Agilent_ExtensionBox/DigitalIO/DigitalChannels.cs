@@ -2,9 +2,10 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Agilent_ExtensionBox.DigitalIO
+namespace Agilent_ExtensionBox.IO
 {
-    class DigitalChannels
+    public class DigitalChannels
     {
+
     }
 }

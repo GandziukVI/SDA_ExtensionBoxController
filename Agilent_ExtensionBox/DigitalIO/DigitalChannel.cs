@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Agilent_ExtensionBox.DigitalIO
+namespace Agilent_ExtensionBox.IO
 {
     
 
@@ -62,6 +62,9 @@ namespace Agilent_ExtensionBox.DigitalIO
                 val |= 0x01 << _bitNumber;
             else
                 val &= ~(0x01 << _bitNumber);
+            WriteByte(val);
         }
+
+        
     }
 }

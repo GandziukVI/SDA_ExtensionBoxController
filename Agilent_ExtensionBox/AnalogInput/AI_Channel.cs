@@ -5,7 +5,7 @@ using Agilent.AgilentU254x.Interop;
 using System.Collections;
 using System.Threading;
 
-namespace Agilent_ExtensionBox
+namespace Agilent_ExtensionBox.IO
 {
     public enum MeasuringMode { AC_Mode, DC_Mode }
 

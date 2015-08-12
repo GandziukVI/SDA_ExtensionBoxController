@@ -6,6 +6,7 @@ using Ivi.Driver.Interop;
 using Agilent.AgilentU254x.Interop;
 using System.Threading;
 using System.Collections;
+using Agilent_ExtensionBox.IO;
 
 namespace Agilent_ExtensionBox
 {
