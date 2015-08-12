@@ -23,22 +23,22 @@ namespace Agilent_ExtensionBox.IO
             {
                 case DigitalChannelsEnum.DIOA:
                     {
-                        _channelName = "DIOA";
+                        _channelName = ChannelNames.DIOA;
                         width = 8;
                     } break;
                 case DigitalChannelsEnum.DIOB:
                     {
-                        _channelName = "DIOB";
+                        _channelName = ChannelNames.DIOB;
                         width = 8;
                     } break;
                 case DigitalChannelsEnum.DIOC:
                     {
-                        _channelName = "DIOC";
+                        _channelName = ChannelNames.DIOC;
                         width = 4;
                     } break;
                 case DigitalChannelsEnum.DIOD:
                     {
-                        _channelName = "DIOD";
+                        _channelName = ChannelNames.DIOD;
                         width = 4;
                     } break;
                 default:
