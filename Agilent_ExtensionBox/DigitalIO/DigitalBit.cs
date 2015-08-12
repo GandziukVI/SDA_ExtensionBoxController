@@ -7,9 +7,31 @@ namespace Agilent_ExtensionBox.DigitalIO
 {
     public class DigitalBit
     {
-        private int _BitNumber;
-        private AgilentU254xClass _driver;
-        private AgilentU254xDigitalChannelClass _digitalChannel;
+        private int _bitNumber;
+        private DigitalChannel _channel;
+        public DigitalBit(DigitalChannel channel, int BitNumber)
+        {
+            _channel = channel;
+            _bitNumber = BitNumber;
+        }
 
+        public bool Value
+        {
+            get { 
+                var res = false;
+                _channel.ReadBit(_bitNumber, out  res);
+                return res;
+            }
+        }
+
+        public void Set()
+        {
+            _channel.WriteBit(_bitNumber, true);
+        }
+
+        public void Reset()
+        {
+            _channel.WriteBit(_bitNumber, false);
+        }
     }
 }

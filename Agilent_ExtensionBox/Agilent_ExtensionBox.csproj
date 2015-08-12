@@ -55,6 +55,7 @@
     <Compile Include="DigitalIO\DigitalBit.cs" />
     <Compile Include="DigitalIO\DigitalChannel.cs" />
     <Compile Include="DigitalIO\DigitalChannels.cs" />
+    <Compile Include="DigitalIO\DigitalChannelsEnum.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SDA_Bit.cs" />
   </ItemGroup>
