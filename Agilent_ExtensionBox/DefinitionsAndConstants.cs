@@ -18,8 +18,8 @@ namespace Agilent_ExtensionBox
         public const string AIN3 = "AIn3";
         public const string AIN4 = "AIn4";
 
-        public const string AOUT1="";
-        public const string AOUT2="";
+        public const string AOUT1 = "AOut1";
+        public const string AOUT2 = "AOut2";
 
         public const string DIOA = "DIOA";
         public const string DIOB = "DIOB";

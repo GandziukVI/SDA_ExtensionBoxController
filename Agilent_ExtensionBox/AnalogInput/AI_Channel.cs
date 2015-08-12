@@ -189,7 +189,7 @@ namespace Agilent_ExtensionBox.IO
             _Set_Filter_Gain(FilterGain);
             _Set_Filter_Frequency(Frequency);
 
-            _Select_AI_Channel();
+            //_Select_AI_Channel();
 
             var ToWrite = _GetPreviouslyWrittenValue(ChannelNames.DIOD);
 
