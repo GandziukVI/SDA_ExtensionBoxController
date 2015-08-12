@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Agilent_ExtensionBox.AnalogInput
+namespace Agilent_ExtensionBox.IO
 {
     public enum AnalogInChannelsEnum
     {

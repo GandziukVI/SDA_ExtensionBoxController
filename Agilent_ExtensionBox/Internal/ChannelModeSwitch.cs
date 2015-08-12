@@ -1,4 +1,4 @@
-﻿using Agilent_ExtensionBox.AnalogInput;
+﻿
 using Agilent_ExtensionBox.IO;
 using System;
 using System.Collections.Generic;
