@@ -33,5 +33,12 @@ namespace Agilent_ExtensionBox.IO
         {
             _channel.WriteBit(_bitNumber, false);
         }
+
+        public void Pulse()
+        {
+            Set();
+            System.Threading.Thread.Sleep(100);
+            Reset();
+        }
     }
 }

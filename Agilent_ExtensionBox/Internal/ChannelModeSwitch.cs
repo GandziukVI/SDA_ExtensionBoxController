@@ -77,9 +77,7 @@ namespace Agilent_ExtensionBox.Internal
 
         private void Pulse()
         {
-            _pulseBit.Set();
-            System.Threading.Thread.Sleep(100);
-            _pulseBit.Reset();
+            _pulseBit.Pulse();
         }
     }
 }
