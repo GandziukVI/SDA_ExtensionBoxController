@@ -56,9 +56,9 @@ namespace Agilent_ExtensionBox.Internal
         private DigitalBit _G2;
         private DigitalBit _G3;
 
-        private Letch _letch;
+        private Latch _letch;
 
-        public Filter(DigitalBit F0,DigitalBit F1,DigitalBit F2,DigitalBit F3,DigitalBit G0,DigitalBit G1,DigitalBit G2,DigitalBit G3, Letch letch)
+        public Filter(DigitalBit F0,DigitalBit F1,DigitalBit F2,DigitalBit F3,DigitalBit G0,DigitalBit G1,DigitalBit G2,DigitalBit G3, Latch letch)
         {
             if ((F0 == null) || (F1 == null) || (F2 == null) || (F3 == null) || (G0 == null) || (G1 == null) || (G2 == null) || (G3 == null)||(letch == null ))
                 throw new ArgumentNullException();
