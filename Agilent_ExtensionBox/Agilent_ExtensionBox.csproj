@@ -52,6 +52,7 @@
     <Compile Include="AnalogOutput\AO_Channels.cs" />
     <Compile Include="BoxController.cs" />
     <Compile Include="DefinitionsAndConstants.cs" />
+    <Compile Include="DigitalIO\DigitalBit.cs" />
     <Compile Include="DigitalIO\DigitalChannel.cs" />
     <Compile Include="DigitalIO\DigitalChannels.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
