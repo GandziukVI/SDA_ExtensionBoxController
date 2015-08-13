@@ -19,11 +19,14 @@ namespace Agilent_ExtensionBox.Internal
             _channel = ControlChannel;
         }
 
+        public PGA_GainsEnum Gain { get; private set; }
+
         public void SetAmplification(PGA_GainsEnum gain)
         {
             if (gain < PGA_GainsEnum.gain1 || gain > PGA_GainsEnum.gain100)
                 throw new ArgumentException("Gain out of range");
-            
+            Gain = gain;
+
         }
     }
 }
