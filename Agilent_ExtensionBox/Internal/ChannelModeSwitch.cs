@@ -19,7 +19,7 @@ namespace Agilent_ExtensionBox.Internal
         private DigitalBit _SelectorA0;
         private DigitalBit _SelectorA1;
 
-        private object SyncRoot = new object();
+        
 
         public ChannelModeSwitch(DigitalBit PulseBit, DigitalBit SetResetBit, DigitalBit SelectorA0, DigitalBit SelectorA1)
         {

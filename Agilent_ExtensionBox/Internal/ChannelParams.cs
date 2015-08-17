@@ -9,10 +9,10 @@ namespace Agilent_ExtensionBox.Internal
     {
         public Filter ChannelFilter { get; private set; }
         public ProgrammableGainAmplifier ChannelPGA { get; private set; }
-        public Latch CommonLatch { get; private set; }
+        public AnalogLatch CommonLatch { get; private set; }
         private AnalogInChannelsEnum _channelName;
 
-        public ChannelParams(AnalogInChannelsEnum channelName, Filter channelFilter, ProgrammableGainAmplifier channelPGA, Latch channelLatch)
+        public ChannelParams(AnalogInChannelsEnum channelName, Filter channelFilter, ProgrammableGainAmplifier channelPGA, AnalogLatch channelLatch)
         {
             _channelName = channelName;
             ChannelFilter = channelFilter;
