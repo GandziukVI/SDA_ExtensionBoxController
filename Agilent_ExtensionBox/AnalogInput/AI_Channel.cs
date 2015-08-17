@@ -8,8 +8,6 @@ using Agilent_ExtensionBox.Internal;
 
 namespace Agilent_ExtensionBox.IO
 {
-    public enum MeasuringMode { AC_Mode, DC_Mode }
-
     public class AI_Channel
     {
         private AnalogInChannelsEnum _channelName;

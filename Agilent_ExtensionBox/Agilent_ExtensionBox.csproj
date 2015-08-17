@@ -64,7 +64,6 @@
     <Compile Include="Internal\Motor.cs" />
     <Compile Include="Internal\ProgrammableGainAmplifier.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SDA_Bit.cs" />
   </ItemGroup>
   <ItemGroup>
     <COMReference Include="VisaComLib">
