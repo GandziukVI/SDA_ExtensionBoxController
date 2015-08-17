@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Agilent_ExtensionBox.Internal
 {
-    public enum PGA_GainsEnum
+    public enum PGA_GainsEnum:int
     {
         gain1 = 0x01,
         gain10 = 0x02,
@@ -26,7 +26,7 @@ namespace Agilent_ExtensionBox.Internal
             if (gain < PGA_GainsEnum.gain1 || gain > PGA_GainsEnum.gain100)
                 throw new ArgumentException("Gain out of range");
             Gain = gain;
-
+            _channel.WriteByte((int)gain);
         }
     }
 }

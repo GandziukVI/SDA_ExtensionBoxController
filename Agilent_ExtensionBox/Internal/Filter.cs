@@ -60,6 +60,10 @@ namespace Agilent_ExtensionBox.Internal
             //_latch = latch;
         }
 
+        public FilterCutOffFrequencies CutoffFrequency { get; private set; }
+
+        public FilterGain Gain { get; private set; }
+
         public void SetCutOffFrequencyAndGain(AnalogInChannelsEnum channelName, FilterCutOffFrequencies cutoff, FilterGain gain)
         {
             if (cutoff < FilterCutOffFrequencies.Freq_0kHz || cutoff > FilterCutOffFrequencies.Freq_150kHz)
@@ -68,7 +72,8 @@ namespace Agilent_ExtensionBox.Internal
                 throw new ArgumentException("Gain out of range");
             var valForLatch = (int)cutoff | (int)gain;
             _channel.WriteByte(valForLatch);
-
+            CutoffFrequency = cutoff;
+            Gain = gain;
             //_latch.PulseLatchForChannel(channelName);
 
             // use latch after calling this method

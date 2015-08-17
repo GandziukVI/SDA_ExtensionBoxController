@@ -58,6 +58,7 @@
     <Compile Include="DigitalIO\DigitalChannels.cs" />
     <Compile Include="DigitalIO\DigitalChannelsEnum.cs" />
     <Compile Include="Internal\ChannelModeSwitch.cs" />
+    <Compile Include="Internal\ChannelParams.cs" />
     <Compile Include="Internal\Filter.cs" />
     <Compile Include="Internal\Latch.cs" />
     <Compile Include="Internal\Motor.cs" />
