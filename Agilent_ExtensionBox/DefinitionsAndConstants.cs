@@ -37,7 +37,6 @@ namespace Agilent_ExtensionBox
         {
             switch (range)
             {
-
                 case Ranges.Range_5:
                     return Range_5;
                 case Ranges.Range_2_5:
