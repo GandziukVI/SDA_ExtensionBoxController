@@ -17,7 +17,7 @@ namespace Agilent_ExtensionBox.IO
         private ChannelParams _channelParams;
 
 
-        public AI_Channel(AnalogInChannelsEnum channelName, AgilentU254xClass Driver, ChannelModeSwitch ModeSwitch,Filter ChannelFilter, ProgrammableGainAmplifier ChannelPGA, AnalogLatch CommonLatch)
+        public AI_Channel(AnalogInChannelsEnum channelName, AgilentU254xClass Driver, ChannelModeSwitch ModeSwitch,Filter ChannelFilter, ProgrammableGainAmplifier ChannelPGA, AnalogInLatch CommonLatch)
         {
             _channelName = channelName;
             _driver = Driver;

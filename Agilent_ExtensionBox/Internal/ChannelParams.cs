@@ -9,10 +9,10 @@ namespace Agilent_ExtensionBox.Internal
     {
         public Filter ChannelFilter { get; private set; }
         public ProgrammableGainAmplifier ChannelPGA { get; private set; }
-        public AnalogLatch CommonLatch { get; private set; }
+        public AnalogInLatch CommonLatch { get; private set; }
         private AnalogInChannelsEnum _channelName;
 
-        public ChannelParams(AnalogInChannelsEnum channelName, Filter channelFilter, ProgrammableGainAmplifier channelPGA, AnalogLatch channelLatch)
+        public ChannelParams(AnalogInChannelsEnum channelName, Filter channelFilter, ProgrammableGainAmplifier channelPGA, AnalogInLatch channelLatch)
         {
             _channelName = channelName;
             ChannelFilter = channelFilter;
@@ -27,6 +27,19 @@ namespace Agilent_ExtensionBox.Internal
             CommonLatch.PulseLatchForChannel(_channelName);
         }
 
+        public void SetCutoffFrequency(FilterCutOffFrequencies cutoff)
+        {
+            SetParams(cutoff, ChannelFilter.Gain, ChannelPGA.Gain);
+        }
 
+        public void SetFilter_Gain(FilterGain gain)
+        {
+            SetParams(ChannelFilter.CutoffFrequency, gain, ChannelPGA.Gain);
+        }
+
+        public void SetPGA_Gain(PGA_GainsEnum gain)
+        {
+            SetParams(ChannelFilter.CutoffFrequency, ChannelFilter.Gain, gain);
+        }
     }
 }

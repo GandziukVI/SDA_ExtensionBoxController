@@ -57,11 +57,12 @@
     <Compile Include="DigitalIO\DigitalChannel.cs" />
     <Compile Include="DigitalIO\DigitalChannels.cs" />
     <Compile Include="DigitalIO\DigitalChannelsEnum.cs" />
+    <Compile Include="Internal\AnalogOutLatch.cs" />
     <Compile Include="Internal\ChannelModeSwitch.cs" />
     <Compile Include="Internal\ChannelParams.cs" />
     <Compile Include="Internal\Filter.cs" />
     <Compile Include="Internal\ILatch.cs" />
-    <Compile Include="Internal\AnalogLatch.cs" />
+    <Compile Include="Internal\AnalogInLatch.cs" />
     <Compile Include="Internal\Motor.cs" />
     <Compile Include="Internal\ProgrammableGainAmplifier.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
