@@ -172,12 +172,12 @@ namespace Agilent_ExtensionBox
             _Driver.Acquisition.Stop();
         }
 
-        public void AcquireSingleShot()
+        public void AcquireSingleShot(int SampleRate)
         {
             double[] results = { 0.0 };
 
-            _Driver.AnalogIn.MultiScan.SampleRate = 499712;
-            _Driver.AnalogIn.MultiScan.NumberOfScans = 499712;
+            _Driver.AnalogIn.MultiScan.SampleRate = SampleRate;
+            _Driver.AnalogIn.MultiScan.NumberOfScans = SampleRate;
             _Driver.Acquisition.Start();
             while (!_Driver.Acquisition.Completed) ;
 

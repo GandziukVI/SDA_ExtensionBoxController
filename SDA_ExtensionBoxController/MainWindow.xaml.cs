@@ -41,7 +41,7 @@ namespace SDA_ExtensionBoxController
             };
 
             b.ConfigureAI_Channels(_ch);
-            b.AcquireSingleShot();
+            b.VoltageMeasurement_AllChannels(1000);
 
             b.Close();
         }
