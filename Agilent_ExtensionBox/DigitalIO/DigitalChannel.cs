@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Agilent_ExtensionBox.IO
 {
-    
+
 
     public class DigitalChannel
     {
@@ -21,7 +21,7 @@ namespace Agilent_ExtensionBox.IO
             switch (Channel)
             {
                 case DigitalChannelsEnum.DIOA:
-                    { 
+                    {
                         _channelName = ChannelNames.DIOA;
                         width = 8;
                     } break;
@@ -44,7 +44,8 @@ namespace Agilent_ExtensionBox.IO
                     throw new ArgumentException();
             }
             _driver = Driver;
-            _driver.Digital.Channels.get_Item(_channelName).Direction = AgilentU254xDigitalChannelDirectionEnum.AgilentU254xDigitalChannelDirectionOut;
+            Driver.Digital.Channels.get_Item(_channelName).Direction = AgilentU254xDigitalChannelDirectionEnum.AgilentU254xDigitalChannelDirectionOut;
+
             _bitArray = new DigitalBit[width];
             for (int i = 0; i < width; i++)
             {
@@ -67,10 +68,10 @@ namespace Agilent_ExtensionBox.IO
 
         public void ReadBit(int _bitNumber, out bool res)
         {
-            int val =0;
+            int val = 0;
             res = false;
             ReadByte(ref val);
-            res = ((0x01 << _bitNumber) & val)>0;
+            res = ((0x01 << _bitNumber) & val) > 0;
         }
 
         public void WriteBit(int _bitNumber, bool p)
@@ -84,6 +85,6 @@ namespace Agilent_ExtensionBox.IO
             WriteByte(val);
         }
 
-        
+
     }
 }

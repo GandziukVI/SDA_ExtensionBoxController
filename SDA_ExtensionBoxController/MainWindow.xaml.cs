@@ -28,6 +28,9 @@ namespace SDA_ExtensionBoxController
 
             BoxController b = new BoxController();
             b.Init("USB0::0x0957::0x1718::TW54334510::INSTR");
+
+            b.StartAnalogAcquisition();
+
             b.Close();
 
         }

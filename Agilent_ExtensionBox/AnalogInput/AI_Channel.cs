@@ -14,9 +14,9 @@ namespace Agilent_ExtensionBox.IO
         private AgilentU254xClass _driver;
         private AgilentU254xAnalogInChannel _channel;
         private ChannelModeSwitch _modeSwitch;
-        
 
-        public AI_Channel(AnalogInChannelsEnum channelName, AgilentU254xClass Driver, ChannelModeSwitch ModeSwitch,Filter ChannelFilter, ProgrammableGainAmplifier ChannelPGA, AnalogInLatch CommonLatch)
+
+        public AI_Channel(AnalogInChannelsEnum channelName, AgilentU254xClass Driver, ChannelModeSwitch ModeSwitch, Filter ChannelFilter, ProgrammableGainAmplifier ChannelPGA, AnalogInLatch CommonLatch)
         {
             _channelName = channelName;
             _driver = Driver;
@@ -42,11 +42,11 @@ namespace Agilent_ExtensionBox.IO
                     channel = _driver.AnalogIn.Channels.get_Item(ChannelNames.AIN3);
                     break;
                 default:
-                        throw new ArgumentException();
+                    throw new ArgumentException();
             }
         }
 
-        public bool Enable
+        public bool Enabled
         {
             get { return _channel.Enabled; }
             set { _channel.Enabled = value; }
@@ -87,7 +87,5 @@ namespace Agilent_ExtensionBox.IO
             get;
             private set;
         }
-
-        
     }
 }

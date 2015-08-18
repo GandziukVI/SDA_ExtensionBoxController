@@ -7,6 +7,7 @@ using Agilent.AgilentU254x.Interop;
 using System.Threading;
 using System.Collections;
 using Agilent_ExtensionBox.IO;
+using Agilent_ExtensionBox.Internal;
 
 namespace Agilent_ExtensionBox
 {
@@ -23,15 +24,16 @@ namespace Agilent_ExtensionBox
             get { return _IsInitialized; }
         }
 
-        private AI_Channels _ChannelCollection;
-        public AI_Channels ChannelCollection
+        private AI_Channels _AI_ChannelCollection;
+        public AI_Channels AI_ChannelCollection
         {
-            get { return _ChannelCollection; }
+            get { return _AI_ChannelCollection; }
         }
 
-        public BoxController()
+        private AO_Channels _AO_ChannelCollection;
+        public AO_Channels AO_ChannelCollection
         {
-            _ChannelCollection = new AI_Channels(this);
+            get { return _AO_ChannelCollection; }
         }
 
         #region Agilent device initialization and closure
@@ -59,6 +61,9 @@ namespace Agilent_ExtensionBox
                 foreach (var ch in _ChannelArray)
                     if (ch.Direction != AgilentU254xDigitalChannelDirectionEnum.AgilentU254xDigitalChannelDirectionOut)
                         ch.Direction = AgilentU254xDigitalChannelDirectionEnum.AgilentU254xDigitalChannelDirectionOut;
+
+                _AI_ChannelCollection = new AI_Channels(_Driver);
+                _AO_ChannelCollection = new AO_Channels(_Driver);
 
                 _IsInitialized = true;
 
@@ -116,7 +121,26 @@ namespace Agilent_ExtensionBox
             return result;
         }
 
+        private void _DisableAllChannelsForContiniousAcquisition()
+        {
+            _AI_ChannelCollection[AnalogInChannelsEnum.AIn1].Enabled = false;
+            _AI_ChannelCollection[AnalogInChannelsEnum.AIn2].Enabled = false;
+            _AI_ChannelCollection[AnalogInChannelsEnum.AIn3].Enabled = false;
+            _AI_ChannelCollection[AnalogInChannelsEnum.AIn4].Enabled = false;
+        }
 
+        public void StartAnalogAcquisition(params AnalogInChannelsEnum[] WorkingChannels)
+        {
+            _DisableAllChannelsForContiniousAcquisition();
+
+            if (WorkingChannels.Length < 1 || WorkingChannels.Length > 4)
+                throw new ArgumentException("The requested number of channels is not supported");
+
+            foreach (var item in WorkingChannels)
+            {
+                _AI_ChannelCollection[item].Enabled = true;
+            }
+        }
 
         #endregion
     }
