@@ -142,13 +142,10 @@ namespace Agilent_ExtensionBox
 
             foreach (var item in ChannelsConfig)
             {
-                if (item.Enabled)
-                {
-                    _AI_ChannelCollection[item.ChannelName].Enabled = item.Enabled;
-                    _AI_ChannelCollection[item.ChannelName].Mode = item.Mode;
-                    _AI_ChannelCollection[item.ChannelName].Polarity = item.Polarity;
-                    _AI_ChannelCollection[item.ChannelName].Range = item.Range;
-                }
+                _AI_ChannelCollection[item.ChannelName].Enabled = item.Enabled;
+                _AI_ChannelCollection[item.ChannelName].Mode = item.Mode;
+                _AI_ChannelCollection[item.ChannelName].Polarity = item.Polarity;
+                _AI_ChannelCollection[item.ChannelName].Range = item.Range;
             }
         }
 
