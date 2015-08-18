@@ -152,17 +152,32 @@ namespace Agilent_ExtensionBox
             }
         }
 
-        public void StartAnalogAcquisition()
-        {
+        private bool _AcquisitionInProgress = false;
+        public bool AcquisitionInProgress { get { return _AcquisitionInProgress; } }
 
+        public void StartAnalogAcquisition(int SampleRate)
+        {
+            double[] results = { 0.0 };
+
+            _Driver.AnalogIn.MultiScan.SampleRate = SampleRate;
+            _Driver.AnalogIn.MultiScan.NumberOfScans = -1;
+            _Driver.Acquisition.Start();
+
+            while (_AcquisitionInProgress)
+            {
+                while (!(_Driver.Acquisition.BufferStatus == AgilentU254xBufferStatusEnum.AgilentU254xBufferStatusDataReady)) ;
+                _Driver.Acquisition.FetchScale(ref results);
+            }
+
+            _Driver.Acquisition.Stop();
         }
 
         public void AcquireSingleShot()
         {
             double[] results = { 0.0 };
 
-            _Driver.AnalogIn.MultiScan.SampleRate = 1000;
-            _Driver.AnalogIn.MultiScan.NumberOfScans = 1000;
+            _Driver.AnalogIn.MultiScan.SampleRate = 499712;
+            _Driver.AnalogIn.MultiScan.NumberOfScans = 499712;
             _Driver.Acquisition.Start();
             while (!_Driver.Acquisition.Completed) ;
 
