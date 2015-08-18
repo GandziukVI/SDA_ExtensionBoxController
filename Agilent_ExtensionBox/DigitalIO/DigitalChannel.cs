@@ -22,22 +22,22 @@ namespace Agilent_ExtensionBox.IO
             {
                 case DigitalChannelsEnum.DIOA:
                     {
-                        _channelName = ChannelNames.DIOA;
+                        _channelName = ChannelNamesEnum.DIOA;
                         width = 8;
                     } break;
                 case DigitalChannelsEnum.DIOB:
                     {
-                        _channelName = ChannelNames.DIOB;
+                        _channelName = ChannelNamesEnum.DIOB;
                         width = 8;
                     } break;
                 case DigitalChannelsEnum.DIOC:
                     {
-                        _channelName = ChannelNames.DIOC;
+                        _channelName = ChannelNamesEnum.DIOC;
                         width = 4;
                     } break;
                 case DigitalChannelsEnum.DIOD:
                     {
-                        _channelName = ChannelNames.DIOD;
+                        _channelName = ChannelNamesEnum.DIOD;
                         width = 4;
                     } break;
                 default:
@@ -72,6 +72,7 @@ namespace Agilent_ExtensionBox.IO
             res = false;
             ReadByte(ref val);
             res = ((0x01 << _bitNumber) & val) > 0;
+            WriteByte(val);
         }
 
         public void WriteBit(int _bitNumber, bool p)
@@ -84,7 +85,5 @@ namespace Agilent_ExtensionBox.IO
                 val &= ~(0x01 << _bitNumber);
             WriteByte(val);
         }
-
-
     }
 }

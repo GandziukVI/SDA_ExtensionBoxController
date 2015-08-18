@@ -21,8 +21,8 @@ namespace Agilent_ExtensionBox.IO
         {
             switch (Channel)
             {
-                case AnalogOutChannelsEnum.AOut1: _channelName = ChannelNames.AOUT1; break;
-                case AnalogOutChannelsEnum.AOut2: _channelName = ChannelNames.AOUT2; break;
+                case AnalogOutChannelsEnum.AOut1: _channelName = ChannelNamesEnum.AOUT1; break;
+                case AnalogOutChannelsEnum.AOut2: _channelName = ChannelNamesEnum.AOUT2; break;
 
                 default:
                     throw new ArgumentException();

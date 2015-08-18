@@ -4,14 +4,20 @@ using System.Text;
 
 namespace Agilent_ExtensionBox
 {
-    public enum Ranges
+    public enum PolarityEnum
+    {
+        Polarity_Bipolar,
+        Polarity_Unipolar
+    }
+
+    public enum RangesEnum
     {
         Range_10,
         Range_5,
         Range_2_5,
         Range_1_25
     }
-    public struct ChannelNames
+    public struct ChannelNamesEnum
     {
         public const string AIN1="AIn1";
         public const string AIN2 = "AIn2";
@@ -33,17 +39,17 @@ namespace Agilent_ExtensionBox
         public const double Range_5 = 5.0;
         public const double Range_2_5 = 2.5;
         public const double Range_1_25 = 1.25;
-        public static double FromRangeEnum(Ranges range)
+        public static double FromRangeEnum(RangesEnum range)
         {
             switch (range)
             {
-                case Ranges.Range_5:
+                case RangesEnum.Range_5:
                     return Range_5;
-                case Ranges.Range_2_5:
+                case RangesEnum.Range_2_5:
                     return Range_2_5;
-                case Ranges.Range_1_25:
+                case RangesEnum.Range_1_25:
                     return Range_1_25;
-                case Ranges.Range_10:
+                case RangesEnum.Range_10:
                 default:
                     return Range_10;
             }

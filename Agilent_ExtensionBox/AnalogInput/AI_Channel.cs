@@ -30,16 +30,16 @@ namespace Agilent_ExtensionBox.IO
             switch (ChannelName)
             {
                 case AnalogInChannelsEnum.AIn1:
-                    channel = _driver.AnalogIn.Channels.get_Item(ChannelNames.AIN1);
+                    channel = _driver.AnalogIn.Channels.get_Item(ChannelNamesEnum.AIN1);
                     break;
                 case AnalogInChannelsEnum.AIn2:
-                    channel = _driver.AnalogIn.Channels.get_Item(ChannelNames.AIN2);
+                    channel = _driver.AnalogIn.Channels.get_Item(ChannelNamesEnum.AIN2);
                     break;
                 case AnalogInChannelsEnum.AIn3:
-                    channel = _driver.AnalogIn.Channels.get_Item(ChannelNames.AIN3);
+                    channel = _driver.AnalogIn.Channels.get_Item(ChannelNamesEnum.AIN3);
                     break;
                 case AnalogInChannelsEnum.AIn4:
-                    channel = _driver.AnalogIn.Channels.get_Item(ChannelNames.AIN3);
+                    channel = _driver.AnalogIn.Channels.get_Item(ChannelNamesEnum.AIN4);
                     break;
                 default:
                     throw new ArgumentException();
@@ -52,15 +52,37 @@ namespace Agilent_ExtensionBox.IO
             set { _channel.Enabled = value; }
         }
 
-        public AgilentU254xAnalogPolarityEnum Polarity
+        public PolarityEnum Polarity
         {
-            get { return _channel.Polarity; }
-            set { _channel.Polarity = value; }
+            get 
+            {
+                switch (_channel.Polarity)
+                {
+                    case AgilentU254xAnalogPolarityEnum.AgilentU254xAnalogPolarityBipolar:
+                        return PolarityEnum.Polarity_Bipolar;
+                    case AgilentU254xAnalogPolarityEnum.AgilentU254xAnalogPolarityUnipolar:
+                        return PolarityEnum.Polarity_Unipolar;
+                    default:
+                        return PolarityEnum.Polarity_Bipolar;
+                }
+            }
+            set 
+            {
+                switch (value)
+                {
+                    case PolarityEnum.Polarity_Bipolar:
+                        _channel.Polarity = AgilentU254xAnalogPolarityEnum.AgilentU254xAnalogPolarityBipolar;
+                        break;
+                    case PolarityEnum.Polarity_Unipolar:
+                        _channel.Polarity = AgilentU254xAnalogPolarityEnum.AgilentU254xAnalogPolarityUnipolar;
+                        break;
+                }
+            }
         }
 
 
-        private Ranges _Range;
-        public Ranges Range
+        private RangesEnum _Range;
+        public RangesEnum Range
         {
             get { return _Range; }
             set

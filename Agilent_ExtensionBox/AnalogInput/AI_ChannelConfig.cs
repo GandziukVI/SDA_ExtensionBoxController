@@ -11,7 +11,7 @@ namespace Agilent_ExtensionBox.IO
         public AnalogInChannelsEnum ChannelName { get; set; }
         public bool Enabled { get; set; }
         public ChannelModeEnum Mode { get; set; }
-        public AgilentU254xAnalogPolarityEnum Polarity { get; set; }
-        public Ranges Range { get; set; }
+        public PolarityEnum Polarity { get; set; }
+        public RangesEnum Range { get; set; }
     }
 }

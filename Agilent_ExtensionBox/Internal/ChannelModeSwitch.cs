@@ -15,7 +15,7 @@ namespace Agilent_ExtensionBox.Internal
     public class ChannelModeSwitch
     {
         private DigitalBit _pulseBit;
-        private DigitalBit _SetResetBit;
+        private DigitalBit _setResetBit;
         private DigitalBit _SelectorA0;
         private DigitalBit _SelectorA1;
 
@@ -27,7 +27,8 @@ namespace Agilent_ExtensionBox.Internal
                 throw new ArgumentNullException();
 
             _pulseBit = PulseBit;
-            _SetResetBit = SetResetBit;
+            _setResetBit = SetResetBit;
+
             _SelectorA0 = SelectorA0;
             _SelectorA1 = SelectorA1;
         }
@@ -63,10 +64,10 @@ namespace Agilent_ExtensionBox.Internal
             switch (mode)
             {
                 case ChannelModeEnum.AC:
-                    _SetResetBit.Reset();
+                    _setResetBit.Reset();
                     break;
                 case ChannelModeEnum.DC:
-                    _SetResetBit.Set();
+                    _setResetBit.Set();
                     break;
                 default:
                     throw new ArgumentException();

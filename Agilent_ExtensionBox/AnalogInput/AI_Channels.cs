@@ -12,13 +12,13 @@ namespace Agilent_ExtensionBox.IO
 
         public AI_Channels(AgilentU254xClass Driver)
         {
-            var _pulsBit = new DigitalBit(new DigitalChannel(DigitalChannelsEnum.DIOD, Driver), 0);
+            var _pulseBit = new DigitalBit(new DigitalChannel(DigitalChannelsEnum.DIOD, Driver), 0);
             var _setResetBit = new DigitalBit(new DigitalChannel(DigitalChannelsEnum.DIOD, Driver), 1);
 
             var _selector_A0 = new DigitalBit(new DigitalChannel(DigitalChannelsEnum.DIOB, Driver), 0);
             var _selector_A1 = new DigitalBit(new DigitalChannel(DigitalChannelsEnum.DIOB, Driver), 1);
 
-            var _channelModeSwitch = new ChannelModeSwitch(_pulsBit, _setResetBit, _selector_A0, _selector_A1);
+            var _channelModeSwitch = new ChannelModeSwitch(_pulseBit, _setResetBit, _selector_A0, _selector_A1);
             var _filter = new Filter(new DigitalChannel(DigitalChannelsEnum.DIOA, Driver));
             var _gainAmplifier = new ProgrammableGainAmplifier(new DigitalChannel(DigitalChannelsEnum.DIOC, Driver));
             var _latch = new AnalogInLatch(new DigitalBit(new DigitalChannel(DigitalChannelsEnum.DIOB, Driver), 0), new DigitalBit(new DigitalChannel(DigitalChannelsEnum.DIOB, Driver), 1), new DigitalBit(new DigitalChannel(DigitalChannelsEnum.DIOD, Driver), 2));

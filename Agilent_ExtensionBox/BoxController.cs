@@ -62,6 +62,8 @@ namespace Agilent_ExtensionBox
                     if (ch.Direction != AgilentU254xDigitalChannelDirectionEnum.AgilentU254xDigitalChannelDirectionOut)
                         ch.Direction = AgilentU254xDigitalChannelDirectionEnum.AgilentU254xDigitalChannelDirectionOut;
 
+                Reset_Digital();
+
                 _AI_ChannelCollection = new AI_Channels(_Driver);
                 _AO_ChannelCollection = new AO_Channels(_Driver);
 
@@ -94,10 +96,10 @@ namespace Agilent_ExtensionBox
 
         public void Reset_Digital()
         {
-            _Driver.Digital.WriteByte("DIOA", 0);
-            _Driver.Digital.WriteByte("DIOB", 0);
-            _Driver.Digital.WriteByte("DIOC", 0);
-            _Driver.Digital.WriteByte("DIOD", 0);
+            _Driver.Digital.WriteByte("DIOA", 0x00);
+            _Driver.Digital.WriteByte("DIOB", 0x00);
+            _Driver.Digital.WriteByte("DIOC", 0x00);
+            _Driver.Digital.WriteByte("DIOD", 0x00);
         }
 
         #region Acquisition control
@@ -159,8 +161,8 @@ namespace Agilent_ExtensionBox
         {
             double[] results = { 0.0 };
 
-            _Driver.AnalogIn.MultiScan.SampleRate = 10000;
-            _Driver.AnalogIn.MultiScan.NumberOfScans = 10000;
+            _Driver.AnalogIn.MultiScan.SampleRate = 1000;
+            _Driver.AnalogIn.MultiScan.NumberOfScans = 1000;
             _Driver.Acquisition.Start();
             while (!_Driver.Acquisition.Completed) ;
 
