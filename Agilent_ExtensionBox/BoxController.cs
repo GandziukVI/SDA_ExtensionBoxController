@@ -121,6 +121,8 @@ namespace Agilent_ExtensionBox
             return result;
         }
 
+
+
         private void _DisableAllChannelsForContiniousAcquisition()
         {
             _AI_ChannelCollection[AnalogInChannelsEnum.AIn1].Enabled = false;
@@ -129,17 +131,40 @@ namespace Agilent_ExtensionBox
             _AI_ChannelCollection[AnalogInChannelsEnum.AIn4].Enabled = false;
         }
 
-        public void StartAnalogAcquisition(params AnalogInChannelsEnum[] WorkingChannels)
+        public void ConfigureAI_Channels(params AI_ChannelConfig[] ChannelsConfig)
         {
             _DisableAllChannelsForContiniousAcquisition();
 
-            if (WorkingChannels.Length < 1 || WorkingChannels.Length > 4)
+            if (ChannelsConfig.Length < 1 || ChannelsConfig.Length > 4)
                 throw new ArgumentException("The requested number of channels is not supported");
 
-            foreach (var item in WorkingChannels)
+            foreach (var item in ChannelsConfig)
             {
-                _AI_ChannelCollection[item].Enabled = true;
+                if (item.Enabled)
+                {
+                    _AI_ChannelCollection[item.ChannelName].Enabled = item.Enabled;
+                    _AI_ChannelCollection[item.ChannelName].Mode = item.Mode;
+                    _AI_ChannelCollection[item.ChannelName].Polarity = item.Polarity;
+                    _AI_ChannelCollection[item.ChannelName].Range = item.Range;
+                }
             }
+        }
+
+        public void StartAnalogAcquisition()
+        {
+
+        }
+
+        public void AcquireSingleShot()
+        {
+            double[] results = { 0.0 };
+
+            _Driver.AnalogIn.MultiScan.SampleRate = 10000;
+            _Driver.AnalogIn.MultiScan.NumberOfScans = 10000;
+            _Driver.Acquisition.Start();
+            while (!_Driver.Acquisition.Completed) ;
+
+            _Driver.Acquisition.FetchScale(ref results);
         }
 
         #endregion

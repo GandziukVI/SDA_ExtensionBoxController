@@ -1,4 +1,7 @@
-﻿using Agilent_ExtensionBox;
+﻿using Agilent.AgilentU254x.Interop;
+using Agilent_ExtensionBox;
+using Agilent_ExtensionBox.Internal;
+using Agilent_ExtensionBox.IO;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,7 +24,7 @@ namespace SDA_ExtensionBoxController
     /// </summary>
     public partial class MainWindow : Window
     {
-        
+
         public MainWindow()
         {
             InitializeComponent();
@@ -29,7 +32,13 @@ namespace SDA_ExtensionBoxController
             BoxController b = new BoxController();
             b.Init("USB0::0x0957::0x1718::TW54334510::INSTR");
 
-            b.StartAnalogAcquisition();
+            var _ch = new AI_ChannelConfig[1]
+            {
+                new AI_ChannelConfig(){ ChannelName = AnalogInChannelsEnum.AIn1, Enabled = true, Mode = ChannelMode.AC, Polarity = AgilentU254xAnalogPolarityEnum.AgilentU254xAnalogPolarityBipolar, Range = Ranges.Range_1_25}
+            };
+
+            b.ConfigureAI_Channels(_ch);
+            b.AcquireSingleShot();
 
             b.Close();
 
