@@ -71,8 +71,8 @@ namespace Agilent_ExtensionBox.IO
             }
         }
 
-        private ChannelMode _Mode;
-        public ChannelMode Mode
+        private ChannelModeEnum _Mode;
+        public ChannelModeEnum Mode
         {
             get { return _Mode; }
             set

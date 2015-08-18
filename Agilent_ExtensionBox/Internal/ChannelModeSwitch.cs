@@ -6,7 +6,7 @@ using System.Text;
 
 namespace Agilent_ExtensionBox.Internal
 {
-    public enum ChannelMode
+    public enum ChannelModeEnum
     {
         AC,
         DC
@@ -32,7 +32,7 @@ namespace Agilent_ExtensionBox.Internal
             _SelectorA1 = SelectorA1;
         }
 
-        public void SetChannelMode(AnalogInChannelsEnum channel, ChannelMode mode)
+        public void SetChannelMode(AnalogInChannelsEnum channel, ChannelModeEnum mode)
         {
 
             switch (channel)
@@ -44,35 +44,35 @@ namespace Agilent_ExtensionBox.Internal
                     } break;
                 case AnalogInChannelsEnum.AIn2:
                     {
-                        _SelectorA0.Reset();
+                        _SelectorA0.Set();
                         _SelectorA1.Reset();
                     } break;
                 case AnalogInChannelsEnum.AIn3:
                     {
                         _SelectorA0.Reset();
-                        _SelectorA1.Reset();
+                        _SelectorA1.Set();
                     } break;
                 case AnalogInChannelsEnum.AIn4:
                     {
-                        _SelectorA0.Reset();
-                        _SelectorA1.Reset();
+                        _SelectorA0.Set();
+                        _SelectorA1.Set();
                     } break;
                 default:
                     throw new ArgumentException();
             }
             switch (mode)
             {
-                case ChannelMode.AC:
+                case ChannelModeEnum.AC:
                     _SetResetBit.Reset();
                     break;
-                case ChannelMode.DC:
+                case ChannelModeEnum.DC:
                     _SetResetBit.Set();
                     break;
                 default:
                     throw new ArgumentException();
             }
-            Pulse();
 
+            Pulse();
         }
 
         private void Pulse()

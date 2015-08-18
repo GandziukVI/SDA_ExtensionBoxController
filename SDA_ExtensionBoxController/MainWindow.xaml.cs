@@ -32,9 +32,12 @@ namespace SDA_ExtensionBoxController
             BoxController b = new BoxController();
             b.Init("USB0::0x0957::0x1718::TW54334510::INSTR");
 
-            var _ch = new AI_ChannelConfig[1]
+            var _ch = new AI_ChannelConfig[4]
             {
-                new AI_ChannelConfig(){ ChannelName = AnalogInChannelsEnum.AIn1, Enabled = true, Mode = ChannelMode.AC, Polarity = AgilentU254xAnalogPolarityEnum.AgilentU254xAnalogPolarityBipolar, Range = Ranges.Range_1_25}
+                new AI_ChannelConfig(){ ChannelName = AnalogInChannelsEnum.AIn1, Enabled = true, Mode = ChannelModeEnum.AC, Polarity = AgilentU254xAnalogPolarityEnum.AgilentU254xAnalogPolarityBipolar, Range = Ranges.Range_1_25},
+                new AI_ChannelConfig(){ ChannelName = AnalogInChannelsEnum.AIn2, Enabled = true, Mode = ChannelModeEnum.AC, Polarity = AgilentU254xAnalogPolarityEnum.AgilentU254xAnalogPolarityBipolar, Range = Ranges.Range_1_25},
+                new AI_ChannelConfig(){ ChannelName = AnalogInChannelsEnum.AIn3, Enabled = true, Mode = ChannelModeEnum.AC, Polarity = AgilentU254xAnalogPolarityEnum.AgilentU254xAnalogPolarityBipolar, Range = Ranges.Range_1_25},
+                new AI_ChannelConfig(){ ChannelName = AnalogInChannelsEnum.AIn4, Enabled = true, Mode = ChannelModeEnum.AC, Polarity = AgilentU254xAnalogPolarityEnum.AgilentU254xAnalogPolarityBipolar, Range = Ranges.Range_1_25}
             };
 
             b.ConfigureAI_Channels(_ch);
