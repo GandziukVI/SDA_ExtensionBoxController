@@ -1,12 +1,13 @@
 ﻿using Agilent.AgilentU254x.Interop;
 using Agilent_ExtensionBox.Internal;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 
 namespace Agilent_ExtensionBox.IO
 {
-    public class AI_Channels
+    public class AI_Channels : IEnumerable<AI_Channel>
     {
         private AI_Channel[] _channels;
 
@@ -37,6 +38,22 @@ namespace Agilent_ExtensionBox.IO
             get
             {
                 return _channels[(int)index];
+            }
+        }
+
+        public IEnumerator<AI_Channel> GetEnumerator()
+        {
+            for (int index = 0; index < _channels.Length; index++)
+            {
+                yield return _channels[index];
+            }
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            for (int index = 0; index < _channels.Length; index++)
+            {
+                yield return _channels[index];
             }
         }
     }

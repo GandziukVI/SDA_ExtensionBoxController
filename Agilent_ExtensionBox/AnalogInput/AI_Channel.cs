@@ -46,10 +46,21 @@ namespace Agilent_ExtensionBox.IO
             }
         }
 
+        private bool _IsEnabled = false;
+        public bool IsEnabled { get { return _IsEnabled; } }
+
         public bool Enabled
         {
-            get { return _channel.Enabled; }
-            set { _channel.Enabled = value; }
+            get 
+            {
+                _IsEnabled = _channel.Enabled;
+                return _IsEnabled; 
+            }
+            set 
+            {
+                _IsEnabled = value;
+                _channel.Enabled = value; 
+            }
         }
 
         public PolarityEnum Polarity

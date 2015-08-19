@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Agilent_ExtensionBox.IO
 {
-    public class DigitalChannels
+    public class DigitalChannels : IEnumerable<DigitalChannel>
     {
         private DigitalChannel[] _channels;
         public DigitalChannels(AgilentU254xClass Driver)
@@ -24,6 +24,22 @@ namespace Agilent_ExtensionBox.IO
             get
             {
                 return _channels[(int)index];
+            }
+        }
+
+        public IEnumerator<DigitalChannel> GetEnumerator()
+        {
+            for (int index = 0; index < _channels.Length; index++)
+            {
+                yield return _channels[index];
+            }
+        }
+
+        System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+        {
+            for (int index = 0; index < _channels.Length; index++)
+            {
+                yield return _channels[index];
             }
         }
     }

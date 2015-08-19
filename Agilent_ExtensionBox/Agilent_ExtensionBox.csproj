@@ -48,6 +48,8 @@
     <Compile Include="AnalogInput\AI_Channel.cs" />
     <Compile Include="AnalogInput\AI_ChannelConfig.cs" />
     <Compile Include="AnalogInput\AI_Channels.cs" />
+    <Compile Include="AnalogInput\AI_ReadingResult.cs" />
+    <Compile Include="AnalogInput\AI_ReadingResults.cs" />
     <Compile Include="AnalogInput\AnalogInChannelsEnum.cs" />
     <Compile Include="AnalogOutput\AnalogOutChannelsEnum.cs" />
     <Compile Include="AnalogOutput\AO_Channel.cs" />
