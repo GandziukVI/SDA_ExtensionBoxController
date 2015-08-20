@@ -46,6 +46,11 @@ namespace Agilent_ExtensionBox.IO
                 {
                     channels[j].OnNext(new Point(time, data[i + j]));
                 }
+                
+            }
+            for (int i = 0; i < channels.Count; i++)
+            {
+                channels[j].OnCompleted();
             }
         }
        
