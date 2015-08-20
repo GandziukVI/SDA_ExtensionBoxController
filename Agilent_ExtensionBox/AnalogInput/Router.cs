@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Windows;
 
-namespace Agilent_ExtensionBox.AnalogInput
+namespace Agilent_ExtensionBox.IO
 {
     class Router:IObservable<Point>
     {

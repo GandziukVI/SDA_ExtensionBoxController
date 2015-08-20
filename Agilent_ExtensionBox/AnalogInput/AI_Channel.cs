@@ -1,28 +1,34 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Text;
 using Agilent.AgilentU254x.Interop;
 using System.Collections;
 using System.Threading;
 using Agilent_ExtensionBox.Internal;
+using System.Windows;
 
 namespace Agilent_ExtensionBox.IO
 {
-    public class AI_Channel:IObserver<double>
+    public class AI_Channel : IObserver<Point>
     {
         private AnalogInChannelsEnum _channelName;
         private AgilentU254x _driver;
         private AgilentU254xAnalogInChannel _channel;
         private ChannelModeSwitch _modeSwitch;
 
+        public ConcurrentQueue<Point> ChannelData { get; private set; }
 
         public AI_Channel(AnalogInChannelsEnum channelName, AgilentU254x Driver, ChannelModeSwitch ModeSwitch, Filter ChannelFilter, ProgrammableGainAmplifier ChannelPGA, AnalogInLatch CommonLatch)
         {
             _channelName = channelName;
             _driver = Driver;
             _modeSwitch = ModeSwitch;
+
             Parameters = new ChannelParams(_channelName, ChannelFilter, ChannelPGA, CommonLatch);
             InitDriverChannel(_channelName, out _channel);
+
+            ChannelData = new ConcurrentQueue<Point>();
         }
 
         private void InitDriverChannel(AnalogInChannelsEnum ChannelName, out AgilentU254xAnalogInChannel channel)
@@ -51,21 +57,21 @@ namespace Agilent_ExtensionBox.IO
 
         public bool Enabled
         {
-            get 
+            get
             {
                 _IsEnabled = _channel.Enabled;
-                return _IsEnabled; 
+                return _IsEnabled;
             }
-            set 
+            set
             {
                 _IsEnabled = value;
-                _channel.Enabled = value; 
+                _channel.Enabled = value;
             }
         }
 
         public PolarityEnum Polarity
         {
-            get 
+            get
             {
                 switch (_channel.Polarity)
                 {
@@ -77,7 +83,7 @@ namespace Agilent_ExtensionBox.IO
                         return PolarityEnum.Polarity_Bipolar;
                 }
             }
-            set 
+            set
             {
                 switch (value)
                 {
@@ -123,17 +129,17 @@ namespace Agilent_ExtensionBox.IO
 
         public void OnCompleted()
         {
-            throw new NotImplementedException();
+            //Raise event with full data
         }
 
         public void OnError(Exception error)
         {
-            throw new NotImplementedException();
+            throw error;
         }
 
-        public void OnNext(double value)
+        public void OnNext(Point value)
         {
-            throw new NotImplementedException();
+            ChannelData.Enqueue(value);
         }
     }
 }
