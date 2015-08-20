@@ -39,7 +39,8 @@ namespace Agilent_ExtensionBox.IO
         public void AddData(double[] data)
         {
             double time = 0;
-            for (int i = 0,j=0; i+j < data.Length; i+= channels.Count)
+            double timeQuant = 1 / Frequency;
+            for (int i = 0,j=0; i+j < data.Length; i+= channels.Count, time += timeQuant)
             {
                 for (j = 0; j < channels.Count; j++)
                 {
