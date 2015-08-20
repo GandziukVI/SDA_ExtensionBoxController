@@ -1,24 +1,38 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Windows;
 
 namespace Agilent_ExtensionBox.AnalogInput
 {
-    class Router:IObservable<double>
+    class Router:IObservable<Point>
     {
-        public IDisposable Subscribe(IObserver<double> observer)
+        private List<IObserver<Point>> observers;
+
+        public IDisposable Subscribe(IObserver<Point> observer)
         {
-            throw new NotImplementedException();
-            observer.OnNext()
+            if (!observers.Contains(observer))
+                observers.Add(observer);
+            return new Unsubscriber(observers, observer);
         }
-
-
-        public void smth()
+        private class Unsubscriber : IDisposable
         {
-            Router r = new Router();
-            r.Subscribe()
+            private List<IObserver<Point>> _observers;
+            private IObserver<Point> _observer;
 
+            public Unsubscriber(List<IObserver<Point>> observers, IObserver<Point> observer)
+            {
+                this._observers = observers;
+                this._observer = observer;
+            }
+
+            public void Dispose()
+            {
+                if (_observer != null && _observers.Contains(_observer))
+                    _observers.Remove(_observer);
+            }
         }
+       
     }
 
     
