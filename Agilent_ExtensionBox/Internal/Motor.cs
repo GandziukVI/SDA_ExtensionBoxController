@@ -4,7 +4,8 @@ using System.Text;
 
 namespace Agilent_ExtensionBox.Internal
 {
-    class Motor
+    public class Motor
     {
+
     }
 }
