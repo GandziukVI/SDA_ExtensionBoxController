@@ -199,7 +199,7 @@ namespace Agilent_ExtensionBox
             while (true)//(_AcquisitionInProgress)
             {
                 while (!(_Driver.Acquisition.BufferStatus == AgilentU254xBufferStatusEnum.AgilentU254xBufferStatusDataReady)) ;
-                _Driver.Acquisition.Fetch(ref results);
+                _Driver.Acquisition.Fetch(ref results);                
 
                 _asyncDataRouter_Caller.BeginInvoke(ref results, null, null);
                 if (i > 500)

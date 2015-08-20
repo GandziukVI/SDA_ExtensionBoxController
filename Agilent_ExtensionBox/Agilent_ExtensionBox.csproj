@@ -53,15 +53,12 @@
     <Compile Include="AnalogInput\AI_Channel.cs" />
     <Compile Include="AnalogInput\AI_ChannelConfig.cs" />
     <Compile Include="AnalogInput\AI_Channels.cs" />
-    <Compile Include="AnalogInput\AI_ReadingResult.cs" />
-    <Compile Include="AnalogInput\AI_ReadingResults.cs" />
     <Compile Include="AnalogInput\AnalogInChannelsEnum.cs" />
     <Compile Include="AnalogInput\AquisitionRouter.cs" />
     <Compile Include="AnalogOutput\AnalogOutChannelsEnum.cs" />
     <Compile Include="AnalogOutput\AO_Channel.cs" />
     <Compile Include="AnalogOutput\AO_Channels.cs" />
     <Compile Include="BoxController.cs" />
-    <Compile Include="Buffers\AI_ReadBuffer.cs" />
     <Compile Include="DefinitionsAndConstants.cs" />
     <Compile Include="DigitalIO\DigitalBit.cs" />
     <Compile Include="DigitalIO\DigitalChannel.cs" />
