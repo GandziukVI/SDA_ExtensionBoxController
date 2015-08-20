@@ -105,12 +105,6 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Agilent_ExtensionBox\Agilent_ExtensionBox.csproj">
-      <Project>{0d6daee4-591c-475c-84b8-91326698926f}</Project>
-      <Name>Agilent_ExtensionBox</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <COMReference Include="AgilentU254xLib">
       <Guid>{20876ED4-FF33-446F-960D-594ECE0D48E8}</Guid>
       <VersionMajor>1</VersionMajor>
@@ -118,7 +112,7 @@
       <Lcid>0</Lcid>
       <WrapperTool>primary</WrapperTool>
       <Isolated>False</Isolated>
-      <EmbedInteropTypes>True</EmbedInteropTypes>
+      <EmbedInteropTypes>False</EmbedInteropTypes>
     </COMReference>
     <COMReference Include="IviDriverLib">
       <Guid>{47ED5120-A398-11D4-BA58-000064657374}</Guid>
@@ -138,6 +132,12 @@
       <Isolated>False</Isolated>
       <EmbedInteropTypes>True</EmbedInteropTypes>
     </COMReference>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Agilent_ExtensionBox\Agilent_ExtensionBox.csproj">
+      <Project>{0d6daee4-591c-475c-84b8-91326698926f}</Project>
+      <Name>Agilent_ExtensionBox</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

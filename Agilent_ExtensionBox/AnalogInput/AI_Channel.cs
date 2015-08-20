@@ -8,15 +8,15 @@ using Agilent_ExtensionBox.Internal;
 
 namespace Agilent_ExtensionBox.IO
 {
-    public class AI_Channel
+    public class AI_Channel:IObserver<double>
     {
         private AnalogInChannelsEnum _channelName;
-        private AgilentU254xClass _driver;
+        private AgilentU254x _driver;
         private AgilentU254xAnalogInChannel _channel;
         private ChannelModeSwitch _modeSwitch;
 
 
-        public AI_Channel(AnalogInChannelsEnum channelName, AgilentU254xClass Driver, ChannelModeSwitch ModeSwitch, Filter ChannelFilter, ProgrammableGainAmplifier ChannelPGA, AnalogInLatch CommonLatch)
+        public AI_Channel(AnalogInChannelsEnum channelName, AgilentU254x Driver, ChannelModeSwitch ModeSwitch, Filter ChannelFilter, ProgrammableGainAmplifier ChannelPGA, AnalogInLatch CommonLatch)
         {
             _channelName = channelName;
             _driver = Driver;
@@ -119,6 +119,21 @@ namespace Agilent_ExtensionBox.IO
         {
             get;
             private set;
+        }
+
+        public void OnCompleted()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void OnError(Exception error)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void OnNext(double value)
+        {
+            throw new NotImplementedException();
         }
     }
 }
