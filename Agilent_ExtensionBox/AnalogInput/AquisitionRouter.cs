@@ -40,7 +40,7 @@ namespace Agilent_ExtensionBox.AnalogInput
         {
             double time = 0;
             double timeQuant = 1 / Frequency;
-            for (int i = 0,j=0; i+j < data.Length; i+= channels.Count, time += timeQuant)
+            for (int i = 0, j = 0; i + j < data.Length; i += channels.Count, time += timeQuant)
             {
                 for (j = 0; j < channels.Count; j++)
                 {
