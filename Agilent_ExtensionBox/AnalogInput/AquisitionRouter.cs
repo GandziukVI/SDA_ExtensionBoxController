@@ -33,10 +33,19 @@ namespace Agilent_ExtensionBox.AnalogInput
                 channels.Add(observer);
             return new Unsubscriber(channels, observer);
         }
-        
+
+        public int Frequency { get; set; }
+
         public void AddData(double[] data)
         {
-
+            double time = 0;
+            for (int i = 0,j=0; i+j < data.Length; i+= channels.Count)
+            {
+                for (j = 0; j < channels.Count; j++)
+                {
+                    channels[j].OnNext(new Point(time, data[i + j]));
+                }
+            }
         }
        
 
