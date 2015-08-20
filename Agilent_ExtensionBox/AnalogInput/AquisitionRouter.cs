@@ -5,7 +5,7 @@ using System.Windows;
 
 namespace Agilent_ExtensionBox.AnalogInput
 {
-    class Router:IObservable<Point>
+    class AquisitionRouter:IObservable<Point>
     {
         private class Unsubscriber : IDisposable
         {
@@ -39,6 +39,7 @@ namespace Agilent_ExtensionBox.AnalogInput
 
         }
        
+
 
 
     }

@@ -5,10 +5,11 @@ using Agilent.AgilentU254x.Interop;
 using System.Collections;
 using System.Threading;
 using Agilent_ExtensionBox.Internal;
+using System.Windows;
 
 namespace Agilent_ExtensionBox.IO
 {
-    public class AI_Channel:IObserver<double>
+    public class AI_Channel:IObserver<Point>
     {
         private AnalogInChannelsEnum _channelName;
         private AgilentU254x _driver;
@@ -131,7 +132,7 @@ namespace Agilent_ExtensionBox.IO
             throw new NotImplementedException();
         }
 
-        public void OnNext(double value)
+        public void OnNext(Point value)
         {
             throw new NotImplementedException();
         }

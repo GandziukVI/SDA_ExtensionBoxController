@@ -56,7 +56,7 @@
     <Compile Include="AnalogInput\AI_ReadingResult.cs" />
     <Compile Include="AnalogInput\AI_ReadingResults.cs" />
     <Compile Include="AnalogInput\AnalogInChannelsEnum.cs" />
-    <Compile Include="AnalogInput\Router.cs" />
+    <Compile Include="AnalogInput\AquisitionRouter.cs" />
     <Compile Include="AnalogOutput\AnalogOutChannelsEnum.cs" />
     <Compile Include="AnalogOutput\AO_Channel.cs" />
     <Compile Include="AnalogOutput\AO_Channels.cs" />
