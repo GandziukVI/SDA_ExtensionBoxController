@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 using System.Windows;
 
 namespace Agilent_ExtensionBox.IO
@@ -30,11 +31,37 @@ namespace Agilent_ExtensionBox.IO
         public IDisposable Subscribe(IObserver<Point> observer)
         {
             if (!_channels.Contains(observer))
+            {
                 _channels.Add(observer);
+
+                var _channel = observer as AI_Channel;
+                var _range = AvailableRanges.FromRangeEnum(_channel.Range);
+
+                switch (_channel.Polarity)
+                {
+                    case PolarityEnum.Polarity_Bipolar:
+                        _Converters.Add(new Func<int, double>((x) => { return x * _range / 32768.0; }));
+                        break;
+                    case PolarityEnum.Polarity_Unipolar:
+                        _Converters.Add(new Func<int, double>((x) => { return (x / 65536.0 + 0.5) * _range; }));
+                        break;
+                    default:
+                        throw new ArgumentException();
+                }
+            }
             return new Unsubscriber(_channels, observer);
         }
 
         public int Frequency { get; set; }
+
+        private readonly List<Func<int, double>> _Converters = new List<Func<int,double>>();
+
+        private delegate void AddData_Async(ref short[] Data);
+        public void AddDataInvoke(ref short[] Data)
+        {
+            var del = new AddData_Async(AddData);
+            del.BeginInvoke(ref Data, null, null);
+        }
 
         public void AddData(ref short[] data)
         {
@@ -46,7 +73,7 @@ namespace Agilent_ExtensionBox.IO
                 {
                     for (j = 0; j < _channels.Count; j++)
                     {
-                        _channels[j].OnNext(new Point(time, data[i + j]));
+                        _channels[j].OnNext(new Point(time, _Converters[j](data[i + j])));
                     }
 
                 }
