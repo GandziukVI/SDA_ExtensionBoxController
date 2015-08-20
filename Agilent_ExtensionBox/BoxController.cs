@@ -155,11 +155,11 @@ namespace Agilent_ExtensionBox
         private bool _AcquisitionInProgress = false;
         public bool AcquisitionInProgress { get { return _AcquisitionInProgress; } }
 
-        public delegate void CallAsync(ref double[] data);
+        public delegate void CallAsync(ref short[] data);
 
         public void StartAnalogAcquisition(int SampleRate)
         {
-            double[] results = { 0.0 };
+            short[] results = { 0 };
 
             _Driver.AnalogIn.MultiScan.SampleRate = SampleRate;
             _Driver.AnalogIn.MultiScan.NumberOfScans = -1;
@@ -199,7 +199,7 @@ namespace Agilent_ExtensionBox
             while (true)//(_AcquisitionInProgress)
             {
                 while (!(_Driver.Acquisition.BufferStatus == AgilentU254xBufferStatusEnum.AgilentU254xBufferStatusDataReady)) ;
-                _Driver.Acquisition.FetchScale(ref results);
+                _Driver.Acquisition.Fetch(ref results);
 
                 _asyncDataRouter_Caller.BeginInvoke(ref results, null, null);
                 if (i > 500)
@@ -216,14 +216,14 @@ namespace Agilent_ExtensionBox
 
         public void AcquireSingleShot(int SampleRate)
         {
-            double[] results = { 0.0 };
+            short[] results = { 0 };
 
             _Driver.AnalogIn.MultiScan.SampleRate = SampleRate;
             _Driver.AnalogIn.MultiScan.NumberOfScans = SampleRate;
             _Driver.Acquisition.Start();
             while (!_Driver.Acquisition.Completed) ;
 
-            _Driver.Acquisition.FetchScale(ref results);
+            _Driver.Acquisition.Fetch(ref results);
 
             _router.Frequency = SampleRate;
 

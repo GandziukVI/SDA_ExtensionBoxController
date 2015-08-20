@@ -36,7 +36,7 @@ namespace Agilent_ExtensionBox.IO
 
         public int Frequency { get; set; }
 
-        public void AddData(ref double[] data)
+        public void AddData(ref short[] data)
         {
             lock (data)
             {
