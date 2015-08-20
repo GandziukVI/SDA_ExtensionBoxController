@@ -7,14 +7,6 @@ namespace Agilent_ExtensionBox.AnalogInput
 {
     class Router:IObservable<Point>
     {
-        private List<IObserver<Point>> observers;
-
-        public IDisposable Subscribe(IObserver<Point> observer)
-        {
-            if (!observers.Contains(observer))
-                observers.Add(observer);
-            return new Unsubscriber(observers, observer);
-        }
         private class Unsubscriber : IDisposable
         {
             private List<IObserver<Point>> _observers;
@@ -32,7 +24,23 @@ namespace Agilent_ExtensionBox.AnalogInput
                     _observers.Remove(_observer);
             }
         }
+
+        private List<IObserver<Point>> channels;
+
+        public IDisposable Subscribe(IObserver<Point> observer)
+        {
+            if (!channels.Contains(observer))
+                channels.Add(observer);
+            return new Unsubscriber(channels, observer);
+        }
+        
+        public void AddData(double[] data)
+        {
+
+        }
        
+
+
     }
 
     
