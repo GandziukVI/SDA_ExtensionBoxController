@@ -167,42 +167,15 @@ namespace Agilent_ExtensionBox
                 while (!(_Driver.Acquisition.BufferStatus == AgilentU254xBufferStatusEnum.AgilentU254xBufferStatusDataReady)) ;
                 _Driver.Acquisition.FetchScale(ref results);
 
-                var result = new AI_ReadingResults();
+                _router.Frequency = SampleRate;
 
-                int counter = 0, numberEnabled = 0;
                 foreach (var item in _AI_ChannelCollection)
                 {
                     if (item.IsEnabled)
-                        ++numberEnabled;
+                        _router.Subscribe(item);
                 }
-                for (int i = 0; i <= results.Length - numberEnabled; )
-                {
-                    counter = 0;
 
-                    if (_AI_ChannelCollection[AnalogInChannelsEnum.AIn1].IsEnabled)
-                    {
-                        result[AnalogInChannelsEnum.AIn1].Readings.AddLast(results[i]);
-                        ++counter;
-                    }
-                    if (_AI_ChannelCollection[AnalogInChannelsEnum.AIn2].IsEnabled)
-                    {
-                        result[AnalogInChannelsEnum.AIn2].Readings.AddLast(results[i + counter]);
-                        ++counter;
-                    }
-                    if (_AI_ChannelCollection[AnalogInChannelsEnum.AIn3].IsEnabled)
-                    {
-                        result[AnalogInChannelsEnum.AIn3].Readings.AddLast(results[i + counter]);
-                        ++counter;
-                    }
-                    if (_AI_ChannelCollection[AnalogInChannelsEnum.AIn4].IsEnabled)
-                    {
-                        result[AnalogInChannelsEnum.AIn4].Readings.AddLast(results[i + counter]);
-                        ++counter;
-                    }
-
-                    i += numberEnabled;
-                    counter = 0;
-                }
+                _router.AddData(results);
             }
 
             _Driver.Acquisition.Stop();

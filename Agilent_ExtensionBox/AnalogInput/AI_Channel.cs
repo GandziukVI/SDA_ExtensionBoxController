@@ -13,13 +13,14 @@ namespace Agilent_ExtensionBox.IO
     public class AI_Channel : IObserver<Point>
     {
         private AnalogInChannelsEnum _channelName;
-        private AgilentU254x _driver;
+        private AgilentU254xClass _driver;
         private AgilentU254xAnalogInChannel _channel;
         private ChannelModeSwitch _modeSwitch;
 
-        public ConcurrentQueue<Point> ChannelData { get; private set; }
+        public ConcurrentQueue<List<Point>> ChannelData { get; private set; }
+        List<Point> _currentChannelData;
 
-        public AI_Channel(AnalogInChannelsEnum channelName, AgilentU254x Driver, ChannelModeSwitch ModeSwitch, Filter ChannelFilter, ProgrammableGainAmplifier ChannelPGA, AnalogInLatch CommonLatch)
+        public AI_Channel(AnalogInChannelsEnum channelName, AgilentU254xClass Driver, ChannelModeSwitch ModeSwitch, Filter ChannelFilter, ProgrammableGainAmplifier ChannelPGA, AnalogInLatch CommonLatch)
         {
             _channelName = channelName;
             _driver = Driver;
@@ -28,7 +29,8 @@ namespace Agilent_ExtensionBox.IO
             Parameters = new ChannelParams(_channelName, ChannelFilter, ChannelPGA, CommonLatch);
             InitDriverChannel(_channelName, out _channel);
 
-            ChannelData = new ConcurrentQueue<Point>();
+            ChannelData = new ConcurrentQueue<List<Point>>();
+            _currentChannelData = new List<Point>();
         }
 
         private void InitDriverChannel(AnalogInChannelsEnum ChannelName, out AgilentU254xAnalogInChannel channel)
@@ -127,9 +129,20 @@ namespace Agilent_ExtensionBox.IO
             private set;
         }
 
+        public event EventHandler DataReady;
+        private void On_DataReady()
+        {
+            var handler = DataReady;
+            if (handler != null)
+                handler(this, new EventArgs());
+        }
+
+
         public void OnCompleted()
         {
-            //Raise event with full data
+            ChannelData.Enqueue(_currentChannelData);
+            _currentChannelData.Clear();
+            On_DataReady();
         }
 
         public void OnError(Exception error)
@@ -139,7 +152,7 @@ namespace Agilent_ExtensionBox.IO
 
         public void OnNext(Point value)
         {
-            ChannelData.Enqueue(value);
+            _currentChannelData.Add(value);
         }
     }
 }

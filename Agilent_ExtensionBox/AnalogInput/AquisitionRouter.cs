@@ -5,7 +5,7 @@ using System.Windows;
 
 namespace Agilent_ExtensionBox.IO
 {
-    public class AquisitionRouter:IObservable<Point>
+    public class AquisitionRouter : IObservable<Point>
     {
         private class Unsubscriber : IDisposable
         {
@@ -25,13 +25,13 @@ namespace Agilent_ExtensionBox.IO
             }
         }
 
-        private List<IObserver<Point>> channels;
+        private List<IObserver<Point>> _channels;
 
         public IDisposable Subscribe(IObserver<Point> observer)
         {
-            if (!channels.Contains(observer))
-                channels.Add(observer);
-            return new Unsubscriber(channels, observer);
+            if (!_channels.Contains(observer))
+                _channels.Add(observer);
+            return new Unsubscriber(_channels, observer);
         }
 
         public int Frequency { get; set; }
@@ -39,25 +39,21 @@ namespace Agilent_ExtensionBox.IO
         public void AddData(double[] data)
         {
             double time = 0;
-            double timeQuant = 1 / Frequency;
-            for (int i = 0, j = 0; i + j < data.Length; i += channels.Count, time += timeQuant)
+            double timeQuant = 1.0 / Frequency;
+            for (int i = 0, j = 0; i + j < data.Length; i += _channels.Count, time += timeQuant)
             {
-                for (j = 0; j < channels.Count; j++)
+                for (j = 0; j < _channels.Count; j++)
                 {
-                    channels[j].OnNext(new Point(time, data[i + j]));
+                    _channels[j].OnNext(new Point(time, data[i + j]));
                 }
-                
+
             }
-            for (int i = 0; i < channels.Count; i++)
+            for (int i = 0; i < _channels.Count; i++)
             {
-                channels[i].OnCompleted();
+                _channels[i].OnCompleted();
             }
         }
-       
-
-
-
     }
 
-    
+
 }
