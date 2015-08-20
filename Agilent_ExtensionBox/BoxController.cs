@@ -36,7 +36,7 @@ namespace Agilent_ExtensionBox
             get { return _AO_ChannelCollection; }
         }
 
-        private readonly Router
+        private readonly AquisitionRouter _router;
 
         #region Agilent device initialization and closure
 

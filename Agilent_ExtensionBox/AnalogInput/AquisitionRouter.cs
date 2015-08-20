@@ -5,7 +5,7 @@ using System.Windows;
 
 namespace Agilent_ExtensionBox.IO
 {
-    class AquisitionRouter:IObservable<Point>
+    public class AquisitionRouter:IObservable<Point>
     {
         private class Unsubscriber : IDisposable
         {
@@ -50,7 +50,7 @@ namespace Agilent_ExtensionBox.IO
             }
             for (int i = 0; i < channels.Count; i++)
             {
-                channels[j].OnCompleted();
+                channels[i].OnCompleted();
             }
         }
        
