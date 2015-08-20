@@ -8,6 +8,7 @@ using System.Threading;
 using System.Collections;
 using Agilent_ExtensionBox.IO;
 using Agilent_ExtensionBox.Internal;
+using System.Windows;
 
 namespace Agilent_ExtensionBox
 {
@@ -36,7 +37,7 @@ namespace Agilent_ExtensionBox
             get { return _AO_ChannelCollection; }
         }
 
-        private readonly AquisitionRouter _router;
+        private readonly AquisitionRouter _router = new AquisitionRouter();
 
         #region Agilent device initialization and closure
 
@@ -154,6 +155,8 @@ namespace Agilent_ExtensionBox
         private bool _AcquisitionInProgress = false;
         public bool AcquisitionInProgress { get { return _AcquisitionInProgress; } }
 
+        public delegate void CallAsync(ref double[] data);
+
         public void StartAnalogAcquisition(int SampleRate)
         {
             double[] results = { 0.0 };
@@ -162,29 +165,57 @@ namespace Agilent_ExtensionBox
             _Driver.AnalogIn.MultiScan.NumberOfScans = -1;
             _Driver.Acquisition.Start();
 
-            while (_AcquisitionInProgress)
+            _Driver.Acquisition.BufferSize = SampleRate;
+
+            _router.Frequency = SampleRate;
+
+            foreach (var item in _AI_ChannelCollection)
+            {
+                if (item.IsEnabled)
+                    _router.Subscribe(item);
+            }
+
+            var _asyncDataRouter_Caller = new CallAsync(_router.AddData);
+
+            var _clearQueue = new Thread(new ThreadStart(() =>
+            {
+                while (true)
+                {
+                    foreach (var item in _AI_ChannelCollection)
+                    {
+                        if (item.ChannelData.Count > 0)
+                        {
+                            var temp = new LinkedList<Point>();
+                            item.ChannelData.TryDequeue(out temp);
+                        }
+                    }
+                }
+            }));
+
+            _clearQueue.Priority = ThreadPriority.Highest;
+            _clearQueue.Start();
+
+            var i = 0;
+            while (true)//(_AcquisitionInProgress)
             {
                 while (!(_Driver.Acquisition.BufferStatus == AgilentU254xBufferStatusEnum.AgilentU254xBufferStatusDataReady)) ;
                 _Driver.Acquisition.FetchScale(ref results);
 
-                _router.Frequency = SampleRate;
-
-                foreach (var item in _AI_ChannelCollection)
-                {
-                    if (item.IsEnabled)
-                        _router.Subscribe(item);
-                }
-
-                _router.AddData(results);
+                _asyncDataRouter_Caller.BeginInvoke(ref results, null, null);
+                if (i > 500)
+                    break;
+                ++i;
             }
 
             _Driver.Acquisition.Stop();
+
+            _clearQueue.Abort();
+           
+            var a = 1;
         }
 
-        public AI_ReadingResults AcquireSingleShot(int SampleRate)
+        public void AcquireSingleShot(int SampleRate)
         {
-            var result = new AI_ReadingResults();
-
             double[] results = { 0.0 };
 
             _Driver.AnalogIn.MultiScan.SampleRate = SampleRate;
@@ -194,42 +225,15 @@ namespace Agilent_ExtensionBox
 
             _Driver.Acquisition.FetchScale(ref results);
 
-            int counter = 0, numberEnabled = 0;
+            _router.Frequency = SampleRate;
+
             foreach (var item in _AI_ChannelCollection)
             {
                 if (item.IsEnabled)
-                    ++numberEnabled;
-            }
-            for (int i = 0; i <= results.Length - numberEnabled;)
-            {
-                counter = 0;
-
-                if (_AI_ChannelCollection[AnalogInChannelsEnum.AIn1].IsEnabled)
-                {
-                    result[AnalogInChannelsEnum.AIn1].Readings.AddLast(results[i]);
-                    ++counter;
-                }
-                if (_AI_ChannelCollection[AnalogInChannelsEnum.AIn2].IsEnabled)
-                {
-                    result[AnalogInChannelsEnum.AIn2].Readings.AddLast(results[i + counter]);
-                    ++counter;
-                }
-                if (_AI_ChannelCollection[AnalogInChannelsEnum.AIn3].IsEnabled)
-                {
-                    result[AnalogInChannelsEnum.AIn3].Readings.AddLast(results[i + counter]);
-                    ++counter;
-                }
-                if (_AI_ChannelCollection[AnalogInChannelsEnum.AIn4].IsEnabled)
-                {
-                    result[AnalogInChannelsEnum.AIn4].Readings.AddLast(results[i + counter]);
-                    ++counter;
-                }
-
-                i += numberEnabled;
-                counter = 0;
+                    _router.Subscribe(item);
             }
 
-            return result;
+            _router.AddData(ref results);
         }
 
         #endregion

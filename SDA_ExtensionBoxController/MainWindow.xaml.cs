@@ -41,7 +41,8 @@ namespace SDA_ExtensionBoxController
             };
 
             b.ConfigureAI_Channels(_ch);
-            b.AcquireSingleShot(499712);
+            //b.AcquireSingleShot(499712);
+            b.StartAnalogAcquisition(499712);
 
             b.Close();
         }

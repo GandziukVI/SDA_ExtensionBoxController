@@ -17,8 +17,8 @@ namespace Agilent_ExtensionBox.IO
         private AgilentU254xAnalogInChannel _channel;
         private ChannelModeSwitch _modeSwitch;
 
-        public ConcurrentQueue<List<Point>> ChannelData { get; private set; }
-        List<Point> _currentChannelData;
+        public ConcurrentQueue<LinkedList<Point>> ChannelData { get; private set; }
+        LinkedList<Point> _currentChannelData;
 
         public AI_Channel(AnalogInChannelsEnum channelName, AgilentU254xClass Driver, ChannelModeSwitch ModeSwitch, Filter ChannelFilter, ProgrammableGainAmplifier ChannelPGA, AnalogInLatch CommonLatch)
         {
@@ -29,8 +29,8 @@ namespace Agilent_ExtensionBox.IO
             Parameters = new ChannelParams(_channelName, ChannelFilter, ChannelPGA, CommonLatch);
             InitDriverChannel(_channelName, out _channel);
 
-            ChannelData = new ConcurrentQueue<List<Point>>();
-            _currentChannelData = new List<Point>();
+            ChannelData = new ConcurrentQueue<LinkedList<Point>>();
+            _currentChannelData = new LinkedList<Point>();
         }
 
         private void InitDriverChannel(AnalogInChannelsEnum ChannelName, out AgilentU254xAnalogInChannel channel)
@@ -141,7 +141,7 @@ namespace Agilent_ExtensionBox.IO
         public void OnCompleted()
         {
             ChannelData.Enqueue(_currentChannelData);
-            _currentChannelData.Clear();
+            _currentChannelData = new LinkedList<Point>();
             On_DataReady();
         }
 
@@ -152,7 +152,7 @@ namespace Agilent_ExtensionBox.IO
 
         public void OnNext(Point value)
         {
-            _currentChannelData.Add(value);
+            _currentChannelData.AddLast(value);
         }
     }
 }

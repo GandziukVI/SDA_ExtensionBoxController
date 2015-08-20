@@ -25,7 +25,7 @@ namespace Agilent_ExtensionBox.IO
             }
         }
 
-        private List<IObserver<Point>> _channels;
+        private readonly List<IObserver<Point>> _channels = new List<IObserver<Point>>();
 
         public IDisposable Subscribe(IObserver<Point> observer)
         {
@@ -36,24 +36,26 @@ namespace Agilent_ExtensionBox.IO
 
         public int Frequency { get; set; }
 
-        public void AddData(double[] data)
+        public void AddData(ref double[] data)
         {
-            double time = 0;
-            double timeQuant = 1.0 / Frequency;
-            for (int i = 0, j = 0; i + j < data.Length; i += _channels.Count, time += timeQuant)
+            lock (data)
             {
-                for (j = 0; j < _channels.Count; j++)
+                double time = 0.0;
+                double timeQuant = 1.0 / Frequency;
+                for (int i = 0, j = 0; i + j <= data.Length; i += _channels.Count, time += timeQuant)
                 {
-                    _channels[j].OnNext(new Point(time, data[i + j]));
-                }
+                    for (j = 0; j < _channels.Count; j++)
+                    {
+                        _channels[j].OnNext(new Point(time, data[i + j]));
+                    }
 
+                }
             }
+
             for (int i = 0; i < _channels.Count; i++)
             {
                 _channels[i].OnCompleted();
             }
         }
     }
-
-
 }
