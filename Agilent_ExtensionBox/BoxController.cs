@@ -153,7 +153,11 @@ namespace Agilent_ExtensionBox
         }
 
         private bool _AcquisitionInProgress = false;
-        public bool AcquisitionInProgress { get { return _AcquisitionInProgress; } }
+        public bool AcquisitionInProgress 
+        {
+            get { return _AcquisitionInProgress; }
+            set { _AcquisitionInProgress = value; }
+        }
 
         public delegate void CallAsync(ref short[] data);
 
