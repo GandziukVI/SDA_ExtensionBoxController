@@ -175,42 +175,15 @@ namespace Agilent_ExtensionBox
                     _router.Subscribe(item);
             }
 
-            //var _clearQueue = new Thread(new ThreadStart(() =>
-            //{
-            //    while (true)
-            //    {
-            //        foreach (var item in _AI_ChannelCollection)
-            //        {
-            //            if (item.ChannelData.Count > 0)
-            //            {
-            //                var temp = new LinkedList<Point>();
-            //                item.ChannelData.TryDequeue(out temp);
-            //            }
-            //        }
-            //    }
-            //}));
-
-            //_clearQueue.Priority = ThreadPriority.Highest;
-            //_clearQueue.Start();
-
-            var i = 0;
-            while (true)//(_AcquisitionInProgress)
+            while (_AcquisitionInProgress)
             {
                 while (!(_Driver.Acquisition.BufferStatus == AgilentU254xBufferStatusEnum.AgilentU254xBufferStatusDataReady)) ;
                 _Driver.Acquisition.Fetch(ref results);                
 
                 _router.AddDataInvoke(ref results);
-
-                if (i > 5)
-                    break;
-                ++i;
             }
 
             _Driver.Acquisition.Stop();
-
-            //_clearQueue.Abort();
-           
-            var a = 1;
         }
 
         public void AcquireSingleShot(int SampleRate)
