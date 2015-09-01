@@ -41,6 +41,17 @@ namespace Agilent_ExtensionBox.IO
             }
         }
 
+        public AI_Channel this[int ChannelNumber]
+        {
+            get
+            {
+                if (ChannelNumber < 1 || ChannelNumber > 4)
+                    throw new ArgumentException();
+
+                return _channels[ChannelNumber - 1];
+            }
+        }
+
         public IEnumerator<AI_Channel> GetEnumerator()
         {
             for (int index = 0; index < _channels.Length; index++)

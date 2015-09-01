@@ -27,6 +27,17 @@ namespace Agilent_ExtensionBox.IO
             }
         }
 
+        public DigitalChannel  this[int ChannelNumber]
+        {
+            get
+            {
+                if (ChannelNumber < 1 || ChannelNumber > 4)
+                    throw new ArgumentException();
+
+                return _channels[ChannelNumber - 1];
+            }
+        }
+
         public IEnumerator<DigitalChannel> GetEnumerator()
         {
             for (int index = 0; index < _channels.Length; index++)

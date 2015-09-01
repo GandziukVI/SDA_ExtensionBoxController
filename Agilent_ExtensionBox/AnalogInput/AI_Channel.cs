@@ -19,7 +19,21 @@ namespace Agilent_ExtensionBox.IO
 
         public ConcurrentQueue<Point[]> ChannelData { get; private set; }
         private Point[] _currentChannelData;
-        private int _sampleRate, _iterator = 0;
+        private int _iterator = 0;
+
+        private int _sampleRate;
+        public int SampleRate
+        {
+            get
+            {
+                return _sampleRate;
+            }
+            set
+            {
+                _currentChannelData = new Point[value];
+                _sampleRate = value;
+            }
+        }
 
         public AI_Channel(AnalogInChannelsEnum channelName, AgilentU254xClass Driver, ChannelModeSwitch ModeSwitch, Filter ChannelFilter, ProgrammableGainAmplifier ChannelPGA, AnalogInLatch CommonLatch)
         {
@@ -31,10 +45,6 @@ namespace Agilent_ExtensionBox.IO
             InitDriverChannel(_channelName, out _channel);
 
             ChannelData = new ConcurrentQueue<Point[]>();
-
-            _sampleRate = Driver.AnalogIn.MultiScan.SampleRate;
-            
-            _currentChannelData = new Point[_sampleRate];
         }
 
         private void InitDriverChannel(AnalogInChannelsEnum ChannelName, out AgilentU254xAnalogInChannel channel)
@@ -146,7 +156,6 @@ namespace Agilent_ExtensionBox.IO
         {
             _iterator = 0;
             ChannelData.Enqueue(_currentChannelData);
-            _currentChannelData = new Point[_sampleRate];
             On_DataReady();
         }
 

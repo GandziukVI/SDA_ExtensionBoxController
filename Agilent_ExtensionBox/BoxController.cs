@@ -176,7 +176,10 @@ namespace Agilent_ExtensionBox
             foreach (var item in _AI_ChannelCollection)
             {
                 if (item.IsEnabled)
+                {
+                    item.SampleRate = SampleRate;
                     _router.Subscribe(item);
+                }
             }
 
             while (_AcquisitionInProgress)
@@ -206,7 +209,10 @@ namespace Agilent_ExtensionBox
             foreach (var item in _AI_ChannelCollection)
             {
                 if (item.IsEnabled)
+                {
+                    item.SampleRate = SampleRate;
                     _router.Subscribe(item);
+                }
             }
 
             _router.AddData(ref results);
