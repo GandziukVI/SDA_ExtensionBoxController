@@ -26,6 +26,17 @@ namespace Agilent_ExtensionBox.IO
             }
         }
 
+        public AO_Channel this[int ChannelNumber]
+        {
+            get
+            {
+                if (ChannelNumber < 1 || ChannelNumber > 2)
+                    throw new ArgumentException();
+
+                return _channels[ChannelNumber - 1];
+            }
+        }
+
         public IEnumerator<AO_Channel> GetEnumerator()
         {
             for (int index = 0; index < _channels.Length; index++)
