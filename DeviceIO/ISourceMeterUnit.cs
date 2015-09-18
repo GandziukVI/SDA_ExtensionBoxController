@@ -6,7 +6,8 @@ using System.Threading.Tasks;
 
 namespace DeviceIO
 {
-    public class Class1
+    public interface ISourceMeterUnit
     {
+        void SetCompliance(SourceMode sourceMode, double compliance);
     }
 }
