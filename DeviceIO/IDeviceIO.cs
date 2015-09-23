@@ -8,7 +8,6 @@ namespace DeviceIO
 {
     public interface IDeviceIO
     {
-        bool InitDevice();
         void SendCommandRequest(string request);
         string ReceiveDeviceAnswer();
         string RequestQuery(string query);
