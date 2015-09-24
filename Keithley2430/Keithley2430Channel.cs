@@ -225,6 +225,11 @@ namespace Keithley2430
             }
         }
 
+        private void _SetMeasurementAutoRange(bool autorange, SourceMode mode)
+        {
+
+        }
+
         private void _SetSourceLevel(double val, SourceMode mode)
         {
             switch (mode)
