@@ -39,6 +39,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DISPlay\Definitions.cs" />
+    <Compile Include="DISPlay\Display.cs" />
     <Compile Include="Keithley24xx.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -50,7 +52,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="CALCulate\" />
-    <Folder Include="DISPlay\" />
     <Folder Include="FORMat\" />
     <Folder Include="OUTPut\" />
     <Folder Include="ROUTe\" />

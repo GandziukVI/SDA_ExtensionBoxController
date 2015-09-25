@@ -479,9 +479,6 @@ namespace Keithley2430
                 return double.NaN;
         }
 
-
-
-
         public double Voltage
         {
             get { return MeasureResistance(); }
