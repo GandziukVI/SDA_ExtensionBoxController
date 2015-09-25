@@ -514,6 +514,11 @@ namespace Keithley2430
         }
 
         private double _PulseWidth = double.NaN;
+        /// <summary>
+        /// Determiming the ON time of the pulse.
+        /// In range 0.15 msek - 5.00 msek. To have
+        /// ability to measure, use no less than 1.75 msek
+        /// </summary>
         public double PulseWidth
         {
             get { return _PulseWidth; }
