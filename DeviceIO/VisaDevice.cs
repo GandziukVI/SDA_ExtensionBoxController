@@ -18,7 +18,7 @@ namespace DeviceIO
         {
             VisaID = resourceString;
             mbSession = (MessageBasedSession)ResourceManager.GetLocalManager().Open(resourceString);
-            mbSession.Timeout = 5000;
+            mbSession.Timeout = int.MaxValue;
         }
 
         public void SendCommandRequest(string request)

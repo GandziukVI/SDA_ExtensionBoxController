@@ -42,6 +42,25 @@
     <Compile Include="Keithley24xx.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\DeviceIO\DeviceIO.csproj">
+      <Project>{74877d78-fe9b-4faf-a9e5-5503d6021577}</Project>
+      <Name>DeviceIO</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="CALCulate\" />
+    <Folder Include="DISPlay\" />
+    <Folder Include="FORMat\" />
+    <Folder Include="OUTPut\" />
+    <Folder Include="ROUTe\" />
+    <Folder Include="SENSe\" />
+    <Folder Include="SOURse\" />
+    <Folder Include="STATus\" />
+    <Folder Include="SYSTem\" />
+    <Folder Include="TRACe\" />
+    <Folder Include="TRIGger\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

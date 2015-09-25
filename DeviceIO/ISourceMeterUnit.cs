@@ -8,6 +8,17 @@ namespace DeviceIO
 {
     public interface ISourceMeterUnit
     {
+        ShapeMode SMU_ShapeMode { get; set; }
+        SourceMode SMU_SourceMode { get; set; }
+
+        double Voltage { get; set; }
+        double Current { get; set; }
+        double Resistance { get; }
+        double Compliance { get; set; }
+
+        double PulseWidth { get; set; }
+        double PulseDelay { get; set; }
+
         void SwitchON();
         void SwitchOFF();
         void SetCompliance(SourceMode sourceMode, double compliance);

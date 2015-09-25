@@ -77,15 +77,34 @@ namespace Keithley2430
                 _driver.SendCommandRequest(":SOUR:DEL:AUTO ON");
         }
 
+        private ShapeMode _currentShapeMode = ShapeMode.ModeNotSet;
         private void _SetShape(ShapeMode mode)
         {
-            switch (mode)
+            if (mode != _currentShapeMode)
             {
-                case ShapeMode.DC:
-                    _driver.SendCommandRequest(":SOUR:FUNC:SHAP DC");
-                    break;
-                default:
-                    break;
+                _currentShapeMode = mode;
+
+                switch (mode)
+                {
+                    case ShapeMode.DC:
+                        _driver.SendCommandRequest(":SOUR:FUNC:SHAP DC");
+                        break;
+                    case ShapeMode.Pulse:
+                        _driver.SendCommandRequest(":SOUR:FUNC:SHAP PULS");
+                        break;
+                    default:
+                        break;
+                }
+            }
+        }
+
+        public ShapeMode SMU_ShapeMode
+        {
+            get { return _currentShapeMode; }
+            set
+            {
+                _currentShapeMode = value;
+                _SetShape(value);
             }
         }
 
@@ -110,6 +129,12 @@ namespace Keithley2430
                         break;
                 }
             }
+        }
+
+        public SourceMode SMU_SourceMode
+        {
+            get { return _currentSourceMode; }
+            set { _SetSourceMode(value); }
         }
 
         private SourceMode _currentFixedSourceMode = SourceMode.ModeNotSet;
@@ -244,13 +269,13 @@ namespace Keithley2430
                         {
                             if (autorange != _currentAutorangeState)
                                 _driver.SendCommandRequest(":SENS:CURR:RANG:AUTO ON");
-                            _currentAutorangeState = true; 
+                            _currentAutorangeState = true;
                         } break;
                     case SenseMode.Resistance:
                         {
                             if (autorange != _resistanceAutorangeState)
                                 _driver.SendCommandRequest("RES:RANG:AUTO ON");
-                            _resistanceAutorangeState = true; 
+                            _resistanceAutorangeState = true;
                         } break;
                     default:
                         break;
@@ -264,13 +289,13 @@ namespace Keithley2430
                         {
                             if (autorange != _voltageAutorangeState)
                                 _driver.SendCommandRequest(":SENS:VOLT:RANG:AUTO OFF");
-                            _voltageAutorangeState = false; 
+                            _voltageAutorangeState = false;
                         } break;
                     case SenseMode.Current:
                         {
                             if (autorange != _currentAutorangeState)
                                 _driver.SendCommandRequest(":SENS:CURR:RANG:AUTO OFF");
-                            _currentAutorangeState = false; 
+                            _currentAutorangeState = false;
                         } break;
                     case SenseMode.Resistance:
                         {
@@ -452,6 +477,85 @@ namespace Keithley2430
                 return res;
             else
                 return double.NaN;
+        }
+
+
+
+
+        public double Voltage
+        {
+            get { return MeasureResistance(); }
+            set { SetSourceVoltage(value); }
+        }
+
+        public double Current
+        {
+            get { return MeasureCurrent(); }
+            set { SetSourceCurrent(value); }
+        }
+
+        public double Resistance
+        {
+            get { return MeasureResistance(); }
+        }
+
+        public double Compliance
+        {
+            get
+            {
+                switch (_currentSourceMode)
+                {
+                    case SourceMode.Voltage:
+                        return _currentVoltageCompliance;
+                    case SourceMode.Current:
+                        return _currentCurrentCompliance;
+                    default:
+                        return double.NaN;
+                }
+            }
+            set { SetCompliance(_currentSourceMode, value); }
+        }
+
+        private double _PulseWidth = double.NaN;
+        public double PulseWidth
+        {
+            get { return _PulseWidth; }
+            set 
+            {
+                if (_PulseWidth != value)
+                {
+                    var val = 0.0;
+                    if (value < 0.00015)
+                        val = 0.00015;
+                    else if (value > 0.005)
+                        val = 0.005;
+
+                    _PulseWidth = val;
+
+                    _driver.SendCommandRequest(string.Format(":SOUR:WIDT {0}", val.ToString(NumberFormatInfo.InvariantInfo)));
+                }
+            }
+        }
+
+        private double _PulseDelay = double.NaN;
+        public double PulseDelay
+        {
+            get { return _PulseDelay; }
+            set
+            {
+                if (_PulseDelay != value)
+                {
+                    var val = 0.0;
+                    if (value < 0.0)
+                        val = 0.0;
+                    else if (value > 9999.999)
+                        val = 9999.999;
+
+                    _PulseDelay = val;
+
+                    _driver.SendCommandRequest(string.Format(":SOUR:DEL {0}", val.ToString(NumberFormatInfo.InvariantInfo)));
+                }
+            }
         }
     }
 }

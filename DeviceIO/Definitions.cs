@@ -36,6 +36,8 @@ namespace DeviceIO
 
     public enum ShapeMode
     {
-        DC
+        DC,
+        Pulse,
+        ModeNotSet
     }
 }
