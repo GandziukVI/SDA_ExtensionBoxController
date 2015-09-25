@@ -225,9 +225,63 @@ namespace Keithley2430
             }
         }
 
-        private void _SetMeasurementAutoRange(bool autorange, SourceMode mode)
+        bool _voltageAutorangeState = false;
+        bool _currentAutorangeState = false;
+        bool _resistanceAutorangeState = false;
+        private void _SetMeasurementAutoRange(SenseMode mode, bool autorange)
         {
-
+            if (autorange)
+            {
+                switch (mode)
+                {
+                    case SenseMode.Voltage:
+                        {
+                            if (autorange != _voltageAutorangeState)
+                                _driver.SendCommandRequest(":SENS:VOLT:RANG:AUTO ON");
+                            _voltageAutorangeState = true;
+                        } break;
+                    case SenseMode.Current:
+                        {
+                            if (autorange != _currentAutorangeState)
+                                _driver.SendCommandRequest(":SENS:CURR:RANG:AUTO ON");
+                            _currentAutorangeState = true; 
+                        } break;
+                    case SenseMode.Resistance:
+                        {
+                            if (autorange != _resistanceAutorangeState)
+                                _driver.SendCommandRequest("RES:RANG:AUTO ON");
+                            _resistanceAutorangeState = true; 
+                        } break;
+                    default:
+                        break;
+                }
+            }
+            else
+            {
+                switch (mode)
+                {
+                    case SenseMode.Voltage:
+                        {
+                            if (autorange != _voltageAutorangeState)
+                                _driver.SendCommandRequest(":SENS:VOLT:RANG:AUTO OFF");
+                            _voltageAutorangeState = false; 
+                        } break;
+                    case SenseMode.Current:
+                        {
+                            if (autorange != _currentAutorangeState)
+                                _driver.SendCommandRequest(":SENS:CURR:RANG:AUTO OFF");
+                            _currentAutorangeState = false; 
+                        } break;
+                    case SenseMode.Resistance:
+                        {
+                            if (autorange != _resistanceAutorangeState)
+                                _driver.SendCommandRequest("RES:RANG:AUTO OFF");
+                            _resistanceAutorangeState = false;
+                        } break;
+                    default:
+                        break;
+                }
+            }
         }
 
         private void _SetSourceLevel(double val, SourceMode mode)
@@ -255,10 +309,13 @@ namespace Keithley2430
                 switch (mode)
                 {
                     case SenseMode.Voltage:
-                        _driver.SendCommandRequest(":SENS:FUNC VOLT");
+                        _driver.SendCommandRequest(":SENS:FUNC \"VOLT\"");
                         break;
                     case SenseMode.Current:
-                        _driver.SendCommandRequest(":SENS:FUNC CURR");
+                        _driver.SendCommandRequest(":SENS:FUNC \"CURR\"");
+                        break;
+                    case SenseMode.Resistance:
+                        _driver.SendCommandRequest("FUNC \"RES\"");
                         break;
                     default:
                         break;
@@ -280,6 +337,9 @@ namespace Keithley2430
                         break;
                     case SenseMode.Current:
                         _driver.SendCommandRequest(":FORM:ELEM CURR");
+                        break;
+                    case SenseMode.Resistance:
+                        _driver.SendCommandRequest(":FORM:ELEM RES");
                         break;
                     default:
                         break;
@@ -326,13 +386,14 @@ namespace Keithley2430
         public double MeasureVoltage()
         {
             _SetReadingFormat(SenseMode.Voltage);
+            _SetMeasurementAutoRange(SenseMode.Voltage, true);
 
             var res = 0.0;
             var success = double.TryParse(_driver.RequestQuery(":READ?"), out res);
 
             if (success)
             {
-                _SetMeasurementRange(res, SenseMode.Voltage);
+                //_SetMeasurementRange(res, SenseMode.Voltage);
                 return res;
             }
             else
@@ -342,22 +403,55 @@ namespace Keithley2430
         public double MeasureCurrent()
         {
             _SetReadingFormat(SenseMode.Current);
+            _SetMeasurementAutoRange(SenseMode.Current, true);
 
             var res = 0.0;
             var success = double.TryParse(_driver.RequestQuery(":READ?"), out res);
 
             if (success)
             {
-                _SetMeasurementRange(res, SenseMode.Current);
+                //_SetMeasurementRange(res, SenseMode.Current);
                 return res;
             }
             else
                 return double.NaN;
         }
 
+        private OhmsMode _currentOhmsMode = OhmsMode.ModeNotSet;
+        private void _SetResistanceMeasurementMode(OhmsMode mode)
+        {
+            if (mode != _currentOhmsMode)
+            {
+                _currentOhmsMode = mode;
+
+                switch (mode)
+                {
+                    case OhmsMode.Auto:
+                        _driver.SendCommandRequest("RES:MODE AUTO");
+                        break;
+                    case OhmsMode.Manual:
+                        _driver.SendCommandRequest("RES:MODE MAN");
+                        break;
+                    default:
+                        break;
+                }
+            }
+        }
+
         public double MeasureResistance()
         {
+            _SetSenseMode(SenseMode.Resistance);
+            _SetResistanceMeasurementMode(OhmsMode.Auto);
+            _SetMeasurementAutoRange(SenseMode.Resistance, true);
+            _SetReadingFormat(SenseMode.Resistance);
 
+            var res = 0.0;
+            var success = double.TryParse(_driver.RequestQuery(":READ?"), out res);
+
+            if (success)
+                return res;
+            else
+                return double.NaN;
         }
     }
 }

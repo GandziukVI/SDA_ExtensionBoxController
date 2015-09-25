@@ -17,14 +17,14 @@ namespace DeviceIO
     {
         Voltage,
         Current,
+        Resistance,
         ModeNotSet
     }
 
-    public enum MeasureMode
+    public enum OhmsMode
     {
-        Voltage,
-        Current,
-        Resistance,
+        Auto,
+        Manual,
         ModeNotSet
     }
 

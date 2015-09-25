@@ -17,6 +17,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Keithley2600A", "Keithley26
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Keithley2635A", "Keithley2635A\Keithley2635A.csproj", "{550D2E79-1473-4412-8E3B-DCACCE22AC75}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Keithley24xx", "Keithley24xx\Keithley24xx.csproj", "{B131651F-BAE3-4A76-9B61-70D810852A69}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -51,6 +53,10 @@ Global
 		{550D2E79-1473-4412-8E3B-DCACCE22AC75}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{550D2E79-1473-4412-8E3B-DCACCE22AC75}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{550D2E79-1473-4412-8E3B-DCACCE22AC75}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B131651F-BAE3-4A76-9B61-70D810852A69}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B131651F-BAE3-4A76-9B61-70D810852A69}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B131651F-BAE3-4A76-9B61-70D810852A69}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B131651F-BAE3-4A76-9B61-70D810852A69}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
