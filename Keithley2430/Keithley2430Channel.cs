@@ -408,6 +408,129 @@ namespace Keithley2430
             _SetSourceLevel(val, SourceMode.Current);
         }
 
+        private int _currentAveraging = 10;
+        public void SetAveraging(int avg)
+        {
+            if (avg != _currentAveraging)
+            {
+                _currentAveraging = avg;
+
+                var _avg = avg;
+                if (avg < 1)
+                    _avg = 1;
+                else if (avg > 100)
+                    _avg = 100;
+
+                _driver.SendCommandRequest(string.Format(":SENS:AVER:COUN {0}", _avg));
+            }
+        }
+
+        private double _currentCurrentNPLC = 1.0;
+        private double _currentVoltageNPLC = 1.0;
+        private double _currentResistanceNPLC = 1.0;
+
+        public void SetNPLC(double val)
+        {
+            switch (_currentSenseMode)
+            {
+                case SenseMode.Voltage:
+                    {
+                        if (val != _currentVoltageNPLC)
+                        {
+                            _currentVoltageNPLC = val;
+
+                            var _minVal = 0.01;
+                            var _maxVal = 10.0;
+
+                            switch (_currentShapeMode)
+                            {
+                                case ShapeMode.DC:
+                                    _maxVal = 10.0;
+                                    break;
+                                case ShapeMode.Pulse:
+                                    _maxVal = 0.1;
+                                    break;
+                                default:
+                                    break;
+                            }
+
+                            var _val = _minVal;
+
+                            if (val < _minVal)
+                                _val = _minVal;
+                            else if (val > _maxVal)
+                                _val = _maxVal;
+
+                            _driver.SendCommandRequest(string.Format(":SENS:VOLT:NPLC {0}", _val));
+                        }
+                    } break;
+                case SenseMode.Current:
+                    {
+                        if (val != _currentCurrentNPLC)
+                        {
+                            _currentCurrentNPLC = val;
+
+                            var _minVal = 0.01;
+                            var _maxVal = 10.0;
+
+                            switch (_currentShapeMode)
+                            {
+                                case ShapeMode.DC:
+                                    _maxVal = 10.0;
+                                    break;
+                                case ShapeMode.Pulse:
+                                    _maxVal = 0.1;
+                                    break;
+                                default:
+                                    break;
+                            }
+
+                            var _val = _minVal;
+
+                            if (val < _minVal)
+                                _val = _minVal;
+                            else if (val > _maxVal)
+                                _val = _maxVal;
+
+                            _driver.SendCommandRequest(string.Format(":SENS:CURR:NPLC {0}", _val));
+                        }
+                    } break;
+                case SenseMode.Resistance:
+                    {
+                        if (val != _currentResistanceNPLC)
+                        {
+                            _currentResistanceNPLC = val;
+
+                            var _minVal = 0.01;
+                            var _maxVal = 10.0;
+
+                            switch (_currentShapeMode)
+                            {
+                                case ShapeMode.DC:
+                                    _maxVal = 10.0;
+                                    break;
+                                case ShapeMode.Pulse:
+                                    _maxVal = 0.1;
+                                    break;
+                                default:
+                                    break;
+                            }
+
+                            var _val = _minVal;
+
+                            if (val < _minVal)
+                                _val = _minVal;
+                            else if (val > _maxVal)
+                                _val = _maxVal;
+
+                            _driver.SendCommandRequest(string.Format(":SENS:RES:NPLC {0}", _val));
+                        }
+                    } break;
+                default:
+                    break;
+            }
+        }
+
         public double MeasureVoltage()
         {
             _SetReadingFormat(SenseMode.Voltage);
@@ -558,6 +681,12 @@ namespace Keithley2430
                     _driver.SendCommandRequest(string.Format(":SOUR:DEL {0}", val.ToString(NumberFormatInfo.InvariantInfo)));
                 }
             }
+        }
+
+        public int Averaging
+        {
+            get { return _currentAveraging; }
+            set { SetAveraging(value); }
         }
     }
 }

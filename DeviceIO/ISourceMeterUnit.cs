@@ -19,12 +19,17 @@ namespace DeviceIO
         double PulseWidth { get; set; }
         double PulseDelay { get; set; }
 
+        int Averaging { get; set; }
+        double NPLC { get; set; }
+
         void SwitchON();
         void SwitchOFF();
         void SetCompliance(SourceMode sourceMode, double compliance);
         void SetSourceDelay(double delay);
         void SetSourceVoltage(double val);
         void SetSourceCurrent(double val);
+        void SetAveraging(int avg);
+        void SetNPLC(double val);
         double MeasureVoltage();
         double MeasureCurrent();
         double MeasureResistance();
