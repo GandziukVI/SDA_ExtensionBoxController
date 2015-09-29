@@ -688,5 +688,24 @@ namespace Keithley2430
             get { return _currentAveraging; }
             set { SetAveraging(value); }
         }
+
+        double NPLC
+        {
+            get 
+            {
+                switch (_currentSenseMode)
+                {
+                    case SenseMode.Voltage:
+                        return _currentVoltageNPLC;
+                    case SenseMode.Current:
+                        return _currentCurrentNPLC;
+                    case SenseMode.Resistance:
+                        return _currentResistanceNPLC;
+                    default:
+                        return double.NaN;
+                }
+            }
+            set { SetNPLC(value); }
+        }
     }
 }
