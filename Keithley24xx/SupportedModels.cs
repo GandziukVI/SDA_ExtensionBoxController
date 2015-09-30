@@ -7,14 +7,20 @@ using System.Threading.Tasks;
 
 namespace Keithley24xx
 {
-    public enum SupportedModels
-    {
-        Keithley2400,
-        Keithley2410,
-        Keithley2420,
-        Keithley2430,
-        Keithley2440,
-    }
+    //public enum SupportedModels
+    //{
+    //    Keithley2400,
+    //    Keithley2410,
+    //    Keithley2420,
+    //    Keithley2430,
+    //    Keithley2440,
+    //}
+
+    //[AttributeUsage(AttributeTargets.Class, AllowMultiple = false, Inherited = true)]
+    //internal class KeithleySMUAttribute:Attribute
+    //{
+    //    public int ChannelsNumber = 
+    //}
 
     public class Keithley2400 : Keithley24xxBase 
     {

@@ -12,10 +12,16 @@ namespace Keithley2430
     {
         private IDeviceIO _driver;
 
-        public Keithley2430Channel(IDeviceIO driver)
+        public Keithley2430Channel()//IDeviceIO driver)
         {
-            _driver = driver;
+            //_driver = driver;
         }
+
+        public void Initialize(IDeviceIO driver)
+        {
+            throw new NotImplementedException();
+        }
+
 
         private int[] _VSourceProtectionLimits = new int[] { 10, 20, 30, 40, 50, 60, 70, 80, -1000 };
         private int _currentVoltageCompliance = 10;
@@ -707,5 +713,8 @@ namespace Keithley2430
             }
             set { SetNPLC(value); }
         }
+
+
+        
     }
 }
