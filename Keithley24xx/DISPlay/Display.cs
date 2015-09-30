@@ -18,6 +18,9 @@ namespace Keithley24xx.DISPlay
         {
             _driver = Driver;
             SubsystemIdentifier = ":DISP";
+
+            WINDow_01 = new DisplayWindow1(ref Driver);
+            WINDow_02 = new DisplayWindow2(ref Driver);
         }
 
         /// <summary>
@@ -51,6 +54,45 @@ namespace Keithley24xx.DISPlay
         {
             _driver.SendCommandRequest(string.Format("{0}{1}", SubsystemIdentifier, ":CND"));
         }
+
+        /// <summary>
+        /// Path to locate message to top display
+        /// </summary>
+        public DisplayWindow1 WINDow_01 { get; private set; }
+
+        /// <summary>
+        /// Path to locate message to bottom display
+        /// </summary>
+        public DisplayWindow2 WINDow_02 { get; private set; }
+
+        /// <summary>
+        /// Specify display resolution (4 to 7).
+        /// Query display resolution
+        /// </summary>
+        public int Digits
+        {
+            get
+            {
+                var responce = _driver.RequestQuery(string.Format("{0}{1}", SubsystemIdentifier, ":DIG?"));
+                var result = 4;
+                var success = int.TryParse(responce, out result);
+
+                if (success)
+                    return result;
+                else
+                    throw new Exception("Can't acquire the display resolution!");
+            }
+            set
+            {
+                var toSet = 4;
+                if (value < 4)
+                    toSet = 4;
+                else if (value > 7)
+                    toSet = 7;
+                
+                _driver.SendCommandRequest(string.Format("{0}{1} {2}", SubsystemIdentifier, ":DIG", toSet.ToString(NumberFormatInfo.InvariantInfo)));
+            }
+        }
     }
 
     public interface IDisplayWindow
@@ -73,7 +115,28 @@ namespace Keithley24xx.DISPlay
 
         public WindowText TEXT { get; private set; }
 
+        /// <summary>
+        /// Query data on bottom portion of display.
+        /// </summary>
+        public string Data
+        {
+            get
+            {
+                return _driver.RequestQuery(string.Format("{0}{1}", WindowIdentifier, ":DATA?"));
+            }
+        }
 
+        /// <summary>
+        /// Query attributes of message characters:
+        ///     blinking (1) or not blinking (0).
+        /// </summary>
+        public string Attributes
+        {
+            get
+            {
+                return _driver.RequestQuery(string.Format("{0}{1}", WindowIdentifier, ":ATTR?"));
+            }
+        }
     }
 
     public class DisplayWindow2 : DISPlay, IDisplayWindow
@@ -90,6 +153,22 @@ namespace Keithley24xx.DISPlay
         }
 
         public WindowText TEXT { get; private set; }
+
+        public string Data
+        {
+            get
+            {
+                return _driver.RequestQuery(string.Format("{0}{1}", WindowIdentifier, ":DATA?"));
+            }
+        }
+
+        public string Attributes
+        {
+            get
+            {
+                return _driver.RequestQuery(string.Format("{0}{1}", WindowIdentifier, ":ATTR?"));
+            }
+        }
     }
 
     /// <summary>
@@ -145,16 +224,6 @@ namespace Keithley24xx.DISPlay
                 var toSet = value ? "ON" : "OFF";
                 _driver.SendCommandRequest(string.Format("{0}{1} {2}", _textIdentifier, ":STAT", toSet));
             }
-        }
-    }
-
-    public class WindowData
-    {
-        private IDeviceIO _driver;
-        public WindowData(ref IDeviceIO Driver, IDisplayWindow window)
-        {
-            _driver = Driver;
-
         }
     }
 }

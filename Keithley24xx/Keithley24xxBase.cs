@@ -10,7 +10,7 @@ namespace Keithley24xx
 {
     public class Keithley24xxBase : ISourceMeterUnit
     {
-        public void Initialize(IDeviceIO driver)
+        public void Initialize(ref IDeviceIO driver)
         {
             throw new NotImplementedException();
         }
@@ -181,9 +181,6 @@ namespace Keithley24xx
         public virtual double MeasureResistance()
         {
             throw new NotImplementedException();
-        }
-
-
-       
+        } 
     }
 }

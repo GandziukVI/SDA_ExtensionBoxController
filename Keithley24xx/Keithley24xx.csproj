@@ -43,6 +43,8 @@
     <Compile Include="CALCulate\Commands\Data.cs" />
     <Compile Include="CALCulate\Commands\MATH.cs" />
     <Compile Include="DISPlay\Display.cs" />
+    <Compile Include="FORMat\Definitions.cs" />
+    <Compile Include="FORMat\FORMat.cs" />
     <Compile Include="Keithley24xx.cs" />
     <Compile Include="Keithley24xxBase.cs" />
     <Compile Include="Keithley24xxChannel.cs" />
@@ -57,7 +59,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="DISPlay\Commands\" />
-    <Folder Include="FORMat\" />
     <Folder Include="OUTPut\" />
     <Folder Include="ROUTe\" />
     <Folder Include="SENSe\" />

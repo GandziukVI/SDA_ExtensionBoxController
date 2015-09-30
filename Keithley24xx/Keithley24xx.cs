@@ -9,14 +9,14 @@ namespace Keithley24xx
 {
     public class Keithley24xx<T> where T : ISourceMeterUnit, new()
     {
-        private IDeviceIO Transport{get;set;}
-        public ISourceMeterUnit Channel{ get; private set; }
+        private IDeviceIO _driver;
+        public ISourceMeterUnit Channel { get; private set; }
 
-        public Keithley24xx(IDeviceIO transport)
+        public Keithley24xx(IDeviceIO Driver)
         {
-            Transport = transport;
+            _driver = Driver;
             Channel = new T();
-            Channel.Initialize(transport);
+            Channel.Initialize(ref Driver);
         }
     }
 }

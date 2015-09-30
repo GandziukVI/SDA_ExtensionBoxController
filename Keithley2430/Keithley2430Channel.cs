@@ -12,9 +12,9 @@ namespace Keithley2430
     {
         private IDeviceIO _driver;
 
-        public Keithley2430Channel()//IDeviceIO driver)
+        public Keithley2430Channel()
         {
-            //_driver = driver;
+            
         }
 
         public void Initialize(IDeviceIO driver)
