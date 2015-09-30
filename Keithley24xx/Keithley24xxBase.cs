@@ -10,6 +10,11 @@ namespace Keithley24xx
 {
     public class Keithley24xxBase : ISourceMeterUnit
     {
+        public void Initialize(IDeviceIO driver)
+        {
+            throw new NotImplementedException();
+        }
+
         public ShapeMode SMU_ShapeMode
         {
             get
@@ -177,5 +182,8 @@ namespace Keithley24xx
         {
             throw new NotImplementedException();
         }
+
+
+       
     }
 }

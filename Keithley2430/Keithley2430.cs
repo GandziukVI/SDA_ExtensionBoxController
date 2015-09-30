@@ -15,7 +15,7 @@ namespace Keithley2430
         public Keithley2430(string resourceName)
         {
             Driver = new VisaDevice(resourceName);
-            SMU_Channel = new Keithley2430Channel(Driver);
+            //SMU_Channel = new Keithley2430Channel(Driver);
         }
     }
 }

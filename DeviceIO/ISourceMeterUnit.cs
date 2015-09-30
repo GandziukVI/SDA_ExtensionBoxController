@@ -10,6 +10,7 @@ namespace DeviceIO
     {
         ShapeMode SMU_ShapeMode { get; set; }
         SourceMode SMU_SourceMode { get; set; }
+        
 
         double Voltage { get; set; }
         double Current { get; set; }
@@ -21,6 +22,8 @@ namespace DeviceIO
 
         int Averaging { get; set; }
         double NPLC { get; set; }
+
+        void Initialize(IDeviceIO driver);
 
         void SwitchON();
         void SwitchOFF();
