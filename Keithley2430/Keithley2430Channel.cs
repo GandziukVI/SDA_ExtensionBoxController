@@ -689,7 +689,7 @@ namespace Keithley2430
             set { SetAveraging(value); }
         }
 
-        double NPLC
+        public double NPLC
         {
             get 
             {

@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Keithley24xx.DISPlay
+namespace Keithley24xx.CALCulate.Commands
 {
-    public class Definitions
+    public class Data
     {
     }
 }

@@ -39,10 +39,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DISPlay\Definitions.cs" />
+    <Compile Include="CALCulate\CALCulate.cs" />
+    <Compile Include="CALCulate\Commands\Data.cs" />
+    <Compile Include="CALCulate\Commands\MATH.cs" />
     <Compile Include="DISPlay\Display.cs" />
-    <Compile Include="Keithley24xx.cs" />
+    <Compile Include="Keithley24xxBase.cs" />
+    <Compile Include="Keithley24xxChannel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SupportedModels.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\DeviceIO\DeviceIO.csproj">
@@ -51,7 +55,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="CALCulate\" />
+    <Folder Include="DISPlay\Commands\" />
     <Folder Include="FORMat\" />
     <Folder Include="OUTPut\" />
     <Folder Include="ROUTe\" />
