@@ -99,7 +99,7 @@ namespace Keithley24xx
             }
         }
 
-        public int Averaging
+        public virtual int Averaging
         {
             get
             {
@@ -111,7 +111,7 @@ namespace Keithley24xx
             }
         }
 
-        public double NPLC
+        public virtual double NPLC
         {
             get
             {
@@ -123,57 +123,57 @@ namespace Keithley24xx
             }
         }
 
-        public void SwitchON()
+        public virtual void SwitchON()
         {
             throw new NotImplementedException();
         }
 
-        public void SwitchOFF()
+        public virtual void SwitchOFF()
         {
             throw new NotImplementedException();
         }
 
-        public void SetCompliance(SourceMode sourceMode, double compliance)
+        public virtual void SetCompliance(SourceMode sourceMode, double compliance)
         {
             throw new NotImplementedException();
         }
 
-        public void SetSourceDelay(double delay)
+        public virtual void SetSourceDelay(double delay)
         {
             throw new NotImplementedException();
         }
 
-        public void SetSourceVoltage(double val)
+        public virtual void SetSourceVoltage(double val)
         {
             throw new NotImplementedException();
         }
 
-        public void SetSourceCurrent(double val)
+        public virtual void SetSourceCurrent(double val)
         {
             throw new NotImplementedException();
         }
 
-        public void SetAveraging(int avg)
+        public virtual void SetAveraging(int avg)
         {
             throw new NotImplementedException();
         }
 
-        public void SetNPLC(double val)
+        public virtual void SetNPLC(double val)
         {
             throw new NotImplementedException();
         }
 
-        public double MeasureVoltage()
+        public virtual double MeasureVoltage()
         {
             throw new NotImplementedException();
         }
 
-        public double MeasureCurrent()
+        public virtual double MeasureCurrent()
         {
             throw new NotImplementedException();
         }
 
-        public double MeasureResistance()
+        public virtual double MeasureResistance()
         {
             throw new NotImplementedException();
         }

@@ -53,17 +53,17 @@ namespace Keithley24xx.DISPlay
         }
     }
 
-    public interface IWindow
+    public interface IDisplayWindow
     {
         string WindowIdentifier { get; }
     }
 
-    public class Window1 : DISPlay, IWindow
+    public class DisplayWindow1 : DISPlay, IDisplayWindow
     {
-        public Window1(ref IDeviceIO Driver)
+        public DisplayWindow1(ref IDeviceIO Driver)
             : base(ref Driver)
         {
-            TEXT = new Text(ref Driver, this);
+            TEXT = new WindowText(ref Driver, this);
         }
 
         public string WindowIdentifier
@@ -71,15 +71,17 @@ namespace Keithley24xx.DISPlay
             get { return string.Format("{0}{1}", SubsystemIdentifier, ":WINDow1"); }
         }
 
-        public Text TEXT { get; private set; }
+        public WindowText TEXT { get; private set; }
+
+
     }
 
-    public class Window2 : DISPlay, IWindow
+    public class DisplayWindow2 : DISPlay, IDisplayWindow
     {
-        public Window2(ref IDeviceIO Driver)
+        public DisplayWindow2(ref IDeviceIO Driver)
             : base(ref Driver) 
         {
-
+            TEXT = new WindowText(ref Driver, this);
         }
 
         public string WindowIdentifier
@@ -87,41 +89,49 @@ namespace Keithley24xx.DISPlay
             get { return string.Format("{0}{1}", SubsystemIdentifier, ":WINDow2"); }
         }
 
-        public Text TEXT { get; private set; }
+        public WindowText TEXT { get; private set; }
     }
 
-    public class Text
+    /// <summary>
+    /// Control user test message
+    /// </summary>
+    public class WindowText
     {
-        protected string TextIdentifier { get; private set; }
-        private IWindow _window;
-
+        private string _textIdentifier;
         private IDeviceIO _driver;
 
-        public Text(ref IDeviceIO Driver, IWindow window)
+        public WindowText(ref IDeviceIO Driver, IDisplayWindow window)
         {
             _driver = Driver;
-            _window = window;
-            TextIdentifier = string.Format("{0}{1}", window.WindowIdentifier, ":TEXT");
+            _textIdentifier = string.Format("{0}{1}", window.WindowIdentifier, ":TEXT");
         }
 
+        /// <summary>
+        /// Define ASCII message “a” (up to 20 characters).
+        /// Query text message.
+        /// </summary>
         public string DATA
         {
             get
             {
-                return _driver.RequestQuery(string.Format("{0}{1}", TextIdentifier, ":DATA?"));
+                return _driver.RequestQuery(string.Format("{0}{1}", _textIdentifier, ":DATA?"));
             }
             set
             {
                 var toSet = value.Length > 20 ? value.Substring(0, 20) : value;
-                _driver.SendCommandRequest(string.Format("{0}{1} {2}", TextIdentifier, ":DATA", toSet));
+                _driver.SendCommandRequest(string.Format("{0}{1} {2}", _textIdentifier, ":DATA", toSet));
             }
         }
 
+        /// <summary>
+        /// Enable or disable message mode.
+        /// Query text message state.
+        /// </summary>
         public bool State
         {
             get
             {
-                var responce = _driver.RequestQuery(string.Format("{0}{1}", TextIdentifier, ":STAT?"));
+                var responce = _driver.RequestQuery(string.Format("{0}{1}", _textIdentifier, ":STAT?"));
 
                 if (responce == "ON")
                     return true;
@@ -133,8 +143,18 @@ namespace Keithley24xx.DISPlay
             set
             {
                 var toSet = value ? "ON" : "OFF";
-                _driver.SendCommandRequest(string.Format("{0}{1} {2}", TextIdentifier, ":STAT", toSet));
+                _driver.SendCommandRequest(string.Format("{0}{1} {2}", _textIdentifier, ":STAT", toSet));
             }
+        }
+    }
+
+    public class WindowData
+    {
+        private IDeviceIO _driver;
+        public WindowData(ref IDeviceIO Driver, IDisplayWindow window)
+        {
+            _driver = Driver;
+
         }
     }
 }
