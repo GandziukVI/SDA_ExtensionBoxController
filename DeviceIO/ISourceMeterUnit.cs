@@ -8,7 +8,7 @@ namespace DeviceIO
 {
     public interface ISourceMeterUnit
     {
-        void Initialize(ref IDeviceIO driver);
+        void Initialize(IDeviceIO driver);
 
         ShapeMode SMU_ShapeMode { get; set; }
         SourceMode SMU_SourceMode { get; set; }

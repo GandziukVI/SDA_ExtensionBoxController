@@ -13,13 +13,13 @@ namespace Keithley24xx
     {
         private ISourceMeterUnit _device;
 
-        public Keithley24xxChannel(ref IDeviceIO Driver)
+        public Keithley24xxChannel(IDeviceIO Driver)
         {
             _device = new T();
-            _device.Initialize(ref Driver);
+            _device.Initialize(Driver);
         }
 
-        public void Initialize(ref IDeviceIO driver)
+        public void Initialize(IDeviceIO driver)
         {
             throw new NotImplementedException();
         }

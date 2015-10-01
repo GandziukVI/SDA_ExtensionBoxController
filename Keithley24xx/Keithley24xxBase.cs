@@ -10,7 +10,7 @@ namespace Keithley24xx
 {
     public class Keithley24xxBase : ISourceMeterUnit
     {
-        public void Initialize(ref IDeviceIO driver)
+        public void Initialize(IDeviceIO driver)
         {
             throw new NotImplementedException();
         }
