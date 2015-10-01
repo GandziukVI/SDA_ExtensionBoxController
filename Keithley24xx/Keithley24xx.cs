@@ -12,11 +12,11 @@ namespace Keithley24xx
         private IDeviceIO _driver;
         public ISourceMeterUnit Channel { get; private set; }
 
-        public Keithley24xx(IDeviceIO Driver)
+        public Keithley24xx(ref IDeviceIO Driver)
         {
             _driver = Driver;
             Channel = new T();
-            Channel.Initialize(Driver);
+            Channel.Initialize(ref Driver);
         }
     }
 }
