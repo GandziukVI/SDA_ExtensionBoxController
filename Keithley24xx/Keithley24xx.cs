@@ -16,7 +16,7 @@ namespace Keithley24xx
         {
             _driver = Driver;
             Channel = new T();
-            Channel.Initialize(ref Driver);
+            Channel.Initialize(Driver);
         }
     }
 }
