@@ -17,6 +17,8 @@ namespace Keithley24xx.FORMat
         {
             _driver = Driver;
             SubsystemIdentifier = ":FORM";
+
+            ELEM = new ELEMents(ref Driver);
         }
 
         /// <summary>
@@ -140,6 +142,8 @@ namespace Keithley24xx.FORMat
                 _driver.SendCommandRequest(string.Format("{0}{1} {2}", SubsystemIdentifier, ":BORD", toSet));
             }
         }
+
+        public ELEMents ELEM { get; private set; }
     }
 
     public class ELEMents : FORMat
