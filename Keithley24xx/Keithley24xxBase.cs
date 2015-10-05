@@ -35,7 +35,7 @@ namespace Keithley24xx
             _currentResistanceNPLC = 1.0;
         }
 
-        public void Initialize(ref IDeviceIO Driver)
+        public void Initialize(IDeviceIO Driver)
         {
             _driver = Driver;
             _isInitialized = true;
