@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Keithley2430
+namespace Keithley2430Namespace
 {
     public class Keithley2430Channel : ISourceMeterUnit
     {
@@ -19,7 +19,7 @@ namespace Keithley2430
 
         public void Initialize(IDeviceIO driver)
         {
-            throw new NotImplementedException();
+            _driver = driver;
         }
 
 
