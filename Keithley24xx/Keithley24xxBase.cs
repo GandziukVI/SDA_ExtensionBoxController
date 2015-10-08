@@ -18,9 +18,6 @@ namespace Keithley24xx
 
         public Keithley24xxBase()
         {
-            _VoltageRanges = new double[] { 0.2, 2.0, 20.0, 100.0 };
-            _CurrentRanges = new double[] { 0.00001, 0.0001, 0.001, 0.01, 0.1, 1.0, 3.0 };
-
             _currentSourceVoltageRange = 0.2;
             _currentMeasurementCurrentRange = 0.00001;
 
