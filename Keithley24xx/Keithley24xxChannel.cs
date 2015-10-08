@@ -13,15 +13,15 @@ namespace Keithley24xx
     {
         private ISourceMeterUnit _device;
 
-        public Keithley24xxChannel(ref IDeviceIO Driver)
+        public Keithley24xxChannel(IDeviceIO Driver)
         {
             _device = new T();
-            Initialize(ref Driver);
+            Initialize(Driver);
         }
 
-        public void Initialize(ref IDeviceIO Driver)
+        public void Initialize(IDeviceIO Driver)
         {
-            _device.Initialize(ref Driver);
+            _device.Initialize(Driver);
         }
 
         public ShapeMode SMU_ShapeMode
