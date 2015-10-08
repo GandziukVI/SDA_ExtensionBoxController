@@ -19,4 +19,21 @@ namespace Keithley24xx
             Channel.Initialize(Driver);
         }
     }
+
+    public class MultichannelKeithley<T> where T : ISourceMeterUnit, new()
+    {
+        private IDeviceIO _driver;
+        public ISourceMeterUnit[] Channels { get; private set; }
+
+        public MultichannelKeithley(IDeviceIO Driver)
+        {
+            _driver = Driver;
+            //var chN = 
+            var type = typeof(T);
+            var attr = (KeithleyAttribute)type.GetCustomAttributes(typeof(KeithleyAttribute), false).FirstOrDefault();
+
+            Channels = new ISourceMeterUnit[attr.ChannelNumber];
+            //Channel.Initialize(Driver);
+        }
+    }
 }

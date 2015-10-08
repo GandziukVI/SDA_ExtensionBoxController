@@ -7,12 +7,25 @@ using System.Threading.Tasks;
 
 namespace Keithley24xx
 {
+
+    [AttributeUsage(AttributeTargets.Class, AllowMultiple=false, Inherited=false)]
+    public class KeithleyAttribute:Attribute
+    {
+        public KeithleyAttribute(int channelNumber)
+        {
+            ChannelNumber = channelNumber;
+        }
+        public int ChannelNumber { get; private set; }
+    }
+
     public enum MATH_StateEnum
     {
         ON,
         OFF
     }
 
+
+    [KeithleyAttribute(2)]
     public class Keithley2400 : Keithley24xxBase
     {
         public Keithley2400()
