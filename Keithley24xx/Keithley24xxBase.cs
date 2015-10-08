@@ -24,7 +24,6 @@ namespace Keithley24xx
             _currentSourceVoltageRange = 0.2;
             _currentMeasurementCurrentRange = 0.00001;
 
-            _VSourceProtectionLimits = new int[] { 10, 20, 30, 40, 50, 60, 70, 80, -1000 };
             _currentVoltageCompliance = 10;
             _currentCurrentCompliance = 0.001;
 
@@ -43,7 +42,7 @@ namespace Keithley24xx
 
         private ShapeMode _currentShapeMode = ShapeMode.ModeNotSet;
         private void _SetShape(ShapeMode mode)
-            {
+        {
             if (mode != _currentShapeMode)
             {
                 _currentShapeMode = mode;
@@ -58,7 +57,7 @@ namespace Keithley24xx
                         break;
                     default:
                         break;
-            }
+                }
             }
         }
 
@@ -103,7 +102,7 @@ namespace Keithley24xx
 
         private SourceMode _currentFixedSourceMode = SourceMode.ModeNotSet;
         private void _SetFixedSourceMode(SourceMode mode)
-            {
+        {
             if (mode != _currentFixedSourceMode)
             {
                 switch (mode)
@@ -120,7 +119,7 @@ namespace Keithley24xx
                         } break;
                     default:
                         break;
-            }
+                }
             }
         }
 
@@ -131,7 +130,7 @@ namespace Keithley24xx
         protected double _currentSourceCurrentRange = 0.00001;
 
         private void _SetSourceRange(double val, SourceMode mode)
-            {
+        {
             switch (mode)
             {
                 case SourceMode.Voltage:
@@ -147,7 +146,7 @@ namespace Keithley24xx
                         {
                             _currentSourceVoltageRange = query;
                             _driver.SendCommandRequest(string.Format(":SOUR:VOLT:RANG {0}", query.ToString(NumberFormatInfo.InvariantInfo)));
-            }
+                        }
                     } break;
                 case SourceMode.Current:
                     {
@@ -163,7 +162,7 @@ namespace Keithley24xx
                         {
                             _currentSourceCurrentRange = query;
                             _driver.SendCommandRequest(string.Format(":SOUR:CURR:RANG {0}", query.ToString(NumberFormatInfo.InvariantInfo)));
-        }
+                        }
                     } break;
                 default:
                     break;
@@ -191,10 +190,10 @@ namespace Keithley24xx
                         {
                             _currentMeasurementVoltageRange = query;
                             _driver.SendCommandRequest(string.Format(":SENS:VOLT:RANG {0}", query.ToString(NumberFormatInfo.InvariantInfo)));
-            }
+                        }
                     } break;
                 case SenseMode.Current:
-            {
+                    {
                         var query = (from range in _CurrentRanges
                                      where range - Math.Abs(val) > 0.0
                                      select new
@@ -207,17 +206,17 @@ namespace Keithley24xx
                         {
                             _currentMeasurementCurrentRange = query;
                             _driver.SendCommandRequest(string.Format(":SENS:CURR:RANG {0}", query.ToString(NumberFormatInfo.InvariantInfo)));
-            }
+                        }
                     } break;
                 default:
                     break;
-        }
+            }
         }
 
         bool _voltageAutorangeState = false;
         bool _currentAutorangeState = false;
         bool _resistanceAutorangeState = false;
-        
+
         private void _SetMeasurementAutoRange(SenseMode mode, bool autorange)
         {
             if (autorange)
@@ -244,7 +243,7 @@ namespace Keithley24xx
                         } break;
                     default:
                         break;
-            }
+                }
             }
             else
             {
@@ -270,8 +269,8 @@ namespace Keithley24xx
                         } break;
                     default:
                         break;
+                }
             }
-        }
         }
 
         private void _SetSourceLevel(double val, SourceMode mode)
@@ -368,7 +367,7 @@ namespace Keithley24xx
                         return _currentCurrentCompliance;
                     default:
                         return double.NaN;
-            }
+                }
             }
             set { SetCompliance(_currentSourceMode, value); }
         }
@@ -404,9 +403,9 @@ namespace Keithley24xx
         {
             get { return _PulseDelay; }
             set
-        {
-                if (_PulseDelay != value)
             {
+                if (_PulseDelay != value)
+                {
                     var val = 0.0;
                     if (value < 0.0)
                         val = 0.0;
@@ -418,10 +417,10 @@ namespace Keithley24xx
                     _driver.SendCommandRequest(string.Format(":SOUR:DEL {0}", val.ToString(NumberFormatInfo.InvariantInfo)));
                 }
             }
-            }
+        }
 
         public int Averaging
-            {
+        {
             get { return _currentAveraging; }
             set { SetAveraging(value); }
         }
@@ -440,7 +439,7 @@ namespace Keithley24xx
                         return _currentResistanceNPLC;
                     default:
                         return double.NaN;
-            }
+                }
             }
             set { SetNPLC(value); }
         }
@@ -452,7 +451,7 @@ namespace Keithley24xx
                 _outpOn = true;
                 _driver.SendCommandRequest(":OUTP ON");
             }
-            }
+        }
 
         public void SwitchOFF()
         {
@@ -463,42 +462,50 @@ namespace Keithley24xx
             }
         }
 
-        protected int[] _VSourceProtectionLimits;
-        protected int _currentVoltageCompliance;
+        protected double _currentVoltageCompliance;
+        protected double _minVoltageCompliance;
+        protected double _maxVoltageCompliance;
+
         protected double _currentCurrentCompliance;
+        protected double _minCurrentCompliance;
+        protected double _maxCurrentCompliance;
 
         public void SetCompliance(SourceMode sourceMode, double compliance)
         {
             switch (sourceMode)
             {
                 case SourceMode.Voltage:
-        {
-                        if (compliance != _currentCurrentCompliance)
-            {
-                            _currentCurrentCompliance = compliance;
-                            _driver.SendCommandRequest(string.Format(":SENS:CURR:PROT {0}", compliance.ToString(NumberFormatInfo.InvariantInfo)));
-            }
+                    {
+                        var _compliance = compliance;
+                        if (compliance < _minCurrentCompliance)
+                            _compliance = _minCurrentCompliance;
+                        else if (compliance > _maxCurrentCompliance)
+                            _compliance = _maxCurrentCompliance;
+
+                        if (_compliance != _currentCurrentCompliance)
+                        {
+                            _currentCurrentCompliance = _compliance;
+                            _driver.SendCommandRequest(string.Format(":SENS:CURR:PROT {0}", _compliance.ToString(NumberFormatInfo.InvariantInfo)));
+                        }
                     } break;
                 case SourceMode.Current:
                     {
-                        var query = (from limit in _VSourceProtectionLimits
-                                     where limit - Math.Abs(compliance) >= 0.0
-                                     select new
-                                     {
-                                         limit,
-                                         distance = limit - Math.Abs(compliance)
-                                     }).OrderBy(p => p.distance).First().limit;
+                        var _compliance = compliance;
+                        if (compliance < _minVoltageCompliance)
+                            _compliance = _minVoltageCompliance;
+                        else if (compliance > _maxVoltageCompliance)
+                            _compliance = _maxVoltageCompliance;
 
-                        if (query != _currentVoltageCompliance)
-            {
-                            _currentVoltageCompliance = query;
-                            _driver.SendCommandRequest(string.Format(":SENS:VOLT:PROT {0}", query.ToString(NumberFormatInfo.InvariantInfo)));
+                        if (_compliance != _currentVoltageCompliance)
+                        {
+                            _currentVoltageCompliance = _compliance;
+                            _driver.SendCommandRequest(string.Format(":SENS:VOLT:PROT {0}", _compliance.ToString(NumberFormatInfo.InvariantInfo)));
                         }
                     } break;
                 default:
                     break;
             }
-            }
+        }
 
         public void SetSourceDelay(double delay)
         {
@@ -528,7 +535,7 @@ namespace Keithley24xx
         public void SetAveraging(int avg)
         {
             if (avg != _currentAveraging)
-        {
+            {
                 _currentAveraging = avg;
 
                 var _avg = avg;
@@ -559,7 +566,7 @@ namespace Keithley24xx
                             var _maxVal = 10.0;
 
                             switch (_currentShapeMode)
-        {
+                            {
                                 case ShapeMode.DC:
                                     _maxVal = 10.0;
                                     break;
@@ -570,15 +577,28 @@ namespace Keithley24xx
                                     break;
                             }
 
-                            var _val = _minVal;
+                            var _val = val;
 
                             if (val < _minVal)
                                 _val = _minVal;
                             else if (val > _maxVal)
                                 _val = _maxVal;
 
-                            _driver.SendCommandRequest(string.Format(":SENS:VOLT:NPLC {0}", _val));
-        }
+                            if(_currentShapeMode == ShapeMode.Pulse)
+                            {
+                                var query = (from range in new double[] { 0.01, 0.02, 0.03, 0.04, 0.05, 0.06, 0.07, 0.08, 0.09, 0.1 }
+                                             where range - Math.Abs(_val) > 0.0
+                                             select new
+                                             {
+                                                 range = range,
+                                                 distance = range - Math.Abs(val)
+                                             }).OrderBy(p => p.distance).First().range;
+
+                                _val = query;
+                            }
+
+                            _driver.SendCommandRequest(string.Format(":SENS:VOLT:NPLC {0}", _val.ToString(NumberFormatInfo.InvariantInfo)));
+                        }
                     } break;
                 case SenseMode.Current:
                     {
@@ -590,7 +610,7 @@ namespace Keithley24xx
                             var _maxVal = 10.0;
 
                             switch (_currentShapeMode)
-        {
+                            {
                                 case ShapeMode.DC:
                                     _maxVal = 10.0;
                                     break;
@@ -608,8 +628,21 @@ namespace Keithley24xx
                             else if (val > _maxVal)
                                 _val = _maxVal;
 
-                            _driver.SendCommandRequest(string.Format(":SENS:CURR:NPLC {0}", _val));
-        }
+                            if (_currentShapeMode == ShapeMode.Pulse)
+                            {
+                                var query = (from range in new double[] { 0.01, 0.02, 0.03, 0.04, 0.05, 0.06, 0.07, 0.08, 0.09, 0.1 }
+                                             where range - Math.Abs(_val) > 0.0
+                                             select new
+                                             {
+                                                 range = range,
+                                                 distance = range - Math.Abs(val)
+                                             }).OrderBy(p => p.distance).First().range;
+
+                                _val = query;
+                            }
+
+                            _driver.SendCommandRequest(string.Format(":SENS:CURR:NPLC {0}", _val.ToString(NumberFormatInfo.InvariantInfo)));
+                        }
                     } break;
                 case SenseMode.Resistance:
                     {
@@ -621,7 +654,7 @@ namespace Keithley24xx
                             var _maxVal = 10.0;
 
                             switch (_currentShapeMode)
-        {
+                            {
                                 case ShapeMode.DC:
                                     _maxVal = 10.0;
                                     break;
@@ -656,7 +689,7 @@ namespace Keithley24xx
             var success = double.TryParse(_driver.RequestQuery(":READ?"), out res);
 
             if (success)
-        {
+            {
                 //_SetMeasurementRange(res, SenseMode.Voltage);
                 return res;
             }
@@ -673,7 +706,7 @@ namespace Keithley24xx
             var success = double.TryParse(_driver.RequestQuery(":READ?"), out res);
 
             if (success)
-        {
+            {
                 //_SetMeasurementRange(res, SenseMode.Current);
                 return res;
             }
@@ -689,7 +722,7 @@ namespace Keithley24xx
                 _currentOhmsMode = mode;
 
                 switch (mode)
-        {
+                {
                     case OhmsMode.Auto:
                         _driver.SendCommandRequest("RES:MODE AUTO");
                         break;
@@ -723,7 +756,7 @@ namespace Keithley24xx
         public void SetAutoZeroMode(AutoZeroMode mode)
         {
             switch (mode)
-        {
+            {
                 case AutoZeroMode.ON:
                     _driver.SendCommandRequest(":SYST:AZER ON");
                     break;
@@ -733,6 +766,6 @@ namespace Keithley24xx
                 default:
                     break;
             }
-        } 
+        }
     }
 }
