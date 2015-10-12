@@ -14,7 +14,6 @@ namespace Keithley24xx
         #region ISourceMeterUnit implementation
 
         private IDeviceIO _driver;
-        protected bool _isInitialized = false;
 
         public Keithley24xxBase()
         {
@@ -34,7 +33,6 @@ namespace Keithley24xx
         public void Initialize(IDeviceIO Driver)
         {
             _driver = Driver;
-            _isInitialized = true;
         }
 
         private ShapeMode _currentShapeMode = ShapeMode.ModeNotSet;
@@ -581,7 +579,7 @@ namespace Keithley24xx
                             else if (val > _maxVal)
                                 _val = _maxVal;
 
-                            if(_currentShapeMode == ShapeMode.Pulse)
+                            if (_currentShapeMode == ShapeMode.Pulse)
                             {
                                 var query = (from range in new double[] { 0.01, 0.02, 0.03, 0.04, 0.05, 0.06, 0.07, 0.08, 0.09, 0.1 }
                                              where range - Math.Abs(_val) > 0.0
