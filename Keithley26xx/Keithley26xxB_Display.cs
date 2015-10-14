@@ -85,7 +85,7 @@ namespace Keithley26xx
             get
             {
                 _driver.SendCommandRequest("displayID = display.screen");
-                var responce = _driver.RequestQuery("print(displayID)").Trim("\r\n\t ".ToCharArray());
+                var responce = _driver.RequestQuery("print(displayID)");
 
                 if (responce == "0" || responce == "display.SMUA")
                     return Keithley26xxBAvailableChannels.SMUA;
@@ -133,14 +133,14 @@ namespace Keithley26xx
             get
             {
                 _driver.SendCommandRequest(string.Format("display{0}LimitFunc = display.smu{0}.limit.func", _channelID));
-                var responce = _driver.RequestQuery(string.Format("print(display{0}LimitFunc)", _channelID)).Trim("\r\n\t ".ToCharArray());
+                var responce = _driver.RequestQuery(string.Format("print(display{0}LimitFunc)", _channelID));
 
                 if (responce == "0" || responce == "display.LIMIT_IV")
                     return Keithley26xxBLimitFunctions.LIMIT_IV;
                 else if (responce == "1" || responce == "display.LIMIT_P")
                     return Keithley26xxBLimitFunctions.LIMIT_P;
                 else
-                    throw new Exception("Can't read smu{0} limit function");
+                    throw new Exception(string.Format("Can't read smu{0} limit function", _channelID));
             }
             set
             {
@@ -158,7 +158,23 @@ namespace Keithley26xx
         {
             get
             {
-                _driver.SendCommandRequest(String.Format("smu{0}MeasureFunc = display.smu{0}"));
+                _driver.SendCommandRequest(string.Format("smu{0}MeasureFunc = display.smu{0}.measure.func", _channelID));
+                var responce = _driver.RequestQuery(string.Format("print(smu{0}MeasureFunc)", _channelID));
+
+                if (responce == "0" || responce == "display.MEASURE_DCAMPS")
+                    return Keithley26xxBMeasureFunctions.MEASURE_DCAMPS;
+                else if (responce == "1" || responce == "display.MEASURE_DCVOLTS")
+                    return Keithley26xxBMeasureFunctions.MEASURE_DCVOLTS;
+                else if (responce == "2" || responce == "MEASURE_OHMS")
+                    return Keithley26xxBMeasureFunctions.MEASURE_OHMS;
+                else if (responce == "3" || responce == "display.MEASURE_WATTS")
+                    return Keithley26xxBMeasureFunctions.MEASURE_WATTS;
+                else
+                    throw new Exception(string.Format("Can't read smu{0} measure function!", _channelID));
+            }
+            set
+            {
+                _driver.SendCommandRequest(string.Format("display.smu{0}.measure.func = {1}", _channelID, (int)value));
             }
         }
     }
