@@ -20,9 +20,144 @@ namespace Keithley26xx
 
         private IDeviceIO _driver;
 
-        public Keithley26xxChannelBase()
+        public Keithley26xxChannelBase(IDeviceIO Driver, string channelIdentifier)
         {
+            _driver = Driver;
             _SetBeeperEnabled(true);
+
+            ChannelIdentifier = channelIdentifier;
+
+            _LoadDeviceFunctions();
+        }
+
+        private void _LoadDeviceFunctions()
+        {
+            var scriptFormat = string.Concat(
+                "reset()\n",
+                "DeviceFunctionsChannel{0} = nil\n",
+                
+                "loadandrunscript DeviceFunctionsChannel{0}\n",
+                
+                "result = nil\n",
+
+                "current_NAvg = nil\n",
+                "function MeasureVoltage(nAvg)\n",
+                    "_nAvg = tonumber(nAvg)\n",
+                    "if _nAvg ~= current_NAvg then\n",
+                        "current_NAvg = _nAvg",
+                        
+                        "if _nAvg < 1 then\n",
+                            "_nAvg = 1\n",
+                        "elseif _nAvg > 9999 then\n",
+                            "_nAvg = 9999\n",
+                        "end\n",
+                        
+                        "smu{0}.measure.count = _nAvg\n",
+                    "end\n",
+                    
+                    "smu{0}.nvbuffer1.clear()\n",
+                    "smu{0}.measure.v(smu{0}.nvbuffer1)\n",
+
+                   "loopIterator = 1\n",
+                   "result = 0.0\n",
+                   "while smu{0}.nvbuffer1[loopIterator] do\n",
+                       "result = result + smu{0}.nvbuffer1[loopIterator]\n",
+                       "loopIterator = loopIterator + 1\n",
+                    "end\n",
+
+                    "result = result / _nAvg\n",
+
+                    "print(result)",
+                "end\n",
+                
+                "function MeasureCurrent(nAvg)\n",
+                    "_nAvg = tonumber(nAvg)\n",
+                    "if _nAvg ~= current_NAvg then\n",
+                        "current_NAvg = _nAvg",
+                        
+                        "if _nAvg < 1 then\n",
+                            "_nAvg = 1\n",
+                        "elseif _nAvg > 9999 then\n",
+                            "_nAvg = 9999\n",
+                        "end\n",
+                        
+                        "smu{0}.measure.count = _nAvg\n",
+                    "end\n",
+                    
+                    "smu{0}.nvbuffer1.clear()\n",
+                    "smu{0}.measure.i(smu{0}.nvbuffer1)\n",
+
+                   "loopIterator = 1\n",
+                   "result = 0.0\n",
+                   "while smu{0}.nvbuffer1[loopIterator] do\n",
+                       "result = result + smu{0}.nvbuffer1[loopIterator]\n",
+                       "loopIterator = loopIterator + 1\n",
+                    "end\n",
+
+                    "result = result / _nAvg\n",
+
+                    "print(result)",
+                "end\n",
+                
+                "function MeasureResistance(nAvg)\n",
+                    "_nAvg = tonumber(nAvg)\n",
+                    "if _nAvg ~= current_NAvg then\n",
+                        "current_NAvg = _nAvg",
+
+                        "if _nAvg < 1 then\n",
+                            "_nAvg = 1\n",
+                        "elseif _nAvg > 9999 then\n",
+                            "_nAvg = 9999\n",
+                        "end\n",
+
+                        "smu{0}.measure.count = _nAvg\n",
+                    "end\n",
+                    
+                    "smu{0}.nvbuffer1.clear()\n",
+                    "smu{0}.measure.r(smu{0}.nvbuffer1)\n",
+
+                   "loopIterator = 1\n",
+                   "result = 0.0\n",
+                   "while smu{0}.nvbuffer1[loopIterator] do\n",
+                       "result = result + smu{0}.nvbuffer1[loopIterator]\n",
+                       "loopIterator = loopIterator + 1\n",
+                    "end\n",
+
+                    "result = result / _nAvg\n",
+
+                    "print(result)",
+                "end\n",
+                
+                "function MeasureConductance(nAvg)\n",
+                    "_nAvg = tonumber(nAvg)\n",
+                    "if _nAvg ~= current_NAvg then\n",
+                        "current_NAvg = _nAvg",
+
+                        "if _nAvg < 1 then\n",
+                            "_nAvg = 1\n",
+                        "elseif _nAvg > 9999 then\n",
+                            "_nAvg = 9999\n",
+                        "end\n",
+
+                        "smu{0}.measure.count = _nAvg\n",
+                    "end\n",
+                    
+                    "smu{0}.nvbuffer1.clear()\n",
+                    "smu{0}.measure.r(smu{0}.nvbuffer1)\n",
+
+                   "loopIterator = 1\n",
+                   "result = 0.0\n",
+                   "while smu{0}.nvbuffer1[loopIterator] do\n",
+                       "result = result + smu{0}.nvbuffer1[loopIterator]\n",
+                       "loopIterator = loopIterator + 1\n",
+                    "end\n",
+
+                    "result = 1.0 / (result / _nAvg)\n",
+
+                    "print(result)",
+                "end\n");
+
+            _driver.SendCommandRequest(string.Format(scriptFormat, ChannelIdentifier));
         }
 
         #region Beeper functionality
@@ -81,7 +216,7 @@ namespace Keithley26xx
         {
             get
             {
-                throw new NotImplementedException();
+                return MeasureVoltage();
             }
             set
             {
@@ -93,7 +228,7 @@ namespace Keithley26xx
         {
             get
             {
-                throw new NotImplementedException();
+                return MeasureCurrent();
             }
             set
             {
@@ -103,7 +238,7 @@ namespace Keithley26xx
 
         public double Resistance
         {
-            get { throw new NotImplementedException(); }
+            get { return MeasureResistance(); }
         }
 
         public double Compliance
@@ -146,23 +281,24 @@ namespace Keithley26xx
         {
             get
             {
-                throw new NotImplementedException();
+                return _currentAveraging;
             }
             set
             {
-                throw new NotImplementedException();
+                SetAveraging(value);
             }
         }
 
+        private double _NPLC = 1.0;
         public double NPLC
         {
             get
             {
-                throw new NotImplementedException();
+                return _NPLC;
             }
             set
             {
-                throw new NotImplementedException();
+                _NPLC = value;
             }
         }
 
@@ -196,9 +332,10 @@ namespace Keithley26xx
             throw new NotImplementedException();
         }
 
+        private int _currentAveraging = 10;
         public void SetAveraging(int avg)
         {
-            throw new NotImplementedException();
+            _currentAveraging = avg;
         }
 
         public void SetNPLC(double val)
@@ -208,17 +345,41 @@ namespace Keithley26xx
 
         public double MeasureVoltage()
         {
-            throw new NotImplementedException();
+            var responce = _driver.RequestQuery(string.Format("MeasureVoltage({0})", _currentAveraging));
+
+            var result = 0.0;
+            var success = double.TryParse(responce, NumberStyles.Float, CultureInfo.InvariantCulture, out result);
+
+            if (success)
+                return result;
+            else
+                throw new Exception("Can't read voltage!");
         }
 
         public double MeasureCurrent()
         {
-            throw new NotImplementedException();
+            var responce = _driver.RequestQuery(string.Format("MeasureCurrent({0})", _currentAveraging));
+
+            var result = 0.0;
+            var success = double.TryParse(responce, NumberStyles.Float, CultureInfo.InvariantCulture, out result);
+
+            if (success)
+                return result;
+            else
+                throw new Exception("Can't read current!");
         }
 
         public double MeasureResistance()
         {
-            throw new NotImplementedException();
+            var responce = _driver.RequestQuery(string.Format("MeasureResistance({0})", _currentAveraging));
+
+            var result = 0.0;
+            var success = double.TryParse(responce, NumberStyles.Float, CultureInfo.InvariantCulture, out result);
+
+            if (success)
+                return result;
+            else
+                throw new Exception("Can't read resistance!");
         }
     }
 }
