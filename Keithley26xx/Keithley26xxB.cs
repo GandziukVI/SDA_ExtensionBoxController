@@ -13,12 +13,12 @@ namespace Keithley26xx
         Channel_B = 1
     }
 
-    public class Keithley26xxB<T> : IEnumerable<T>
+    public class Keithley26xxB<T> : IEnumerable<ISourceMeterUnit>
         where T : Keithley26xxChannelBase, new()
     {
         private IDeviceIO _driver;
         private int _numberOfChannels;
-        public T[] ChannelCollection { get; private set; }
+        public ISourceMeterUnit[] ChannelCollection { get; private set; }
 
         public Keithley26xxB(IDeviceIO Driver)
         {
@@ -29,7 +29,7 @@ namespace Keithley26xx
             if (_numberOfChannels > 2)
                 throw new ArgumentException("The amount of channels can't more than two for supported models!");
 
-            ChannelCollection = new T[_numberOfChannels];
+            ChannelCollection = new ISourceMeterUnit[_numberOfChannels];
 
             for (int i = 0; i < _numberOfChannels; i++)
             {
@@ -42,7 +42,7 @@ namespace Keithley26xx
             }
         }
 
-        public T this[Keithley26xxB_Channels index]
+        public ISourceMeterUnit this[Keithley26xxB_Channels index]
         {
             get
             {
@@ -57,7 +57,7 @@ namespace Keithley26xx
             }
         }
 
-        public T this[int index]
+        public ISourceMeterUnit this[int index]
         {
             get
             {
@@ -72,7 +72,7 @@ namespace Keithley26xx
             }
         }
 
-        public IEnumerator<T> GetEnumerator()
+        public IEnumerator<ISourceMeterUnit> GetEnumerator()
         {
             for (int index = 0; index < ChannelCollection.Length; index++)
             {
