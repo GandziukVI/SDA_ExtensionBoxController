@@ -35,6 +35,11 @@ namespace Keithley24xx
             _driver = Driver;
         }
 
+        public void Initialize(IDeviceIO Driver, string channelID = "Not supported for Keithley24xx series!")
+        {
+            _driver = Driver;
+        }
+
         private ShapeMode _currentShapeMode = ShapeMode.ModeNotSet;
         private void _SetShape(ShapeMode mode)
         {
@@ -92,7 +97,11 @@ namespace Keithley24xx
         public SourceMode SMU_SourceMode
         {
             get { return _currentSourceMode; }
-            set { _SetSourceMode(value); }
+            set 
+            {
+                _currentSourceMode = value;
+                _SetSourceMode(value); 
+            }
         }
 
         private SourceMode _currentFixedSourceMode = SourceMode.ModeNotSet;
@@ -457,11 +466,11 @@ namespace Keithley24xx
             }
         }
 
-        protected double _currentVoltageCompliance;
+        private double _currentVoltageCompliance;
         protected double _minVoltageCompliance;
         protected double _maxVoltageCompliance;
 
-        protected double _currentCurrentCompliance;
+        private double _currentCurrentCompliance;
         protected double _minCurrentCompliance;
         protected double _maxCurrentCompliance;
 

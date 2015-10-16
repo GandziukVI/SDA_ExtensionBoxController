@@ -10,24 +10,12 @@ namespace Keithley24xx
     public class Keithley24xx<T> where T : ISourceMeterUnit, new()
     {
         private IDeviceIO _driver;
-        public ISourceMeterUnit Channel { get; private set; }
+        public T Channel { get; private set; }
 
         public Keithley24xx(IDeviceIO Driver)
         {
             _driver = Driver;
             Channel = new T();
-            Channel.Initialize(Driver);
-        }
-    }
-
-    public class MultichannelKeithley<T> where T : ISourceMeterUnit, new()
-    {
-        private IDeviceIO _driver;
-        public T Channel { get; private set; }
-
-        public MultichannelKeithley(IDeviceIO Driver)
-        {
-            _driver = Driver;
             Channel.Initialize(Driver);
         }
     }

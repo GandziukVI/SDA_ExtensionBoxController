@@ -14,147 +14,303 @@ namespace Keithley26xx
         _2400_Hz = 2400
     }
 
+    [AttributeUsage(AttributeTargets.Class, AllowMultiple = false, Inherited = true)]
+    public class NumberOfChannelsAttribute : Attribute
+    {
+        public int NumberOfChannels { get; protected set; }
+
+        public NumberOfChannelsAttribute(int numberOfChannels)
+            : base()
+        {
+            NumberOfChannels = numberOfChannels;
+        }
+    }
+
+    [NumberOfChannels(1)]
     public class Keithley26xxChannelBase : ISourceMeterUnit
     {
+        private int _numberOfChannels = 1;
+        public int NumberOfChannels
+        {
+            get { return _numberOfChannels; }
+            set
+            {
+                if (value > 2)
+                    throw new ArgumentException("Unavailable number of channels!");
+
+                _numberOfChannels = value;
+            }
+        }
+
         public string ChannelIdentifier { get; protected set; }
 
         private IDeviceIO _driver;
-
-        public Keithley26xxChannelBase(IDeviceIO Driver, string channelIdentifier)
-        {
-            _driver = Driver;
-            _SetBeeperEnabled(true);
-
-            ChannelIdentifier = channelIdentifier;
-
-            _LoadDeviceFunctions();
-        }
+        private Keithley26xxB_Display _display;
 
         private void _LoadDeviceFunctions()
         {
             var scriptFormat = string.Concat(
                 "reset()\n",
                 "DeviceFunctionsChannel{0} = nil\n",
-                
-                "loadandrunscript DeviceFunctionsChannel{0}\n",
-                
-                "result = nil\n",
 
-                "current_NAvg = nil\n",
-                "function MeasureVoltage(nAvg)\n",
-                    "_nAvg = tonumber(nAvg)\n",
-                    "if _nAvg ~= current_NAvg then\n",
-                        "current_NAvg = _nAvg",
-                        
-                        "if _nAvg < 1 then\n",
-                            "_nAvg = 1\n",
-                        "elseif _nAvg > 9999 then\n",
-                            "_nAvg = 9999\n",
-                        "end\n",
-                        
-                        "smu{0}.measure.count = _nAvg\n",
+                "loadandrunscript DeviceFunctionsChannel{0}\n",
+
+                "result_{0} = nil\n",
+
+                "currentNAvg_smu_{0} = smu{0}.measure.count\n",
+                "currentNPLC_smu_{0} = smu{0}.measure.nplc\n",
+                "currentDelay_smu_{0} = smu{0}.measure.delay\n",
+
+                "currentCurrentLimit_smu_{0} = smu{0}.source.limiti\n",
+                "currentVoltageLimit_smu_{0} = smu{0}.source.limitv\n",
+                "currentOutputFunc_smu_{0} = smu{0}.source.func\n",
+
+                "function SetVoltage_smu{0}(srcVolt, srcLimitI)\n",
+                    "_srcVolt = tonumber(srcVolt)\n",
+                    "_srcLimitI = tonumber(srcLimitI)\n",
+
+                    "if currentOutputFunc_smu_{0} ~= smu{0}.OUTPUT_DCVOLTS then\n",
+                        "currentOutputFunc_smu_{0} = smu{0}.OUTPUT_DCVOLTS\n",
+                        "smu{0}.source.func = smu{0}.OUTPUT_DCVOLTS\n",
                     "end\n",
-                    
+
+                    "if currentCurrentLimit_smu_{0} ~= _srcLimitI then\n",
+                        "currentCurrentLimit_smu_{0} = _srcLimitI\n",
+                        "smu{0}.source.limiti = _srcLimitI\n",
+                    "end\n",
+
+                    "smu{0}.source.levelv = _srcVolt\n",
+                "end\n",
+
+                "function MeasureVoltage_smu{0}(devAvg, devNPLC, devDelay)\n",
+                    "_devAvg = tonumber(devAvg)\n",
+                    "_devNPLC = tonumber(devNPLC)\n",
+                    "_devDelay = tonumber(devDelay)\n",
+
+                    "if currentNPLC_smu_{0} ~= _devNPLC then\n",
+                        "currentNPLC_smu_{0} = _devNPLC\n",
+
+                        "if _devNPLC < 0.01 then\n",
+                            "_devNPLC = 0.01\n",
+                        "elseif _devNPLC > 25.0 then\n",
+                            "_devNPLC = 25.0\n",
+                        "end\n",
+
+                        "smu{0}.measure.nplc = _devNPLC\n",
+                    "end\n",
+
+                    "if currentDelay_smu_{0} ~= _devDelay then\n",
+                        "currentDelay_smu_{0} = _devDelay",
+
+                        "if _devDelay == 0.0 then\n",
+                            "smu{0}.measure.delay = smu{0}.DELAY_AUTO\n",
+                        "else smu{0}.measure.delay = _devDelay\n",
+                        "end\n",
+                    "end\n",
+
+                    "if _devAvg ~= currentNAvg_smu_{0} then\n",
+                        "currentNAvg_smu_{0} = _devAvg\n",
+
+                        "if  _devAvg < 1 then\n",
+                            "_devAvg = 1\n",
+                        "elseif  _devAvg > 9999 then\n",
+                            "_devAvg = 9999\n",
+                        "end\n",
+
+                        "smu{0}.measure.count = _devAvg\n",
+                    "end\n",
+
                     "smu{0}.nvbuffer1.clear()\n",
                     "smu{0}.measure.v(smu{0}.nvbuffer1)\n",
 
-                   "loopIterator = 1\n",
-                   "result = 0.0\n",
-                   "while smu{0}.nvbuffer1[loopIterator] do\n",
-                       "result = result + smu{0}.nvbuffer1[loopIterator]\n",
-                       "loopIterator = loopIterator + 1\n",
+                    "loopIterator = 1\n",
+                    "result_{0} = 0.0\n",
+                    "while smu{0}.nvbuffer1[loopIterator] do\n",
+                        "result_{0} = result_{0} + smu{0}.nvbuffer1[loopIterator]\n",
+                        "loopIterator = loopIterator + 1\n",
                     "end\n",
 
-                    "result = result / _nAvg\n",
+                    "result_{0} = result_{0} / _devAvg\n",
 
-                    "print(result)",
+                    "print(result_{0})\n",
                 "end\n",
-                
-                "function MeasureCurrent(nAvg)\n",
-                    "_nAvg = tonumber(nAvg)\n",
-                    "if _nAvg ~= current_NAvg then\n",
-                        "current_NAvg = _nAvg",
-                        
-                        "if _nAvg < 1 then\n",
-                            "_nAvg = 1\n",
-                        "elseif _nAvg > 9999 then\n",
-                            "_nAvg = 9999\n",
-                        "end\n",
-                        
-                        "smu{0}.measure.count = _nAvg\n",
+
+                "function SetCurrent_smu{0}(srcCurr, srcLimitV)\n",
+                    "_srcCurr = tonumber(srcCurr)\n",
+                    "_srcLimitV = tonumber(srcLimitV)\n",
+
+                    "if currentOutputFunc_smu_{0} ~= smu{0}.OUTPUT_DCAMPS then\n",
+                        "currentOutputFunc_smu_{0} = smu{0}.OUTPUT_DCAMPS\n",
+                        "smu{0}.source.func = smu{0}.OUTPUT_DCAMPS\n",
                     "end\n",
-                    
+
+                    "if currentVoltageLimit_smu_{0} ~= _srcLimitV then\n",
+                        "currentVoltageLimit_smu_{0} = _srcLimitV\n",
+                        "smu{0}.source.limitv = _srcLimitV\n",
+                    "end\n",
+
+                    "smu{0}.source.leveli = _srcCurr\n",
+                "end\n",
+
+                "function MeasureCurrent_smu{0}(devAvg, devNPLC, devDelay)\n",
+                    "_devAvg = tonumber(devAvg)\n",
+                    "_devNPLC = tonumber(devNPLC)\n",
+                    "_devDelay = tonumber(devDelay)\n",
+
+                    "if currentNPLC_smu_{0} ~= _devNPLC then\n",
+                        "currentNPLC_smu_{0} = _devNPLC\n",
+
+                        "if _devNPLC < 0.01 then\n",
+                            "_devNPLC = 0.01\n",
+                        "elseif _devNPLC > 25.0 then\n",
+                            "_devNPLC = 25.0\n",
+                        "end\n",
+
+                        "smu{0}.measure.nplc = _devNPLC\n",
+                    "end\n",
+
+                    "if currentDelay_smu_{0} ~= _devDelay then\n",
+                        "currentDelay_smu_{0} = _devDelay",
+
+                        "if _devDelay == 0.0 then\n",
+                            "smu{0}.measure.delay = smu{0}.DELAY_AUTO\n",
+                        "else smu{0}.measure.delay = _devDelay\n",
+                        "end\n",
+                    "end\n",
+
+                    "if _devAvg ~= currentNAvg_smu_{0} then\n",
+                        "currentNAvg_smu_{0} = _devAvg\n",
+
+                        "if  _devAvg < 1 then\n",
+                            "_devAvg = 1\n",
+                        "elseif  _devAvg > 9999 then\n",
+                            "_devAvg = 9999\n",
+                        "end\n",
+
+                        "smu{0}.measure.count = _devAvg\n",
+                    "end\n",
+
                     "smu{0}.nvbuffer1.clear()\n",
                     "smu{0}.measure.i(smu{0}.nvbuffer1)\n",
 
-                   "loopIterator = 1\n",
-                   "result = 0.0\n",
-                   "while smu{0}.nvbuffer1[loopIterator] do\n",
-                       "result = result + smu{0}.nvbuffer1[loopIterator]\n",
-                       "loopIterator = loopIterator + 1\n",
+                    "loopIterator = 1\n",
+                    "result_{0} = 0.0\n",
+                    "while smu{0}.nvbuffer1[loopIterator] do\n",
+                        "result_{0} = result_{0} + smu{0}.nvbuffer1[loopIterator]\n",
+                        "loopIterator = loopIterator + 1\n",
                     "end\n",
 
-                    "result = result / _nAvg\n",
+                    "result_{0} = result_{0} / _devAvg\n",
 
-                    "print(result)",
+                    "print(result_{0})\n",
                 "end\n",
-                
-                "function MeasureResistance(nAvg)\n",
-                    "_nAvg = tonumber(nAvg)\n",
-                    "if _nAvg ~= current_NAvg then\n",
-                        "current_NAvg = _nAvg",
 
-                        "if _nAvg < 1 then\n",
-                            "_nAvg = 1\n",
-                        "elseif _nAvg > 9999 then\n",
-                            "_nAvg = 9999\n",
+                "function MeasureResistance_smu{0}(devAvg, devNPLC, devDelay)\n",
+                    "_devAvg = tonumber(devAvg)\n",
+                    "_devNPLC = tonumber(devNPLC)\n",
+                    "_devDelay = tonumber(devDelay)\n",
+
+                    "if currentNPLC_smu_{0} ~= _devNPLC then\n",
+                        "currentNPLC_smu_{0} = _devNPLC\n",
+
+                        "if _devNPLC < 0.01 then\n",
+                            "_devNPLC = 0.01\n",
+                        "elseif _devNPLC > 25.0 then\n",
+                            "_devNPLC = 25.0\n",
                         "end\n",
 
-                        "smu{0}.measure.count = _nAvg\n",
+                        "smu{0}.measure.nplc = _devNPLC\n",
                     "end\n",
-                    
+
+                    "if currentDelay_smu_{0} ~= _devDelay then\n",
+                        "currentDelay_smu_{0} = _devDelay",
+
+                        "if _devDelay == 0.0 then\n",
+                            "smu{0}.measure.delay = smu{0}.DELAY_AUTO\n",
+                        "else smu{0}.measure.delay = _devDelay\n",
+                        "end\n",
+                    "end\n",
+
+                    "if _devAvg ~= currentNAvg_smu_{0} then\n",
+                        "currentNAvg_smu_{0} = _devAvg\n",
+
+                        "if  _devAvg < 1 then\n",
+                            "_devAvg = 1\n",
+                        "elseif  _devAvg > 9999 then\n",
+                            "_devAvg = 9999\n",
+                        "end\n",
+
+                        "smu{0}.measure.count = _devAvg\n",
+                    "end\n",
+
                     "smu{0}.nvbuffer1.clear()\n",
                     "smu{0}.measure.r(smu{0}.nvbuffer1)\n",
 
-                   "loopIterator = 1\n",
-                   "result = 0.0\n",
-                   "while smu{0}.nvbuffer1[loopIterator] do\n",
-                       "result = result + smu{0}.nvbuffer1[loopIterator]\n",
-                       "loopIterator = loopIterator + 1\n",
+                    "loopIterator = 1\n",
+                    "result_{0} = 0.0\n",
+                    "while smu{0}.nvbuffer1[loopIterator] do\n",
+                        "result_{0} = result_{0} + smu{0}.nvbuffer1[loopIterator]\n",
+                        "loopIterator = loopIterator + 1\n",
                     "end\n",
 
-                    "result = result / _nAvg\n",
+                    "result_{0} = result_{0} / _devAvg\n",
 
-                    "print(result)",
+                    "print(result_{0})\n",
                 "end\n",
-                
-                "function MeasureConductance(nAvg)\n",
-                    "_nAvg = tonumber(nAvg)\n",
-                    "if _nAvg ~= current_NAvg then\n",
-                        "current_NAvg = _nAvg",
 
-                        "if _nAvg < 1 then\n",
-                            "_nAvg = 1\n",
-                        "elseif _nAvg > 9999 then\n",
-                            "_nAvg = 9999\n",
+                "function MeasureConductance_smu{0}(devAvg, devNPLC, devDelay)\n",
+                    "_devAvg = tonumber(devAvg)\n",
+                    "_devNPLC = tonumber(devNPLC)\n",
+                    "_devDelay = tonumber(devDelay)\n",
+
+                    "if currentNPLC_smu_{0} ~= _devNPLC then\n",
+                        "currentNPLC_smu_{0} = _devNPLC\n",
+
+                        "if _devNPLC < 0.01 then\n",
+                            "_devNPLC = 0.01\n",
+                        "elseif _devNPLC > 25.0 then\n",
+                            "_devNPLC = 25.0\n",
                         "end\n",
 
-                        "smu{0}.measure.count = _nAvg\n",
+                        "smu{0}.measure.nplc = _devNPLC\n",
                     "end\n",
-                    
+
+                    "if currentDelay_smu_{0} ~= _devDelay then\n",
+                        "currentDelay_smu_{0} = _devDelay",
+
+                        "if _devDelay == 0.0 then\n",
+                            "smu{0}.measure.delay = smu{0}.DELAY_AUTO\n",
+                        "else smu{0}.measure.delay = _devDelay\n",
+                        "end\n",
+                    "end\n",
+
+                    "if _devAvg ~= currentNAvg_smu_{0} then\n",
+                        "currentNAvg_smu_{0} = _devAvg\n",
+
+                        "if  _devAvg < 1 then\n",
+                            "_devAvg = 1\n",
+                        "elseif  _devAvg > 9999 then\n",
+                            "_devAvg = 9999\n",
+                        "end\n",
+
+                        "smu{0}.measure.count = _devAvg\n",
+                    "end\n",
+
                     "smu{0}.nvbuffer1.clear()\n",
                     "smu{0}.measure.r(smu{0}.nvbuffer1)\n",
 
-                   "loopIterator = 1\n",
-                   "result = 0.0\n",
-                   "while smu{0}.nvbuffer1[loopIterator] do\n",
-                       "result = result + smu{0}.nvbuffer1[loopIterator]\n",
-                       "loopIterator = loopIterator + 1\n",
+                    "loopIterator = 1\n",
+                    "result_{0} = 0.0\n",
+                    "while smu{0}.nvbuffer1[loopIterator] do\n",
+                        "result_{0} = result_{0} + smu{0}.nvbuffer1[loopIterator]\n",
+                        "loopIterator = loopIterator + 1\n",
                     "end\n",
 
-                    "result = 1.0 / (result / _nAvg)\n",
+                    "result_{0} = 1.0 / (result_{0} / _devAvg)\n",
 
-                    "print(result)",
+                    "print(result_{0})\n",
+                "end\n",
+
                 "end\n");
 
             _driver.SendCommandRequest(string.Format(scriptFormat, ChannelIdentifier));
@@ -185,7 +341,21 @@ namespace Keithley26xx
 
         public void Initialize(IDeviceIO Driver)
         {
+            Initialize(Driver, "a");
+        }
+
+        public void Initialize(IDeviceIO Driver, string channelID)
+        {
             _driver = Driver;
+            _display = new Keithley26xxB_Display(ref Driver, ChannelIdentifier);
+            _SetBeeperEnabled(true);
+
+            _currentMeasureFunction = Keithley26xxBMeasureFunctions.MEASURE_DCAMPS;
+            _display.smuX.measure.func = Keithley26xxBMeasureFunctions.MEASURE_DCAMPS;
+
+            ChannelIdentifier = channelID;
+
+            _LoadDeviceFunctions();
         }
 
         public ShapeMode SMU_ShapeMode
@@ -200,15 +370,16 @@ namespace Keithley26xx
             }
         }
 
+        private SourceMode _currentSourceMode = SourceMode.ModeNotSet;
         public SourceMode SMU_SourceMode
         {
             get
             {
-                throw new NotImplementedException();
+                return _currentSourceMode;
             }
             set
             {
-                throw new NotImplementedException();
+                _currentSourceMode = value;
             }
         }
 
@@ -220,7 +391,7 @@ namespace Keithley26xx
             }
             set
             {
-                throw new NotImplementedException();
+                SetSourceVoltage(value);
             }
         }
 
@@ -232,7 +403,7 @@ namespace Keithley26xx
             }
             set
             {
-                throw new NotImplementedException();
+                SetSourceCurrent(value);
             }
         }
 
@@ -245,12 +416,17 @@ namespace Keithley26xx
         {
             get
             {
-                throw new NotImplementedException();
+                switch (_currentSourceMode)
+                {
+                    case SourceMode.Voltage:
+                        return _currentVoltageCompliance;
+                    case SourceMode.Current:
+                        return _currentCurrentCompliance;
+                    default:
+                        return double.NaN;
+                }
             }
-            set
-            {
-                throw new NotImplementedException();
-            }
+            set { SetCompliance(_currentSourceMode, value); }
         }
 
         public double PulseWidth
@@ -289,47 +465,123 @@ namespace Keithley26xx
             }
         }
 
-        private double _NPLC = 1.0;
+        private double _currentNPLC = 1.0;
         public double NPLC
         {
             get
             {
-                return _NPLC;
+                return _currentNPLC;
             }
             set
             {
-                _NPLC = value;
+                _currentNPLC = value;
             }
         }
 
+        private bool _outpOn = false;
         public void SwitchON()
         {
-            throw new NotImplementedException();
+            if (_outpOn == false)
+            {
+                _outpOn = true;
+                _driver.SendCommandRequest(string.Format("smu{0}.source.output = smu{0}.OUTPUT_ON", ChannelIdentifier));
+                Beep(0.5, BeeperFrequencyEnum._2400_Hz);
+            }
         }
 
         public void SwitchOFF()
         {
-            throw new NotImplementedException();
+            if (_outpOn == true)
+            {
+                _outpOn = false;
+                _driver.SendCommandRequest(string.Format("smu{0}.source.output = smu{0}.OUTPUT_OFF", ChannelIdentifier));
+                Beep(0.5, BeeperFrequencyEnum._2400_Hz);
+            }
         }
+
+        private double _currentVoltageCompliance;
+        protected double _minVoltageCompliance;
+        protected double _maxVoltageCompliance;
+
+        private double _currentCurrentCompliance;
+        protected double _minCurrentCompliance;
+        protected double _maxCurrentCompliance;
 
         public void SetCompliance(SourceMode sourceMode, double compliance)
         {
-            throw new NotImplementedException();
+            switch (sourceMode)
+            {
+                case SourceMode.Voltage:
+                    {
+                        var _compliance = compliance;
+                        if (compliance < _minCurrentCompliance)
+                            _compliance = _minCurrentCompliance;
+                        else if (compliance > _maxCurrentCompliance)
+                            _compliance = _maxCurrentCompliance;
+
+                        if (_compliance != _currentCurrentCompliance)
+                            _currentCurrentCompliance = _compliance;
+                    } break;
+                case SourceMode.Current:
+                    {
+                        var _compliance = compliance;
+                        if (compliance < _minVoltageCompliance)
+                            _compliance = _minVoltageCompliance;
+                        else if (compliance > _maxVoltageCompliance)
+                            _compliance = _maxVoltageCompliance;
+
+                        if (_compliance != _currentVoltageCompliance)
+                            _currentVoltageCompliance = _compliance;
+                    } break;
+                default:
+                    break;
+            }
         }
 
+        private double _currentDelay = 0.0;
         public void SetSourceDelay(double delay)
         {
-            throw new NotImplementedException();
+            _currentDelay = delay;
         }
 
+        private Keithley26xxBLimitFunctions _currentLimitFunction;
+
+        protected double minVoltageVal;
+        protected double maxVoltageVal;
         public void SetSourceVoltage(double val)
         {
-            throw new NotImplementedException();
+            if (_currentLimitFunction != Keithley26xxBLimitFunctions.LIMIT_IV)
+            {
+                _currentLimitFunction = Keithley26xxBLimitFunctions.LIMIT_IV;
+                _display.smuX.limit.func = Keithley26xxBLimitFunctions.LIMIT_IV;
+            }
+
+            var toSet = val;
+            if (val < minVoltageVal)
+                toSet = minVoltageVal;
+            else if (val > maxVoltageVal)
+                toSet = maxVoltageVal;
+
+            _driver.SendCommandRequest(string.Format("SetVoltage_smu{0}({1}, {2})", ChannelIdentifier, toSet.ToString(CultureInfo.InvariantCulture), _currentCurrentCompliance.ToString(CultureInfo.InvariantCulture)));
         }
 
+        protected double minCurrentVal;
+        protected double maxCurrentVal;
         public void SetSourceCurrent(double val)
         {
-            throw new NotImplementedException();
+            if (_currentLimitFunction != Keithley26xxBLimitFunctions.LIMIT_IV)
+            {
+                _currentLimitFunction = Keithley26xxBLimitFunctions.LIMIT_IV;
+                _display.smuX.limit.func = Keithley26xxBLimitFunctions.LIMIT_IV;
+            }
+
+            var toSet = val;
+            if (val < minCurrentVal)
+                toSet = minCurrentVal;
+            else if (val > maxCurrentVal)
+                toSet = maxCurrentVal;
+
+            _driver.SendCommandRequest(string.Format("SetCurrent_smu{0}({1}, {2})", ChannelIdentifier, toSet.ToString(CultureInfo.InvariantCulture), _currentVoltageCompliance.ToString(CultureInfo.InvariantCulture)));
         }
 
         private int _currentAveraging = 10;
@@ -343,9 +595,17 @@ namespace Keithley26xx
             throw new NotImplementedException();
         }
 
+        private Keithley26xxBMeasureFunctions _currentMeasureFunction;
+
         public double MeasureVoltage()
         {
-            var responce = _driver.RequestQuery(string.Format("MeasureVoltage({0})", _currentAveraging));
+            if (_currentMeasureFunction != Keithley26xxBMeasureFunctions.MEASURE_DCVOLTS)
+            {
+                _currentMeasureFunction = Keithley26xxBMeasureFunctions.MEASURE_DCVOLTS;
+                _display.smuX.measure.func = Keithley26xxBMeasureFunctions.MEASURE_DCVOLTS;
+            }
+
+            var responce = _driver.RequestQuery(string.Format("MeasureVoltage_smu{0}({1}, {2}, {3})", ChannelIdentifier, _currentAveraging, _currentNPLC.ToString(CultureInfo.InvariantCulture), _currentDelay.ToString(CultureInfo.InvariantCulture)));
 
             var result = 0.0;
             var success = double.TryParse(responce, NumberStyles.Float, CultureInfo.InvariantCulture, out result);
@@ -358,7 +618,13 @@ namespace Keithley26xx
 
         public double MeasureCurrent()
         {
-            var responce = _driver.RequestQuery(string.Format("MeasureCurrent({0})", _currentAveraging));
+            if (_currentMeasureFunction != Keithley26xxBMeasureFunctions.MEASURE_DCAMPS)
+            {
+                _currentMeasureFunction = Keithley26xxBMeasureFunctions.MEASURE_DCAMPS;
+                _display.smuX.measure.func = Keithley26xxBMeasureFunctions.MEASURE_DCAMPS;
+            }
+
+            var responce = _driver.RequestQuery(string.Format("MeasureCurrent_smu{0}({1}, {2}, {3})", ChannelIdentifier, _currentAveraging, _currentNPLC.ToString(CultureInfo.InvariantCulture), _currentDelay.ToString(CultureInfo.InvariantCulture)));
 
             var result = 0.0;
             var success = double.TryParse(responce, NumberStyles.Float, CultureInfo.InvariantCulture, out result);
@@ -371,7 +637,13 @@ namespace Keithley26xx
 
         public double MeasureResistance()
         {
-            var responce = _driver.RequestQuery(string.Format("MeasureResistance({0})", _currentAveraging));
+            if (_currentMeasureFunction != Keithley26xxBMeasureFunctions.MEASURE_OHMS)
+            {
+                _currentMeasureFunction = Keithley26xxBMeasureFunctions.MEASURE_OHMS;
+                _display.smuX.measure.func = Keithley26xxBMeasureFunctions.MEASURE_OHMS;
+            }
+
+            var responce = _driver.RequestQuery(string.Format("MeasureResistance_smu{0}({1}, {2}, {3})", ChannelIdentifier, _currentAveraging, _currentNPLC.ToString(CultureInfo.InvariantCulture), _currentDelay.ToString(CultureInfo.InvariantCulture)));
 
             var result = 0.0;
             var success = double.TryParse(responce, NumberStyles.Float, CultureInfo.InvariantCulture, out result);

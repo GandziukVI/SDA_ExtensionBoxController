@@ -17,6 +17,9 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
+using Keithley26xx;
+using DeviceIO;
+
 namespace SDA_ExtensionBoxController
 {
     /// <summary>
@@ -28,6 +31,9 @@ namespace SDA_ExtensionBoxController
         public MainWindow()
         {
             InitializeComponent();
+
+            var a = new VisaDevice("ASRL10::INSTR");
+            var b = new Keithley26xxB<Keithley2635B>(a);
 
             //BoxController b = new BoxController();
             //b.Init("USB0::0x0957::0x1718::TW54334510::INSTR");

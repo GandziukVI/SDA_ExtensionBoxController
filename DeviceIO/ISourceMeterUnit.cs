@@ -9,6 +9,7 @@ namespace DeviceIO
     public interface ISourceMeterUnit
     {
         void Initialize(IDeviceIO Driver);
+        void Initialize(IDeviceIO Driver, string channelID);
 
         ShapeMode SMU_ShapeMode { get; set; }
         SourceMode SMU_SourceMode { get; set; }

@@ -24,6 +24,11 @@ namespace Keithley24xx
             _device.Initialize(Driver);
         }
 
+        public void Initialize(IDeviceIO Driver, string channelID = "Not supported for Keithley24xx series!")
+        {
+            _device.Initialize(Driver);
+        }
+
         public ShapeMode SMU_ShapeMode
         {
             get { return _device.SMU_ShapeMode; }

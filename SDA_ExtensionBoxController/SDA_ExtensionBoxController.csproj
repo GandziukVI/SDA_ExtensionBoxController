@@ -138,6 +138,14 @@
       <Project>{0d6daee4-591c-475c-84b8-91326698926f}</Project>
       <Name>Agilent_ExtensionBox</Name>
     </ProjectReference>
+    <ProjectReference Include="..\DeviceIO\DeviceIO.csproj">
+      <Project>{74877d78-fe9b-4faf-a9e5-5503d6021577}</Project>
+      <Name>DeviceIO</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Keithley26xx\Keithley26xx.csproj">
+      <Project>{61c7f3be-15b1-4445-8367-90331c7f47fd}</Project>
+      <Name>Keithley26xx</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
