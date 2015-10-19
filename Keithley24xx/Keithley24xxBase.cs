@@ -33,6 +33,7 @@ namespace Keithley24xx
         public void Initialize(IDeviceIO Driver)
         {
             _driver = Driver;
+            _driver.SendCommandRequest("*RST");
         }
 
         public void Initialize(IDeviceIO Driver, string channelID = "Not supported for Keithley24xx series!")

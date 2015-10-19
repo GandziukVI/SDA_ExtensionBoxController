@@ -65,6 +65,9 @@ namespace Keithley26xx
                 "currentVoltageLimit_smu_{0} = smu{0}.source.limitv\n",
                 "currentOutputFunc_smu_{0} = smu{0}.source.func\n",
 
+                "currentMeasureCurrent_smu{0}_AutorangeState = smu{0}.measure.autorangei\n",
+                "currentMeasureVoltage_smu{0}_AutorangeState = smu{0}.measure.autorangev\n",
+
                 "function SetVoltage_smu{0}(srcVolt, srcLimitI)\n",
                     "_srcVolt = tonumber(srcVolt)\n",
                     "_srcLimitI = tonumber(srcLimitI)\n",
