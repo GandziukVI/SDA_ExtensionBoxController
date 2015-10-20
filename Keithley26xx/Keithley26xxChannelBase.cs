@@ -53,7 +53,7 @@ namespace Keithley26xx
                 "reset()\n",
                 "DeviceFunctionsChannel{0} = nil\n",
 
-                "loadandrunscript DeviceFunctionsChannel{0}\n",
+                "loadscript DeviceFunctionsChannel{0}\n",
 
                 "result_{0} = nil\n",
 
@@ -103,7 +103,7 @@ namespace Keithley26xx
                     "end\n",
 
                     "if currentDelay_smu_{0} ~= _devDelay then\n",
-                        "currentDelay_smu_{0} = _devDelay",
+                        "currentDelay_smu_{0} = _devDelay\n",
 
                         "if _devDelay == 0.0 then\n",
                             "smu{0}.measure.delay = smu{0}.DELAY_AUTO\n",
@@ -173,7 +173,7 @@ namespace Keithley26xx
                     "end\n",
 
                     "if currentDelay_smu_{0} ~= _devDelay then\n",
-                        "currentDelay_smu_{0} = _devDelay",
+                        "currentDelay_smu_{0} = _devDelay\n",
 
                         "if _devDelay == 0.0 then\n",
                             "smu{0}.measure.delay = smu{0}.DELAY_AUTO\n",
@@ -226,7 +226,7 @@ namespace Keithley26xx
                     "end\n",
 
                     "if currentDelay_smu_{0} ~= _devDelay then\n",
-                        "currentDelay_smu_{0} = _devDelay",
+                        "currentDelay_smu_{0} = _devDelay\n",
 
                         "if _devDelay == 0.0 then\n",
                             "smu{0}.measure.delay = smu{0}.DELAY_AUTO\n",
@@ -279,7 +279,7 @@ namespace Keithley26xx
                     "end\n",
 
                     "if currentDelay_smu_{0} ~= _devDelay then\n",
-                        "currentDelay_smu_{0} = _devDelay",
+                        "currentDelay_smu_{0} = _devDelay\n",
 
                         "if _devDelay == 0.0 then\n",
                             "smu{0}.measure.delay = smu{0}.DELAY_AUTO\n",
@@ -314,7 +314,10 @@ namespace Keithley26xx
                     "print(result_{0})\n",
                 "end\n",
 
-                "end\n");
+                "endscript\n",
+
+                "DeviceFunctionsChannel{0}.run()\n");
+                //"DeviceFunctionsChannel{0}.save(\"/usb1/DeviceFunctionsChannel{0}.tsp\")\n");
 
             _driver.SendCommandRequest(string.Format(scriptFormat, ChannelIdentifier));
         }
@@ -350,13 +353,13 @@ namespace Keithley26xx
         public void Initialize(IDeviceIO Driver, string channelID)
         {
             _driver = Driver;
+            ChannelIdentifier = channelID;
+
             _display = new Keithley26xxB_Display(ref Driver, ChannelIdentifier);
             _SetBeeperEnabled(true);
 
             _currentMeasureFunction = Keithley26xxBMeasureFunctions.MEASURE_DCAMPS;
             _display.smuX.measure.func = Keithley26xxBMeasureFunctions.MEASURE_DCAMPS;
-
-            ChannelIdentifier = channelID;
 
             _LoadDeviceFunctions();
         }
@@ -551,6 +554,7 @@ namespace Keithley26xx
 
         protected double minVoltageVal;
         protected double maxVoltageVal;
+
         public void SetSourceVoltage(double val)
         {
             if (_currentLimitFunction != Keithley26xxBLimitFunctions.LIMIT_IV)
@@ -558,6 +562,9 @@ namespace Keithley26xx
                 _currentLimitFunction = Keithley26xxBLimitFunctions.LIMIT_IV;
                 _display.smuX.limit.func = Keithley26xxBLimitFunctions.LIMIT_IV;
             }
+
+            if (SMU_SourceMode != SourceMode.Voltage)
+                SMU_SourceMode = SourceMode.Voltage;
 
             var toSet = val;
             if (val < minVoltageVal)
@@ -577,6 +584,9 @@ namespace Keithley26xx
                 _currentLimitFunction = Keithley26xxBLimitFunctions.LIMIT_IV;
                 _display.smuX.limit.func = Keithley26xxBLimitFunctions.LIMIT_IV;
             }
+
+            if (SMU_SourceMode != SourceMode.Current)
+                SMU_SourceMode = SourceMode.Current;
 
             var toSet = val;
             if (val < minCurrentVal)

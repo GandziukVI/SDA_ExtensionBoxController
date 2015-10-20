@@ -158,6 +158,8 @@ namespace Keithley26xx
         {
             get
             {
+                var a = string.Format("display{0}LimitFunc = display.smu{0}.limit.func", _channelID);
+
                 _driver.SendCommandRequest(string.Format("display{0}LimitFunc = display.smu{0}.limit.func", _channelID));
                 var responce = _driver.RequestQuery(string.Format("print(display{0}LimitFunc)", _channelID));
 

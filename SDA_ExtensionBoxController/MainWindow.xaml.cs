@@ -27,13 +27,26 @@ namespace SDA_ExtensionBoxController
     /// </summary>
     public partial class MainWindow : Window
     {
+        double responce;
 
         public MainWindow()
         {
             InitializeComponent();
 
-            var a = new VisaDevice("ASRL10::INSTR");
-            var b = new Keithley26xxB<Keithley2635B>(a);
+            var _driver = new VisaDevice("GPIB0::26::INSTR");
+            var _device = new Keithley26xxB<Keithley2635B>(_driver);
+
+            var _smu_channel = _device.ChannelCollection[0];
+
+            _smu_channel.SMU_SourceMode = SourceMode.Voltage;
+            _smu_channel.Averaging = 100;
+            _smu_channel.Compliance = 0.001;
+            _smu_channel.SetSourceVoltage(0.006);
+            _smu_channel.SwitchON();
+
+            responce = _smu_channel.Resistance;
+
+            _smu_channel.SwitchOFF();
 
             //BoxController b = new BoxController();
             //b.Init("USB0::0x0957::0x1718::TW54334510::INSTR");
