@@ -126,11 +126,9 @@ namespace Keithley26xx
                     "smu{0}.nvbuffer1.clear()\n",
                     "smu{0}.measure.v(smu{0}.nvbuffer1)\n",
 
-                    "loopIterator = 1\n",
                     "result_{0} = 0.0\n",
-                    "while smu{0}.nvbuffer1[loopIterator] do\n",
+                    "for loopIterator = 1, smu{0}.nvbuffer1.n do\n",
                         "result_{0} = result_{0} + smu{0}.nvbuffer1[loopIterator]\n",
-                        "loopIterator = loopIterator + 1\n",
                     "end\n",
 
                     "result_{0} = result_{0} / _devAvg\n",
@@ -196,11 +194,9 @@ namespace Keithley26xx
                     "smu{0}.nvbuffer1.clear()\n",
                     "smu{0}.measure.i(smu{0}.nvbuffer1)\n",
 
-                    "loopIterator = 1\n",
                     "result_{0} = 0.0\n",
-                    "while smu{0}.nvbuffer1[loopIterator] do\n",
+                    "for loopIterator = 1, smu{0}.nvbuffer1.n do\n",
                         "result_{0} = result_{0} + smu{0}.nvbuffer1[loopIterator]\n",
-                        "loopIterator = loopIterator + 1\n",
                     "end\n",
 
                     "result_{0} = result_{0} / _devAvg\n",
@@ -249,11 +245,9 @@ namespace Keithley26xx
                     "smu{0}.nvbuffer1.clear()\n",
                     "smu{0}.measure.r(smu{0}.nvbuffer1)\n",
 
-                    "loopIterator = 1\n",
                     "result_{0} = 0.0\n",
-                    "while smu{0}.nvbuffer1[loopIterator] do\n",
+                    "for loopIterator = 1, smu{0}.nvbuffer1.n do\n",
                         "result_{0} = result_{0} + smu{0}.nvbuffer1[loopIterator]\n",
-                        "loopIterator = loopIterator + 1\n",
                     "end\n",
 
                     "result_{0} = result_{0} / _devAvg\n",
@@ -302,11 +296,9 @@ namespace Keithley26xx
                     "smu{0}.nvbuffer1.clear()\n",
                     "smu{0}.measure.r(smu{0}.nvbuffer1)\n",
 
-                    "loopIterator = 1\n",
                     "result_{0} = 0.0\n",
-                    "while smu{0}.nvbuffer1[loopIterator] do\n",
+                    "for loopIterator = 1, smu{0}.nvbuffer1.n do\n",
                         "result_{0} = result_{0} + smu{0}.nvbuffer1[loopIterator]\n",
-                        "loopIterator = loopIterator + 1\n",
                     "end\n",
 
                     "result_{0} = 1.0 / (result_{0} / _devAvg)\n",
@@ -491,7 +483,7 @@ namespace Keithley26xx
             {
                 _outpOn = true;
                 _driver.SendCommandRequest(string.Format("smu{0}.source.output = smu{0}.OUTPUT_ON", ChannelIdentifier));
-                Beep(0.5, BeeperFrequencyEnum._2400_Hz);
+                //Beep(0.5, BeeperFrequencyEnum._2400_Hz);
             }
         }
 
@@ -501,7 +493,7 @@ namespace Keithley26xx
             {
                 _outpOn = false;
                 _driver.SendCommandRequest(string.Format("smu{0}.source.output = smu{0}.OUTPUT_OFF", ChannelIdentifier));
-                Beep(0.5, BeeperFrequencyEnum._2400_Hz);
+                //Beep(0.5, BeeperFrequencyEnum._2400_Hz);
             }
         }
 
