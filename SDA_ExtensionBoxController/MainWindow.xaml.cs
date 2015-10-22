@@ -40,7 +40,7 @@ namespace SDA_ExtensionBoxController
 
             _smu_channel.SMU_SourceMode = SourceMode.Voltage;
             _smu_channel.Averaging = 100;
-            _smu_channel.NPLC = 10.0;
+            _smu_channel.NPLC = 1.0;
             _smu_channel.Compliance = 0.001;
             _smu_channel.SetSourceVoltage(0.007);
             _smu_channel.SwitchON();
