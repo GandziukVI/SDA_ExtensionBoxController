@@ -306,10 +306,45 @@ namespace Keithley26xx
                     "print(result_{0})\n",
                 "end\n",
 
+                "function DCSweepVLinear_smu{0}(start, stop, numPoints, limitI, nplc)\n",
+                    "reset()\n",
+
+                    "smu{0}.reset()\n",
+                    "smu{0}.source.func = smu{0}.OUTPUT_DCVOLTS\n",
+                    "smu{0}.source.limiti = limitI\n",
+                    "smu{0}.measure.nplc = nplc\n",
+                    "smu{0}.measure.delay = smua.DELAY_AUTO\n",
+
+                    "smu{0}.nvbuffer1.clear()\n",
+                    "smu{0}.nvbuffer1.collecttimestamps = 1\n",
+                    "smu{0}.nvbuffer2.clear()\n",
+                    "smu{0}.nvbuffer2.collecttimestamps	= 1\n",
+
+                    "smu{0}.trigger.source.linearv(start, stop, numPoints)\n",
+                    "smu{0}.trigger.source.limiti = limitI\n",
+                    "smu{0}.trigger.measure.action = smu{0}.ENABLE\n",
+                    "smu{0}.trigger.measure.iv(smu{0}.nvbuffer1, smu{0}.nvbuffer2)\n",
+                    "smu{0}.trigger.endpulse.action		= smu{0}.SOURCE_HOLD\n",
+                    "smu{0}.trigger.endsweep.action		= smu{0}.SOURCE_IDLE\n",
+                    "smu{0}.trigger.count = numPoints\n",
+                    "smu{0}.trigger.source.action = smu{0}.ENABLE\n",
+
+                    "smu{0}.source.output = smua.OUTPUT_ON\n",
+                    "smu{0}.trigger.initiate()\n",
+                    "waitcomplete()\n",
+                    "smu{0}.source.output = smua.OUTPUT_OFF\n",
+
+                    "result = \"\"",
+                    "for x=1, smu{0}.nvbuffer1.n do\n",
+                        "result = result .. smu{0}.nvbuffer1.timestamps[x] .. \" \" .. smu{0}.nvbuffer2[x] .. \" \" .. smu{0}.nvbuffer1[x] .. \"\\n\"\n",
+                    "end\n",
+
+                    "print(result)\n",
+                "end\n",
+
                 "endscript\n",
 
                 "DeviceFunctionsChannel{0}.run()\n");
-                //"DeviceFunctionsChannel{0}.save(\"/usb1/DeviceFunctionsChannel{0}.tsp\")\n");
 
             _driver.SendCommandRequest(string.Format(scriptFormat, ChannelIdentifier));
         }
@@ -483,7 +518,7 @@ namespace Keithley26xx
             {
                 _outpOn = true;
                 _driver.SendCommandRequest(string.Format("smu{0}.source.output = smu{0}.OUTPUT_ON", ChannelIdentifier));
-                //Beep(0.5, BeeperFrequencyEnum._2400_Hz);
+                Beep(0.5, BeeperFrequencyEnum._2400_Hz);
             }
         }
 
@@ -493,7 +528,7 @@ namespace Keithley26xx
             {
                 _outpOn = false;
                 _driver.SendCommandRequest(string.Format("smu{0}.source.output = smu{0}.OUTPUT_OFF", ChannelIdentifier));
-                //Beep(0.5, BeeperFrequencyEnum._2400_Hz);
+                Beep(0.5, BeeperFrequencyEnum._2400_Hz);
             }
         }
 
