@@ -324,8 +324,8 @@ namespace Keithley26xx
                     "smu{0}.trigger.source.limiti = limitI\n",
                     "smu{0}.trigger.measure.action = smu{0}.ENABLE\n",
                     "smu{0}.trigger.measure.iv(smu{0}.nvbuffer1, smu{0}.nvbuffer2)\n",
-                    "smu{0}.trigger.endpulse.action		= smu{0}.SOURCE_HOLD\n",
-                    "smu{0}.trigger.endsweep.action		= smu{0}.SOURCE_IDLE\n",
+                    "smu{0}.trigger.endpulse.action = smu{0}.SOURCE_HOLD\n",
+                    "smu{0}.trigger.endsweep.action = smu{0}.SOURCE_IDLE\n",
                     "smu{0}.trigger.count = numPoints\n",
                     "smu{0}.trigger.source.action = smu{0}.ENABLE\n",
 
