@@ -332,7 +332,200 @@ namespace Keithley26xx
                     "smu{0}.source.output = smua.OUTPUT_ON\n",
                     "smu{0}.trigger.initiate()\n",
                     "waitcomplete()\n",
-                    "smu{0}.source.output = smua.OUTPUT_OFF\n",
+                    "smu{0}.source.output = smu{0}.OUTPUT_OFF\n",
+
+                    "result = \"\"",
+                    "for x=1, smu{0}.nvbuffer1.n do\n",
+                        "result = result .. smu{0}.nvbuffer1.timestamps[x] .. \" \" .. smu{0}.nvbuffer2[x] .. \" \" .. smu{0}.nvbuffer1[x] .. \"\\n\"\n",
+                    "end\n",
+
+                    "print(result)\n",
+                "end\n",
+
+                "function DCSweepILinear_smu{0}(start, stop, numPoints, limitV, nplc)\n",
+                    "reset()\n",
+
+                    "smu{0}.reset()\n",
+                    "smu{0}.source.func = smu{0}.OUTPUT_DCAMPS\n",
+                    "smu{0}.source.limitv = limitV\n",
+                    "smu{0}.measure.nplc = nplc\n",
+                    "smu{0}.measure.delay = smu{0}.DELAY_AUTO\n",
+
+                    "smu{0}.nvbuffer1.clear()\n",
+                    "smu{0}.nvbuffer1.collecttimestamps	= 1\n",
+                    "smu{0}.nvbuffer2.clear()\n",
+                    "smu{0}.nvbuffer2.collecttimestamps	= 1\n",
+
+                    "smu{0}.trigger.source.lineari(start, stop, numPoints)\n",
+                    "smu{0}.trigger.source.limitv = limitV\n",
+                    "smu{0}.trigger.measure.action = smu{0}.ENABLE\n",
+                    "smu{0}.trigger.measure.iv(smu{0}.nvbuffer1, smu{0}.nvbuffer2)\n",
+                    "smu{0}.trigger.endpulse.action = smu{0}.SOURCE_HOLD\n",
+
+                    "smu{0}.trigger.endsweep.action	= smu{0}.SOURCE_IDLE\n",
+                    "smu{0}.trigger.count = numPoints\n",
+                    "smu{0}.trigger.source.action = smu{0}.ENABLE\n",
+
+                    "smu{0}.source.output = smu{0}.OUTPUT_ON\n",
+                    "smu{0}.trigger.initiate()\n",
+                    "waitcomplete()\n",
+                    "smu{0}.source.output = smu{0}.OUTPUT_OFF\n",
+
+                    "result = \"\"",
+                    "for x=1, smu{0}.nvbuffer1.n do\n",
+                        "result = result .. smu{0}.nvbuffer1.timestamps[x] .. \" \" .. smu{0}.nvbuffer2[x] .. \" \" .. smu{0}.nvbuffer1[x] .. \"\\n\"\n",
+                    "end\n",
+
+                    "print(result)\n",
+                "end\n",
+
+                "function DCSweepVLog_smu{0}(start, stop, numPoints, limitI, nplc)\n",
+                    "reset()\n",
+
+                    "smu{0}.reset()\n",
+                    "smu{0}.source.func = smu{0}.OUTPUT_DCVOLTS\n",
+                    "smu{0}.source.limiti = limitI\n",
+                    "smu{0}.measure.nplc = nplc\n",
+                    "smu{0}.measure.delay = smu{0}.DELAY_AUTO\n",
+
+                    "smu{0}.nvbuffer1.clear()\n",
+                    "smu{0}.nvbuffer1.collecttimestamps	= 1\n",
+                    "smu{0}.nvbuffer2.clear()\n",
+                    "smu{0}.nvbuffer2.collecttimestamps	= 1\n",
+
+                    "smu{0}.trigger.source.logv(start, stop, numPoints, 0)\n",
+                    "smu{0}.trigger.source.limiti = limitI\n",
+                    "smu{0}.trigger.measure.action = smu{0}.ENABLE\n",
+                    "smu{0}.trigger.measure.iv(smu{0}.nvbuffer1, smu{0}.nvbuffer2)\n",
+                    "smu{0}.trigger.endpulse.action = smu{0}.SOURCE_HOLD\n",
+
+                    "smu{0}.trigger.endsweep.action = smu{0}.SOURCE_IDLE\n",
+                    "smu{0}.trigger.count = numPoints\n",
+                    "smu{0}.trigger.source.action = smu{0}.ENABLE\n",
+
+                    "smu{0}.source.output = smu{0}.OUTPUT_ON\n",
+                    "smu{0}.trigger.initiate()\n",
+                    "waitcomplete()\n",
+                    "smu{0}.source.output = smu{0}.OUTPUT_OFF\n",
+
+                    "result = \"\"",
+                    "for x=1, smu{0}.nvbuffer1.n do\n",
+                        "result = result .. smu{0}.nvbuffer1.timestamps[x] .. \" \" .. smu{0}.nvbuffer2[x] .. \" \" .. smu{0}.nvbuffer1[x] .. \"\\n\"\n",
+                    "end\n",
+
+                    "print(result)\n",
+                "end\n",
+
+                "function DCSweepILog_smu{0}(start, stop, numPoints, limitV, nplc)\n",
+                    "reset()\n",
+
+                    "smu{0}.reset()\n",
+                    "smu{0}.source.func = smu{0}.OUTPUT_DCAMPS\n",
+                    "smu{0}.source.limitv = limitV\n",
+                    "smu{0}.measure.nplc = nplc\n",
+                    "smu{0}.measure.delay = smu{0}.DELAY_AUTO\n",
+
+                    "smu{0}.nvbuffer1.clear()\n",
+                    "smu{0}.nvbuffer1.collecttimestamps	= 1\n",
+                    "smu{0}.nvbuffer2.clear()\n",
+                    "smu{0}.nvbuffer2.collecttimestamps	= 1\n",
+
+                    "smu{0}.trigger.source.logi(start, stop, numPoints)\n",
+                    "smu{0}.trigger.source.limitv = limitV\n",
+                    "smu{0}.trigger.measure.action = smu{0}.ENABLE\n",
+                    "smu{0}.trigger.measure.iv(smu{0}.nvbuffer1, smu{0}.nvbuffer2)\n",
+                    "smu{0}.trigger.endpulse.action = smu{0}.SOURCE_HOLD\n",
+
+                    "smu{0}.trigger.endsweep.action = smu{0}.SOURCE_IDLE\n",
+                    "smu{0}.trigger.count = numPoints\n",
+                    "smu{0}.trigger.source.action = smu{0}.ENABLE\n",
+
+                    "smu{0}.source.output = smu{0}.OUTPUT_ON\n",
+                    "smu{0}.trigger.initiate()\n",
+                    "waitcomplete()\n",
+                    "smu{0}.source.output = smu{0}.OUTPUT_OFF\n",
+
+                    "result = \"\"",
+                    "for x=1, smu{0}.nvbuffer1.n do\n",
+                        "result = result .. smu{0}.nvbuffer1.timestamps[x] .. \" \" .. smu{0}.nvbuffer2[x] .. \" \" .. smu{0}.nvbuffer1[x] .. \"\\n\"\n",
+                    "end\n",
+
+                    "print(result)\n",
+                "end\n",
+
+                "function DCSweepVList_smu{0}(sweepList, numPoints, limitI, nplc)\n",
+                    "if sweepList == nil or type(sweepList) ~= \"table\" then\n",
+                        "sweepList = {1, 5, 2, 6, 3, 7, 4, 8, 5, 9, 6, 10}\n",
+                    "end\n",
+
+                    "reset()\n",
+
+                    "smu{0}.reset()\n",
+                    "smu{0}.source.func = smu{0}.OUTPUT_DCVOLTS\n",
+                    "smu{0}.source.limiti = limitI\n",
+                    "smu{0}.measure.nplc = nplc\n",
+                    "smu{0}.measure.delay = smu{0}.DELAY_AUTO\n",
+
+                    "smu{0}.nvbuffer1.clear()\n",
+                    "smu{0}.nvbuffer1.collecttimestamps	= 1\n",
+                    "smu{0}.nvbuffer2.clear()\n",
+                    "smu{0}.nvbuffer2.collecttimestamps	= 1\n",
+
+                    "smu{0}.trigger.source.listv(sweepList)\n",
+                    "smu{0}.trigger.source.limiti = limitI\n",
+                    "smu{0}.trigger.measure.action = smu{0}.ENABLE\n",
+                    "smu{0}.trigger.measure.iv(smu{0}.nvbuffer1, smu{0}.nvbuffer2)\n",
+                    "smu{0}.trigger.endpulse.action = smu{0}.SOURCE_HOLD\n",
+
+                    "smu{0}.trigger.endsweep.action = smu{0}.SOURCE_IDLE\n",
+                    "smu{0}.trigger.count = numPoints\n",
+                    "smu{0}.trigger.source.action = smu{0}.ENABLE\n",
+
+                    "smu{0}.source.output = smu{0}.OUTPUT_ON\n",
+                    "smu{0}.trigger.initiate()\n",
+                    "waitcomplete()\n",
+                    "smu{0}.source.output = smu{0}.OUTPUT_OFF\n",
+
+                    "result = \"\"",
+                    "for x=1, smu{0}.nvbuffer1.n do\n",
+                        "result = result .. smu{0}.nvbuffer1.timestamps[x] .. \" \" .. smu{0}.nvbuffer2[x] .. \" \" .. smu{0}.nvbuffer1[x] .. \"\\n\"\n",
+                    "end\n",
+
+                    "print(result)\n",
+                "end\n",
+
+                "function DCSweepIList_smu{0}(sweepList, numPoints, limitV, nplc)\n",
+                    "if sweepList == nil or type(sweepList) ~= \"table\" then\n",
+                        "sweepList = {1e-3, 5e-3, 2e-3, 6e-3, 3e-3, 7e-3, 4e-3, 8e-3, 5e-3, 9e-3, 6e-3, 10e-3}\n",
+                    "end\n",
+
+                    "reset()\n",
+
+                    "smu{0}.reset()\n",
+                    "smu{0}.source.func	= smu{0}.OUTPUT_DCAMPS\n",
+                    "smu{0}.source.limitv = limitV\n",
+                    "smu{0}.measure.nplc = nplc\n",
+                    "smu{0}.measure.delay = smu{0}.DELAY_AUTO\n",
+
+                    "smu{0}.nvbuffer1.clear()\n",
+                    "smu{0}.nvbuffer1.collecttimestamps	= 1\n",
+                    "smu{0}.nvbuffer2.clear()\n",
+                    "smu{0}.nvbuffer2.collecttimestamps	= 1\n",
+
+                    "smu{0}.trigger.source.listi(sweepList)\n",
+                    "smu{0}.trigger.source.limitv = limitV\n",
+                    "smu{0}.trigger.measure.action = smu{0}.ENABLE\n",
+                    "smu{0}.trigger.measure.iv(smu{0}.nvbuffer1, smu{0}.nvbuffer2)\n",
+                    "smu{0}.trigger.endpulse.action = smu{0}.SOURCE_HOLD\n",
+
+                    "smu{0}.trigger.endsweep.action	= smu{0}.SOURCE_IDLE\n",
+                    "smu{0}.trigger.count = numPoints\n",
+                    "smu{0}.trigger.source.action = smu{0}.ENABLE\n",
+
+                    "smu{0}.source.output = smu{0}.OUTPUT_ON\n",
+                    "smu{0}.trigger.initiate()\n",
+                    "waitcomplete()\n",
+                    "smu{0}.source.output = smu{0}.OUTPUT_OFF\n",
 
                     "result = \"\"",
                     "for x=1, smu{0}.nvbuffer1.n do\n",
