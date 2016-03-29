@@ -40,14 +40,16 @@ namespace SDA_ExtensionBoxController
 
             _smu_channel.SMU_SourceMode = SourceMode.Voltage;
             _smu_channel.Averaging = 100;
-            _smu_channel.NPLC = 1.0;
-            _smu_channel.Compliance = 0.001;
-            _smu_channel.SetSourceVoltage(0.007);
-            _smu_channel.SwitchON();
+            _smu_channel.NPLC = 0.001;
+            _smu_channel.Compliance = 0.0001;
+            //_smu_channel.SetSourceVoltage(0.007);
+            //_smu_channel.SwitchON();
 
-            responce = _smu_channel.Resistance;
+            //responce = _smu_channel.Resistance;
 
-            _smu_channel.SwitchOFF();
+            //_smu_channel.SwitchOFF();
+
+            var responce1 = _smu_channel.PulsedLinearVoltageSweep(0.0, 1.0, 151, 0.001, 0.005, false);
 
             //BoxController b = new BoxController();
             //b.Init("USB0::0x0957::0x1718::TW54334510::INSTR");

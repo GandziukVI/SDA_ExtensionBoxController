@@ -1,0 +1,748 @@
+reset()
+
+result_a = nil
+
+currentNAvg_smu_a = smua.measure.count
+currentNPLC_smu_a = smua.measure.nplc
+currentDelay_smu_a = smua.measure.delay
+
+currentCurrentLimit_smu_a = smua.source.limiti
+currentVoltageLimit_smu_a = smua.source.limitv
+currentOutputFunc_smu_a = smua.source.func
+
+currentMeasureCurrent_smua_AutorangeState = smua.measure.autorangei
+currentMeasureVoltage_smua_AutorangeState = smua.measure.autorangev
+
+currentMeasureFunction_smua = display.smua.measure.func
+
+function SetVoltage_smua(srcVolt, srcLimitI)
+	_srcVolt = tonumber(srcVolt)
+	_srcLimitI = tonumber(srcLimitI)
+	
+	if currentOutputFunc_smu_a ~= smua.OUTPUT_DCVOLTS then
+		currentOutputFunc_smu_a = smua.OUTPUT_DCVOLTS
+		smua.source.func = smua.OUTPUT_DCVOLTS
+	end
+	
+	if currentCurrentLimit_smu_a ~= _srcLimitI then
+		currentCurrentLimit_smu_a = _srcLimitI
+		smua.source.limiti = _srcLimitI
+	end
+	
+	smua.source.levelv = _srcVolt
+end
+
+function MeasureVoltage_smua(devAvg, devNPLC, devDelay)
+	if currentMeasureFunction_smua ~= display.MEASURE_DCVOLTS then
+		currentMeasureFunction_smua = display.MEASURE_DCVOLTS
+		display.smua.measure.func = display.MEASURE_DCVOLTS
+	end
+	
+	_devAvg = tonumber(devAvg)
+	_devNPLC = tonumber(devNPLC)
+	_devDelay = tonumber(devDelay)
+	
+	if currentNPLC_smu_a ~= _devNPLC then
+		currentNPLC_smu_a = _devNPLC
+		
+		if _devNPLC < 0.01 then
+			_devNPLC = 0.01
+		elseif _devNPLC > 25.0 then
+			_devNPLC = 25.0
+		end
+		
+		smua.measure.nplc = _devNPLC
+	end
+	
+	if currentDelay_smu_a ~= _devDelay then
+		currentDelay_smu_a = _devDelay
+		
+		if _devDelay == 0.0 then
+			smua.measure.delay = smua.DELAY_AUTO
+		else smua.measure.delay = _devDelay
+		end
+	end
+	
+	if _devAvg ~= currentNAvg_smu_a then
+		currentNAvg_smu_a = _devAvg
+		
+		if  _devAvg < 1 then
+			_devAvg = 1
+		elseif  _devAvg > 9999 then
+			_devAvg = 9999
+		end
+		
+		smua.measure.count = _devAvg
+	end
+	
+	smua.nvbuffer1.clear()
+	smua.measure.v(smua.nvbuffer1)
+	
+	result_a = 0.0
+	for loopIterator = 1, smua.nvbuffer1.n do
+		result_a = result_a + smua.nvbuffer1[loopIterator]
+	end
+	
+	result_a = result_a / _devAvg
+	
+	print(result_a)
+end
+
+function SetCurrent_smua(srcCurr, srcLimitV)
+	_srcCurr = tonumber(srcCurr)
+	_srcLimitV = tonumber(srcLimitV)
+	
+	if currentOutputFunc_smu_a ~= smua.OUTPUT_DCAMPS then
+		currentOutputFunc_smu_a = smua.OUTPUT_DCAMPS
+		smua.source.func = smua.OUTPUT_DCAMPS
+	end
+	
+	if currentVoltageLimit_smu_a ~= _srcLimitV then
+		currentVoltageLimit_smu_a = _srcLimitV
+		smua.source.limitv = _srcLimitV
+	end
+	
+	smua.source.leveli = _srcCurr
+end
+
+function MeasureCurrent_smua(devAvg, devNPLC, devDelay)
+	if currentMeasureFunction_smua ~= display.MEASURE_DCAMPS then
+		currentMeasureFunction_smua = display.MEASURE_DCAMPS
+		display.smua.measure.func = display.MEASURE_DCAMPS
+	end
+	
+	_devAvg = tonumber(devAvg)
+	_devNPLC = tonumber(devNPLC)
+	_devDelay = tonumber(devDelay)
+	
+	if currentNPLC_smu_a ~= _devNPLC then
+		currentNPLC_smu_a = _devNPLC
+		
+		if _devNPLC < 0.01 then
+			_devNPLC = 0.01
+		elseif _devNPLC > 25.0 then
+			_devNPLC = 25.0
+		end
+		
+		smua.measure.nplc = _devNPLC
+	end
+	
+	if currentDelay_smu_a ~= _devDelay then
+		currentDelay_smu_a = _devDelay
+		
+		if _devDelay == 0.0 then
+			smua.measure.delay = smua.DELAY_AUTO
+		else smua.measure.delay = _devDelay
+		end
+	end
+	
+	if _devAvg ~= currentNAvg_smu_a then
+		currentNAvg_smu_a = _devAvg
+		
+		if  _devAvg < 1 then
+			_devAvg = 1
+		elseif  _devAvg > 9999 then
+			_devAvg = 9999
+		end
+		
+		smua.measure.count = _devAvg
+	end
+	
+	smua.nvbuffer1.clear()
+	smua.measure.i(smua.nvbuffer1)
+	
+	result_a = 0.0
+	for loopIterator = 1, smua.nvbuffer1.n do
+		result_a = result_a + smua.nvbuffer1[loopIterator]
+	end
+	
+	result_a = result_a / _devAvg
+	
+	print(result_a)
+end
+
+function MeasureResistance_smua(devAvg, devNPLC, devDelay)
+	if currentMeasureFunction_smua ~= display.MEASURE_OHMS then
+		currentMeasureFunction_smua = display.MEASURE_OHMS
+		display.smua.measure.func = display.MEASURE_OHMS
+	end
+	
+	_devAvg = tonumber(devAvg)
+	_devNPLC = tonumber(devNPLC)
+	_devDelay = tonumber(devDelay)
+	
+	if currentNPLC_smu_a ~= _devNPLC then
+		currentNPLC_smu_a = _devNPLC
+		
+		if _devNPLC < 0.01 then
+			_devNPLC = 0.01
+		elseif _devNPLC > 25.0 then
+			_devNPLC = 25.0
+		end
+		
+		smua.measure.nplc = _devNPLC
+	end
+	
+	if currentDelay_smu_a ~= _devDelay then
+		currentDelay_smu_a = _devDelay
+		
+		if _devDelay == 0.0 then
+			smua.measure.delay = smua.DELAY_AUTO
+		else smua.measure.delay = _devDelay
+		end
+	end
+	
+	if _devAvg ~= currentNAvg_smu_a then
+		currentNAvg_smu_a = _devAvg
+		
+		if  _devAvg < 1 then
+			_devAvg = 1
+		elseif  _devAvg > 9999 then
+			_devAvg = 9999
+		end
+		
+		smua.measure.count = _devAvg
+	end
+	
+	smua.nvbuffer1.clear()
+	smua.measure.r(smua.nvbuffer1)
+	
+	result_a = 0.0
+	for loopIterator = 1, smua.nvbuffer1.n do
+		result_a = result_a + smua.nvbuffer1[loopIterator]
+	end
+	
+	result_a = result_a / _devAvg
+	
+	print(result_a)
+end
+
+function MeasureConductance_smua(devAvg, devNPLC, devDelay)
+	if currentMeasureFunction_smua ~= display.MEASURE_OHMS then
+		currentMeasureFunction_smua = display.MEASURE_OHMS
+		display.smua.measure.func = display.MEASURE_OHMS
+	end
+	
+	_devAvg = tonumber(devAvg)
+	_devNPLC = tonumber(devNPLC)
+	_devDelay = tonumber(devDelay)
+	
+	if currentNPLC_smu_a ~= _devNPLC then
+		currentNPLC_smu_a = _devNPLC
+		
+		if _devNPLC < 0.01 then
+			_devNPLC = 0.01
+		elseif _devNPLC > 25.0 then
+			_devNPLC = 25.0
+		end
+		
+		smua.measure.nplc = _devNPLC
+	end
+	
+	if currentDelay_smu_a ~= _devDelay then
+		currentDelay_smu_a = _devDelay
+		
+		if _devDelay == 0.0 then
+			smua.measure.delay = smua.DELAY_AUTO
+		else smua.measure.delay = _devDelay
+		end
+	end
+	
+	if _devAvg ~= currentNAvg_smu_a then
+		currentNAvg_smu_a = _devAvg
+		
+		if _devAvg < 1 then
+			_devAvg = 1
+		elseif  _devAvg > 9999 then
+			_devAvg = 9999
+		end
+		
+		smua.measure.count = _devAvg
+	end
+	
+	smua.nvbuffer1.clear()
+	smua.measure.r(smua.nvbuffer1)
+	
+	result_a = 0.0
+	for loopIterator = 1, smua.nvbuffer1.n do
+		result_a = result_a + smua.nvbuffer1[loopIterator]
+	end
+	
+	result_a = 1.0 / (result_a / _devAvg)
+	
+	print(result_a)
+end
+			
+function DCSweepVLinear_smua(start, stop, numPoints, limitI, nplc)
+	reset()
+	
+	smua.reset()
+	
+	display.smua.measure.func = display.MEASURE_DCAMPS
+	
+	smua.source.func = smua.OUTPUT_DCVOLTS
+	smua.source.limiti = limitI
+	smua.measure.nplc = nplc
+	smua.measure.delay = smua.DELAY_AUTO
+	
+	smua.nvbuffer1.clear()
+	smua.nvbuffer1.collecttimestamps = 1
+	smua.nvbuffer2.clear()
+	smua.nvbuffer2.collecttimestamps = 1
+	
+	smua.trigger.source.linearv(start, stop, numPoints)
+	smua.trigger.source.limiti = limitI
+	smua.trigger.measure.action = smua.ENABLE
+	smua.trigger.measure.iv(smua.nvbuffer1, smua.nvbuffer2)
+	smua.trigger.endpulse.action = smua.SOURCE_HOLD
+	smua.trigger.endsweep.action = smua.SOURCE_IDLE
+	smua.trigger.count = numPoints
+	smua.trigger.source.action = smua.ENABLE
+	
+	smua.source.output = smua.OUTPUT_ON
+	smua.trigger.initiate()
+	waitcomplete()
+	smua.source.output = smua.OUTPUT_OFF
+	
+	for x = 1, smua.nvbuffer1.n do
+		print(smua.nvbuffer1.timestamps[x] .. " " .. smua.nvbuffer2[x] .. " " .. smua.nvbuffer1[x] .. "\n")
+	end
+end
+
+function DCSweepILinear_smua(start, stop, numPoints, limitV, nplc)
+	reset()
+	
+	smua.reset()
+	
+	display.smua.measure.func = display.MEASURE_DCVOLTS
+	
+	smua.source.func = smua.OUTPUT_DCAMPS
+	smua.source.limitv = limitV
+	smua.measure.nplc = nplc
+	smua.measure.delay = smua.DELAY_AUTO
+	
+	smua.nvbuffer1.clear()
+	smua.nvbuffer1.collecttimestamps = 1
+	smua.nvbuffer2.clear()
+	smua.nvbuffer2.collecttimestamps = 1
+	smua.trigger.source.lineari(start, stop, numPoints)
+	smua.trigger.source.limitv = limitV
+	smua.trigger.measure.action = smua.ENABLE
+	smua.trigger.measure.iv(smua.nvbuffer1, smua.nvbuffer2)
+	smua.trigger.endpulse.action = smua.SOURCE_HOLD
+	
+	smua.trigger.endsweep.action = smua.SOURCE_IDLE
+	smua.trigger.count = numPoints
+	smua.trigger.source.action = smua.ENABLE
+	
+	smua.source.output = smua.OUTPUT_ON
+	smua.trigger.initiate()
+	waitcomplete()
+	smua.source.output = smua.OUTPUT_OFF
+
+	for x = 1, smua.nvbuffer1.n do
+		print(smua.nvbuffer1.timestamps[x] .. " " .. smua.nvbuffer2[x] .. " " .. smua.nvbuffer1[x] .. "\n")
+	end
+end
+
+function DCSweepVLog_smua(start, stop, numPoints, limitI, nplc)
+	reset()
+	
+	smua.reset()
+	
+	display.smua.measure.func = display.MEASURE_DCAMPS
+	
+	smua.source.func = smua.OUTPUT_DCVOLTS
+	smua.source.limiti = limitI
+	smua.measure.nplc = nplc
+	smua.measure.delay = smua.DELAY_AUTO
+	
+	smua.nvbuffer1.clear()
+	smua.nvbuffer1.collecttimestamps = 1
+	smua.nvbuffer2.clear()
+	smua.nvbuffer2.collecttimestamps = 1
+	
+	smua.trigger.source.logv(start, stop, numPoints, 0)
+	smua.trigger.source.limiti = limitI
+	smua.trigger.measure.action = smua.ENABLE
+	smua.trigger.measure.iv(smua.nvbuffer1, smua.nvbuffer2)
+	smua.trigger.endpulse.action = smua.SOURCE_HOLD
+	
+	smua.trigger.endsweep.action = smua.SOURCE_IDLE
+	smua.trigger.count = numPoints
+	smua.trigger.source.action = smua.ENABLE
+	
+	smua.source.output = smua.OUTPUT_ON
+	smua.trigger.initiate()
+	waitcomplete()
+	smua.source.output = smua.OUTPUT_OFF
+	
+	for x = 1, smua.nvbuffer1.n do
+		print(smua.nvbuffer1.timestamps[x] .. " " .. smua.nvbuffer2[x] .. " " .. smua.nvbuffer1[x])
+	end
+end
+
+function DCSweepILog_smua(start, stop, numPoints, limitV, nplc)
+	reset()
+	
+	smua.reset()
+	
+	display.smua.measure.func = display.MEASURE_DCVOLTS
+	
+	smua.source.func = smua.OUTPUT_DCAMPS
+	smua.source.limitv = limitV
+	smua.measure.nplc = nplc
+	smua.measure.delay = smua.DELAY_AUTO
+	
+	smua.nvbuffer1.clear()
+	smua.nvbuffer1.collecttimestamps = 1
+	smua.nvbuffer2.clear()
+	smua.nvbuffer2.collecttimestamps = 1
+	
+	smua.trigger.source.logi(start, stop, numPoints)
+	smua.trigger.source.limitv = limitV
+	smua.trigger.measure.action = smua.ENABLE
+	smua.trigger.measure.iv(smua.nvbuffer1, smua.nvbuffer2)
+	smua.trigger.endpulse.action = smua.SOURCE_HOLD
+	
+	smua.trigger.endsweep.action = smua.SOURCE_IDLE
+	smua.trigger.count = numPoints
+	smua.trigger.source.action = smua.ENABLE
+	smua.source.output = smua.OUTPUT_ON
+	smua.trigger.initiate()
+	waitcomplete()
+	smua.source.output = smua.OUTPUT_OFF
+	
+	for x = 1, smua.nvbuffer1.n do
+		print(smua.nvbuffer1.timestamps[x] .. " " .. smua.nvbuffer2[x] .. " " .. smua.nvbuffer1[x])
+	end
+end
+
+function DCSweepVList_smua(sweepList, numPoints, limitI, nplc)
+	if sweepList == nil or type(sweepList) ~= "table" then
+		sweepList = {1, 5, 2, 6, 3, 7, 4, 8, 5, 9, 6, 10}
+	end
+	
+	reset()
+	
+	smua.reset()
+	
+	display.smua.measure.func = display.MEASURE_DCAMPS
+	
+	smua.source.func = smua.OUTPUT_DCVOLTS
+	smua.source.limiti = limitI
+	smua.measure.nplc = nplc
+	smua.measure.delay = smua.DELAY_AUTO
+	
+	smua.nvbuffer1.clear()
+	smua.nvbuffer1.collecttimestamps = 1
+	smua.nvbuffer2.clear()
+	smua.nvbuffer2.collecttimestamps = 1
+	
+	smua.trigger.source.listv(sweepList)
+	smua.trigger.source.limiti = limitI
+	smua.trigger.measure.action = smua.ENABLE
+	smua.trigger.measure.iv(smua.nvbuffer1, smua.nvbuffer2)
+	smua.trigger.endpulse.action = smua.SOURCE_HOLD
+	
+	smua.trigger.endsweep.action = smua.SOURCE_IDLE
+	smua.trigger.count = numPoints
+	smua.trigger.source.action = smua.ENABLE
+	
+	smua.source.output = smua.OUTPUT_ON
+	smua.trigger.initiate()
+	waitcomplete()
+	smua.source.output = smua.OUTPUT_OFF
+	
+	for x = 1, smua.nvbuffer1.n do
+		print(smua.nvbuffer1.timestamps[x] .. " " .. smua.nvbuffer2[x] .. " " .. smua.nvbuffer1[x])
+	end
+end
+
+function DCSweepIList_smua(sweepList, numPoints, limitV, nplc)
+	if sweepList == nil or type(sweepList) ~= "table" then
+		sweepList = {1e-3, 5e-3, 2e-3, 6e-3, 3e-3, 7e-3, 4e-3, 8e-3, 5e-3, 9e-3, 6e-3, 10e-3}
+	end
+	
+	reset()
+	
+	smua.reset()
+	
+	display.smua.measure.func = display.MEASURE_DCVOLTS
+	
+	smua.source.func = smua.OUTPUT_DCAMPS
+	smua.source.limitv = limitV
+	smua.measure.nplc = nplc
+	smua.measure.delay = smua.DELAY_AUTO
+	
+	smua.nvbuffer1.clear()
+	smua.nvbuffer1.collecttimestamps = 1
+	smua.nvbuffer2.clear()
+	smua.nvbuffer2.collecttimestamps = 1
+	
+	smua.trigger.source.listi(sweepList)
+	smua.trigger.source.limitv = limitV
+	smua.trigger.measure.action = smua.ENABLE
+	smua.trigger.measure.iv(smua.nvbuffer1, smua.nvbuffer2)
+	smua.trigger.endpulse.action = smua.SOURCE_HOLD
+	
+	smua.trigger.endsweep.action = smua.SOURCE_IDLE
+	smua.trigger.count = numPoints
+	smua.trigger.source.action = smua.ENABLE
+	
+	smua.source.output = smua.OUTPUT_ON
+	smua.trigger.initiate()
+	waitcomplete()
+	smua.source.output = smua.OUTPUT_OFF
+	
+	for x = 1, smua.nvbuffer1.n do
+		print(smua.nvbuffer1.timestamps[x] .. " " .. smua.nvbuffer2[x] .. " " .. smua.nvbuffer1[x])
+	end
+end
+
+--[[
+	Title:			KE26XXB Pulsed Sweep Single
+
+	Description:	This example demonstrates how to output a pulsed sweep
+		on a single SMU channel.  This script performs a linear sweep but
+		can easily be modified to perform log or list sweeps.
+		There are two functions contained in this script.  One function
+		performs a pulsed voltage sweep while the other performs a pulsed
+		current sweep.
+		At the conclusion of the sweeps the data is returned to the
+		instrument console in a format that is compatible for copy and
+		paste into Microsoft Excel.
+
+	Equipment Needed:
+		1x Series 2600B SourceMeter instrument
+
+	Script Functions:
+		PulsedSweepVSingle(start, stop, numPoints, pulseWidth, pulsePeriod, limitI, nplc, remoteSense)
+		PulsedSweepISingle(start, stop, numPoints, pulseWidth, pulsePeriod, limitV, nplc, remoteSense)
+--]]
+
+--[[
+	Name:	PulsedSweepVSingle(start, stop, numPoints, pulseWidth, pulsePeriod, limitI, nplc, remoteSense)
+	
+	Description:
+		This function performs a pulsed linear voltage sweep on a single SMU channel.
+
+	Parameters:
+		start:			The voltage level of the first step in the sweep in volts
+		stop:			The voltage level of the last step in the sweep in volts
+		numPoints:		The number of points in the sweep
+		pulseWidth:		The width of the pulse in seconds
+		pulsePeriod:	The time from the start of one pulse to the start of the next pulse
+		limitI:			The current limit of the pulse in amps
+		nplc:			The measurment aperture setting in PLCs where 1 PLC = 1/60 s for 60Hz power
+		remoteSense		Set to true to enable 4-Wire (Kelvin) measurements or to false for 2-Wire measurements
+
+	Example Usage:
+		PulsedSweepVSingle(0, 10, 11, 1e-3, 5e-3, 0.1, 0.001, false)
+--]]
+function PulsedSweepVSingle_smua(start, stop, numPoints, pulseWidth, pulsePeriod, limitI, nplc, remoteSense)
+	reset()
+	smua.reset()
+	smua.source.func					= smua.OUTPUT_DCVOLTS
+	if remoteSense == true then
+		smua.sense						= smua.SENSE_REMOTE
+	else
+		smua.sense						= smua.SENSE_LOCAL
+	end
+	smua.source.autorangev			= smua.AUTORANGE_OFF
+	smua.source.rangev				= math.max(math.abs(start), math.abs(stop))
+	smua.source.levelv				= 0
+	-- Set the DC bias limit.  This is not the limit used during the pulses.
+	smua.source.limiti				= 0.1
+
+	-- Disabling Auto-Ranging and Auto-Zero ensures accurate and consistent timing
+	smua.measure.autozero			= smua.AUTOZERO_ONCE
+	smua.measure.autorangei			= smua.AUTORANGE_OFF
+	smua.measure.rangei				= limitI
+	smua.measure.nplc				= nplc
+	-- A timer will be used to control the measure delay so set the built-in delay to 0
+	smua.measure.delay				= 0
+
+	-- Prepare the Reading Buffers
+	smua.nvbuffer1.clear()
+	smua.nvbuffer1.collecttimestamps= 1
+	smua.nvbuffer2.clear()
+	smua.nvbuffer2.collecttimestamps= 1
+
+	-- Configure the Trigger Model
+	--============================
+	-- Pressing the TRIG button on the front panel will trigger the sweep to start
+	display.trigger.clear()
+	
+	display.clear()
+	display.settext("Press TRIG button")
+
+	-- Timer 1 controls the pulse period
+	trigger.timer[1].count			= numPoints > 1 and numPoints - 1 or 1
+	trigger.timer[1].delay			= pulsePeriod
+	trigger.timer[1].passthrough	= true
+	trigger.timer[1].stimulus		= display.trigger.EVENT_ID
+
+	-- Timer 2 controls the measure delay
+	trigger.timer[2].count			= 1
+	-- Set the measure delay long enough so that measurements start after the pulse
+	-- has settled, but short enough that it fits within the width of the pulse.
+	trigger.timer[2].delay			= pulseWidth - (1/localnode.linefreq)*nplc - 60e-6
+	trigger.timer[2].passthrough	= false
+	trigger.timer[2].stimulus		= trigger.timer[1].EVENT_ID
+	
+	-- Timer 3 controls the pulse width
+	trigger.timer[3].count			= 1
+	trigger.timer[3].delay			= pulseWidth
+	trigger.timer[3].passthrough	= false
+	trigger.timer[3].stimulus		= trigger.timer[1].EVENT_ID
+
+	-- Configure SMU Trigger Model for Sweep
+	smua.trigger.source.linearv(start, stop, numPoints)
+	smua.trigger.source.limiti		= limitI
+	smua.trigger.measure.action		= smua.ENABLE
+	smua.trigger.measure.iv(smua.nvbuffer1, smua.nvbuffer2)
+	smua.trigger.endpulse.action	= smua.SOURCE_IDLE
+	smua.trigger.endsweep.action	= smua.SOURCE_IDLE
+	smua.trigger.count				= numPoints
+	smua.trigger.arm.stimulus		= 0
+	smua.trigger.source.stimulus	= trigger.timer[1].EVENT_ID
+	smua.trigger.measure.stimulus	= trigger.timer[2].EVENT_ID
+	smua.trigger.endpulse.stimulus	= trigger.timer[3].EVENT_ID
+	smua.trigger.source.action		= smua.ENABLE
+	--==============================
+	-- End Trigger Model Configuration
+
+	smua.source.output				= smua.OUTPUT_ON
+
+	-- Start the trigger model execution
+	smua.trigger.initiate()
+	-- Sweep will not start TRIG button is pressed
+
+	-- Wait until the sweep has completed
+	waitcomplete()
+	
+	display.clear()
+	display.settext("Measurement is Done!")
+	
+	smua.source.output				= smua.OUTPUT_OFF
+
+	-- Print the data back to the Console in tabular format
+	for x = 1, smua.nvbuffer1.n do
+		-- Voltage readings are in nvbuffer2.  Current readings are in nvbuffer1.
+		print(smua.nvbuffer1.timestamps[x] .. " " .. smua.nvbuffer2[x] .. " " .. smua.nvbuffer1[x])
+	end
+end
+
+--[[
+	Name:	PulsedSweepISingle(start, stop, numPoints, pulseWidth, pulsePeriod, limitV, nplc, remoteSense)
+	
+	Description:
+		This function performs a pulsed linear current sweep on a single SMU channel.
+
+	Parameters:
+		start:			The current level of the first step in the sweep in amps
+		stop:			The current level of the last step in the sweep in amps
+		numPoints:		The number of points in the sweep
+		pulseWidth:		The width of the pulse in seconds
+		pulsePeriod:	The time from the start of one pulse to the start of the next pulse
+		limitI:			The voltage limit of the pulse in volts
+		nplc:			The measurment aperture setting in PLCs where 1 PLC = 1/60 s for 60Hz power
+		remoteSense		Set to true to enable 4-Wire (Kelvin) measurements or to false for 2-Wire measurements
+
+	Example Usage:
+		PulsedSweepISingle(0, 10e-3, 11, 1e-3, 5e-3, 10, 0.001, false)
+--]]
+function PulsedSweepISingle_smua(start, stop, numPoints, pulseWidth, pulsePeriod, limitV, nplc, remoteSense)
+	reset()
+	smua.reset()
+	smua.source.func					= smua.OUTPUT_DCAMPS
+	if remoteSense == true then
+		smua.sense						= smua.SENSE_REMOTE
+	else
+		smua.sense						= smua.SENSE_LOCAL
+	end
+	smua.source.autorangei			= smua.AUTORANGE_OFF
+	smua.source.rangei				= math.max(math.abs(start), math.abs(stop))
+	smua.source.leveli				= 0
+	-- Set the DC bias limit.  This is not the limit used during the pulses.
+	smua.source.limitv				= 1
+
+	-- Disabling Auto-Ranging and Auto-Zero ensures accurate and consistent timing
+	smua.measure.autozero			= smua.AUTOZERO_ONCE
+	smua.measure.autorangev			= smua.AUTORANGE_OFF
+	smua.measure.rangev				= limitV
+	smua.measure.nplc				= nplc
+	-- A timer will be used to control the measure delay so set the built-in delay to 0
+	smua.measure.delay				= 0
+
+	-- Prepare the Reading Buffers
+	smua.nvbuffer1.clear()
+	smua.nvbuffer1.collecttimestamps= 1
+	smua.nvbuffer2.clear()
+	smua.nvbuffer2.collecttimestamps= 1
+
+	-- Configure the Trigger Model
+	--============================
+	-- Pressing the TRIG button on the front panel will trigger the sweep to start
+	display.trigger.clear()
+	
+	display.clear()
+	display.settext("Press TRIG button")
+
+	-- Timer 1 controls the pulse period
+	trigger.timer[1].count			= numPoints > 1 and numPoints - 1 or 1
+	trigger.timer[1].delay			= pulsePeriod
+	trigger.timer[1].passthrough	= true
+	trigger.timer[1].stimulus		= display.trigger.EVENT_ID
+
+	-- Timer 2 controls the measure delay
+	trigger.timer[2].count			= 1
+	-- Set the measure delay long enough so that measurements start after the pulse
+	-- has settled, but short enough that it fits within the width of the pulse.
+	trigger.timer[2].delay			= pulseWidth - (1/localnode.linefreq)*nplc - 60e-6
+	trigger.timer[2].passthrough	= false
+	trigger.timer[2].stimulus		= trigger.timer[1].EVENT_ID
+
+	-- Timer 3 controls the pulse width
+	trigger.timer[3].count			= 1
+	trigger.timer[3].delay			= pulseWidth
+	trigger.timer[3].passthrough	= false
+	trigger.timer[3].stimulus		= trigger.timer[1].EVENT_ID
+
+	-- Configure SMU Trigger Model for Sweep
+	smua.trigger.source.lineari(start, stop, numPoints)
+	smua.trigger.source.limitv		= limitV
+	smua.trigger.measure.action		= smua.ENABLE
+	smua.trigger.measure.iv(smua.nvbuffer1, smua.nvbuffer2)
+	smua.trigger.endpulse.action	= smua.SOURCE_IDLE
+	smua.trigger.endsweep.action	= smua.SOURCE_IDLE
+	smua.trigger.count				= numPoints
+	smua.trigger.arm.stimulus		= 0
+	smua.trigger.source.stimulus	= trigger.timer[1].EVENT_ID
+	smua.trigger.measure.stimulus	= trigger.timer[2].EVENT_ID
+	smua.trigger.endpulse.stimulus	= trigger.timer[3].EVENT_ID
+	smua.trigger.source.action		= smua.ENABLE
+	--==============================
+	-- End Trigger Model Configuration
+
+	smua.source.output				= smua.OUTPUT_ON
+
+	-- Start the trigger model execution
+	smua.trigger.initiate()
+	-- Sweep will not start until the TRIG button is pressed
+
+	-- Wait until the sweep has completed
+	waitcomplete()
+	
+	display.clear()
+	display.settext("Measurement is Done!")
+	
+	smua.source.output				= smua.OUTPUT_OFF
+
+	-- Print the data back to the Console in tabular format
+	for x=1,smua.nvbuffer1.n do
+		-- Voltage readings are in nvbuffer2.  Current readings are in nvbuffer1.
+		print(smua.nvbuffer1.timestamps[x] .. " " .. smua.nvbuffer2[x] .. " " .. smua.nvbuffer1[x])
+	end
+end

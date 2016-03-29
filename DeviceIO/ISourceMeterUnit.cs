@@ -33,8 +33,21 @@ namespace DeviceIO
         void SetSourceCurrent(double val);
         void SetAveraging(int avg);
         void SetNPLC(double val);
+        
         double MeasureVoltage();
         double MeasureCurrent();
         double MeasureResistance();
+
+        ReturnValue[] LinearVoltageSweep(double start, double stop, int numPoints);
+        ReturnValue[] LinearCurrentSweep(double start, double stop, int numPoints);
+
+        ReturnValue[] LogarithmicVoltageSweep(double start, double stop, int numPoints);
+        ReturnValue[] LogarithmicCurrentSweep(double start, double stop, int numPoints);
+
+        ReturnValue[] ListVoltageSweep(double[] sweepList);
+        ReturnValue[] ListCurrentSweep(double[] sweepList);
+
+        ReturnValue[] PulsedLinearVoltageSweep(double start, double stop, int numPoints, double pulseWidth, double pulsePeriod, bool remoteSense);
+        ReturnValue[] PulsedLinearCurrentSweep(double start, double stop, int numPoints, double pulseWidth, double pulsePeriod, bool remoteSense);
     }
 }

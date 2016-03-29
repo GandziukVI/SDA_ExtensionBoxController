@@ -49,497 +49,16 @@ namespace Keithley26xx
 
         private void _LoadDeviceFunctions()
         {
-            var scriptFormat = string.Concat(
-                "reset()\n",
-                "DeviceFunctionsChannel{0} = nil\n",
-
-                "loadscript DeviceFunctionsChannel{0}\n",
-
-                "result_{0} = nil\n",
-
-                "currentNAvg_smu_{0} = smu{0}.measure.count\n",
-                "currentNPLC_smu_{0} = smu{0}.measure.nplc\n",
-                "currentDelay_smu_{0} = smu{0}.measure.delay\n",
-
-                "currentCurrentLimit_smu_{0} = smu{0}.source.limiti\n",
-                "currentVoltageLimit_smu_{0} = smu{0}.source.limitv\n",
-                "currentOutputFunc_smu_{0} = smu{0}.source.func\n",
-
-                "currentMeasureCurrent_smu{0}_AutorangeState = smu{0}.measure.autorangei\n",
-                "currentMeasureVoltage_smu{0}_AutorangeState = smu{0}.measure.autorangev\n",
-
-                "function SetVoltage_smu{0}(srcVolt, srcLimitI)\n",
-                    "_srcVolt = tonumber(srcVolt)\n",
-                    "_srcLimitI = tonumber(srcLimitI)\n",
-
-                    "if currentOutputFunc_smu_{0} ~= smu{0}.OUTPUT_DCVOLTS then\n",
-                        "currentOutputFunc_smu_{0} = smu{0}.OUTPUT_DCVOLTS\n",
-                        "smu{0}.source.func = smu{0}.OUTPUT_DCVOLTS\n",
-                    "end\n",
-
-                    "if currentCurrentLimit_smu_{0} ~= _srcLimitI then\n",
-                        "currentCurrentLimit_smu_{0} = _srcLimitI\n",
-                        "smu{0}.source.limiti = _srcLimitI\n",
-                    "end\n",
-
-                    "smu{0}.source.levelv = _srcVolt\n",
-                "end\n",
-
-                "function MeasureVoltage_smu{0}(devAvg, devNPLC, devDelay)\n",
-                    "_devAvg = tonumber(devAvg)\n",
-                    "_devNPLC = tonumber(devNPLC)\n",
-                    "_devDelay = tonumber(devDelay)\n",
-
-                    "if currentNPLC_smu_{0} ~= _devNPLC then\n",
-                        "currentNPLC_smu_{0} = _devNPLC\n",
-
-                        "if _devNPLC < 0.01 then\n",
-                            "_devNPLC = 0.01\n",
-                        "elseif _devNPLC > 25.0 then\n",
-                            "_devNPLC = 25.0\n",
-                        "end\n",
-
-                        "smu{0}.measure.nplc = _devNPLC\n",
-                    "end\n",
-
-                    "if currentDelay_smu_{0} ~= _devDelay then\n",
-                        "currentDelay_smu_{0} = _devDelay\n",
-
-                        "if _devDelay == 0.0 then\n",
-                            "smu{0}.measure.delay = smu{0}.DELAY_AUTO\n",
-                        "else smu{0}.measure.delay = _devDelay\n",
-                        "end\n",
-                    "end\n",
-
-                    "if _devAvg ~= currentNAvg_smu_{0} then\n",
-                        "currentNAvg_smu_{0} = _devAvg\n",
-
-                        "if  _devAvg < 1 then\n",
-                            "_devAvg = 1\n",
-                        "elseif  _devAvg > 9999 then\n",
-                            "_devAvg = 9999\n",
-                        "end\n",
-
-                        "smu{0}.measure.count = _devAvg\n",
-                    "end\n",
-
-                    "smu{0}.nvbuffer1.clear()\n",
-                    "smu{0}.measure.v(smu{0}.nvbuffer1)\n",
-
-                    "result_{0} = 0.0\n",
-                    "for loopIterator = 1, smu{0}.nvbuffer1.n do\n",
-                        "result_{0} = result_{0} + smu{0}.nvbuffer1[loopIterator]\n",
-                    "end\n",
-
-                    "result_{0} = result_{0} / _devAvg\n",
-
-                    "print(result_{0})\n",
-                "end\n",
-
-                "function SetCurrent_smu{0}(srcCurr, srcLimitV)\n",
-                    "_srcCurr = tonumber(srcCurr)\n",
-                    "_srcLimitV = tonumber(srcLimitV)\n",
-
-                    "if currentOutputFunc_smu_{0} ~= smu{0}.OUTPUT_DCAMPS then\n",
-                        "currentOutputFunc_smu_{0} = smu{0}.OUTPUT_DCAMPS\n",
-                        "smu{0}.source.func = smu{0}.OUTPUT_DCAMPS\n",
-                    "end\n",
-
-                    "if currentVoltageLimit_smu_{0} ~= _srcLimitV then\n",
-                        "currentVoltageLimit_smu_{0} = _srcLimitV\n",
-                        "smu{0}.source.limitv = _srcLimitV\n",
-                    "end\n",
-
-                    "smu{0}.source.leveli = _srcCurr\n",
-                "end\n",
-
-                "function MeasureCurrent_smu{0}(devAvg, devNPLC, devDelay)\n",
-                    "_devAvg = tonumber(devAvg)\n",
-                    "_devNPLC = tonumber(devNPLC)\n",
-                    "_devDelay = tonumber(devDelay)\n",
-
-                    "if currentNPLC_smu_{0} ~= _devNPLC then\n",
-                        "currentNPLC_smu_{0} = _devNPLC\n",
-
-                        "if _devNPLC < 0.01 then\n",
-                            "_devNPLC = 0.01\n",
-                        "elseif _devNPLC > 25.0 then\n",
-                            "_devNPLC = 25.0\n",
-                        "end\n",
-
-                        "smu{0}.measure.nplc = _devNPLC\n",
-                    "end\n",
-
-                    "if currentDelay_smu_{0} ~= _devDelay then\n",
-                        "currentDelay_smu_{0} = _devDelay\n",
-
-                        "if _devDelay == 0.0 then\n",
-                            "smu{0}.measure.delay = smu{0}.DELAY_AUTO\n",
-                        "else smu{0}.measure.delay = _devDelay\n",
-                        "end\n",
-                    "end\n",
-
-                    "if _devAvg ~= currentNAvg_smu_{0} then\n",
-                        "currentNAvg_smu_{0} = _devAvg\n",
-
-                        "if  _devAvg < 1 then\n",
-                            "_devAvg = 1\n",
-                        "elseif  _devAvg > 9999 then\n",
-                            "_devAvg = 9999\n",
-                        "end\n",
-
-                        "smu{0}.measure.count = _devAvg\n",
-                    "end\n",
-
-                    "smu{0}.nvbuffer1.clear()\n",
-                    "smu{0}.measure.i(smu{0}.nvbuffer1)\n",
-
-                    "result_{0} = 0.0\n",
-                    "for loopIterator = 1, smu{0}.nvbuffer1.n do\n",
-                        "result_{0} = result_{0} + smu{0}.nvbuffer1[loopIterator]\n",
-                    "end\n",
-
-                    "result_{0} = result_{0} / _devAvg\n",
-
-                    "print(result_{0})\n",
-                "end\n",
-
-                "function MeasureResistance_smu{0}(devAvg, devNPLC, devDelay)\n",
-                    "_devAvg = tonumber(devAvg)\n",
-                    "_devNPLC = tonumber(devNPLC)\n",
-                    "_devDelay = tonumber(devDelay)\n",
-
-                    "if currentNPLC_smu_{0} ~= _devNPLC then\n",
-                        "currentNPLC_smu_{0} = _devNPLC\n",
-
-                        "if _devNPLC < 0.01 then\n",
-                            "_devNPLC = 0.01\n",
-                        "elseif _devNPLC > 25.0 then\n",
-                            "_devNPLC = 25.0\n",
-                        "end\n",
-
-                        "smu{0}.measure.nplc = _devNPLC\n",
-                    "end\n",
-
-                    "if currentDelay_smu_{0} ~= _devDelay then\n",
-                        "currentDelay_smu_{0} = _devDelay\n",
-
-                        "if _devDelay == 0.0 then\n",
-                            "smu{0}.measure.delay = smu{0}.DELAY_AUTO\n",
-                        "else smu{0}.measure.delay = _devDelay\n",
-                        "end\n",
-                    "end\n",
-
-                    "if _devAvg ~= currentNAvg_smu_{0} then\n",
-                        "currentNAvg_smu_{0} = _devAvg\n",
-
-                        "if  _devAvg < 1 then\n",
-                            "_devAvg = 1\n",
-                        "elseif  _devAvg > 9999 then\n",
-                            "_devAvg = 9999\n",
-                        "end\n",
-
-                        "smu{0}.measure.count = _devAvg\n",
-                    "end\n",
-
-                    "smu{0}.nvbuffer1.clear()\n",
-                    "smu{0}.measure.r(smu{0}.nvbuffer1)\n",
-
-                    "result_{0} = 0.0\n",
-                    "for loopIterator = 1, smu{0}.nvbuffer1.n do\n",
-                        "result_{0} = result_{0} + smu{0}.nvbuffer1[loopIterator]\n",
-                    "end\n",
-
-                    "result_{0} = result_{0} / _devAvg\n",
-
-                    "print(result_{0})\n",
-                "end\n",
-
-                "function MeasureConductance_smu{0}(devAvg, devNPLC, devDelay)\n",
-                    "_devAvg = tonumber(devAvg)\n",
-                    "_devNPLC = tonumber(devNPLC)\n",
-                    "_devDelay = tonumber(devDelay)\n",
-
-                    "if currentNPLC_smu_{0} ~= _devNPLC then\n",
-                        "currentNPLC_smu_{0} = _devNPLC\n",
-
-                        "if _devNPLC < 0.01 then\n",
-                            "_devNPLC = 0.01\n",
-                        "elseif _devNPLC > 25.0 then\n",
-                            "_devNPLC = 25.0\n",
-                        "end\n",
-
-                        "smu{0}.measure.nplc = _devNPLC\n",
-                    "end\n",
-
-                    "if currentDelay_smu_{0} ~= _devDelay then\n",
-                        "currentDelay_smu_{0} = _devDelay\n",
-
-                        "if _devDelay == 0.0 then\n",
-                            "smu{0}.measure.delay = smu{0}.DELAY_AUTO\n",
-                        "else smu{0}.measure.delay = _devDelay\n",
-                        "end\n",
-                    "end\n",
-
-                    "if _devAvg ~= currentNAvg_smu_{0} then\n",
-                        "currentNAvg_smu_{0} = _devAvg\n",
-
-                        "if  _devAvg < 1 then\n",
-                            "_devAvg = 1\n",
-                        "elseif  _devAvg > 9999 then\n",
-                            "_devAvg = 9999\n",
-                        "end\n",
-
-                        "smu{0}.measure.count = _devAvg\n",
-                    "end\n",
-
-                    "smu{0}.nvbuffer1.clear()\n",
-                    "smu{0}.measure.r(smu{0}.nvbuffer1)\n",
-
-                    "result_{0} = 0.0\n",
-                    "for loopIterator = 1, smu{0}.nvbuffer1.n do\n",
-                        "result_{0} = result_{0} + smu{0}.nvbuffer1[loopIterator]\n",
-                    "end\n",
-
-                    "result_{0} = 1.0 / (result_{0} / _devAvg)\n",
-
-                    "print(result_{0})\n",
-                "end\n",
-
-                "function DCSweepVLinear_smu{0}(start, stop, numPoints, limitI, nplc)\n",
-                    "reset()\n",
-
-                    "smu{0}.reset()\n",
-                    "smu{0}.source.func = smu{0}.OUTPUT_DCVOLTS\n",
-                    "smu{0}.source.limiti = limitI\n",
-                    "smu{0}.measure.nplc = nplc\n",
-                    "smu{0}.measure.delay = smua.DELAY_AUTO\n",
-
-                    "smu{0}.nvbuffer1.clear()\n",
-                    "smu{0}.nvbuffer1.collecttimestamps = 1\n",
-                    "smu{0}.nvbuffer2.clear()\n",
-                    "smu{0}.nvbuffer2.collecttimestamps	= 1\n",
-
-                    "smu{0}.trigger.source.linearv(start, stop, numPoints)\n",
-                    "smu{0}.trigger.source.limiti = limitI\n",
-                    "smu{0}.trigger.measure.action = smu{0}.ENABLE\n",
-                    "smu{0}.trigger.measure.iv(smu{0}.nvbuffer1, smu{0}.nvbuffer2)\n",
-                    "smu{0}.trigger.endpulse.action = smu{0}.SOURCE_HOLD\n",
-                    "smu{0}.trigger.endsweep.action = smu{0}.SOURCE_IDLE\n",
-                    "smu{0}.trigger.count = numPoints\n",
-                    "smu{0}.trigger.source.action = smu{0}.ENABLE\n",
-
-                    "smu{0}.source.output = smua.OUTPUT_ON\n",
-                    "smu{0}.trigger.initiate()\n",
-                    "waitcomplete()\n",
-                    "smu{0}.source.output = smu{0}.OUTPUT_OFF\n",
-
-                    "result = \"\"",
-                    "for x=1, smu{0}.nvbuffer1.n do\n",
-                        "result = result .. smu{0}.nvbuffer1.timestamps[x] .. \" \" .. smu{0}.nvbuffer2[x] .. \" \" .. smu{0}.nvbuffer1[x] .. \"\\n\"\n",
-                    "end\n",
-
-                    "print(result)\n",
-                "end\n",
-
-                "function DCSweepILinear_smu{0}(start, stop, numPoints, limitV, nplc)\n",
-                    "reset()\n",
-
-                    "smu{0}.reset()\n",
-                    "smu{0}.source.func = smu{0}.OUTPUT_DCAMPS\n",
-                    "smu{0}.source.limitv = limitV\n",
-                    "smu{0}.measure.nplc = nplc\n",
-                    "smu{0}.measure.delay = smu{0}.DELAY_AUTO\n",
-
-                    "smu{0}.nvbuffer1.clear()\n",
-                    "smu{0}.nvbuffer1.collecttimestamps	= 1\n",
-                    "smu{0}.nvbuffer2.clear()\n",
-                    "smu{0}.nvbuffer2.collecttimestamps	= 1\n",
-
-                    "smu{0}.trigger.source.lineari(start, stop, numPoints)\n",
-                    "smu{0}.trigger.source.limitv = limitV\n",
-                    "smu{0}.trigger.measure.action = smu{0}.ENABLE\n",
-                    "smu{0}.trigger.measure.iv(smu{0}.nvbuffer1, smu{0}.nvbuffer2)\n",
-                    "smu{0}.trigger.endpulse.action = smu{0}.SOURCE_HOLD\n",
-
-                    "smu{0}.trigger.endsweep.action	= smu{0}.SOURCE_IDLE\n",
-                    "smu{0}.trigger.count = numPoints\n",
-                    "smu{0}.trigger.source.action = smu{0}.ENABLE\n",
-
-                    "smu{0}.source.output = smu{0}.OUTPUT_ON\n",
-                    "smu{0}.trigger.initiate()\n",
-                    "waitcomplete()\n",
-                    "smu{0}.source.output = smu{0}.OUTPUT_OFF\n",
-
-                    "result = \"\"",
-                    "for x=1, smu{0}.nvbuffer1.n do\n",
-                        "result = result .. smu{0}.nvbuffer1.timestamps[x] .. \" \" .. smu{0}.nvbuffer2[x] .. \" \" .. smu{0}.nvbuffer1[x] .. \"\\n\"\n",
-                    "end\n",
-
-                    "print(result)\n",
-                "end\n",
-
-                "function DCSweepVLog_smu{0}(start, stop, numPoints, limitI, nplc)\n",
-                    "reset()\n",
-
-                    "smu{0}.reset()\n",
-                    "smu{0}.source.func = smu{0}.OUTPUT_DCVOLTS\n",
-                    "smu{0}.source.limiti = limitI\n",
-                    "smu{0}.measure.nplc = nplc\n",
-                    "smu{0}.measure.delay = smu{0}.DELAY_AUTO\n",
-
-                    "smu{0}.nvbuffer1.clear()\n",
-                    "smu{0}.nvbuffer1.collecttimestamps	= 1\n",
-                    "smu{0}.nvbuffer2.clear()\n",
-                    "smu{0}.nvbuffer2.collecttimestamps	= 1\n",
-
-                    "smu{0}.trigger.source.logv(start, stop, numPoints, 0)\n",
-                    "smu{0}.trigger.source.limiti = limitI\n",
-                    "smu{0}.trigger.measure.action = smu{0}.ENABLE\n",
-                    "smu{0}.trigger.measure.iv(smu{0}.nvbuffer1, smu{0}.nvbuffer2)\n",
-                    "smu{0}.trigger.endpulse.action = smu{0}.SOURCE_HOLD\n",
-
-                    "smu{0}.trigger.endsweep.action = smu{0}.SOURCE_IDLE\n",
-                    "smu{0}.trigger.count = numPoints\n",
-                    "smu{0}.trigger.source.action = smu{0}.ENABLE\n",
-
-                    "smu{0}.source.output = smu{0}.OUTPUT_ON\n",
-                    "smu{0}.trigger.initiate()\n",
-                    "waitcomplete()\n",
-                    "smu{0}.source.output = smu{0}.OUTPUT_OFF\n",
-
-                    "result = \"\"",
-                    "for x=1, smu{0}.nvbuffer1.n do\n",
-                        "result = result .. smu{0}.nvbuffer1.timestamps[x] .. \" \" .. smu{0}.nvbuffer2[x] .. \" \" .. smu{0}.nvbuffer1[x] .. \"\\n\"\n",
-                    "end\n",
-
-                    "print(result)\n",
-                "end\n",
-
-                "function DCSweepILog_smu{0}(start, stop, numPoints, limitV, nplc)\n",
-                    "reset()\n",
-
-                    "smu{0}.reset()\n",
-                    "smu{0}.source.func = smu{0}.OUTPUT_DCAMPS\n",
-                    "smu{0}.source.limitv = limitV\n",
-                    "smu{0}.measure.nplc = nplc\n",
-                    "smu{0}.measure.delay = smu{0}.DELAY_AUTO\n",
-
-                    "smu{0}.nvbuffer1.clear()\n",
-                    "smu{0}.nvbuffer1.collecttimestamps	= 1\n",
-                    "smu{0}.nvbuffer2.clear()\n",
-                    "smu{0}.nvbuffer2.collecttimestamps	= 1\n",
-
-                    "smu{0}.trigger.source.logi(start, stop, numPoints)\n",
-                    "smu{0}.trigger.source.limitv = limitV\n",
-                    "smu{0}.trigger.measure.action = smu{0}.ENABLE\n",
-                    "smu{0}.trigger.measure.iv(smu{0}.nvbuffer1, smu{0}.nvbuffer2)\n",
-                    "smu{0}.trigger.endpulse.action = smu{0}.SOURCE_HOLD\n",
-
-                    "smu{0}.trigger.endsweep.action = smu{0}.SOURCE_IDLE\n",
-                    "smu{0}.trigger.count = numPoints\n",
-                    "smu{0}.trigger.source.action = smu{0}.ENABLE\n",
-
-                    "smu{0}.source.output = smu{0}.OUTPUT_ON\n",
-                    "smu{0}.trigger.initiate()\n",
-                    "waitcomplete()\n",
-                    "smu{0}.source.output = smu{0}.OUTPUT_OFF\n",
-
-                    "result = \"\"",
-                    "for x=1, smu{0}.nvbuffer1.n do\n",
-                        "result = result .. smu{0}.nvbuffer1.timestamps[x] .. \" \" .. smu{0}.nvbuffer2[x] .. \" \" .. smu{0}.nvbuffer1[x] .. \"\\n\"\n",
-                    "end\n",
-
-                    "print(result)\n",
-                "end\n",
-
-                "function DCSweepVList_smu{0}(sweepList, numPoints, limitI, nplc)\n",
-                    "if sweepList == nil or type(sweepList) ~= \"table\" then\n",
-                        "sweepList = {1, 5, 2, 6, 3, 7, 4, 8, 5, 9, 6, 10}\n",
-                    "end\n",
-
-                    "reset()\n",
-
-                    "smu{0}.reset()\n",
-                    "smu{0}.source.func = smu{0}.OUTPUT_DCVOLTS\n",
-                    "smu{0}.source.limiti = limitI\n",
-                    "smu{0}.measure.nplc = nplc\n",
-                    "smu{0}.measure.delay = smu{0}.DELAY_AUTO\n",
-
-                    "smu{0}.nvbuffer1.clear()\n",
-                    "smu{0}.nvbuffer1.collecttimestamps	= 1\n",
-                    "smu{0}.nvbuffer2.clear()\n",
-                    "smu{0}.nvbuffer2.collecttimestamps	= 1\n",
-
-                    "smu{0}.trigger.source.listv(sweepList)\n",
-                    "smu{0}.trigger.source.limiti = limitI\n",
-                    "smu{0}.trigger.measure.action = smu{0}.ENABLE\n",
-                    "smu{0}.trigger.measure.iv(smu{0}.nvbuffer1, smu{0}.nvbuffer2)\n",
-                    "smu{0}.trigger.endpulse.action = smu{0}.SOURCE_HOLD\n",
-
-                    "smu{0}.trigger.endsweep.action = smu{0}.SOURCE_IDLE\n",
-                    "smu{0}.trigger.count = numPoints\n",
-                    "smu{0}.trigger.source.action = smu{0}.ENABLE\n",
-
-                    "smu{0}.source.output = smu{0}.OUTPUT_ON\n",
-                    "smu{0}.trigger.initiate()\n",
-                    "waitcomplete()\n",
-                    "smu{0}.source.output = smu{0}.OUTPUT_OFF\n",
-
-                    "result = \"\"",
-                    "for x=1, smu{0}.nvbuffer1.n do\n",
-                        "result = result .. smu{0}.nvbuffer1.timestamps[x] .. \" \" .. smu{0}.nvbuffer2[x] .. \" \" .. smu{0}.nvbuffer1[x] .. \"\\n\"\n",
-                    "end\n",
-
-                    "print(result)\n",
-                "end\n",
-
-                "function DCSweepIList_smu{0}(sweepList, numPoints, limitV, nplc)\n",
-                    "if sweepList == nil or type(sweepList) ~= \"table\" then\n",
-                        "sweepList = {1e-3, 5e-3, 2e-3, 6e-3, 3e-3, 7e-3, 4e-3, 8e-3, 5e-3, 9e-3, 6e-3, 10e-3}\n",
-                    "end\n",
-
-                    "reset()\n",
-
-                    "smu{0}.reset()\n",
-                    "smu{0}.source.func	= smu{0}.OUTPUT_DCAMPS\n",
-                    "smu{0}.source.limitv = limitV\n",
-                    "smu{0}.measure.nplc = nplc\n",
-                    "smu{0}.measure.delay = smu{0}.DELAY_AUTO\n",
-
-                    "smu{0}.nvbuffer1.clear()\n",
-                    "smu{0}.nvbuffer1.collecttimestamps	= 1\n",
-                    "smu{0}.nvbuffer2.clear()\n",
-                    "smu{0}.nvbuffer2.collecttimestamps	= 1\n",
-
-                    "smu{0}.trigger.source.listi(sweepList)\n",
-                    "smu{0}.trigger.source.limitv = limitV\n",
-                    "smu{0}.trigger.measure.action = smu{0}.ENABLE\n",
-                    "smu{0}.trigger.measure.iv(smu{0}.nvbuffer1, smu{0}.nvbuffer2)\n",
-                    "smu{0}.trigger.endpulse.action = smu{0}.SOURCE_HOLD\n",
-
-                    "smu{0}.trigger.endsweep.action	= smu{0}.SOURCE_IDLE\n",
-                    "smu{0}.trigger.count = numPoints\n",
-                    "smu{0}.trigger.source.action = smu{0}.ENABLE\n",
-
-                    "smu{0}.source.output = smu{0}.OUTPUT_ON\n",
-                    "smu{0}.trigger.initiate()\n",
-                    "waitcomplete()\n",
-                    "smu{0}.source.output = smu{0}.OUTPUT_OFF\n",
-
-                    "result = \"\"",
-                    "for x=1, smu{0}.nvbuffer1.n do\n",
-                        "result = result .. smu{0}.nvbuffer1.timestamps[x] .. \" \" .. smu{0}.nvbuffer2[x] .. \" \" .. smu{0}.nvbuffer1[x] .. \"\\n\"\n",
-                    "end\n",
-
-                    "print(result)\n",
-                "end\n",
-
-                "endscript\n",
-
-                "DeviceFunctionsChannel{0}.run()\n");
-
-            _driver.SendCommandRequest(string.Format(scriptFormat, ChannelIdentifier));
+            var formatString = "loadscript {0}\n{1}\nendscript\n{0}.run()\n";
+            switch (ChannelIdentifier)
+            {
+                case "a":
+                    _driver.SendCommandRequest(string.Format(formatString, "DeviceFunctionsChannelA", Properties.Resources.DeviceFunctionsChannelA));
+                    break;
+                case "b":
+                    _driver.SendCommandRequest(string.Format(formatString, "DeviceFunctionsChannelB", Properties.Resources.DeviceFunctionsChannelB));
+                    break;
+            }
         }
 
         #region Beeper functionality
@@ -645,9 +164,9 @@ namespace Keithley26xx
                 switch (_currentSourceMode)
                 {
                     case SourceMode.Voltage:
-                        return _currentVoltageCompliance;
-                    case SourceMode.Current:
                         return _currentCurrentCompliance;
+                    case SourceMode.Current:
+                        return _currentVoltageCompliance;
                     default:
                         return double.NaN;
                 }
@@ -825,7 +344,7 @@ namespace Keithley26xx
 
         public void SetNPLC(double val)
         {
-            throw new NotImplementedException();
+            _currentNPLC = val;
         }
 
         private Keithley26xxBMeasureFunctions _currentMeasureFunction;
@@ -885,6 +404,174 @@ namespace Keithley26xx
                 return result;
             else
                 throw new Exception("Can't read resistance!");
+        }
+
+        private char[] _delim = { '\n' };
+
+        public ReturnValue[] LinearVoltageSweep(double start, double stop, int numPoints)
+        {
+            _driver.SendCommandRequest(string.Format("DCSweepVLinear_smu{0}({1}, {2}, {3}, {4}, {5})",
+                ChannelIdentifier,
+                start.ToString(NumberFormatInfo.InvariantInfo),
+                stop.ToString(NumberFormatInfo.InvariantInfo),
+                numPoints.ToString(NumberFormatInfo.InvariantInfo),
+                Compliance.ToString(NumberFormatInfo.InvariantInfo),
+                NPLC.ToString(NumberFormatInfo.InvariantInfo)));
+
+            var result = new ReturnValue[numPoints];
+
+            for (int i = 0; i < result.Length; i++)
+                result[i] = new ReturnValue(_driver.ReceiveDeviceAnswer());
+
+            return result;
+        }
+
+        public ReturnValue[] LinearCurrentSweep(double start, double stop, int numPoints)
+        {
+            _driver.SendCommandRequest(string.Format("DCSweepILinear_smu{0}({1}, {2}, {3}, {4}, {5})",
+                ChannelIdentifier,
+                start.ToString(NumberFormatInfo.InvariantInfo),
+                stop.ToString(NumberFormatInfo.InvariantInfo),
+                numPoints.ToString(NumberFormatInfo.InvariantInfo),
+                Compliance.ToString(NumberFormatInfo.InvariantInfo),
+                NPLC.ToString(NumberFormatInfo.InvariantInfo)));
+
+            var result = new ReturnValue[numPoints];
+
+            for (int i = 0; i < result.Length; i++)
+                result[i] = new ReturnValue(_driver.ReceiveDeviceAnswer());
+
+            return result;
+        }
+
+        public ReturnValue[] LogarithmicVoltageSweep(double start, double stop, int numPoints)
+        {
+            _driver.SendCommandRequest(string.Format("DCSweepVLog_smu{0}({1}, {2}, {3}, {4}, {5})",
+                ChannelIdentifier,
+                start.ToString(NumberFormatInfo.InvariantInfo),
+                stop.ToString(NumberFormatInfo.InvariantInfo),
+                numPoints.ToString(NumberFormatInfo.InvariantInfo),
+                Compliance.ToString(NumberFormatInfo.InvariantInfo),
+                NPLC.ToString(NumberFormatInfo.InvariantInfo)));
+
+            var result = new ReturnValue[numPoints];
+
+            for (int i = 0; i < result.Length; i++)
+                result[i] = new ReturnValue(_driver.ReceiveDeviceAnswer());
+
+            return result;
+        }
+
+        public ReturnValue[] LogarithmicCurrentSweep(double start, double stop, int numPoints)
+        {
+            _driver.SendCommandRequest(string.Format("DCSweepILog_smu{0}({1}, {2}, {3}, {4}, {5})",
+                ChannelIdentifier,
+                start.ToString(NumberFormatInfo.InvariantInfo),
+                stop.ToString(NumberFormatInfo.InvariantInfo),
+                numPoints.ToString(NumberFormatInfo.InvariantInfo),
+                Compliance.ToString(NumberFormatInfo.InvariantInfo),
+                NPLC.ToString(NumberFormatInfo.InvariantInfo)));
+
+            var result = new ReturnValue[numPoints];
+
+            for (int i = 0; i < result.Length; i++)
+                result[i] = new ReturnValue(_driver.ReceiveDeviceAnswer());
+
+            return result;
+        }
+
+        public ReturnValue[] ListVoltageSweep(double[] sweepList)
+        {
+            var stringList = "{";
+            for (int i = 0; i < sweepList.Length - 1; i++)
+            {
+                stringList += sweepList[i].ToString(NumberFormatInfo.InvariantInfo) + ", ";
+            }
+            stringList += sweepList[sweepList.Length - 1] + "}";
+
+            _driver.SendCommandRequest(string.Format("DCSweepVList_smu{0}({1}, {2}, {3}, {4})",
+                 ChannelIdentifier,
+                 stringList,
+                 sweepList.Length.ToString(NumberFormatInfo.InvariantInfo),
+                 Compliance.ToString(NumberFormatInfo.InvariantInfo),
+                 NPLC.ToString(NumberFormatInfo.InvariantInfo)));
+
+            var result = new ReturnValue[sweepList.Length];
+
+            for (int i = 0; i < result.Length; i++)
+                result[i] = new ReturnValue(_driver.ReceiveDeviceAnswer());
+
+            return result;
+        }
+
+        public ReturnValue[] ListCurrentSweep(double[] sweepList)
+        {
+            var stringList = "{";
+            for (int i = 0; i < sweepList.Length - 1; i++)
+            {
+                stringList += sweepList[i].ToString(NumberFormatInfo.InvariantInfo) + ", ";
+            }
+            stringList += sweepList[sweepList.Length - 1] + "}";
+
+            _driver.SendCommandRequest(string.Format("DCSweepIList_smu{0}({1}, {2}, {3}, {4})",
+                 ChannelIdentifier,
+                 stringList,
+                 sweepList.Length.ToString(NumberFormatInfo.InvariantInfo),
+                 Compliance.ToString(NumberFormatInfo.InvariantInfo),
+                 NPLC.ToString(NumberFormatInfo.InvariantInfo)));
+
+            var result = new ReturnValue[sweepList.Length];
+
+            for (int i = 0; i < result.Length; i++)
+                result[i] = new ReturnValue(_driver.ReceiveDeviceAnswer());
+
+            return result;
+        }
+
+        public ReturnValue[] PulsedLinearVoltageSweep(double start, double stop, int numPoints, double pulseWidth, double pulsePeriod, bool remoteSense = false)
+        {
+            var _senseMode = (remoteSense == true) ? "true" : "false";
+
+            _driver.SendCommandRequest(string.Format("PulsedSweepVSingle_smu{0}({1}, {2}, {3}, {4}, {5}, {6}, {7}, {8})",
+                ChannelIdentifier,
+                start.ToString(NumberFormatInfo.InvariantInfo),
+                stop.ToString(NumberFormatInfo.InvariantInfo),
+                numPoints.ToString(NumberFormatInfo.InvariantInfo),
+                pulseWidth.ToString(NumberFormatInfo.InvariantInfo),
+                pulsePeriod.ToString(NumberFormatInfo.InvariantInfo),
+                Compliance.ToString(NumberFormatInfo.InvariantInfo),
+                NPLC.ToString(NumberFormatInfo.InvariantInfo),
+                _senseMode));
+
+            var result = new ReturnValue[numPoints];
+
+            for (int i = 0; i < result.Length; i++)
+                result[i] = new ReturnValue(_driver.ReceiveDeviceAnswer());
+
+            return result;
+        }
+
+        public ReturnValue[] PulsedLinearCurrentSweep(double start, double stop, int numPoints, double pulseWidth, double pulsePeriod, bool remoteSense = false)
+        {
+            var _senseMode = (remoteSense == true) ? "true" : "false";
+
+            _driver.SendCommandRequest(string.Format("PulsedSweepISingle_smu{0}({1}, {2}, {3}, {4}, {5}, {6}, {7}, {8})",
+                ChannelIdentifier,
+                start.ToString(NumberFormatInfo.InvariantInfo),
+                stop.ToString(NumberFormatInfo.InvariantInfo),
+                numPoints.ToString(NumberFormatInfo.InvariantInfo),
+                pulseWidth.ToString(NumberFormatInfo.InvariantInfo),
+                pulsePeriod.ToString(NumberFormatInfo.InvariantInfo),
+                Compliance.ToString(NumberFormatInfo.InvariantInfo),
+                NPLC.ToString(NumberFormatInfo.InvariantInfo),
+                _senseMode));
+
+            var result = new ReturnValue[numPoints];
+
+            for (int i = 0; i < result.Length; i++)
+                result[i] = new ReturnValue(_driver.ReceiveDeviceAnswer());
+
+            return result;
         }
     }
 }
