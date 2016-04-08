@@ -38,16 +38,26 @@ namespace DeviceIO
         double MeasureCurrent();
         double MeasureResistance();
 
-        ReturnValue[] LinearVoltageSweep(double start, double stop, int numPoints);
-        ReturnValue[] LinearCurrentSweep(double start, double stop, int numPoints);
+        IV_Data[] LinearVoltageSweep(double start, double stop, int numPoints);
+        IV_Data[] LinearCurrentSweep(double start, double stop, int numPoints);
 
-        ReturnValue[] LogarithmicVoltageSweep(double start, double stop, int numPoints);
-        ReturnValue[] LogarithmicCurrentSweep(double start, double stop, int numPoints);
+        IV_Data[] LogarithmicVoltageSweep(double start, double stop, int numPoints);
+        IV_Data[] LogarithmicCurrentSweep(double start, double stop, int numPoints);
 
-        ReturnValue[] ListVoltageSweep(double[] sweepList);
-        ReturnValue[] ListCurrentSweep(double[] sweepList);
+        IV_Data[] ListVoltageSweep(double[] sweepList);
+        IV_Data[] ListCurrentSweep(double[] sweepList);
 
-        ReturnValue[] PulsedLinearVoltageSweep(double start, double stop, int numPoints, double pulseWidth, double pulsePeriod, bool remoteSense);
-        ReturnValue[] PulsedLinearCurrentSweep(double start, double stop, int numPoints, double pulseWidth, double pulsePeriod, bool remoteSense);
+        IV_Data[] PulsedLinearVoltageSweep(double start, double stop, int numPoints, double pulseWidth, double pulsePeriod, bool remoteSense);
+        IV_Data[] PulsedLinearCurrentSweep(double start, double stop, int numPoints, double pulseWidth, double pulsePeriod, bool remoteSense);
+
+        event EventHandler<TraceDataArrived_EventArgs> TraceDataArrived;
+
+        void StartVoltageTrace(double srcCurr, double srcLimitV, double devNPLC, int outputBlockSize);
+        void StartCurrentTrace(double srcVolt, double srcLimitI, double devNPLC, int outputBlockSize);
+
+        void StopVoltageTrace();
+        void StopCurrenttrace();
+
+        void Reset();
     }
 }

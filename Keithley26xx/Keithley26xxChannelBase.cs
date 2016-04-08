@@ -29,18 +29,18 @@ namespace Keithley26xx
     [NumberOfChannels(1)]
     public class Keithley26xxChannelBase : ISourceMeterUnit
     {
-        private int _numberOfChannels = 1;
-        public int NumberOfChannels
-        {
-            get { return _numberOfChannels; }
-            set
-            {
-                if (value > 2)
-                    throw new ArgumentException("Unavailable number of channels!");
+        //private int _numberOfChannels = 1;
+        //public int NumberOfChannels
+        //{
+        //    get { return _numberOfChannels; }
+        //    set
+        //    {
+        //        if (value > 2)
+        //            throw new ArgumentException("Unavailable number of channels!");
 
-                _numberOfChannels = value;
-            }
-        }
+        //        _numberOfChannels = value;
+        //    }
+        //}
 
         public string ChannelIdentifier { get; protected set; }
 
@@ -408,7 +408,7 @@ namespace Keithley26xx
 
         private char[] _delim = { '\n' };
 
-        public ReturnValue[] LinearVoltageSweep(double start, double stop, int numPoints)
+        public IV_Data[] LinearVoltageSweep(double start, double stop, int numPoints)
         {
             _driver.SendCommandRequest(string.Format("DCSweepVLinear_smu{0}({1}, {2}, {3}, {4}, {5})",
                 ChannelIdentifier,
@@ -418,15 +418,15 @@ namespace Keithley26xx
                 Compliance.ToString(NumberFormatInfo.InvariantInfo),
                 NPLC.ToString(NumberFormatInfo.InvariantInfo)));
 
-            var result = new ReturnValue[numPoints];
+            var result = new IV_Data[numPoints];
 
             for (int i = 0; i < result.Length; i++)
-                result[i] = new ReturnValue(_driver.ReceiveDeviceAnswer());
+                result[i] = new IV_Data(_driver.ReceiveDeviceAnswer());
 
             return result;
         }
 
-        public ReturnValue[] LinearCurrentSweep(double start, double stop, int numPoints)
+        public IV_Data[] LinearCurrentSweep(double start, double stop, int numPoints)
         {
             _driver.SendCommandRequest(string.Format("DCSweepILinear_smu{0}({1}, {2}, {3}, {4}, {5})",
                 ChannelIdentifier,
@@ -436,15 +436,15 @@ namespace Keithley26xx
                 Compliance.ToString(NumberFormatInfo.InvariantInfo),
                 NPLC.ToString(NumberFormatInfo.InvariantInfo)));
 
-            var result = new ReturnValue[numPoints];
+            var result = new IV_Data[numPoints];
 
             for (int i = 0; i < result.Length; i++)
-                result[i] = new ReturnValue(_driver.ReceiveDeviceAnswer());
+                result[i] = new IV_Data(_driver.ReceiveDeviceAnswer());
 
             return result;
         }
 
-        public ReturnValue[] LogarithmicVoltageSweep(double start, double stop, int numPoints)
+        public IV_Data[] LogarithmicVoltageSweep(double start, double stop, int numPoints)
         {
             _driver.SendCommandRequest(string.Format("DCSweepVLog_smu{0}({1}, {2}, {3}, {4}, {5})",
                 ChannelIdentifier,
@@ -454,15 +454,15 @@ namespace Keithley26xx
                 Compliance.ToString(NumberFormatInfo.InvariantInfo),
                 NPLC.ToString(NumberFormatInfo.InvariantInfo)));
 
-            var result = new ReturnValue[numPoints];
+            var result = new IV_Data[numPoints];
 
             for (int i = 0; i < result.Length; i++)
-                result[i] = new ReturnValue(_driver.ReceiveDeviceAnswer());
+                result[i] = new IV_Data(_driver.ReceiveDeviceAnswer());
 
             return result;
         }
 
-        public ReturnValue[] LogarithmicCurrentSweep(double start, double stop, int numPoints)
+        public IV_Data[] LogarithmicCurrentSweep(double start, double stop, int numPoints)
         {
             _driver.SendCommandRequest(string.Format("DCSweepILog_smu{0}({1}, {2}, {3}, {4}, {5})",
                 ChannelIdentifier,
@@ -472,15 +472,15 @@ namespace Keithley26xx
                 Compliance.ToString(NumberFormatInfo.InvariantInfo),
                 NPLC.ToString(NumberFormatInfo.InvariantInfo)));
 
-            var result = new ReturnValue[numPoints];
+            var result = new IV_Data[numPoints];
 
             for (int i = 0; i < result.Length; i++)
-                result[i] = new ReturnValue(_driver.ReceiveDeviceAnswer());
+                result[i] = new IV_Data(_driver.ReceiveDeviceAnswer());
 
             return result;
         }
 
-        public ReturnValue[] ListVoltageSweep(double[] sweepList)
+        public IV_Data[] ListVoltageSweep(double[] sweepList)
         {
             var stringList = "{";
             for (int i = 0; i < sweepList.Length - 1; i++)
@@ -496,15 +496,15 @@ namespace Keithley26xx
                  Compliance.ToString(NumberFormatInfo.InvariantInfo),
                  NPLC.ToString(NumberFormatInfo.InvariantInfo)));
 
-            var result = new ReturnValue[sweepList.Length];
+            var result = new IV_Data[sweepList.Length];
 
             for (int i = 0; i < result.Length; i++)
-                result[i] = new ReturnValue(_driver.ReceiveDeviceAnswer());
+                result[i] = new IV_Data(_driver.ReceiveDeviceAnswer());
 
             return result;
         }
 
-        public ReturnValue[] ListCurrentSweep(double[] sweepList)
+        public IV_Data[] ListCurrentSweep(double[] sweepList)
         {
             var stringList = "{";
             for (int i = 0; i < sweepList.Length - 1; i++)
@@ -520,15 +520,15 @@ namespace Keithley26xx
                  Compliance.ToString(NumberFormatInfo.InvariantInfo),
                  NPLC.ToString(NumberFormatInfo.InvariantInfo)));
 
-            var result = new ReturnValue[sweepList.Length];
+            var result = new IV_Data[sweepList.Length];
 
             for (int i = 0; i < result.Length; i++)
-                result[i] = new ReturnValue(_driver.ReceiveDeviceAnswer());
+                result[i] = new IV_Data(_driver.ReceiveDeviceAnswer());
 
             return result;
         }
 
-        public ReturnValue[] PulsedLinearVoltageSweep(double start, double stop, int numPoints, double pulseWidth, double pulsePeriod, bool remoteSense = false)
+        public IV_Data[] PulsedLinearVoltageSweep(double start, double stop, int numPoints, double pulseWidth, double pulsePeriod, bool remoteSense = false)
         {
             var _senseMode = (remoteSense == true) ? "true" : "false";
 
@@ -543,15 +543,15 @@ namespace Keithley26xx
                 NPLC.ToString(NumberFormatInfo.InvariantInfo),
                 _senseMode));
 
-            var result = new ReturnValue[numPoints];
+            var result = new IV_Data[numPoints];
 
             for (int i = 0; i < result.Length; i++)
-                result[i] = new ReturnValue(_driver.ReceiveDeviceAnswer());
+                result[i] = new IV_Data(_driver.ReceiveDeviceAnswer());
 
             return result;
         }
 
-        public ReturnValue[] PulsedLinearCurrentSweep(double start, double stop, int numPoints, double pulseWidth, double pulsePeriod, bool remoteSense = false)
+        public IV_Data[] PulsedLinearCurrentSweep(double start, double stop, int numPoints, double pulseWidth, double pulsePeriod, bool remoteSense = false)
         {
             var _senseMode = (remoteSense == true) ? "true" : "false";
 
@@ -566,12 +566,76 @@ namespace Keithley26xx
                 NPLC.ToString(NumberFormatInfo.InvariantInfo),
                 _senseMode));
 
-            var result = new ReturnValue[numPoints];
+            var result = new IV_Data[numPoints];
 
             for (int i = 0; i < result.Length; i++)
-                result[i] = new ReturnValue(_driver.ReceiveDeviceAnswer());
+                result[i] = new IV_Data(_driver.ReceiveDeviceAnswer());
 
             return result;
+        }
+
+
+        public event EventHandler<TraceDataArrived_EventArgs> TraceDataArrived;
+
+        private void _OnTraceDataArrived(TraceDataArrived_EventArgs e)
+        {
+            if (TraceDataArrived != null)
+                TraceDataArrived(this, e);
+        }
+
+        private bool VoltageTrace_InProgress = false;
+        public void StartVoltageTrace(double srcCurr, double srcLimitV, double devNPLC, int outputBlockSize)
+        {
+            VoltageTrace_InProgress = true;
+
+            _driver.SendCommandRequest(string.Format("StartVoltageTrace_smu{0}({1}, {2}, {3}, {4})",
+                ChannelIdentifier,
+                srcCurr.ToString(NumberFormatInfo.InvariantInfo),
+                srcLimitV.ToString(NumberFormatInfo.InvariantInfo),
+                devNPLC.ToString(NumberFormatInfo.InvariantInfo),
+                outputBlockSize.ToString(NumberFormatInfo.InvariantInfo)));
+
+            var reading = Task.Run(() => {
+                while (VoltageTrace_InProgress == true)
+                    _OnTraceDataArrived(new TraceDataArrived_EventArgs(new TraceData(_driver.ReceiveDeviceAnswer())));
+            });
+            reading.Wait();
+        }
+
+        private bool CurrentTrace_InProgress = false;
+        public void StartCurrentTrace(double srcVolt, double srcLimitI, double devNPLC, int outputBlockSize)
+        {
+            CurrentTrace_InProgress = true;
+
+            _driver.SendCommandRequest(string.Format("StartCurrentTrace_smu{0}({1}, {2}, {3}, {4})",
+                ChannelIdentifier,
+                srcVolt.ToString(NumberFormatInfo.InvariantInfo),
+                srcLimitI.ToString(NumberFormatInfo.InvariantInfo),
+                devNPLC.ToString(NumberFormatInfo.InvariantInfo),
+                outputBlockSize.ToString(NumberFormatInfo.InvariantInfo)));
+
+            var reading = Task.Run(() => {
+                while (CurrentTrace_InProgress == true)
+                    _OnTraceDataArrived(new TraceDataArrived_EventArgs(new TraceData(_driver.ReceiveDeviceAnswer())));
+            });
+            reading.Wait();
+        }
+
+        public void StopVoltageTrace()
+        {
+            VoltageTrace_InProgress = false;
+            _driver.SendCommandRequest(string.Format("StopVoltageTrace_smu{0}()", ChannelIdentifier));
+        }
+
+        public void StopCurrenttrace()
+        {
+            CurrentTrace_InProgress = false;
+            _driver.SendCommandRequest(string.Format("StopCurrentTrace_smu{0}()", ChannelIdentifier));
+        }
+
+        public void Reset()
+        {
+            throw new NotImplementedException();
         }
     }
 }

@@ -42,28 +42,28 @@ namespace DeviceIO
         ModeNotSet
     }
 
-    public class ReturnValue
+    public class IV_Data
     {
         char[] _delimeters = { '\r', '\n' };
         char[] _separators = { ' ' };
 
         private double _Time;
 
-        public ReturnValue()
+        public IV_Data()
         {
             _Time = 0.0;
             _Voltage = 0.0;
             _Current = 0.0;
         }
 
-        public ReturnValue(double time, double voltage, double current)
+        public IV_Data(double time, double voltage, double current)
         {
             _Time = time;
             _Voltage = voltage;
             _Current = current;
         }
 
-        public ReturnValue(string InputData)
+        public IV_Data(string InputData)
         {
             var data = InputData.TrimEnd(_delimeters).Split(_separators, StringSplitOptions.RemoveEmptyEntries);
             if (data.Length != 3)
@@ -97,6 +97,52 @@ namespace DeviceIO
         {
             get { return _Current; }
             set { _Current = value; }
+        }
+    }
+
+    public class TraceData
+    {
+        char[] _delimeters = { '\r', '\n' };
+        char[] _separators = { ' ' };
+
+
+        private double _Time;
+        public double Time
+        {
+            get { return _Time; }
+            set { _Time = value; }
+        }
+
+        private double _Value;
+        public double Value
+        {
+            get { return _Value; }
+            set { _Value = value; }
+        }
+
+        public TraceData()
+        {
+            _Time = 0.0;
+            _Value = 0.0;
+        }
+
+        public TraceData(double time, double val)
+        {
+            _Time = time;
+            _Value = val;
+        }
+
+        public TraceData(string InputData)
+        {
+            var data = InputData.TrimEnd(_delimeters).Split(_separators, StringSplitOptions.RemoveEmptyEntries);
+            if (data.Length != 2)
+                throw new ArgumentException("The input data has wrong format!");
+
+            var successTime = double.TryParse(data[0], NumberStyles.Float, NumberFormatInfo.InvariantInfo, out _Time);
+            var successValue = double.TryParse(data[1], NumberStyles.Float, NumberFormatInfo.InvariantInfo, out _Value);
+            
+            if (!(successTime && successValue))
+                throw new Exception("Canno't interpert input data!");
         }
     }
 }

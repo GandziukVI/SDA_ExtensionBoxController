@@ -746,3 +746,107 @@ function PulsedSweepISingle_smua(start, stop, numPoints, pulseWidth, pulsePeriod
 		print(smua.nvbuffer1.timestamps[x] .. " " .. smua.nvbuffer2[x] .. " " .. smua.nvbuffer1[x])
 	end
 end
+
+VoltageTrace_LasTime_smua = 0.0
+VoltageTrace_InProgress_smua = false
+function StartVoltageTrace_smua(srcCurr, srcLimitV, devNPLC, outputBlockSize)
+	VoltageTrace_InProgress_smua = true
+	SetCurrent_smua(srcCurr, srcLimitV)
+	
+	_devNPLC = tonumber(devNPLC)
+	if currentNPLC_smu_a ~= _devNPLC then
+		currentNPLC_smu_a = _devNPLC
+		
+		if _devNPLC < 0.01 then
+			_devNPLC = 0.01
+		elseif _devNPLC > 25.0 then
+			_devNPLC = 25.0
+		end
+		
+		smua.measure.nplc = _devNPLC
+	end
+	
+	_outputBlockSize = tonumber(outputBlockSize)
+	if _outputBlockSize ~= currentNAvg_smu_a then
+		currentNAvg_smu_a = _outputBlockSize
+		
+		if  _outputBlockSize < 1 then
+			_outputBlockSize = 1
+		elseif  _outputBlockSize > 9999 then
+			_outputBlockSize = 9999
+		end
+		
+		smua.measure.count = _outputBlockSize
+	end
+	
+	while (VoltageTrace_InProgress_smua == true)
+	do	
+		smua.nvbuffer1.clear()
+		smua.nvbuffer1.collecttimestamps = 1
+		
+		smua.measure.v(smua.nvbuffer1)
+		
+		for loopIterator = 1, smua.nvbuffer1.n do
+			print(smua.nvbuffer1.timestamps[loopIterator] + VoltageTrace_LasTime_smua .. " " .. smua.nvbuffer1[loopIterator])
+		end
+		
+		VoltageTrace_LasTime_smua = VoltageTrace_LasTime_smua + smua.nvbuffer1.timestamps[smua.nvbuffer1.n]
+	end
+end
+
+function StopVoltageTrace_smua()
+	VoltageTrace_InProgress_smua = false
+	VoltageTrace_LasTime_smua = 0.0
+end
+
+CurrentTrace_LasTime_smua = 0.0
+CurrentTrace_InProgress_smua = false
+function StartCurrentTrace_smua(srcVolt, srcLimitI, devNPLC, outputBlockSize)
+	CurrentTrace_InProgress_smua = true
+	SetVoltage_smua(srcVolt, srcLimitI)
+	
+	_devNPLC = tonumber(devNPLC)
+	if currentNPLC_smu_a ~= _devNPLC then
+		currentNPLC_smu_a = _devNPLC
+		
+		if _devNPLC < 0.01 then
+			_devNPLC = 0.01
+		elseif _devNPLC > 25.0 then
+			_devNPLC = 25.0
+		end
+		
+		smua.measure.nplc = _devNPLC
+	end
+	
+	_outputBlockSize = tonumber(outputBlockSize)
+	if _outputBlockSize ~= currentNAvg_smu_a then
+		currentNAvg_smu_a = _outputBlockSize
+		
+		if  _outputBlockSize < 1 then
+			_outputBlockSize = 1
+		elseif  _outputBlockSize > 9999 then
+			_outputBlockSize = 9999
+		end
+		
+		smua.measure.count = _outputBlockSize
+	end
+	
+	while (CurrentTrace_InProgress_smua == true)
+	do	
+		smua.nvbuffer1.clear()
+		smua.nvbuffer1.collecttimestamps = 1
+		
+		smua.measure.i(smua.nvbuffer1)
+		
+		for loopIterator = 1, smua.nvbuffer1.n do
+			print(smua.nvbuffer1.timestamps[loopIterator] + CurrentTrace_LasTime_smua .. " " .. smua.nvbuffer1[loopIterator])
+		end
+		
+		CurrentTrace_LasTime_smua = CurrentTrace_LasTime_smua + smua.nvbuffer1.timestamps[smua.nvbuffer1.n]
+	end
+end
+
+function StopCurrenttrace_smua()
+	CurrentTrace_InProgress_smua = false
+	CurrentTrace_LasTime_smua = 0.0
+end

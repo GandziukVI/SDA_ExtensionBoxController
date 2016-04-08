@@ -19,6 +19,7 @@ using System.Windows.Shapes;
 
 using Keithley26xx;
 using DeviceIO;
+using System.Threading;
 
 namespace SDA_ExtensionBoxController
 {
@@ -28,11 +29,12 @@ namespace SDA_ExtensionBoxController
     public partial class MainWindow : Window
     {
         double responce;
+       // LinkedList<TraceData> listData;
 
         public MainWindow()
         {
             InitializeComponent();
-
+         
             var _driver = new VisaDevice("GPIB0::26::INSTR");
             var _device = new Keithley26xxB<Keithley2635B>(_driver);
 
@@ -42,6 +44,13 @@ namespace SDA_ExtensionBoxController
             _smu_channel.Averaging = 100;
             _smu_channel.NPLC = 0.001;
             _smu_channel.Compliance = 0.0001;
+
+            _smu_channel.SwitchON();
+            _smu_channel.StartCurrentTrace(0.02, 0.0001, 0.01, 10);
+
+            Thread.Sleep(1000);
+            _smu_channel.SwitchOFF();
+
             //_smu_channel.SetSourceVoltage(0.007);
             //_smu_channel.SwitchON();
 
@@ -49,7 +58,7 @@ namespace SDA_ExtensionBoxController
 
             //_smu_channel.SwitchOFF();
 
-            var responce1 = _smu_channel.PulsedLinearVoltageSweep(0.0, 1.0, 151, 0.001, 0.005, false);
+            //var responce1 = _smu_channel.PulsedLinearVoltageSweep(0.0, 1.0, 151, 0.001, 0.005, false);
 
             //BoxController b = new BoxController();
             //b.Init("USB0::0x0957::0x1718::TW54334510::INSTR");

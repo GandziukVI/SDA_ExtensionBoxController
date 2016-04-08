@@ -45,6 +45,7 @@
     <Compile Include="IDeviceIO.cs" />
     <Compile Include="ISourceMeterUnit.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TraceDataArrived_EventArgs.cs" />
     <Compile Include="VisaDevice.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
