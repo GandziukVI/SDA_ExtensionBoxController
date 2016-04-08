@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 using DeviceIO;
 using System.Globalization;
+using System.Threading;
 
 namespace Keithley26xx
 {
@@ -29,19 +30,6 @@ namespace Keithley26xx
     [NumberOfChannels(1)]
     public class Keithley26xxChannelBase : ISourceMeterUnit
     {
-        //private int _numberOfChannels = 1;
-        //public int NumberOfChannels
-        //{
-        //    get { return _numberOfChannels; }
-        //    set
-        //    {
-        //        if (value > 2)
-        //            throw new ArgumentException("Unavailable number of channels!");
-
-        //        _numberOfChannels = value;
-        //    }
-        //}
-
         public string ChannelIdentifier { get; protected set; }
 
         private IDeviceIO _driver;
@@ -599,7 +587,6 @@ namespace Keithley26xx
                 while (VoltageTrace_InProgress == true)
                     _OnTraceDataArrived(new TraceDataArrived_EventArgs(new TraceData(_driver.ReceiveDeviceAnswer())));
             });
-            reading.Wait();
         }
 
         private bool CurrentTrace_InProgress = false;
@@ -618,7 +605,6 @@ namespace Keithley26xx
                 while (CurrentTrace_InProgress == true)
                     _OnTraceDataArrived(new TraceDataArrived_EventArgs(new TraceData(_driver.ReceiveDeviceAnswer())));
             });
-            reading.Wait();
         }
 
         public void StopVoltageTrace()
@@ -627,7 +613,7 @@ namespace Keithley26xx
             _driver.SendCommandRequest(string.Format("StopVoltageTrace_smu{0}()", ChannelIdentifier));
         }
 
-        public void StopCurrenttrace()
+        public void StopCurrentTrace()
         {
             CurrentTrace_InProgress = false;
             _driver.SendCommandRequest(string.Format("StopCurrentTrace_smu{0}()", ChannelIdentifier));
@@ -635,7 +621,7 @@ namespace Keithley26xx
 
         public void Reset()
         {
-            throw new NotImplementedException();
+            _driver.SendCommandRequest(string.Format("smu{0}.reset()", ChannelIdentifier));
         }
     }
 }

@@ -56,7 +56,7 @@ namespace DeviceIO
         void StartCurrentTrace(double srcVolt, double srcLimitI, double devNPLC, int outputBlockSize);
 
         void StopVoltageTrace();
-        void StopCurrenttrace();
+        void StopCurrentTrace();
 
         void Reset();
     }

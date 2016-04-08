@@ -831,12 +831,16 @@ function StartCurrentTrace_smua(srcVolt, srcLimitI, devNPLC, outputBlockSize)
 		smua.measure.count = _outputBlockSize
 	end
 	
-	while (CurrentTrace_InProgress_smua == true)
-	do	
+	while true do	
+		if CurrentTrace_InProgress_smua ~= true then
+			break
+		end
+
 		smua.nvbuffer1.clear()
 		smua.nvbuffer1.collecttimestamps = 1
 		
-		smua.measure.i(smua.nvbuffer1)
+		smua.measure.overlappedi(smua.nvbuffer1)
+		waitcomplete()
 		
 		for loopIterator = 1, smua.nvbuffer1.n do
 			print(smua.nvbuffer1.timestamps[loopIterator] + CurrentTrace_LasTime_smua .. " " .. smua.nvbuffer1[loopIterator])
@@ -846,7 +850,7 @@ function StartCurrentTrace_smua(srcVolt, srcLimitI, devNPLC, outputBlockSize)
 	end
 end
 
-function StopCurrenttrace_smua()
+function StopCurrentTrace_smua()
 	CurrentTrace_InProgress_smua = false
 	CurrentTrace_LasTime_smua = 0.0
 end
