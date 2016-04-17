@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 using DeviceIO;
 using System.Globalization;
+using System.Diagnostics;
 
 namespace Keithley26xx
 {
@@ -29,23 +30,12 @@ namespace Keithley26xx
     [NumberOfChannels(1)]
     public class Keithley26xxChannelBase : ISourceMeterUnit
     {
-        //private int _numberOfChannels = 1;
-        //public int NumberOfChannels
-        //{
-        //    get { return _numberOfChannels; }
-        //    set
-        //    {
-        //        if (value > 2)
-        //            throw new ArgumentException("Unavailable number of channels!");
-
-        //        _numberOfChannels = value;
-        //    }
-        //}
-
         public string ChannelIdentifier { get; protected set; }
 
         private IDeviceIO _driver;
         private Keithley26xxB_Display _display;
+
+        private Stopwatch _stopWatch;
 
         private void _LoadDeviceFunctions()
         {
@@ -101,6 +91,8 @@ namespace Keithley26xx
             _display.smuX.measure.func = Keithley26xxBMeasureFunctions.MEASURE_DCAMPS;
 
             _LoadDeviceFunctions();
+
+            _stopWatch = new Stopwatch();
         }
 
         public ShapeMode SMU_ShapeMode
@@ -588,18 +580,27 @@ namespace Keithley26xx
         {
             VoltageTrace_InProgress = true;
 
-            _driver.SendCommandRequest(string.Format("StartVoltageTrace_smu{0}({1}, {2}, {3}, {4})",
-                ChannelIdentifier,
-                srcCurr.ToString(NumberFormatInfo.InvariantInfo),
-                srcLimitV.ToString(NumberFormatInfo.InvariantInfo),
-                devNPLC.ToString(NumberFormatInfo.InvariantInfo),
-                outputBlockSize.ToString(NumberFormatInfo.InvariantInfo)));
+            SetCompliance(SourceMode.Current, srcLimitV);
+            SetNPLC(devNPLC);
+            SetSourceCurrent(srcCurr);
+            SwitchON();
+            _stopWatch.Start();
 
-            var reading = Task.Run(() => {
+            //_driver.SendCommandRequest(string.Format("StartVoltageTrace_smu{0}({1}, {2}, {3}, {4})",
+            //    ChannelIdentifier,
+            //    srcCurr.ToString(NumberFormatInfo.InvariantInfo),
+            //    srcLimitV.ToString(NumberFormatInfo.InvariantInfo),
+            //    devNPLC.ToString(NumberFormatInfo.InvariantInfo),
+            //    outputBlockSize.ToString(NumberFormatInfo.InvariantInfo)));
+
+            var reading = Task.Run(() =>
+            {
                 while (VoltageTrace_InProgress == true)
-                    _OnTraceDataArrived(new TraceDataArrived_EventArgs(new TraceData(_driver.ReceiveDeviceAnswer())));
+                    _OnTraceDataArrived(new TraceDataArrived_EventArgs(new TraceData((double)(_stopWatch.ElapsedMilliseconds) / 1000.0, MeasureVoltage())));
+                //_OnTraceDataArrived(new TraceDataArrived_EventArgs(new TraceData(_driver.ReceiveDeviceAnswer())));
             });
-            reading.Wait();
+
+            //reading.Wait();
         }
 
         private bool CurrentTrace_InProgress = false;
@@ -607,30 +608,45 @@ namespace Keithley26xx
         {
             CurrentTrace_InProgress = true;
 
-            _driver.SendCommandRequest(string.Format("StartCurrentTrace_smu{0}({1}, {2}, {3}, {4})",
-                ChannelIdentifier,
-                srcVolt.ToString(NumberFormatInfo.InvariantInfo),
-                srcLimitI.ToString(NumberFormatInfo.InvariantInfo),
-                devNPLC.ToString(NumberFormatInfo.InvariantInfo),
-                outputBlockSize.ToString(NumberFormatInfo.InvariantInfo)));
+            SetCompliance(SourceMode.Voltage, srcLimitI);
+            SetNPLC(devNPLC);
+            SetSourceVoltage(srcVolt);
+            SwitchON();
+            _stopWatch.Start();
 
-            var reading = Task.Run(() => {
+            //_driver.SendCommandRequest(string.Format("StartCurrentTrace_smu{0}({1}, {2}, {3}, {4})",
+            //    ChannelIdentifier,
+            //    srcVolt.ToString(NumberFormatInfo.InvariantInfo),
+            //    srcLimitI.ToString(NumberFormatInfo.InvariantInfo),
+            //    devNPLC.ToString(NumberFormatInfo.InvariantInfo),
+            //    outputBlockSize.ToString(NumberFormatInfo.InvariantInfo)));
+
+            var reading = Task.Run(() =>
+            {
                 while (CurrentTrace_InProgress == true)
-                    _OnTraceDataArrived(new TraceDataArrived_EventArgs(new TraceData(_driver.ReceiveDeviceAnswer())));
+                    _OnTraceDataArrived(new TraceDataArrived_EventArgs(new TraceData((double)(_stopWatch.ElapsedMilliseconds) / 1000.0, MeasureCurrent())));
+                //_OnTraceDataArrived(new TraceDataArrived_EventArgs(new TraceData(_driver.ReceiveDeviceAnswer())));
             });
-            reading.Wait();
+
+            //reading.Wait();
         }
 
         public void StopVoltageTrace()
         {
             VoltageTrace_InProgress = false;
-            _driver.SendCommandRequest(string.Format("StopVoltageTrace_smu{0}()", ChannelIdentifier));
+
+            SwitchOFF();
+            _stopWatch.Reset();
+            //_driver.SendCommandRequest(string.Format("StopVoltageTrace_smu{0}()", ChannelIdentifier));
         }
 
         public void StopCurrenttrace()
         {
             CurrentTrace_InProgress = false;
-            _driver.SendCommandRequest(string.Format("StopCurrentTrace_smu{0}()", ChannelIdentifier));
+
+            SwitchOFF();
+            _stopWatch.Reset();
+            //_driver.SendCommandRequest(string.Format("StopCurrentTrace_smu{0}()", ChannelIdentifier));
         }
 
         public void Reset()
