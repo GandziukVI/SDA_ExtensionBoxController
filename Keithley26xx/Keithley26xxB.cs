@@ -72,7 +72,7 @@ namespace Keithley26xx
             }
         }
 
-        public IEnumerator<ISourceMeterUnit> GetEnumerator()
+        public System.Collections.Generic.IEnumerator<ISourceMeterUnit> GetEnumerator()
         {
             for (int index = 0; index < ChannelCollection.Length; index++)
             {

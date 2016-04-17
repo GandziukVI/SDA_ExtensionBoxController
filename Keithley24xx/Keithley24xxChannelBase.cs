@@ -6,16 +6,18 @@ using System.Threading.Tasks;
 
 using DeviceIO;
 using System.Globalization;
+using System.Diagnostics;
 
 namespace Keithley24xx
 {
-    public class Keithley24xxBase : ISourceMeterUnit
+    public class Keithley24xxChannelBase : ISourceMeterUnit
     {
         #region ISourceMeterUnit implementation
 
         private IDeviceIO _driver;
+        private Stopwatch _stopWatch;
 
-        public Keithley24xxBase()
+        public Keithley24xxChannelBase()
         {
             _currentSourceVoltageRange = 0.2;
             _currentMeasurementCurrentRange = 0.00001;
@@ -34,11 +36,14 @@ namespace Keithley24xx
         {
             _driver = Driver;
             _driver.SendCommandRequest("*RST");
+            _stopWatch = new Stopwatch();
         }
 
         public void Initialize(IDeviceIO Driver, string channelID = "Not supported for Keithley24xx series!")
         {
             _driver = Driver;
+            _driver.SendCommandRequest("*RST");
+            _stopWatch = new Stopwatch();
         }
 
         private ShapeMode _currentShapeMode = ShapeMode.ModeNotSet;
@@ -771,6 +776,112 @@ namespace Keithley24xx
                 default:
                     break;
             }
+        }
+
+
+        public IV_Data[] LinearVoltageSweep(double start, double stop, int numPoints)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IV_Data[] LinearCurrentSweep(double start, double stop, int numPoints)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IV_Data[] LogarithmicVoltageSweep(double start, double stop, int numPoints)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IV_Data[] LogarithmicCurrentSweep(double start, double stop, int numPoints)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IV_Data[] ListVoltageSweep(double[] sweepList)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IV_Data[] ListCurrentSweep(double[] sweepList)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IV_Data[] PulsedLinearVoltageSweep(double start, double stop, int numPoints, double pulseWidth, double pulsePeriod, bool remoteSense)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IV_Data[] PulsedLinearCurrentSweep(double start, double stop, int numPoints, double pulseWidth, double pulsePeriod, bool remoteSense)
+        {
+            throw new NotImplementedException();
+        }
+
+        public event EventHandler<TraceDataArrived_EventArgs> TraceDataArrived;
+        
+        private void _OnTraceDataArrived(TraceDataArrived_EventArgs e)
+        {
+            if (TraceDataArrived != null)
+                TraceDataArrived(this, e);
+        }
+
+        private bool VoltageTrace_InProgress = false;
+        public void StartVoltageTrace(double srcCurr, double srcLimitV, double devNPLC)
+        {
+            VoltageTrace_InProgress = true;
+
+            SetCompliance(SourceMode.Current, srcLimitV);
+            SetNPLC(devNPLC);
+            SetSourceCurrent(srcCurr);
+            SwitchON();
+            _stopWatch.Start();
+
+            var reading = Task.Run(() =>
+            {
+                while (VoltageTrace_InProgress == true)
+                    _OnTraceDataArrived(new TraceDataArrived_EventArgs(new TraceData((double)(_stopWatch.ElapsedMilliseconds) / 1000.0, MeasureVoltage())));
+            });
+        }
+
+        private bool CurrentTrace_InProgress = false;
+        public void StartCurrentTrace(double srcVolt, double srcLimitI, double devNPLC)
+        {
+            CurrentTrace_InProgress = true;
+
+            SetCompliance(SourceMode.Voltage, srcLimitI);
+            SetNPLC(devNPLC);
+            SetSourceVoltage(srcVolt);
+            SwitchON();
+            _stopWatch.Start();
+
+            var reading = Task.Run(() =>
+            {
+                while (CurrentTrace_InProgress == true)
+                    _OnTraceDataArrived(new TraceDataArrived_EventArgs(new TraceData((double)(_stopWatch.ElapsedMilliseconds) / 1000.0, MeasureCurrent())));
+            });
+        }
+
+        public void StopVoltageTrace()
+        {
+            VoltageTrace_InProgress = false;
+
+            SwitchOFF();
+            _stopWatch.Reset();
+        }
+
+        public void StopCurrentTrace()
+        {
+            CurrentTrace_InProgress = false;
+
+            SwitchOFF();
+            _stopWatch.Reset();
+        }
+
+        public void Reset()
+        {
+            _driver.SendCommandRequest("*RST");
         }
     }
 }

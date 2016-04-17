@@ -13,7 +13,7 @@ namespace Keithley24xx
         OFF
     }
 
-    public class Keithley2400 : Keithley24xxBase
+    public class Keithley2400 : Keithley24xxChannelBase
     {
         public Keithley2400()
             : base()
@@ -58,7 +58,7 @@ namespace Keithley24xx
         }
     }
 
-    public class Keithley2400_LV : Keithley24xxBase
+    public class Keithley2400_LV : Keithley24xxChannelBase
     {
         public Keithley2400_LV()
             : base()
@@ -103,7 +103,7 @@ namespace Keithley24xx
         }
     }
 
-    public class Keithley2401 : Keithley24xxBase
+    public class Keithley2401 : Keithley24xxChannelBase
     {
         public Keithley2401()
             : base()
@@ -148,7 +148,7 @@ namespace Keithley24xx
         }
     }
 
-    public class Keithley2410 : Keithley24xxBase
+    public class Keithley2410 : Keithley24xxChannelBase
     {
         public Keithley2410()
             : base()
@@ -193,7 +193,7 @@ namespace Keithley24xx
         }
     }
 
-    public class Keithley2420 : Keithley24xxBase
+    public class Keithley2420 : Keithley24xxChannelBase
     {
         public Keithley2420()
             : base()
@@ -238,7 +238,7 @@ namespace Keithley24xx
         }
     }
 
-    public class Keithley2425 : Keithley24xxBase
+    public class Keithley2425 : Keithley24xxChannelBase
     {
         public Keithley2425()
             : base()
@@ -256,7 +256,7 @@ namespace Keithley24xx
         }
     }
 
-    public class Keithley2430 : Keithley24xxBase
+    public class Keithley2430 : Keithley24xxChannelBase
     {
         public Keithley2430()
             : base()
@@ -274,7 +274,7 @@ namespace Keithley24xx
         }
     }
 
-    public class Keithley2440 : Keithley24xxBase
+    public class Keithley2440 : Keithley24xxChannelBase
     {
         public Keithley2440()
             : base()
