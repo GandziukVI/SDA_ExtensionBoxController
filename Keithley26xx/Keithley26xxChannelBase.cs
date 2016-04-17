@@ -576,7 +576,7 @@ namespace Keithley26xx
         }
 
         private bool VoltageTrace_InProgress = false;
-        public void StartVoltageTrace(double srcCurr, double srcLimitV, double devNPLC, int outputBlockSize)
+        public void StartVoltageTrace(double srcCurr, double srcLimitV, double devNPLC)
         {
             VoltageTrace_InProgress = true;
 
@@ -586,25 +586,15 @@ namespace Keithley26xx
             SwitchON();
             _stopWatch.Start();
 
-            //_driver.SendCommandRequest(string.Format("StartVoltageTrace_smu{0}({1}, {2}, {3}, {4})",
-            //    ChannelIdentifier,
-            //    srcCurr.ToString(NumberFormatInfo.InvariantInfo),
-            //    srcLimitV.ToString(NumberFormatInfo.InvariantInfo),
-            //    devNPLC.ToString(NumberFormatInfo.InvariantInfo),
-            //    outputBlockSize.ToString(NumberFormatInfo.InvariantInfo)));
-
             var reading = Task.Run(() =>
             {
                 while (VoltageTrace_InProgress == true)
                     _OnTraceDataArrived(new TraceDataArrived_EventArgs(new TraceData((double)(_stopWatch.ElapsedMilliseconds) / 1000.0, MeasureVoltage())));
-                //_OnTraceDataArrived(new TraceDataArrived_EventArgs(new TraceData(_driver.ReceiveDeviceAnswer())));
             });
-
-            //reading.Wait();
         }
 
         private bool CurrentTrace_InProgress = false;
-        public void StartCurrentTrace(double srcVolt, double srcLimitI, double devNPLC, int outputBlockSize)
+        public void StartCurrentTrace(double srcVolt, double srcLimitI, double devNPLC)
         {
             CurrentTrace_InProgress = true;
 
@@ -614,21 +604,11 @@ namespace Keithley26xx
             SwitchON();
             _stopWatch.Start();
 
-            //_driver.SendCommandRequest(string.Format("StartCurrentTrace_smu{0}({1}, {2}, {3}, {4})",
-            //    ChannelIdentifier,
-            //    srcVolt.ToString(NumberFormatInfo.InvariantInfo),
-            //    srcLimitI.ToString(NumberFormatInfo.InvariantInfo),
-            //    devNPLC.ToString(NumberFormatInfo.InvariantInfo),
-            //    outputBlockSize.ToString(NumberFormatInfo.InvariantInfo)));
-
             var reading = Task.Run(() =>
             {
                 while (CurrentTrace_InProgress == true)
                     _OnTraceDataArrived(new TraceDataArrived_EventArgs(new TraceData((double)(_stopWatch.ElapsedMilliseconds) / 1000.0, MeasureCurrent())));
-                //_OnTraceDataArrived(new TraceDataArrived_EventArgs(new TraceData(_driver.ReceiveDeviceAnswer())));
             });
-
-            //reading.Wait();
         }
 
         public void StopVoltageTrace()
@@ -637,21 +617,20 @@ namespace Keithley26xx
 
             SwitchOFF();
             _stopWatch.Reset();
-            //_driver.SendCommandRequest(string.Format("StopVoltageTrace_smu{0}()", ChannelIdentifier));
         }
 
-        public void StopCurrenttrace()
+        public void StopCurrentTrace()
         {
             CurrentTrace_InProgress = false;
 
             SwitchOFF();
             _stopWatch.Reset();
-            //_driver.SendCommandRequest(string.Format("StopCurrentTrace_smu{0}()", ChannelIdentifier));
         }
 
         public void Reset()
         {
-            throw new NotImplementedException();
+            _driver.SendCommandRequest("reset()");
+            _driver.SendCommandRequest(string.Format("Reset_smu{0}()", ChannelIdentifier));
         }
     }
 }

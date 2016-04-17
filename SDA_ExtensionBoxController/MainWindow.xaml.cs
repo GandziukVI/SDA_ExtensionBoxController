@@ -29,27 +29,37 @@ namespace SDA_ExtensionBoxController
     public partial class MainWindow : Window
     {
         double responce;
-       // LinkedList<TraceData> listData;
+        LinkedList<TraceData> listData;
 
         public MainWindow()
         {
             InitializeComponent();
-         
+
+            listData = new LinkedList<TraceData>();
+
             var _driver = new VisaDevice("GPIB0::26::INSTR");
             var _device = new Keithley26xxB<Keithley2635B>(_driver);
 
             var _smu_channel = _device.ChannelCollection[0];
 
-            _smu_channel.SMU_SourceMode = SourceMode.Voltage;
-            _smu_channel.Averaging = 100;
-            _smu_channel.NPLC = 0.001;
-            _smu_channel.Compliance = 0.0001;
+            //_smu_channel.SMU_SourceMode = SourceMode.Voltage;
+            //_smu_channel.Averaging = 100;
+            //_smu_channel.NPLC = 0.001;
+            //_smu_channel.Compliance = 0.0001;
+
+            _smu_channel.TraceDataArrived += _smu_channel_TraceDataArrived;
 
             _smu_channel.SwitchON();
-            _smu_channel.StartCurrentTrace(0.02, 0.0001, 0.01, 10);
+            _smu_channel.StartCurrentTrace(0.02, 0.0001, 0.01);
 
-            Thread.Sleep(1000);
+            Thread.Sleep(10000);
+
+            _smu_channel.StopCurrentTrace();
             _smu_channel.SwitchOFF();
+
+
+            var a = 0.0;
+            a += 1.0;
 
             //_smu_channel.SetSourceVoltage(0.007);
             //_smu_channel.SwitchON();
@@ -76,6 +86,11 @@ namespace SDA_ExtensionBoxController
             //b.StartAnalogAcquisition(499712);
 
             //b.Close();
+        }
+
+        void _smu_channel_TraceDataArrived(object sender, TraceDataArrived_EventArgs e)
+        {
+            listData.AddLast(e.DataPoint);
         }
     }
 }

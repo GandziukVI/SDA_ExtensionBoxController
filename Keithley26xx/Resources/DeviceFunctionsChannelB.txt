@@ -748,3 +748,7 @@ function PulsedSweepISingle_smub(start, stop, numPoints, pulseWidth, pulsePeriod
 		print(smub.nvbuffer1.timestamps[x] .. " " .. smub.nvbuffer2[x] .. " " .. smub.nvbuffer1[x])
 	end
 end
+
+function Reset_smub()
+	smub.reset();
+end

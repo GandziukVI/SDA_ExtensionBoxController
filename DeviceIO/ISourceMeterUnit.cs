@@ -52,11 +52,11 @@ namespace DeviceIO
 
         event EventHandler<TraceDataArrived_EventArgs> TraceDataArrived;
 
-        void StartVoltageTrace(double srcCurr, double srcLimitV, double devNPLC, int outputBlockSize);
-        void StartCurrentTrace(double srcVolt, double srcLimitI, double devNPLC, int outputBlockSize);
+        void StartVoltageTrace(double srcCurr, double srcLimitV, double devNPLC);
+        void StartCurrentTrace(double srcVolt, double srcLimitI, double devNPLC);
 
         void StopVoltageTrace();
-        void StopCurrenttrace();
+        void StopCurrentTrace();
 
         void Reset();
     }
