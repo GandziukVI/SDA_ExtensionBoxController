@@ -50,7 +50,7 @@ namespace SDA_ExtensionBoxController
             _smu_channel.TraceDataArrived += _smu_channel_TraceDataArrived;
 
             _smu_channel.SwitchON();
-            _smu_channel.StartCurrentTrace(0.02, 0.0001, 0.01);
+            _smu_channel.StartCurrentTrace(0.12, 0.001, 1.0);
 
             Thread.Sleep(10000);
 
