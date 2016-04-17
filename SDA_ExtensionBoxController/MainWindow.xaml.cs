@@ -1,4 +1,4 @@
-﻿using Agilent.AgilentU254x.Interop;
+﻿//using Agilent.AgilentU254x.Interop;
 using Agilent_ExtensionBox;
 using Agilent_ExtensionBox.Internal;
 using Agilent_ExtensionBox.IO;

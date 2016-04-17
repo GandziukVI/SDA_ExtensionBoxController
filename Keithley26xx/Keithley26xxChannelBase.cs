@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using DeviceIO;
 using System.Globalization;
 using System.Diagnostics;
+using System.Threading;
 
 namespace Keithley26xx
 {
@@ -629,8 +630,7 @@ namespace Keithley26xx
 
         public void Reset()
         {
-            _driver.SendCommandRequest("reset()");
-            _driver.SendCommandRequest(string.Format("Reset_smu{0}()", ChannelIdentifier));
+            _driver.SendCommandRequest(string.Format("smu{0}.reset()", ChannelIdentifier));
         }
     }
 }
