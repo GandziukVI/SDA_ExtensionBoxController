@@ -30,36 +30,77 @@ namespace SDA_ExtensionBoxController
     {
         double responce;
         LinkedList<TraceData> listData;
+        static COMDevice device;
 
         public MainWindow()
         {
+            device = new COMDevice("COM1", 115200, System.IO.Ports.Parity.None, 8, System.IO.Ports.StopBits.One);
+
+            var ans = "";
+            var stringresponce = device.RequestQuery("pos");
+            stringresponce += "\n";
+
+            device.RequestQuery("en");
+
+            device.SendCommandRequest("la4000");
+            device.SendCommandRequest("m");
+            device.RequestQuery("np");
+            ans = device.ReceiveDeviceAnswer();
+            ans += "\n";
+            device.RequestQuery("la4050");
+            device.SendCommandRequest("m");
+            device.RequestQuery("np");
+            ans = device.ReceiveDeviceAnswer();
+            device.RequestQuery("la4100");
+            device.RequestQuery("m");
+            device.RequestQuery("np");
+            ans = device.ReceiveDeviceAnswer();
+            device.RequestQuery("la4150");
+            device.RequestQuery("m");
+            device.RequestQuery("np");
+            ans = device.ReceiveDeviceAnswer();
+            device.RequestQuery("la4200");
+            device.RequestQuery("m");
+            device.RequestQuery("np");
+            ans = device.ReceiveDeviceAnswer();
+            device.RequestQuery("la4300");
+            device.RequestQuery("m");
+            device.RequestQuery("np");
+            ans = device.ReceiveDeviceAnswer();
+
+            device.RequestQuery("di");
+
+            Thread.Sleep(1000);
+            stringresponce = device.RequestQuery("pos");
+            stringresponce += "\n";
+
             InitializeComponent();
 
-            listData = new LinkedList<TraceData>();
+            //listData = new LinkedList<TraceData>();
 
-            var _driver = new VisaDevice("GPIB0::26::INSTR");
-            var _device = new Keithley26xxB<Keithley2635B>(_driver);
+            //var _driver = new VisaDevice("GPIB0::26::INSTR");
+            //var _device = new Keithley26xxB<Keithley2635B>(_driver);
 
-            var _smu_channel = _device.ChannelCollection[0];
+            //var _smu_channel = _device.ChannelCollection[0];
 
             //_smu_channel.SMU_SourceMode = SourceMode.Voltage;
             //_smu_channel.Averaging = 100;
             //_smu_channel.NPLC = 0.001;
             //_smu_channel.Compliance = 0.0001;
 
-            _smu_channel.TraceDataArrived += _smu_channel_TraceDataArrived;
+            //_smu_channel.TraceDataArrived += _smu_channel_TraceDataArrived;
 
-            _smu_channel.SwitchON();
-            _smu_channel.StartCurrentTrace(0.12, 0.001, 1.0);
+            //_smu_channel.SwitchON();
+            //_smu_channel.StartCurrentTrace(0.12, 0.001, 1.0);
 
-            Thread.Sleep(10000);
+            //Thread.Sleep(10000);
 
-            _smu_channel.StopCurrentTrace();
-            _smu_channel.SwitchOFF();
+            //_smu_channel.StopCurrentTrace();
+            //_smu_channel.SwitchOFF();
 
 
-            var a = 0.0;
-            a += 1.0;
+            //var a = 0.0;
+            //a += 1.0;
 
             //_smu_channel.SetSourceVoltage(0.007);
             //_smu_channel.SwitchON();

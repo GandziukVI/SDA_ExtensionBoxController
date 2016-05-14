@@ -8,9 +8,10 @@ using System.IO.Ports;
 
 namespace DeviceIO
 {
-    class COMDevice : IDeviceIO, IDisposable
+    public class COMDevice : IDeviceIO, IDisposable
     {
         private SerialPort _COMPort;
+        private string _returnToken;
         private bool _dataReady = false;
         private string _dataReading;
 
@@ -18,7 +19,9 @@ namespace DeviceIO
         {
             _COMPort = new SerialPort(portName, baudRate, parity, dataBits, stopBits);
 
-            _COMPort.NewLine = returnToken;
+            _returnToken = returnToken;
+
+            _COMPort.NewLine = _returnToken;
             _COMPort.RtsEnable = true;
             _COMPort.DtrEnable = true;
 
@@ -30,6 +33,8 @@ namespace DeviceIO
             _COMPort.Open();
 
             if (!_COMPort.IsOpen)
+                _COMPort.Open();
+            if (!_COMPort.IsOpen)
                 throw new Exception("Can't connect to the COM port!");
         }
 
@@ -40,7 +45,7 @@ namespace DeviceIO
 
         private void _COMPort_DataReceived(object sender, SerialDataReceivedEventArgs e)
         {
-            using(var port = sender as SerialPort)
+            using (var port = sender as SerialPort)
             {
                 _dataReading += port.ReadExisting();
 
@@ -53,23 +58,28 @@ namespace DeviceIO
         {
             try
             {
+                while (!_COMPort.IsOpen)
+                    _COMPort.Open();
+
                 _dataReady = false;
+                _dataReading = string.Empty;
 
                 request = request.EndsWith("\n") ? request : request + "\n";
 
                 var strBytes = Encoding.ASCII.GetBytes(request);
+                while (_COMPort.CtsHolding) ;
                 _COMPort.Write(strBytes, 0, strBytes.Length);
             }
-            catch
+            catch (Exception e)
             {
-                throw new Exception("Error while communicating with COM port!");
+                throw e;
             }
         }
 
         public string ReceiveDeviceAnswer()
         {
             while (!_dataReady) ;
-            
+
             var _dataReadingCopy = string.Copy(_dataReading);
             _dataReading = string.Empty;
 
@@ -84,10 +94,11 @@ namespace DeviceIO
 
         public void Dispose()
         {
-            if(_COMPort != null)
+            if (_COMPort != null)
             {
                 if (_COMPort.IsOpen)
                 {
+                    _COMPort.DataReceived -= _COMPort_DataReceived;
                     _COMPort.Close();
                     _COMPort.Dispose();
                 }
