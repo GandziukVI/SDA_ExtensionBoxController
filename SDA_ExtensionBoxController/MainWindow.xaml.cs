@@ -30,11 +30,11 @@ namespace SDA_ExtensionBoxController
     {
         double responce;
         LinkedList<TraceData> listData;
-        static COMDevice device;
+        static SerialDevice device;
 
         public MainWindow()
         {
-            device = new COMDevice("COM1", 115200, System.IO.Ports.Parity.None, 8, System.IO.Ports.StopBits.One);
+            device = new SerialDevice("COM1", 115200, System.IO.Ports.Parity.None, 8, System.IO.Ports.StopBits.One);
 
             var ans = "";
             var stringresponce = device.RequestQuery("pos");

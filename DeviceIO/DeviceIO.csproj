@@ -41,7 +41,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="COMDevice.cs" />
+    <Compile Include="SerialDevice.cs" />
     <Compile Include="Definitions.cs" />
     <Compile Include="IDeviceIO.cs" />
     <Compile Include="ISourceMeterUnit.cs" />
