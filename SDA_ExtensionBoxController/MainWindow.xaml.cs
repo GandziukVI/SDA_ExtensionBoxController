@@ -34,47 +34,49 @@ namespace SDA_ExtensionBoxController
 
         public MainWindow()
         {
-            device = new SerialDevice("COM1", 115200, System.IO.Ports.Parity.None, 8, System.IO.Ports.StopBits.One);
+            using (device = new SerialDevice("COM1", 115200, System.IO.Ports.Parity.None, 8, System.IO.Ports.StopBits.One))
+            {
 
-            var ans = "";
-            var stringresponce = device.RequestQuery("pos");
-            stringresponce += "\n";
+                var ans = "";
+                var stringresponce = device.RequestQuery("pos");
+                stringresponce += "\n";
 
-            device.RequestQuery("en");
+                device.RequestQuery("en");
 
-            device.SendCommandRequest("la4000");
-            device.SendCommandRequest("m");
-            device.RequestQuery("np");
-            ans = device.ReceiveDeviceAnswer();
-            ans += "\n";
-            device.RequestQuery("la4050");
-            device.SendCommandRequest("m");
-            device.RequestQuery("np");
-            ans = device.ReceiveDeviceAnswer();
-            device.RequestQuery("la4100");
-            device.RequestQuery("m");
-            device.RequestQuery("np");
-            ans = device.ReceiveDeviceAnswer();
-            device.RequestQuery("la4150");
-            device.RequestQuery("m");
-            device.RequestQuery("np");
-            ans = device.ReceiveDeviceAnswer();
-            device.RequestQuery("la4200");
-            device.RequestQuery("m");
-            device.RequestQuery("np");
-            ans = device.ReceiveDeviceAnswer();
-            device.RequestQuery("la4300");
-            device.RequestQuery("m");
-            device.RequestQuery("np");
-            ans = device.ReceiveDeviceAnswer();
+                device.SendCommandRequest("la4000");
+                device.SendCommandRequest("m");
+                device.RequestQuery("np");
+                ans = device.ReceiveDeviceAnswer();
+                ans += "\n";
+                device.RequestQuery("la4050");
+                device.SendCommandRequest("m");
+                device.RequestQuery("np");
+                ans = device.ReceiveDeviceAnswer();
+                device.RequestQuery("la4100");
+                device.RequestQuery("m");
+                device.RequestQuery("np");
+                ans = device.ReceiveDeviceAnswer();
+                device.RequestQuery("la4150");
+                device.RequestQuery("m");
+                device.RequestQuery("np");
+                ans = device.ReceiveDeviceAnswer();
+                device.RequestQuery("la4200");
+                device.RequestQuery("m");
+                device.RequestQuery("np");
+                ans = device.ReceiveDeviceAnswer();
+                device.RequestQuery("la4300");
+                device.RequestQuery("m");
+                device.RequestQuery("np");
+                ans = device.ReceiveDeviceAnswer();
 
-            device.RequestQuery("di");
+                device.RequestQuery("di");
 
-            Thread.Sleep(1000);
-            stringresponce = device.RequestQuery("pos");
-            stringresponce += "\n";
+                Thread.Sleep(1000);
+                stringresponce = device.RequestQuery("pos");
+                stringresponce += "\n";
 
-            InitializeComponent();
+                InitializeComponent();
+            }
 
             //listData = new LinkedList<TraceData>();
 

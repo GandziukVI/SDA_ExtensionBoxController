@@ -89,7 +89,7 @@ namespace DeviceIO
                     _dataReading += Encoding.ASCII.GetString(buffer);
                     if (_dataReading.Contains(_COMPort.NewLine))
                     {
-                        _dataQueue.Enqueue(_dataReading);
+                        _dataQueue.Enqueue(_dataReading.TrimEnd("\r\n".ToCharArray()));
                         _dataReading = string.Empty;
                     }
                 }
@@ -132,7 +132,11 @@ namespace DeviceIO
         public void Dispose()
         {
             _communicatyionIsActive = false;
-            while (_serialThread.IsAlive) ;
+            while (_serialThread.IsAlive)
+            {
+                _serialThread.Abort();
+                Thread.Sleep(500);
+            }
 
             if (_COMPort != null)
             {
