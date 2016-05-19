@@ -105,6 +105,10 @@ namespace DeviceIO
 
         public void SendCommandRequest(string request)
         {
+            var temp = string.Empty;
+            while (!_dataQueue.IsEmpty)
+                _dataQueue.TryDequeue(out temp);
+
             request = request.EndsWith("\n") ? request : request + "\n";
 
             var strBytes = Encoding.ASCII.GetBytes(request);
