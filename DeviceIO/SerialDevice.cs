@@ -132,11 +132,7 @@ namespace DeviceIO
         public void Dispose()
         {
             _communicatyionIsActive = false;
-            while (_serialThread.IsAlive)
-            {
-                _serialThread.Abort();
-                Thread.Sleep(500);
-            }
+            while (_serialThread.IsAlive) ;
 
             if (_COMPort != null)
             {
