@@ -13,14 +13,14 @@ namespace Keithley26xx
         Channel_B = 1
     }
 
-    public class Keithley26xxB<T> : IEnumerable<ISourceMeterUnit>
+    public class Keithley26xxB<T> : IEnumerable<ISourceMeterUnit>, IDisposable
         where T : Keithley26xxChannelBase, new()
     {
-        private IDeviceIO _driver;
+        private IODriverBase _driver;
         private int _numberOfChannels;
         public ISourceMeterUnit[] ChannelCollection { get; private set; }
 
-        public Keithley26xxB(IDeviceIO Driver)
+        public Keithley26xxB(IODriverBase Driver)
         {
             _driver = Driver;
             var attr = (NumberOfChannelsAttribute)typeof(T).GetCustomAttributes(typeof(NumberOfChannelsAttribute), true).FirstOrDefault();
@@ -50,7 +50,7 @@ namespace Keithley26xx
                 {
                     return ChannelCollection[(int)index];
                 }
-                catch(IndexOutOfRangeException)
+                catch (IndexOutOfRangeException)
                 {
                     throw new ArgumentException("The channel is not supported for current model!");
                 }
@@ -86,6 +86,14 @@ namespace Keithley26xx
             {
                 yield return ChannelCollection[index];
             }
+        }
+
+        public void Dispose()
+        {
+            if (_driver != null)
+                _driver.Dispose();
+
+            GC.SuppressFinalize(this);
         }
     }
 }

@@ -8,7 +8,7 @@ using NationalInstruments.VisaNS;
 
 namespace DeviceIO
 {
-    public class VisaDevice : IDeviceIO
+    public class VisaDevice : IDeviceIO, IDisposable
     {
         private MessageBasedSession mbSession;
 
@@ -40,6 +40,14 @@ namespace DeviceIO
             var _Query = query.EndsWith("\n") ? Encoding.ASCII.GetBytes(query) : Encoding.ASCII.GetBytes(query + "\n");
 
             return Encoding.ASCII.GetString(mbSession.Query(_Query)).TrimEnd("\r\n".ToCharArray());
+        }
+
+        public void Dispose()
+        {
+            if (mbSession != null)
+                mbSession.Dispose();
+
+            GC.SuppressFinalize(this);
         }
     }
 }
