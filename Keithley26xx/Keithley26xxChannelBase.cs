@@ -632,5 +632,11 @@ namespace Keithley26xx
         {
             _driver.SendCommandRequest(string.Format("smu{0}.reset()", ChannelIdentifier));
         }
+
+        public void Dispose()
+        {
+            if (_driver != null)
+                _driver.Dispose();
+        }
     }
 }

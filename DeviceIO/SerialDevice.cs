@@ -11,7 +11,7 @@ using System.Diagnostics;
 
 namespace DeviceIO
 {
-    public class SerialDevice : IDeviceIO, IDisposable
+    public class SerialDevice : IDeviceIO
     {
         private SerialPort _COMPort;
         private string _returnToken;

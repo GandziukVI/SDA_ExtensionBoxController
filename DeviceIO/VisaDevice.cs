@@ -8,7 +8,7 @@ using NationalInstruments.VisaNS;
 
 namespace DeviceIO
 {
-    public class VisaDevice : IDeviceIO, IDisposable
+    public class VisaDevice : IDeviceIO
     {
         private MessageBasedSession mbSession;
 

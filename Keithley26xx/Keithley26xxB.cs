@@ -16,11 +16,11 @@ namespace Keithley26xx
     public class Keithley26xxB<T> : IEnumerable<ISourceMeterUnit>, IDisposable
         where T : Keithley26xxChannelBase, new()
     {
-        private IODriverBase _driver;
+        private IDeviceIO _driver;
         private int _numberOfChannels;
         public ISourceMeterUnit[] ChannelCollection { get; private set; }
 
-        public Keithley26xxB(IODriverBase Driver)
+        public Keithley26xxB(IDeviceIO Driver)
         {
             _driver = Driver;
             var attr = (NumberOfChannelsAttribute)typeof(T).GetCustomAttributes(typeof(NumberOfChannelsAttribute), true).FirstOrDefault();

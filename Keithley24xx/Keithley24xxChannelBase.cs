@@ -761,24 +761,6 @@ namespace Keithley24xx
                 return double.NaN;
         }
 
-        #endregion
-
-        public void SetAutoZeroMode(AutoZeroMode mode)
-        {
-            switch (mode)
-            {
-                case AutoZeroMode.ON:
-                    _driver.SendCommandRequest(":SYST:AZER ON");
-                    break;
-                case AutoZeroMode.OFF:
-                    _driver.SendCommandRequest(":SYST:AZER OFF");
-                    break;
-                default:
-                    break;
-            }
-        }
-
-
         public IV_Data[] LinearVoltageSweep(double start, double stop, int numPoints)
         {
             throw new NotImplementedException();
@@ -820,7 +802,7 @@ namespace Keithley24xx
         }
 
         public event EventHandler<TraceDataArrived_EventArgs> TraceDataArrived;
-        
+
         private void _OnTraceDataArrived(TraceDataArrived_EventArgs e)
         {
             if (TraceDataArrived != null)
@@ -882,6 +864,29 @@ namespace Keithley24xx
         public void Reset()
         {
             _driver.SendCommandRequest("*RST");
+        }
+
+        public void Dispose()
+        {
+            if (_driver != null)
+                _driver.Dispose();
+        }
+
+        #endregion
+
+        public void SetAutoZeroMode(AutoZeroMode mode)
+        {
+            switch (mode)
+            {
+                case AutoZeroMode.ON:
+                    _driver.SendCommandRequest(":SYST:AZER ON");
+                    break;
+                case AutoZeroMode.OFF:
+                    _driver.SendCommandRequest(":SYST:AZER OFF");
+                    break;
+                default:
+                    break;
+            }
         }
     }
 }

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace DeviceIO
 {
-    public interface IDeviceIO
+    public interface IDeviceIO : IDisposable
     {
         void SendCommandRequest(string request);
         string ReceiveDeviceAnswer();

@@ -41,7 +41,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="IODriverBase.cs" />
     <Compile Include="SerialDevice.cs" />
     <Compile Include="Definitions.cs" />
     <Compile Include="IDeviceIO.cs" />

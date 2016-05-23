@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace DeviceIO
 {
-    public interface ISourceMeterUnit
+    public interface ISourceMeterUnit : IDisposable
     {
         void Initialize(IDeviceIO Driver);
         void Initialize(IDeviceIO Driver, string channelID);
@@ -33,7 +33,7 @@ namespace DeviceIO
         void SetSourceCurrent(double val);
         void SetAveraging(int avg);
         void SetNPLC(double val);
-        
+
         double MeasureVoltage();
         double MeasureCurrent();
         double MeasureResistance();
