@@ -37,85 +37,6 @@ namespace SDA_ExtensionBoxController
 
         public MainWindow()
         {
-            //using (device = new SerialDevice("COM1", 115200, System.IO.Ports.Parity.None, 8, System.IO.Ports.StopBits.One))
-            //{
-
-            //    var ans = "";
-            //    var stringresponce = device.RequestQuery("pos");
-            //    stringresponce += "\n";
-
-            //    device.RequestQuery("en");
-
-            //    device.SendCommandRequest("la4000");
-            //    device.SendCommandRequest("m");
-            //    device.RequestQuery("np");
-            //    ans = device.ReceiveDeviceAnswer();
-            //    ans += "\n";
-            //    device.RequestQuery("la4050");
-            //    device.SendCommandRequest("m");
-            //    device.RequestQuery("np");
-            //    ans = device.ReceiveDeviceAnswer();
-            //    device.RequestQuery("la4100");
-            //    device.RequestQuery("m");
-            //    device.RequestQuery("np");
-            //    ans = device.ReceiveDeviceAnswer();
-            //    device.RequestQuery("la4150");
-            //    device.RequestQuery("m");
-            //    device.RequestQuery("np");
-            //    ans = device.ReceiveDeviceAnswer();
-            //    device.RequestQuery("la4200");
-            //    device.RequestQuery("m");
-            //    device.RequestQuery("np");
-            //    ans = device.ReceiveDeviceAnswer();
-            //    device.RequestQuery("la4300");
-            //    device.RequestQuery("m");
-            //    device.RequestQuery("np");
-            //    ans = device.ReceiveDeviceAnswer();
-
-            //    device.RequestQuery("di");
-
-            //    Thread.Sleep(1000);
-            //    stringresponce = device.RequestQuery("pos");
-            //    stringresponce += "\n";
-
-            //    InitializeComponent();
-            //}
-
-            //listData = new LinkedList<TraceData>();
-
-            //var _driver = new VisaDevice("GPIB0::26::INSTR");
-            //var _device = new Keithley26xxB<Keithley2635B>(_driver);
-
-            //var _smu_channel = _device.ChannelCollection[0];
-
-            //_smu_channel.SMU_SourceMode = SourceMode.Voltage;
-            //_smu_channel.Averaging = 100;
-            //_smu_channel.NPLC = 0.001;
-            //_smu_channel.Compliance = 0.0001;
-
-            //_smu_channel.TraceDataArrived += _smu_channel_TraceDataArrived;
-
-            //_smu_channel.SwitchON();
-            //_smu_channel.StartCurrentTrace(0.12, 0.001, 1.0);
-
-            //Thread.Sleep(10000);
-
-            //_smu_channel.StopCurrentTrace();
-            //_smu_channel.SwitchOFF();
-
-
-            //var a = 0.0;
-            //a += 1.0;
-
-            //_smu_channel.SetSourceVoltage(0.007);
-            //_smu_channel.SwitchON();
-
-            //responce = _smu_channel.Resistance;
-
-            //_smu_channel.SwitchOFF();
-
-            //var responce1 = _smu_channel.PulsedLinearVoltageSweep(0.0, 1.0, 151, 0.001, 0.005, false);
-
             //BoxController b = new BoxController();
             //b.Init("USB0::0x0957::0x1718::TW54334510::INSTR");
 
@@ -162,21 +83,21 @@ namespace SDA_ExtensionBoxController
 
         private void wnd_KeyDown(object sender, KeyEventArgs e)
         {
-            if (e.Key == Key.Up)
-            {
-                FocusManager.SetFocusedElement(progWND, cmd_Move);
-                radio_up.IsChecked = true;
-            }
-            else if (e.Key == Key.Down)
-            {
-                FocusManager.SetFocusedElement(progWND, cmd_Move);
-                radio_down.IsChecked = true;
-            }
+            //if (e.Key == Key.Up)
+            //{
+            //    FocusManager.SetFocusedElement(progWND, cmd_Move);
+            //    radio_up.IsChecked = true;
+            //}
+            //else if (e.Key == Key.Down)
+            //{
+            //    FocusManager.SetFocusedElement(progWND, cmd_Move);
+            //    radio_down.IsChecked = true;
+            //}
 
-            var peer = new ButtonAutomationPeer(cmd_Move);
-            var invokeProv = peer.GetPattern(PatternInterface.Invoke) 
-                as IInvokeProvider;
-            invokeProv.Invoke();
+            //var peer = new ButtonAutomationPeer(cmd_Move);
+            //var invokeProv = peer.GetPattern(PatternInterface.Invoke) 
+            //    as IInvokeProvider;
+            //invokeProv.Invoke();
         }
     }
 }
