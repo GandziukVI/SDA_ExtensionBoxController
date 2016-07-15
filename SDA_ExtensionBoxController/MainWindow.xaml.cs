@@ -31,10 +31,6 @@ namespace SDA_ExtensionBoxController
     /// </summary>
     public partial class MainWindow : Window
     {
-        double responce;
-        LinkedList<TraceData> listData;
-        static SerialDevice device;
-
         public MainWindow()
         {
             //BoxController b = new BoxController();
@@ -55,49 +51,83 @@ namespace SDA_ExtensionBoxController
             //b.Close();
 
             InitializeComponent();
+            this.KeyDown += MainWindow_KeyDown;
         }
 
-        void _smu_channel_TraceDataArrived(object sender, TraceDataArrived_EventArgs e)
+        private void pressPutton(Button btn)
         {
-            listData.AddLast(e.DataPoint);
+            var peer = new ButtonAutomationPeer(btn);
+            var invokeProv = peer.GetPattern(PatternInterface.Invoke)
+                as IInvokeProvider;
+            invokeProv.Invoke();
         }
 
-        private void cmd_Move_Click(object sender, RoutedEventArgs e)
+        void MainWindow_KeyDown(object sender, KeyEventArgs e)
         {
-            using (device = new SerialDevice("COM1", 115200, System.IO.Ports.Parity.None, 8, System.IO.Ports.StopBits.One))
+            if (e.Key == Key.Left)
+                pressPutton(cmd_Left);
+            else if (e.Key == Key.Up)
+                pressPutton(cmd_Up);
+            else if (e.Key == Key.Right)
+                pressPutton(cmd_Right);
+            else if (e.Key == Key.Down)
+                pressPutton(cmd_Down);
+        }
+
+        private double[] dx = new double[] { 0.001, 0.005, 0.01, 0.05, 0.1, 0.25, 0.5, 1.0, 2.5, 5, 10.0 };
+        private int index = 7;
+
+        private double alpha()
+        {
+            return (double)(6.0 * parameter_U.Value * 0.000000001 * parameter_t.Value * 0.01 / (parameter_L.Value * 0.001 * parameter_L.Value * 0.001));
+        }
+
+        private void cmd_Left_Click(object sender, System.Windows.RoutedEventArgs e)
+        {
+            if (index >= 0)
+                index -= 1;
+
+            inputMovementVal.Value = dx[index];
+        }
+
+        private void cmd_Right_Click(object sender, System.Windows.RoutedEventArgs e)
+        {
+            if (index < dx.Length)
+                index += 1;
+
+            inputMovementVal.Value = dx[index];
+        }
+
+        private void cmd_Up_Click(object sender, System.Windows.RoutedEventArgs e)
+        {
+            using (var device = new SerialDevice(COMPortName.Text, 115200, System.IO.Ports.Parity.None, 8, System.IO.Ports.StopBits.One))
             {
-                var toSet = Math.Ceiling((double)(30520.0 * inputMovementVal.Value)).ToString(NumberFormatInfo.InvariantInfo);
+                var toSet = Math.Ceiling((double)((inputMovementVal.Value * 0.0000000001 / alpha()) * 1000.0 * 1526.0 * 3000.0 / 0.5)).ToString(NumberFormatInfo.InvariantInfo);
 
                 device.SendCommandRequest("en");
-                if(radio_up.IsChecked == true)
-                    device.SendCommandRequest(string.Format("lr{0}", toSet));
-                else
-                    device.SendCommandRequest(string.Format("lr-{0}", toSet));
+                device.SendCommandRequest(string.Format("lr{0}", toSet));
 
                 device.SendCommandRequest("m");
 
-                Thread.Sleep((int)(1000.0 * inputMovementVal.Value));
+                Thread.Sleep((int)(500.0 * inputMovementVal.Value));
                 device.SendCommandRequest("di");
             }
         }
 
-        private void wnd_KeyDown(object sender, KeyEventArgs e)
+        private void cmd_Down_Click(object sender, System.Windows.RoutedEventArgs e)
         {
-            //if (e.Key == Key.Up)
-            //{
-            //    FocusManager.SetFocusedElement(progWND, cmd_Move);
-            //    radio_up.IsChecked = true;
-            //}
-            //else if (e.Key == Key.Down)
-            //{
-            //    FocusManager.SetFocusedElement(progWND, cmd_Move);
-            //    radio_down.IsChecked = true;
-            //}
+            using (var device = new SerialDevice(COMPortName.Text, 115200, System.IO.Ports.Parity.None, 8, System.IO.Ports.StopBits.One))
+            {
+                var toSet = Math.Ceiling((double)((inputMovementVal.Value * 0.0000000001 / alpha()) * 1000.0 * 1526.0 * 3000.0 / 0.5)).ToString(NumberFormatInfo.InvariantInfo);
 
-            //var peer = new ButtonAutomationPeer(cmd_Move);
-            //var invokeProv = peer.GetPattern(PatternInterface.Invoke) 
-            //    as IInvokeProvider;
-            //invokeProv.Invoke();
+                device.SendCommandRequest("en");
+                device.SendCommandRequest(string.Format("lr-{0}", toSet));
+
+                device.SendCommandRequest("m");
+
+                Thread.Sleep((int)(500.0 * inputMovementVal.Value));
+                device.SendCommandRequest("di");
+            }
         }
     }
 }
