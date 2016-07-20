@@ -109,7 +109,8 @@ namespace SDA_ExtensionBoxController
 
                 device.SendCommandRequest("m");
 
-                Thread.Sleep((int)(500.0 * inputMovementVal.Value));
+                while (!device.ReceiveDeviceAnswer().Contains('p')) ;
+                //Thread.Sleep((int)(500.0 * inputMovementVal.Value));
                 device.SendCommandRequest("di");
             }
         }
@@ -125,7 +126,8 @@ namespace SDA_ExtensionBoxController
 
                 device.SendCommandRequest("m");
 
-                Thread.Sleep((int)(500.0 * inputMovementVal.Value));
+                while (!device.ReceiveDeviceAnswer().Contains('p')) ;
+                //Thread.Sleep((int)(500.0 * inputMovementVal.Value));
                 device.SendCommandRequest("di");
             }
         }
