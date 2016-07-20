@@ -106,6 +106,7 @@ namespace SDA_ExtensionBoxController
 
                 device.SendCommandRequest("en");
                 device.SendCommandRequest(string.Format("lr{0}", toSet));
+                device.SendCommandRequest("np");
 
                 device.SendCommandRequest("m");
 
@@ -123,6 +124,7 @@ namespace SDA_ExtensionBoxController
 
                 device.SendCommandRequest("en");
                 device.SendCommandRequest(string.Format("lr-{0}", toSet));
+                device.SendCommandRequest("np");
 
                 device.SendCommandRequest("m");
 
