@@ -84,7 +84,7 @@ namespace SDA_ExtensionBoxController
 
         private void cmd_Left_Click(object sender, System.Windows.RoutedEventArgs e)
         {
-            if (index >= 0)
+            if (index > 0)
                 index -= 1;
 
             inputMovementVal.Value = dx[index];
@@ -92,7 +92,7 @@ namespace SDA_ExtensionBoxController
 
         private void cmd_Right_Click(object sender, System.Windows.RoutedEventArgs e)
         {
-            if (index < dx.Length)
+            if (index < dx.Length - 1)
                 index += 1;
 
             inputMovementVal.Value = dx[index];
