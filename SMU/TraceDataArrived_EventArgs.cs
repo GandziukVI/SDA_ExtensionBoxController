@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DeviceIO
+namespace SMU
 {
     public class TraceDataArrived_EventArgs : EventArgs
     {

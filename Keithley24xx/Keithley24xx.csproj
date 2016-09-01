@@ -56,6 +56,10 @@
       <Project>{74877d78-fe9b-4faf-a9e5-5503d6021577}</Project>
       <Name>DeviceIO</Name>
     </ProjectReference>
+    <ProjectReference Include="..\SMU\SMU.csproj">
+      <Project>{ed72605b-7901-47aa-b6aa-85a8a3883382}</Project>
+      <Name>SMU</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="DISPlay\Commands\" />

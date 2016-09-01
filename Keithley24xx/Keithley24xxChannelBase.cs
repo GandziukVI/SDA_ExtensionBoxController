@@ -5,6 +5,8 @@ using System.Text;
 using System.Threading.Tasks;
 
 using DeviceIO;
+using SMU;
+
 using System.Globalization;
 using System.Diagnostics;
 

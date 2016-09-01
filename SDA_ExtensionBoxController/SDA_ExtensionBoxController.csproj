@@ -150,6 +150,10 @@
       <Project>{61c7f3be-15b1-4445-8367-90331c7f47fd}</Project>
       <Name>Keithley26xx</Name>
     </ProjectReference>
+    <ProjectReference Include="..\SMU\SMU.csproj">
+      <Project>{ed72605b-7901-47aa-b6aa-85a8a3883382}</Project>
+      <Name>SMU</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
