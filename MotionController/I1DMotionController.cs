@@ -16,12 +16,12 @@ namespace MotionController
 
         double GetCurrentPosition();
         double GetSpeed();
-        
+
         void SetSpeed(double Speed);
-        void SetDestination(double Destination);
         void SetPosition(double Position);
 
         double Position { get; set; }
+        bool OnTarget { get; }
         double Speed { get; set; }
     }
 }

@@ -29,18 +29,24 @@ namespace FaulhaberSA2036U012V
             }
         }
 
+        private bool enabled = false;
         public void Enable()
         {
-            _driver.SendCommandRequest("en");
+            if (!enabled)
+                _driver.SendCommandRequest("en");
+            enabled = true;
         }
 
         public void Disable()
         {
-            _driver.SendCommandRequest("di");
+            if (enabled)
+                _driver.SendCommandRequest("di");
+            enabled = false;
         }
 
         public void StartMotion()
         {
+            Enable();
             _driver.SendCommandRequest("m");
         }
 
@@ -51,32 +57,48 @@ namespace FaulhaberSA2036U012V
 
         public double GetCurrentPosition()
         {
-            return _queryMotor("pos");
+            var motorPos = _queryMotor("pos");
+
+            return motorPos / pulsesPerRevolution / gear / 2.0;
         }
 
         public double GetSpeed()
         {
             var rpmSpeed = _queryMotor("GV");
-            var mmpm = rpmSpeed / 2.0;
+            var mmpm = rpmSpeed / 2.0 / gear;
 
             return mmpm;
         }
 
         public void SetSpeed(double Speed)
         {
-            var rpmSpeed = (int)Math.Round(2.0 * Speed);
+            var rpmSpeed = (int)(Math.Round(2.0 * Speed) * gear);
+
+            if (rpmSpeed < -30000)
+                rpmSpeed = -30000;
+            else if (rpmSpeed > 30000)
+                rpmSpeed = 30000;
+
             _driver.SendCommandRequest(string.Format("V{0}", rpmSpeed.ToString(NumberFormatInfo.InvariantInfo)));
+            //_driver.SendCommandRequest("nv");
+            //while (!_driver.ReceiveDeviceAnswer().Contains('v')) ;
         }
 
-        public void SetDestination(double Destination)
-        {
-            var destination = 
-            throw new NotImplementedException();
-        }
+        private bool onTarget = false;
+        private double pulsesPerRevolution = 3000;
+        private double gear = 1526.0;
 
         public void SetPosition(double Position)
         {
-            throw new NotImplementedException();
+            onTarget = false;
+
+            var destination = 2.0 * Position * pulsesPerRevolution * gear;
+            _driver.SendCommandRequest(string.Format("la{0}", ((int)Math.Round(destination)).ToString(NumberFormatInfo.InvariantInfo)));
+            _driver.SendCommandRequest("np");
+            _driver.SendCommandRequest("m");
+            while (!_driver.ReceiveDeviceAnswer().Contains('p')) ;
+
+            onTarget = true;
         }
 
         public double Position
@@ -94,6 +116,12 @@ namespace FaulhaberSA2036U012V
         public void Dispose()
         {
             _driver.Dispose();
+        }
+
+
+        public bool OnTarget
+        {
+            get { return onTarget; }
         }
     }
 }
