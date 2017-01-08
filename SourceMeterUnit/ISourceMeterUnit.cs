@@ -4,7 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DeviceIO
+using DeviceIO;
+
+namespace SourceMeterUnit
 {
     public interface ISourceMeterUnit : IDisposable
     {

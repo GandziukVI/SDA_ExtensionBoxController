@@ -8,6 +8,7 @@ using DeviceIO;
 using System.Globalization;
 using System.Diagnostics;
 using System.Threading;
+using SourceMeterUnit;
 
 namespace Keithley26xx
 {

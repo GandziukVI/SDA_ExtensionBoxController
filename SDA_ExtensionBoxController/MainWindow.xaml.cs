@@ -20,6 +20,7 @@ using System.Windows.Shapes;
 using Keithley26xx;
 using DeviceIO;
 using System.Threading;
+using SourceMeterUnit;
 
 namespace SDA_ExtensionBoxController
 {

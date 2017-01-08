@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DeviceIO
+namespace SourceMeterUnit
 {
     public enum SourceMode
     {
@@ -140,7 +140,7 @@ namespace DeviceIO
 
             var successTime = double.TryParse(data[0], NumberStyles.Float, NumberFormatInfo.InvariantInfo, out _Time);
             var successValue = double.TryParse(data[1], NumberStyles.Float, NumberFormatInfo.InvariantInfo, out _Value);
-            
+
             if (!(successTime && successValue))
                 throw new Exception("Canno't interpert input data!");
         }

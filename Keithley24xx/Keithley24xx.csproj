@@ -56,6 +56,10 @@
       <Project>{74877d78-fe9b-4faf-a9e5-5503d6021577}</Project>
       <Name>DeviceIO</Name>
     </ProjectReference>
+    <ProjectReference Include="..\SourceMeterUnit\SourceMeterUnit.csproj">
+      <Project>{ce69e0ee-2e6c-4f3d-b29a-a9a82fb13d00}</Project>
+      <Name>SourceMeterUnit</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="DISPlay\Commands\" />
@@ -67,6 +71,9 @@
     <Folder Include="SYSTem\" />
     <Folder Include="TRACe\" />
     <Folder Include="TRIGger\" />
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Service References\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

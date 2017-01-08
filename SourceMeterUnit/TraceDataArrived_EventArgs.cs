@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DeviceIO
+namespace SourceMeterUnit
 {
     public class TraceDataArrived_EventArgs : EventArgs
     {

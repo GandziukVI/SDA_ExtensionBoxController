@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using DeviceIO;
 using System.Globalization;
 using System.Diagnostics;
+using SourceMeterUnit;
 
 namespace Keithley24xx
 {

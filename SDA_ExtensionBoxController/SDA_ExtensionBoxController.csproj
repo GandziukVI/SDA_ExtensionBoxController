@@ -57,6 +57,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="TraceDataArrived_EventArgs.cs" />
     <Page Include="ChannelParams.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -145,6 +146,18 @@
     <ProjectReference Include="..\Keithley26xx\Keithley26xx.csproj">
       <Project>{61c7f3be-15b1-4445-8367-90331c7f47fd}</Project>
       <Name>Keithley26xx</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\MCS_Faulhaber\MCS_Faulhaber.csproj">
+      <Project>{b6a1c81f-96bb-475e-908b-e9f0ae84aab2}</Project>
+      <Name>MCS_Faulhaber</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\MotionManager\MotionManager.csproj">
+      <Project>{f6bef88a-f790-4bc7-acf1-5eaf0c211791}</Project>
+      <Name>MotionManager</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\SourceMeterUnit\SourceMeterUnit.csproj">
+      <Project>{ce69e0ee-2e6c-4f3d-b29a-a9a82fb13d00}</Project>
+      <Name>SourceMeterUnit</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
