@@ -4,11 +4,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{9FC59C48-CA2C-4FC8-8975-7E430AC2C5F0}</ProjectGuid>
+    <ProjectGuid>{876F9DF1-A5FE-42F1-9F77-BA0F1FB27662}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Keithley2430</RootNamespace>
-    <AssemblyName>Keithley2430</AssemblyName>
+    <RootNamespace>MotionController</RootNamespace>
+    <AssemblyName>MotionController</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -39,18 +39,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Keithley2430.cs" />
-    <Compile Include="Keithley2430Channel.cs" />
+    <Compile Include="I1DMotionController.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\DeviceIO\DeviceIO.csproj">
       <Project>{74877d78-fe9b-4faf-a9e5-5503d6021577}</Project>
       <Name>DeviceIO</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\SMU\SMU.csproj">
-      <Project>{ed72605b-7901-47aa-b6aa-85a8a3883382}</Project>
-      <Name>SMU</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

@@ -21,6 +21,9 @@ using Keithley26xx;
 using DeviceIO;
 using System.Threading;
 using SourceMeterUnit;
+using System.Globalization;
+using System.Windows.Automation.Peers;
+using System.Windows.Automation.Provider;
 
 namespace SDA_ExtensionBoxController
 {
@@ -29,91 +32,8 @@ namespace SDA_ExtensionBoxController
     /// </summary>
     public partial class MainWindow : Window
     {
-        double responce;
-        LinkedList<TraceData> listData;
-        static SerialDevice device;
-
         public MainWindow()
         {
-            using (device = new SerialDevice("COM1", 115200, System.IO.Ports.Parity.None, 8, System.IO.Ports.StopBits.One))
-            {
-
-                var ans = "";
-                var stringresponce = device.RequestQuery("pos");
-                stringresponce += "\n";
-
-                device.RequestQuery("en");
-
-                device.SendCommandRequest("la4000");
-                device.SendCommandRequest("m");
-                device.RequestQuery("np");
-                ans = device.ReceiveDeviceAnswer();
-                ans += "\n";
-                device.RequestQuery("la4050");
-                device.SendCommandRequest("m");
-                device.RequestQuery("np");
-                ans = device.ReceiveDeviceAnswer();
-                device.RequestQuery("la4100");
-                device.RequestQuery("m");
-                device.RequestQuery("np");
-                ans = device.ReceiveDeviceAnswer();
-                device.RequestQuery("la4150");
-                device.RequestQuery("m");
-                device.RequestQuery("np");
-                ans = device.ReceiveDeviceAnswer();
-                device.RequestQuery("la4200");
-                device.RequestQuery("m");
-                device.RequestQuery("np");
-                ans = device.ReceiveDeviceAnswer();
-                device.RequestQuery("la4300");
-                device.RequestQuery("m");
-                device.RequestQuery("np");
-                ans = device.ReceiveDeviceAnswer();
-
-                device.RequestQuery("di");
-
-                Thread.Sleep(1000);
-                stringresponce = device.RequestQuery("pos");
-                stringresponce += "\n";
-
-                InitializeComponent();
-            }
-
-            //listData = new LinkedList<TraceData>();
-
-            //var _driver = new VisaDevice("GPIB0::26::INSTR");
-            //var _device = new Keithley26xxB<Keithley2635B>(_driver);
-
-            //var _smu_channel = _device.ChannelCollection[0];
-
-            //_smu_channel.SMU_SourceMode = SourceMode.Voltage;
-            //_smu_channel.Averaging = 100;
-            //_smu_channel.NPLC = 0.001;
-            //_smu_channel.Compliance = 0.0001;
-
-            //_smu_channel.TraceDataArrived += _smu_channel_TraceDataArrived;
-
-            //_smu_channel.SwitchON();
-            //_smu_channel.StartCurrentTrace(0.12, 0.001, 1.0);
-
-            //Thread.Sleep(10000);
-
-            //_smu_channel.StopCurrentTrace();
-            //_smu_channel.SwitchOFF();
-
-
-            //var a = 0.0;
-            //a += 1.0;
-
-            //_smu_channel.SetSourceVoltage(0.007);
-            //_smu_channel.SwitchON();
-
-            //responce = _smu_channel.Resistance;
-
-            //_smu_channel.SwitchOFF();
-
-            //var responce1 = _smu_channel.PulsedLinearVoltageSweep(0.0, 1.0, 151, 0.001, 0.005, false);
-
             //BoxController b = new BoxController();
             //b.Init("USB0::0x0957::0x1718::TW54334510::INSTR");
 
@@ -130,11 +50,89 @@ namespace SDA_ExtensionBoxController
             //b.StartAnalogAcquisition(499712);
 
             //b.Close();
+
+                InitializeComponent();
+            this.KeyDown += MainWindow_KeyDown;
+            }
+
+        private void pressPutton(Button btn)
+        {
+            var peer = new ButtonAutomationPeer(btn);
+            var invokeProv = peer.GetPattern(PatternInterface.Invoke)
+                as IInvokeProvider;
+            invokeProv.Invoke();
         }
 
-        void _smu_channel_TraceDataArrived(object sender, TraceDataArrived_EventArgs e)
+        void MainWindow_KeyDown(object sender, KeyEventArgs e)
         {
-            listData.AddLast(e.DataPoint);
+            if (e.Key == Key.Left)
+                pressPutton(cmd_Left);
+            else if (e.Key == Key.Up)
+                pressPutton(cmd_Up);
+            else if (e.Key == Key.Right)
+                pressPutton(cmd_Right);
+            else if (e.Key == Key.Down)
+                pressPutton(cmd_Down);
+        }
+
+        private double[] dx = new double[] { 0.001, 0.005, 0.01, 0.05, 0.1, 0.25, 0.5, 1.0, 2.5, 5, 10.0 };
+        private int index = 7;
+
+        private double alpha()
+        {
+            return (double)(6.0 * parameter_U.Value * 0.000000001 * parameter_t.Value * 0.01 / (parameter_L.Value * 0.001 * parameter_L.Value * 0.001));
+        }
+
+        private void cmd_Left_Click(object sender, System.Windows.RoutedEventArgs e)
+        {
+            if (index > 0)
+                index -= 1;
+
+            inputMovementVal.Value = dx[index];
+        }
+
+        private void cmd_Right_Click(object sender, System.Windows.RoutedEventArgs e)
+        {
+            if (index < dx.Length - 1)
+                index += 1;
+
+            inputMovementVal.Value = dx[index];
+        }
+
+        private void cmd_Up_Click(object sender, System.Windows.RoutedEventArgs e)
+        {
+            using (var device = new SerialDevice(COMPortName.Text, 115200, System.IO.Ports.Parity.None, 8, System.IO.Ports.StopBits.One))
+            {
+                var toSet = Math.Ceiling((double)((inputMovementVal.Value * 0.0000000001 / alpha()) * 1000.0 * 1526.0 * 3000.0 / 0.5)).ToString(NumberFormatInfo.InvariantInfo);
+
+                device.SendCommandRequest("en");
+                device.SendCommandRequest(string.Format("lr{0}", toSet));
+                device.SendCommandRequest("np");
+
+                device.SendCommandRequest("m");
+
+                while (!device.ReceiveDeviceAnswer().Contains('p')) ;
+                //Thread.Sleep((int)(500.0 * inputMovementVal.Value));
+                device.SendCommandRequest("di");
+            }
+        }
+
+        private void cmd_Down_Click(object sender, System.Windows.RoutedEventArgs e)
+        {
+            using (var device = new SerialDevice(COMPortName.Text, 115200, System.IO.Ports.Parity.None, 8, System.IO.Ports.StopBits.One))
+            {
+                var toSet = Math.Ceiling((double)((inputMovementVal.Value * 0.0000000001 / alpha()) * 1000.0 * 1526.0 * 3000.0 / 0.5)).ToString(NumberFormatInfo.InvariantInfo);
+
+                device.SendCommandRequest("en");
+                device.SendCommandRequest(string.Format("lr-{0}", toSet));
+                device.SendCommandRequest("np");
+
+                device.SendCommandRequest("m");
+
+                while (!device.ReceiveDeviceAnswer().Contains('p')) ;
+                //Thread.Sleep((int)(500.0 * inputMovementVal.Value));
+                device.SendCommandRequest("di");
+        }
         }
     }
 }
