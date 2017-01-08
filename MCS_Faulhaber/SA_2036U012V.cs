@@ -71,7 +71,7 @@ namespace MCS_Faulhaber
 
         public override double GetVelosity()
         {
-            if (currentVelosity != null && !double.IsNaN(currentVelosity))
+            if (!double.IsNaN(currentVelosity))
                 return currentVelosity * MilimetersPerRevolution;
             else
                 return 0.0;

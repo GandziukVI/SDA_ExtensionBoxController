@@ -16,6 +16,9 @@ namespace MotionManager
         {
             if (Driver != null)
                 driver = Driver;
+
+            if (!IsEnabled)
+                Enable();
         }
 
         public virtual void SetPosition(double Position)
@@ -96,6 +99,7 @@ namespace MotionManager
 
         public void Dispose()
         {
+            Disable();
             if (driver != null)
                 driver.Dispose();
         }
