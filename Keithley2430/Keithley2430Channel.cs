@@ -1,4 +1,5 @@
 ﻿using DeviceIO;
+using SourceMeterUnit;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -715,6 +716,84 @@ namespace Keithley2430Namespace
         }
 
 
-        
+
+
+
+        public void Initialize(IDeviceIO Driver, string channelID)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IV_Data[] LinearVoltageSweep(double start, double stop, int numPoints)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IV_Data[] LinearCurrentSweep(double start, double stop, int numPoints)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IV_Data[] LogarithmicVoltageSweep(double start, double stop, int numPoints)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IV_Data[] LogarithmicCurrentSweep(double start, double stop, int numPoints)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IV_Data[] ListVoltageSweep(double[] sweepList)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IV_Data[] ListCurrentSweep(double[] sweepList)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IV_Data[] PulsedLinearVoltageSweep(double start, double stop, int numPoints, double pulseWidth, double pulsePeriod, bool remoteSense)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IV_Data[] PulsedLinearCurrentSweep(double start, double stop, int numPoints, double pulseWidth, double pulsePeriod, bool remoteSense)
+        {
+            throw new NotImplementedException();
+        }
+
+        public event EventHandler<TraceDataArrived_EventArgs> TraceDataArrived;
+
+        public void StartVoltageTrace(double srcCurr, double srcLimitV, double devNPLC)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void StartCurrentTrace(double srcVolt, double srcLimitI, double devNPLC)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void StopVoltageTrace()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void StopCurrentTrace()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Reset()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Dispose()
+        {
+            throw new NotImplementedException();
+        }
     }
 }
