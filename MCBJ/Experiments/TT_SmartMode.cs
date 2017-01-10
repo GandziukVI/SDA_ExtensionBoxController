@@ -17,6 +17,8 @@ namespace MCBJ.Experiments
 
         private readonly double ConductanceQuantum = 0.0000774809173;
 
+        private LinkedList<double> avgConductanceList;
+
         public TT_SmartMode(ISourceMeterUnit SMU, IMotionController1D Motor)
         {
             smu = SMU;
@@ -38,6 +40,11 @@ namespace MCBJ.Experiments
             var minConductance = settings.MinConductance;
             var maxConductance = settings.MaxConductance;
 
+            var nPointsConsider = settings.nPointsToConsider;
+
+            if (avgConductanceList == null)
+                avgConductanceList = new LinkedList<double>();
+
             var currPos = setPos;
 
             var currCycle = 1;
@@ -53,7 +60,15 @@ namespace MCBJ.Experiments
 
                 while (true)
                 {
+                    // Correct NPLC settings should be applied here
+                    smu.NPLC = 10;
+
                     var scaledConductance = (1.0 / smu.Resistance) / ConductanceQuantum;
+
+                    if (avgConductanceList.Count >= nPointsConsider)
+                        avgConductanceList.RemoveFirst();
+
+                    avgConductanceList.AddLast(scaledConductance);
 
                     onDataArrived(new ExpDataArrivedEventArgs(string.Format("{0}\t{1}\r\n", currPos.ToString(NumberFormatInfo.InvariantInfo), scaledConductance.ToString(NumberFormatInfo.InvariantInfo))));
 
@@ -67,7 +82,7 @@ namespace MCBJ.Experiments
 
                     if (currPos > destPos)
                     {
-                        if (scaledConductance > maxConductance)
+                        if (avgConductanceList.Average() > maxConductance)
                         {
                             destPos = maxPos;
                             break;
@@ -78,8 +93,9 @@ namespace MCBJ.Experiments
                     }
                     else
                     {
-                        if (scaledConductance < minConductance)
+                        if (avgConductanceList.Average() < minConductance)
                         {
+                            smu.NPLC = 0.01;
                             destPos = minPos;
                             break;
                         }

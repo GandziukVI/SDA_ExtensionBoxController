@@ -61,6 +61,7 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Experiments\IV_DefinedResistance.cs" />
     <Compile Include="Experiments\TT_SmartMode.cs" />
     <Compile Include="Experiments\TT_SmartModeInfo.cs" />
     <Compile Include="MainWindow.xaml.cs">

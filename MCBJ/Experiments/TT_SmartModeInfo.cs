@@ -17,5 +17,6 @@ namespace MCBJ.Experiments
         public int nCycles { get; set; }
         public double MinConductance { get; set; }
         public double MaxConductance { get; set; }
+        public int nPointsToConsider { get; set; }
     }
 }
