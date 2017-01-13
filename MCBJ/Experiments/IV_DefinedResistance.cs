@@ -4,6 +4,7 @@ using SourceMeterUnit;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -27,9 +28,18 @@ namespace MCBJ.Experiments
             stabilityStopwatch = new Stopwatch();
         }
 
+        private string getIVString(ref IV_Data[] Data)
+        {
+            var resultString = "";
+            for (int i = 0; i < Data.Length; i++)
+                resultString += string.Format("{0}\t{1}\r\n", Data[i].Voltage.ToString(NumberFormatInfo.InvariantInfo), Data[i].Current.ToString(NumberFormatInfo.InvariantInfo));
+
+            return resultString;
+        }
+
         public override void ToDo(object Arg)
         {
-            var setCond = 12900.0;
+            var setCond = 0.001;
             var condDev = 20.0;
             var stabilizationTime = 1.5;
 
@@ -48,8 +58,16 @@ namespace MCBJ.Experiments
             var inRangeCounter = 0;
             var outsiderCounter = 0;
 
+            var minValue = 0.0;
+            var maxValue = 1.0;
+            var epsilon = 0.02;
+            var nPoints = 100;
+            var nCycles = 3;
+
+            var sourceMode = SourceMode.Voltage;
+
             motor.Position = setPos;
-            
+
             while (true)
             {
                 if (!IsRunning)
@@ -71,11 +89,11 @@ namespace MCBJ.Experiments
                     motor.Position = maxPos;
                 else
                     motor.Position = minPos;
-                
-                if((scaledConductance >= setCond - (setCond * condDev / 100.0)) &&
+
+                if ((scaledConductance >= setCond - (setCond * condDev / 100.0)) &&
                     (scaledConductance <= setCond + (setCond * condDev / 100.0)))
                 {
-                    if(!stabilityStopwatch.IsRunning)
+                    if (!stabilityStopwatch.IsRunning)
                         stabilityStopwatch.Start();
 
                     ++inRangeCounter;
@@ -91,7 +109,7 @@ namespace MCBJ.Experiments
                     if ((double)stabilityStopwatch.ElapsedMilliseconds / 1000.0 >= stabilizationTime)
                     {
                         var divider = outsiderCounter > 0 ? (double)outsiderCounter : 1.0;
-                        if ((double)inRangeCounter / divider >= 10.0)
+                        if (Math.Log10((double)inRangeCounter / divider) >= 1.0)
                         {
                             stabilityStopwatch.Stop();
                             break;
@@ -100,6 +118,39 @@ namespace MCBJ.Experiments
                             stabilityStopwatch.Restart();
                     }
                 }
+            }
+
+            var currCycle = 1;
+
+            while (currCycle <= nCycles)
+            {
+                switch (sourceMode)
+                {
+                    case SourceMode.Voltage:
+                        {
+                            var ivData = smu.LinearVoltageSweep(-1.0 * epsilon, maxValue, nPoints);
+
+                            onDataArrived(new ExpDataArrivedEventArgs(getIVString(ref ivData)));
+
+                            ivData = smu.LinearVoltageSweep(epsilon, minValue, nPoints);
+
+                            onDataArrived(new ExpDataArrivedEventArgs(getIVString(ref ivData)));
+                        } break;
+                    case SourceMode.Current:
+                        {
+                            var ivData = smu.LinearCurrentSweep(-1.0 * epsilon, maxValue, nPoints);
+
+                            onDataArrived(new ExpDataArrivedEventArgs(getIVString(ref ivData)));
+
+                            ivData = smu.LinearCurrentSweep(epsilon, minValue, nPoints);
+
+                            onDataArrived(new ExpDataArrivedEventArgs(getIVString(ref ivData)));
+                        } break;
+                    case SourceMode.ModeNotSet:
+                        throw new ArgumentException();
+                }
+
+                ++currCycle;
             }
         }
     }

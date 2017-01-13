@@ -25,6 +25,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExperimentController", "Exp
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MCBJ", "MCBJ\MCBJ.csproj", "{4AB62377-487B-44D0-8AC4-46BADD78C873}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FileIOController", "FileIOController\FileIOController.csproj", "{DAD1749F-3633-45E8-BC7D-D56A63450F65}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -107,6 +109,12 @@ Global
 		{4AB62377-487B-44D0-8AC4-46BADD78C873}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4AB62377-487B-44D0-8AC4-46BADD78C873}.Release|Any CPU.Build.0 = Release|Any CPU
 		{4AB62377-487B-44D0-8AC4-46BADD78C873}.Release|x86.ActiveCfg = Release|Any CPU
+		{DAD1749F-3633-45E8-BC7D-D56A63450F65}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DAD1749F-3633-45E8-BC7D-D56A63450F65}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DAD1749F-3633-45E8-BC7D-D56A63450F65}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{DAD1749F-3633-45E8-BC7D-D56A63450F65}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DAD1749F-3633-45E8-BC7D-D56A63450F65}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DAD1749F-3633-45E8-BC7D-D56A63450F65}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
