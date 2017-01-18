@@ -9,6 +9,10 @@ using ExperimentController;
 using Agilent_ExtensionBox;
 using Agilent_ExtensionBox.IO;
 using Agilent_ExtensionBox.Internal;
+using NationalInstruments.Analysis.SpectralMeasurements;
+using NationalInstruments.Analysis.Dsp;
+using System.IO;
+using System.Globalization;
 
 namespace NoiseMeasurement.Experiments
 {
@@ -30,52 +34,58 @@ namespace NoiseMeasurement.Experiments
             b.ConfigureAI_Channels(_ch);
 
             var freq = 499712;
+            var avgNumber = 100;
+
+            int averagingCounter = 0;
+
+            double[] autoPSD;
+            double[] noisePSD = new double[freq / 2];
 
             while (true)
             {
                 if (!IsRunning)
                     break;
+                if (averagingCounter >= avgNumber)
+                    break;
 
                 b.StartAnalogAcquisition(freq);
 
-                Point[] res;
-                b.AI_ChannelCollection[AnalogInChannelsEnum.AIn1].ChannelData.TryDequeue(out res);
+                Point[] timeTrace;
+                var dataReadingSuccess = b.AI_ChannelCollection[AnalogInChannelsEnum.AIn1].ChannelData.TryDequeue(out timeTrace);
 
-                var query = from val in res
-                            select val.Y;
-
-                var counter = 0;
-                var spectrum = new double[res.Length];
-                foreach (var item in query)
+                if (dataReadingSuccess)
                 {
-                    spectrum[counter] = item;
-                    ++counter;
-                }
+                    var query = from val in timeTrace
+                                select val.Y;
 
-                StringBuilder unit = new System.Text.StringBuilder("V", 256);
-
-                double dt, df, equivalentNoiseBandwidth, coherentGain;
-                ScaledWindow sw = ScaledWindow.CreateRectangularWindow();
-                sw.Apply(spectrum, out equivalentNoiseBandwidth, out coherentGain);
-
-                dt = 1.0 / (double)freq;
-
-                var autoPsd = Measurements.AutoPowerSpectrum(spectrum, dt, out df);
-                var specConversion = Measurements.SpectrumUnitConversion(autoPsd, SpectrumType.Power, ScalingMode.Linear, DisplayUnits.VoltsPeakSquaredPerHZ, df, equivalentNoiseBandwidth, coherentGain, unit);
-
-                counter = 0;
-                using (var fs = new FileStream("F:\\Temp.txt", FileMode.Create, FileAccess.Write))
-                {
-                    using (var sWriter = new StreamWriter(fs))
+                    var counter = 0;
+                    var traceData = new double[timeTrace.Length];
+                    foreach (var item in query)
                     {
-                        foreach (var item in specConversion)
-                        {
-                            sWriter.Write(string.Format("{0}\t{1}\r\n", counter.ToString(NumberFormatInfo.InvariantInfo), item.ToString(NumberFormatInfo.InvariantInfo)));
-                            ++counter;
-                        }
+                        traceData[counter] = item;
+                        ++counter;
                     }
+
+                    double dt, df, equivalentNoiseBandwidth, coherentGain;
+
+                    var unit = new System.Text.StringBuilder("V", 256);
+                    var sw = ScaledWindow.CreateRectangularWindow();
+
+                    sw.Apply(traceData, out equivalentNoiseBandwidth, out coherentGain);
+
+                    dt = 1.0 / (double)freq;
+
+                    autoPSD = Measurements.AutoPowerSpectrum(traceData, dt, out df);
+                    var singlePSD = Measurements.SpectrumUnitConversion(autoPSD,SpectrumType.Power, ScalingMode.Linear, DisplayUnits.VoltsPeakSquaredPerHZ, df, equivalentNoiseBandwidth, coherentGain, unit);
+
+                    for (int i = 0; i < singlePSD.Length; i++)
+                        noisePSD[i] += singlePSD[i];
+
+                    ++averagingCounter;
                 }
             }
+
+
 
             b.Close();
         }
