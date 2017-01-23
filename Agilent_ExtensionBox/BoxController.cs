@@ -9,6 +9,8 @@ using System.Collections;
 using Agilent_ExtensionBox.IO;
 using Agilent_ExtensionBox.Internal;
 using System.Windows;
+using System.Threading.Tasks;
+using System.Windows.Threading;
 
 namespace Agilent_ExtensionBox
 {
@@ -153,7 +155,7 @@ namespace Agilent_ExtensionBox
         }
 
         private bool _AcquisitionInProgress = false;
-        public bool AcquisitionInProgress 
+        public bool AcquisitionInProgress
         {
             get { return _AcquisitionInProgress; }
             set { _AcquisitionInProgress = value; }
@@ -161,7 +163,7 @@ namespace Agilent_ExtensionBox
 
         public delegate void CallAsync(ref short[] data);
 
-        public void StartAnalogAcquisition(int SampleRate)
+        public async Task StartAnalogAcquisition(Dispatcher d, int SampleRate)
         {
             short[] results = { 0 };
 
@@ -182,15 +184,18 @@ namespace Agilent_ExtensionBox
                 }
             }
 
-            while (_AcquisitionInProgress)
+            await d.InvokeAsync(new Action(() =>
             {
-                while (!(_Driver.Acquisition.BufferStatus == AgilentU254xBufferStatusEnum.AgilentU254xBufferStatusDataReady)) ;
-                _Driver.Acquisition.Fetch(ref results);                
+                while (_AcquisitionInProgress)
+                {
+                    while (!(_Driver.Acquisition.BufferStatus == AgilentU254xBufferStatusEnum.AgilentU254xBufferStatusDataReady)) ;
+                    _Driver.Acquisition.Fetch(ref results);
 
-                _router.AddDataInvoke(ref results);
-            }
+                    _router.AddDataInvoke(ref results);
+                }
 
-            _Driver.Acquisition.Stop();
+                _Driver.Acquisition.Stop();
+            }));
         }
 
         public void AcquireSingleShot(int SampleRate)

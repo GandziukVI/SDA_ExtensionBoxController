@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ExperimentController
 {
-    interface IExperiment : IDisposable
+    public interface IExperiment : IDisposable
     {
         bool IsRunning { get; set; }
         void ToDo(object Arg);
