@@ -154,7 +154,7 @@ namespace Agilent_ExtensionBox
             }
         }
 
-        private bool _AcquisitionInProgress = false;
+        private volatile bool _AcquisitionInProgress = false;
         public bool AcquisitionInProgress
         {
             get { return _AcquisitionInProgress; }
@@ -163,7 +163,7 @@ namespace Agilent_ExtensionBox
 
         public delegate void CallAsync(ref short[] data);
 
-        public async Task StartAnalogAcquisition(Dispatcher d, int SampleRate)
+        public async Task StartAnalogAcquisition(int SampleRate)
         {
             short[] results = { 0 };
 
@@ -184,7 +184,19 @@ namespace Agilent_ExtensionBox
                 }
             }
 
-            await d.InvokeAsync(new Action(() =>
+            //await Task.Run(() => {
+            //    while (_AcquisitionInProgress)
+            //    {
+            //        while (!(_Driver.Acquisition.BufferStatus == AgilentU254xBufferStatusEnum.AgilentU254xBufferStatusDataReady)) ;
+            //        _Driver.Acquisition.Fetch(ref results);
+
+            //        _router.AddDataInvoke(ref results);
+            //    }
+
+            //    _Driver.Acquisition.Stop();
+            //});
+
+            await Dispatcher.CurrentDispatcher.InvokeAsync(new Action(() =>
             {
                 while (_AcquisitionInProgress)
                 {

@@ -50,10 +50,10 @@ namespace NoiseMeasurement.Experiments
                 throw new ArgumentException("The frequency should be an even number!");
 
             b.AcquisitionInProgress = true;
-            
+
             //await Dispatcher.CurrentDispatcher.InvokeAsync(new Action(() =>
             //{
-                await b.StartAnalogAcquisition(Dispatcher.CurrentDispatcher, freq);
+                b.StartAnalogAcquisition(freq);
             //}));
 
             while (true)
