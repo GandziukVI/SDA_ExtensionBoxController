@@ -11,7 +11,7 @@ namespace Agilent_ExtensionBox.IO
     {
         private AI_Channel[] _channels;
 
-        public AI_Channels(AgilentU254xClass Driver)
+        public AI_Channels(AgilentU254x Driver)
         {
             var _pulseBit = new DigitalBit(new DigitalChannel(DigitalChannelsEnum.DIOD, Driver), 0);
             var _setResetBit = new DigitalBit(new DigitalChannel(DigitalChannelsEnum.DIOD, Driver), 1);

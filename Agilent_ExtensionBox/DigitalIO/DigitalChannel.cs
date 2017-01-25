@@ -11,11 +11,11 @@ namespace Agilent_ExtensionBox.IO
     {
         public int Width { get { return _bitArray.Length; } }
         private DigitalBit[] _bitArray;
-        private AgilentU254xClass _driver;
+        private AgilentU254x _driver;
         private string _channelName;
 
 
-        public DigitalChannel(DigitalChannelsEnum Channel, AgilentU254xClass Driver)
+        public DigitalChannel(DigitalChannelsEnum Channel, AgilentU254x Driver)
         {
             int width = 0;
             switch (Channel)

@@ -9,7 +9,7 @@ namespace Agilent_ExtensionBox.IO
     public class AO_Channels : IEnumerable<AO_Channel>
     {
         private AO_Channel[] _channels;
-        public AO_Channels(AgilentU254xClass Driver)
+        public AO_Channels(AgilentU254x Driver)
         {
             _channels = new AO_Channel[2]
             {

@@ -13,7 +13,7 @@ namespace Agilent_ExtensionBox.IO
     public class AI_Channel : IObserver<Point>
     {
         private AnalogInChannelsEnum _channelName;
-        private AgilentU254xClass _driver;
+        private AgilentU254x _driver;
         private AgilentU254xAnalogInChannel _channel;
         private ChannelModeSwitch _modeSwitch;
 
@@ -35,7 +35,7 @@ namespace Agilent_ExtensionBox.IO
             }
         }
 
-        public AI_Channel(AnalogInChannelsEnum channelName, AgilentU254xClass Driver, ChannelModeSwitch ModeSwitch, Filter ChannelFilter, ProgrammableGainAmplifier ChannelPGA, AnalogInLatch CommonLatch)
+        public AI_Channel(AnalogInChannelsEnum channelName, AgilentU254x Driver, ChannelModeSwitch ModeSwitch, Filter ChannelFilter, ProgrammableGainAmplifier ChannelPGA, AnalogInLatch CommonLatch)
         {
             _channelName = channelName;
             _driver = Driver;

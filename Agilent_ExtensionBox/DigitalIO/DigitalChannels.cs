@@ -8,7 +8,7 @@ namespace Agilent_ExtensionBox.IO
     public class DigitalChannels : IEnumerable<DigitalChannel>
     {
         private DigitalChannel[] _channels;
-        public DigitalChannels(AgilentU254xClass Driver)
+        public DigitalChannels(AgilentU254x Driver)
         {
             _channels = new DigitalChannel[4]
             {

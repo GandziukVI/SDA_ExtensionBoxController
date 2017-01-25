@@ -20,6 +20,8 @@ namespace NoiseMeasurement.Experiments
 {
     public class DefResistanceNoise : ExperimentBase
     {
+        private static int averagingCounter = 0;
+
         public override async void ToDo(object Arg)
         {
             BoxController b = new BoxController();
@@ -36,10 +38,8 @@ namespace NoiseMeasurement.Experiments
             b.ConfigureAI_Channels(_ch);
 
             var freq = 499712;
-            var updNumber = 10;
+            var updNumber = 1;
             var avgNumber = 10;
-
-            int averagingCounter = 0;
 
             double[] autoPSD;
             double[] noisePSD = new double[freq / 2];
@@ -50,72 +50,82 @@ namespace NoiseMeasurement.Experiments
                 throw new ArgumentException("The frequency should be an even number!");
 
             b.AcquisitionInProgress = true;
+            b.AI_ChannelCollection[AnalogInChannelsEnum.AIn1].DataReady += DefResistanceNoise_DataReady;
 
-            //await Dispatcher.CurrentDispatcher.InvokeAsync(new Action(() =>
-            //{
-                b.StartAnalogAcquisition(freq);
-            //}));
-
-            while (true)
-            {
-                if (!IsRunning)
+            Parallel.Invoke(
+                () =>
                 {
-                    b.AcquisitionInProgress = false;
-                    break;
-                }
-                if (averagingCounter >= avgNumber)
+                    b.StartAnalogAcquisition(freq);
+                },
+                () =>
                 {
-                    b.AcquisitionInProgress = false;
-                    break;
-                }
+                    while (true)
+                    {
+                        if (!IsRunning)
+                        {
+                            b.AcquisitionInProgress = false;
+                            break;
+                        }
+                        if (averagingCounter >= avgNumber)
+                        {
+                            b.AcquisitionInProgress = false;
+                            break;
+                        }
 
-                Point[] timeTrace;
-                var dataReadingSuccess = b.AI_ChannelCollection[AnalogInChannelsEnum.AIn1].ChannelData.TryDequeue(out timeTrace);
+                        Point[] timeTrace;
+                        var dataReadingSuccess = b.AI_ChannelCollection[AnalogInChannelsEnum.AIn1].ChannelData.TryDequeue(out timeTrace);
 
-                //if (dataReadingSuccess)
-                //{
-                //    var query = from val in timeTrace
-                //                select val.Y;
+                        //if (dataReadingSuccess)
+                        //{
+                        //    var query = from val in timeTrace
+                        //                select val.Y;
 
-                //    var counter = 0;
-                //    var traceData = new double[timeTrace.Length];
-                //    foreach (var item in query)
-                //    {
-                //        traceData[counter] = item;
-                //        ++counter;
-                //    }
+                        //    var counter = 0;
+                        //    var traceData = new double[timeTrace.Length];
+                        //    foreach (var item in query)
+                        //    {
+                        //        traceData[counter] = item;
+                        //        ++counter;
+                        //    }
 
-                //    double dt, df, equivalentNoiseBandwidth, coherentGain;
+                        //    double dt, df, equivalentNoiseBandwidth, coherentGain;
 
-                //    var unit = new System.Text.StringBuilder("V", 256);
-                //    var sw = ScaledWindow.CreateRectangularWindow();
+                        //    var unit = new System.Text.StringBuilder("V", 256);
+                        //    var sw = ScaledWindow.CreateRectangularWindow();
 
-                //    sw.Apply(traceData, out equivalentNoiseBandwidth, out coherentGain);
+                        //    sw.Apply(traceData, out equivalentNoiseBandwidth, out coherentGain);
 
-                //    dt = 1.0 / (double)freq;
+                        //    dt = 1.0 / (double)freq;
 
-                //    autoPSD = Measurements.AutoPowerSpectrum(traceData, dt, out df);
-                //    var singlePSD = Measurements.SpectrumUnitConversion(autoPSD, SpectrumType.Power, ScalingMode.Linear, DisplayUnits.VoltsPeakSquaredPerHZ, df, equivalentNoiseBandwidth, coherentGain, unit);
+                        //    autoPSD = Measurements.AutoPowerSpectrum(traceData, dt, out df);
+                        //    var singlePSD = Measurements.SpectrumUnitConversion(autoPSD, SpectrumType.Power, ScalingMode.Linear, DisplayUnits.VoltsPeakSquaredPerHZ, df, equivalentNoiseBandwidth, coherentGain, unit);
 
-                //    for (int i = 0; i < singlePSD.Length; i++)
-                //        noisePSD[i] += singlePSD[i];
+                        //    for (int i = 0; i < singlePSD.Length; i++)
+                        //        noisePSD[i] += singlePSD[i];
 
-                //    //if (averagingCounter % updNumber == 0)
-                //    //{
-                //    //    resSpec = string.Empty;
-                //    //    for (int i = 0; i < noisePSD.Length; i++)
-                //    //        resSpec += string.Format("{0}\t{1}\r\n", i.ToString(NumberFormatInfo.InvariantInfo), (noisePSD[i] / (double)averagingCounter).ToString(NumberFormatInfo.InvariantInfo));
+                        //    //if (averagingCounter % updNumber == 0)
+                        //    //{
+                        //    //    resSpec = string.Empty;
+                        //    //    for (int i = 0; i < noisePSD.Length; i++)
+                        //    //        resSpec += string.Format("{0}\t{1}\r\n", i.ToString(NumberFormatInfo.InvariantInfo), (noisePSD[i] / (double)averagingCounter).ToString(NumberFormatInfo.InvariantInfo));
 
-                //    //    onDataArrived(new ExpDataArrivedEventArgs(resSpec));
-                //    //}
+                        //    //    onDataArrived(new ExpDataArrivedEventArgs(resSpec));
+                        //    //}
 
-                //    ++averagingCounter;
-                //}
+                        //    ++averagingCounter;
+                        //}
 
-                ++averagingCounter;
-            }
+                        //if (dataReadingSuccess == true)
+                        //    ++averagingCounter;
+                    }
+                });
 
             b.Close();
+        }
+
+        void DefResistanceNoise_DataReady(object sender, EventArgs e)
+        {
+            ++averagingCounter;
         }
     }
 }
