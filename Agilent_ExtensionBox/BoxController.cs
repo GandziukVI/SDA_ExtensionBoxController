@@ -191,7 +191,13 @@ namespace Agilent_ExtensionBox
                 //while (!(_Driver.Acquisition.BufferStatus == AgilentU254xBufferStatusEnum.AgilentU254xBufferStatusDataReady)) ;
                 //_Driver.Acquisition.Fetch(ref results);
 
-                while (!(_Driver.AnalogIn.Acquisition.BufferStatus == AgilentU254xBufferStatusEnum.AgilentU254xBufferStatusDataReady)) ;
+                while (true)
+                {
+                    var dataReady = (_Driver.AnalogIn.Acquisition.BufferStatus == AgilentU254xBufferStatusEnum.AgilentU254xBufferStatusDataReady);
+                    if (dataReady == true)
+                        break;
+                    Thread.Sleep(20);
+                }
                 _Driver.AnalogIn.Acquisition.Fetch(ref results);
 
                 _router.AddDataInvoke(ref results);

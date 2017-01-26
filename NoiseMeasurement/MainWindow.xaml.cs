@@ -7,7 +7,7 @@ using NationalInstruments.Analysis.Monitoring;
 using NationalInstruments.Analysis.SignalGeneration;
 using NationalInstruments.Analysis.SpectralMeasurements;
 using NationalInstruments;
-using NationalInstruments.NI4882;
+//using NationalInstruments.NI4882;
 using NationalInstruments.VisaNS;
 using NationalInstruments.NetworkVariable;
 using NationalInstruments.NetworkVariable.WindowsForms;

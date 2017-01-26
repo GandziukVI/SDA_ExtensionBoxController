@@ -38,8 +38,8 @@ namespace NoiseMeasurement.Experiments
             b.ConfigureAI_Channels(_ch);
 
             var freq = 499712;
-            var updNumber = 1;
-            var avgNumber = 10;
+            var updNumber = 10;
+            var avgNumber = 100;
 
             double[] autoPSD;
             double[] noisePSD = new double[freq / 2];
