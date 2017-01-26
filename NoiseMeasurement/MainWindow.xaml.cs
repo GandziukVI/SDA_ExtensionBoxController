@@ -54,9 +54,6 @@ namespace NoiseMeasurement
         {
             InitializeComponent();
 
-            //ds = new ObsLLPointDataSource(100000);
-            //ds.UpdateFrequency = 100000;
-
             dList = new LinkedList<Point>();
             ds = new EnumerableDataSource<Point>(dList);
             ds.SetXYMapping(p => p);
@@ -81,13 +78,14 @@ namespace NoiseMeasurement
 
         private void addDataToPlot(object DataString)
         {
+            dList.Clear();
+
             var data = (string)DataString;
             var query = from dataPoint in data.Split("\r\n".ToCharArray(), StringSplitOptions.RemoveEmptyEntries)
                         select Array.ConvertAll(dataPoint.Split(new char[] { '\t' }, StringSplitOptions.RemoveEmptyEntries), element => double.Parse(element, NumberFormatInfo.InvariantInfo));
 
             foreach (var item in query)
                 dList.AddLast(new Point(item[0] + 1.0, item[1]));
-            //ds.AppendAsync(Dispatcher, new Point(item[0] + 1.0, item[1]));
 
             Dispatcher.InvokeAsync(new Action(() => 
             {

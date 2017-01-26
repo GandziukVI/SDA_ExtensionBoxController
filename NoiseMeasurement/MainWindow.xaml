@@ -29,7 +29,6 @@
                     </d3:VerticalAxis.TicksProvider>
                 </d3:VerticalAxis>
             </d3:ChartPlotter.MainVerticalAxis>
-            <d3:Header Content="Time trace CH_01"/>
             <d3:HorizontalAxis>
                 <d3:HorizontalAxisTitle Content="Frequency, Hz"/>
             </d3:HorizontalAxis>

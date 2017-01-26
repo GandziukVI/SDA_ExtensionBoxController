@@ -37,9 +37,9 @@ namespace NoiseMeasurement.Experiments
 
             b.ConfigureAI_Channels(_ch);
 
-            var freq = 20000;
+            var freq = 5000;
             var updNumber = 2;
-            var avgNumber = 2;
+            var avgNumber = 10;
 
             double[] autoPSD;
             double[] noisePSD = new double[freq / 2];
@@ -49,6 +49,8 @@ namespace NoiseMeasurement.Experiments
 
             b.AcquisitionInProgress = true;
             b.AI_ChannelCollection[AnalogInChannelsEnum.AIn1].DataReady += DefResistanceNoise_DataReady;
+
+            var sb = new StringBuilder();
 
             Parallel.Invoke(
                 () =>
@@ -101,16 +103,19 @@ namespace NoiseMeasurement.Experiments
                             for (int i = 0; i < singlePSD.Length; i++)
                                 noisePSD[i] += singlePSD[i];
 
-                            //if (averagingCounter % updNumber == 0)
-                            //{                                
-                                
-                            //}
+                            if (averagingCounter % updNumber == 0)
+                            {
+                                sb = new StringBuilder();
 
-                           // ++averagingCounter;
+                                for (int i = 0; i < noisePSD.Length; i++)
+                                    sb.AppendFormat("{0}\t{1}\r\n", i.ToString(NumberFormatInfo.InvariantInfo), (noisePSD[i] / (double)averagingCounter).ToString(NumberFormatInfo.InvariantInfo));
+
+                                onDataArrived(new ExpDataArrivedEventArgs(sb.ToString()));
+                            }
                         }
                     }
 
-                    var sb = new StringBuilder();
+                    sb = new StringBuilder();
 
                     for (int i = 0; i < noisePSD.Length; i++)
                         sb.AppendFormat("{0}\t{1}\r\n", i.ToString(NumberFormatInfo.InvariantInfo), (noisePSD[i] / (double)averagingCounter).ToString(NumberFormatInfo.InvariantInfo));
@@ -123,7 +128,7 @@ namespace NoiseMeasurement.Experiments
 
         void DefResistanceNoise_DataReady(object sender, EventArgs e)
         {
-            ++averagingCounter;
+            Interlocked.Increment(ref averagingCounter);
         }
     }
 }
