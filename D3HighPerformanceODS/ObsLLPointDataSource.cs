@@ -9,6 +9,7 @@ using System.Windows;
 using System.Windows.Threading;
 
 using Microsoft.Research.DynamicDataDisplay.DataSources;
+using System.Threading;
 
 namespace D3HighPerformanceODS
 {
@@ -77,6 +78,11 @@ namespace D3HighPerformanceODS
 
         #endregion
 
+        public void Clear()
+        {
+            Data.Clear();
+        }
+
         public async Task AddLastAsync(Dispatcher d, Point p)
         {
             if (Data.Count > collectionSize)
@@ -94,7 +100,37 @@ namespace D3HighPerformanceODS
                 }));
             }
 
-            ++counter;
+            Interlocked.Increment(ref counter);
+        }
+
+        public async Task AddRangeAsync(Dispatcher d, IEnumerable<Point> collection)
+        {
+            var len = collection.Count();
+
+            if (len > Data.Count)
+                for (int i = 0; i < len - Data.Count; i++)
+                    Data.RemoveFirst();
+
+            foreach (var item in collection)
+                Data.AddLast(item);
+
+            await d.InvokeAsync(new Action(() =>
+                {
+                    DataChanged(this, new EventArgs());
+                }));
+        }
+
+        public async Task SetDataRangeAsync(Dispatcher d, IEnumerable<Point> collection)
+        {
+            Data.Clear();
+
+            foreach (var item in collection)
+                Data.AddLast(item);            
+
+            await d.InvokeAsync(new Action(() =>
+            {
+                DataChanged(this, new EventArgs());
+            }));
         }
     }
 }

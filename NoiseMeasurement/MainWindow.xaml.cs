@@ -35,6 +35,10 @@ using System.IO;
 using System.Globalization;
 using ExperimentController;
 using NoiseMeasurement.Experiments;
+using D3HighPerformanceODS;
+using Microsoft.Research.DynamicDataDisplay;
+using Microsoft.Research.DynamicDataDisplay.DataSources;
+using System.Threading;
 
 namespace NoiseMeasurement
 {
@@ -43,69 +47,52 @@ namespace NoiseMeasurement
     /// </summary>
     public partial class MainWindow : Window
     {
+        EnumerableDataSource<Point> ds;
+        LinkedList<Point> dList;
+
         public MainWindow()
         {
             InitializeComponent();
 
+            //ds = new ObsLLPointDataSource(100000);
+            //ds.UpdateFrequency = 100000;
+
+            dList = new LinkedList<Point>();
+            ds = new EnumerableDataSource<Point>(dList);
+            ds.SetXYMapping(p => p);
+
+            var psdGraph = new LineGraph(ds);
+            psdGraph.AddToPlotter(myChart);
+            myChart.Viewport.FitToView();
+
             var a = new DefResistanceNoise() as IExperiment;
+
+            a.DataArrived += a_DataArrived;
             a.Start();
+        }
 
-            //BoxController b = new BoxController();
-            //b.Init("USB0::0x0957::0x1718::TW54334510::INSTR");
+        void a_DataArrived(object sender, ExpDataArrivedEventArgs e)
+        {
+            var ts = new ParameterizedThreadStart(addDataToPlot);
+            var th = new Thread(ts);
 
-            //var _ch = new AI_ChannelConfig[4]
-            //{
-            //    new AI_ChannelConfig(){ ChannelName = AnalogInChannelsEnum.AIn1, Enabled = true, Mode = ChannelModeEnum.DC, Polarity = PolarityEnum.Polarity_Bipolar, Range = RangesEnum.Range_1_25},
-            //    new AI_ChannelConfig(){ ChannelName = AnalogInChannelsEnum.AIn2, Enabled = false, Mode = ChannelModeEnum.DC, Polarity = PolarityEnum.Polarity_Bipolar, Range = RangesEnum.Range_1_25},
-            //    new AI_ChannelConfig(){ ChannelName = AnalogInChannelsEnum.AIn3, Enabled = false, Mode = ChannelModeEnum.DC, Polarity = PolarityEnum.Polarity_Bipolar, Range = RangesEnum.Range_1_25},
-            //    new AI_ChannelConfig(){ ChannelName = AnalogInChannelsEnum.AIn4, Enabled = false, Mode = ChannelModeEnum.DC, Polarity = PolarityEnum.Polarity_Bipolar, Range = RangesEnum.Range_1_25}
-            //};
+            th.Start(e.Data);
+        }
 
-            //b.ConfigureAI_Channels(_ch);
+        private void addDataToPlot(object DataString)
+        {
+            var data = (string)DataString;
+            var query = from dataPoint in data.Split("\r\n".ToCharArray(), StringSplitOptions.RemoveEmptyEntries)
+                        select Array.ConvertAll(dataPoint.Split(new char[] { '\t' }, StringSplitOptions.RemoveEmptyEntries), element => double.Parse(element, NumberFormatInfo.InvariantInfo));
 
-            //var freq = 499712;
+            foreach (var item in query)
+                dList.AddLast(new Point(item[0] + 1.0, item[1]));
+            //ds.AppendAsync(Dispatcher, new Point(item[0] + 1.0, item[1]));
 
-            //b.AcquireSingleShot(freq);
-
-            //Point[] res;
-            //b.AI_ChannelCollection[AnalogInChannelsEnum.AIn1].ChannelData.TryDequeue(out res);
-
-            //var query = from val in res
-            //            select val.Y;
-            
-            //var counter = 0;
-            //var spectrum = new double[res.Length];
-            //foreach (var item in query)
-            //{
-            //    spectrum[counter] = item;
-            //    ++counter;
-            //}
-
-            //StringBuilder unit = new System.Text.StringBuilder("V", 256);
-
-            //double dt, df, equivalentNoiseBandwidth, coherentGain;
-            //ScaledWindow sw = ScaledWindow.CreateRectangularWindow();
-            //sw.Apply(spectrum, out equivalentNoiseBandwidth, out coherentGain);
-
-            //dt = 1.0 / (double)freq;
-
-            //var autoPsd = Measurements.AutoPowerSpectrum(spectrum, dt, out df);
-            //var specConversion = Measurements.SpectrumUnitConversion(autoPsd, SpectrumType.Power, ScalingMode.Linear, DisplayUnits.VoltsPeakSquaredPerHZ, df, equivalentNoiseBandwidth, coherentGain, unit);
-
-            //counter = 0;
-            //using (var fs = new FileStream("F:\\Temp.txt", FileMode.Create, FileAccess.Write))
-            //{
-            //    using (var sWriter = new StreamWriter(fs))
-            //    {
-            //        foreach (var item in specConversion)
-            //        {
-            //            sWriter.Write(string.Format("{0}\t{1}\r\n", counter.ToString(NumberFormatInfo.InvariantInfo), item.ToString(NumberFormatInfo.InvariantInfo)));
-            //            ++counter;
-            //        }
-            //    }
-            //}
-
-            //b.Close();
+            Dispatcher.InvokeAsync(new Action(() => 
+            {
+                ds.RaiseDataChanged();
+            }));
         }
     }
 }

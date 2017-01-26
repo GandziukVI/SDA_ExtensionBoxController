@@ -57,6 +57,30 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="DynamicDataDisplay">
+      <HintPath>..\Third_Part_Libraries\D3Assemblies\DynamicDataDisplay.dll</HintPath>
+    </Reference>
+    <Reference Include="DynamicDataDisplay.Coastline">
+      <HintPath>..\Third_Part_Libraries\D3Assemblies\DynamicDataDisplay.Coastline.dll</HintPath>
+    </Reference>
+    <Reference Include="DynamicDataDisplay.Controls">
+      <HintPath>..\Third_Part_Libraries\D3Assemblies\DynamicDataDisplay.Controls.dll</HintPath>
+    </Reference>
+    <Reference Include="DynamicDataDisplay.Design">
+      <HintPath>..\Third_Part_Libraries\D3Assemblies\DynamicDataDisplay.Design.dll</HintPath>
+    </Reference>
+    <Reference Include="DynamicDataDisplay.Fractals">
+      <HintPath>..\Third_Part_Libraries\D3Assemblies\DynamicDataDisplay.Fractals.dll</HintPath>
+    </Reference>
+    <Reference Include="DynamicDataDisplay.Maps">
+      <HintPath>..\Third_Part_Libraries\D3Assemblies\DynamicDataDisplay.Maps.dll</HintPath>
+    </Reference>
+    <Reference Include="DynamicDataDisplay.Markers">
+      <HintPath>..\Third_Part_Libraries\D3Assemblies\DynamicDataDisplay.Markers.dll</HintPath>
+    </Reference>
+    <Reference Include="DynamicDataDisplay.Markers.Design">
+      <HintPath>..\Third_Part_Libraries\D3Assemblies\DynamicDataDisplay.Markers.Design.dll</HintPath>
+    </Reference>
     <Reference Include="NationalInstruments.Analysis.Enterprise, Version=15.0.45.49153, Culture=neutral, PublicKeyToken=4febd62461bf11a4, processorArchitecture=MSIL" />
     <Reference Include="NationalInstruments.Common, Version=15.0.40.49154, Culture=neutral, PublicKeyToken=dc6ad606294fc298, processorArchitecture=MSIL" />
     <Reference Include="NationalInstruments.Controls, Version=15.0.45.3898, Culture=neutral, PublicKeyToken=4febd62461bf11a4, processorArchitecture=MSIL" />
@@ -129,6 +153,10 @@
     <ProjectReference Include="..\Agilent_ExtensionBox\Agilent_ExtensionBox.csproj">
       <Project>{0d6daee4-591c-475c-84b8-91326698926f}</Project>
       <Name>Agilent_ExtensionBox</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\D3HighPerformanceODS\D3HighPerformanceODS.csproj">
+      <Project>{cc2ec958-4f1f-4612-8fd8-5cb31aa1cfc5}</Project>
+      <Name>D3HighPerformanceODS</Name>
     </ProjectReference>
     <ProjectReference Include="..\DeviceIO\DeviceIO.csproj">
       <Project>{74877d78-fe9b-4faf-a9e5-5503d6021577}</Project>
