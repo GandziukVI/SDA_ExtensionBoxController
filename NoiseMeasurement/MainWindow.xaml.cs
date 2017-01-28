@@ -54,6 +54,16 @@ namespace NoiseMeasurement
         {
             InitializeComponent();
 
+            var r = new Random();
+
+            var x = new Point[1000];
+            for (int i = 0; i < x.Length; i++)
+                x[i] = new Point(i + 1, r.NextDouble());
+
+
+            var y = SelectNPointsPerDecade(ref x, 100);
+
+
             dList = new LinkedList<Point>();
             ds = new EnumerableDataSource<Point>(dList);
             ds.SetXYMapping(p => p);
@@ -87,10 +97,52 @@ namespace NoiseMeasurement
             foreach (var item in query)
                 dList.AddLast(new Point(item[0] + 1.0, item[1]));
 
-            Dispatcher.InvokeAsync(new Action(() => 
+            Dispatcher.InvokeAsync(new Action(() =>
             {
                 ds.RaiseDataChanged();
             }));
         }
+
+        double[] SelectPoints(ref double[] arr, int N)
+        {
+            return arr.Where((value, index) => index % N == 0).ToArray();
+        }
+
+        Point[] SelectPoints(ref Point[] arr, int N)
+        {
+            return arr.Where((value, index) => index % N == 0).ToArray();
+        }
+
+        Point[] SelectNPointsPerDecade(ref Point[] arr, int N)
+        {
+            var minFreq = arr[0].X;
+            var maxFreq = arr[arr.Length - 1].X;
+
+            var nDecades = (int)Math.Log10(maxFreq);
+
+            var res = new Point[] { };
+
+            for (int i = 0; i < nDecades; i++)
+            {
+                var minXPerDecade = arr[arr.Length / nDecades * i].X;
+                var maxXPerDecade = arr[arr.Length / nDecades * (i + 1)].X;
+
+                var selectRangeArr = (from p in arr
+                                      where p.X >= minXPerDecade && p.X < maxXPerDecade
+                                      select p).ToArray();
+
+                if (selectRangeArr.Length > N)
+                {
+                    var factor = (int)(Math.Ceiling((double)selectRangeArr.Length / N));
+                    selectRangeArr = SelectPoints(ref selectRangeArr, factor);
+                }
+
+                res = res.Concat(selectRangeArr).ToArray();
+            }
+
+
+            return res;
+        }
     }
+
 }
