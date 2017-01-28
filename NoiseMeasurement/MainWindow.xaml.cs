@@ -8,7 +8,7 @@ using NationalInstruments.Analysis.SignalGeneration;
 using NationalInstruments.Analysis.SpectralMeasurements;
 using NationalInstruments;
 //using NationalInstruments.NI4882;
-using NationalInstruments.VisaNS;
+//using NationalInstruments.VisaNS;
 using NationalInstruments.NetworkVariable;
 using NationalInstruments.NetworkVariable.WindowsForms;
 using NationalInstruments.Tdms;
@@ -39,6 +39,7 @@ using D3HighPerformanceODS;
 using Microsoft.Research.DynamicDataDisplay;
 using Microsoft.Research.DynamicDataDisplay.DataSources;
 using System.Threading;
+using D3Helper;
 
 namespace NoiseMeasurement
 {
@@ -48,24 +49,14 @@ namespace NoiseMeasurement
     public partial class MainWindow : Window
     {
         EnumerableDataSource<Point> ds;
-        LinkedList<Point> dList;
+        Point[] dArr;
 
         public MainWindow()
         {
             InitializeComponent();
 
-            var r = new Random();
-
-            var x = new Point[1000];
-            for (int i = 0; i < x.Length; i++)
-                x[i] = new Point(i + 1, r.NextDouble());
-
-
-            var y = SelectNPointsPerDecade(ref x, 100);
-
-
-            dList = new LinkedList<Point>();
-            ds = new EnumerableDataSource<Point>(dList);
+            dArr = new Point[] { };
+            ds = new EnumerableDataSource<Point>(dArr);
             ds.SetXYMapping(p => p);
 
             var psdGraph = new LineGraph(ds);
@@ -88,60 +79,26 @@ namespace NoiseMeasurement
 
         private void addDataToPlot(object DataString)
         {
-            dList.Clear();
-
             var data = (string)DataString;
-            var query = from dataPoint in data.Split("\r\n".ToCharArray(), StringSplitOptions.RemoveEmptyEntries)
-                        select Array.ConvertAll(dataPoint.Split(new char[] { '\t' }, StringSplitOptions.RemoveEmptyEntries), element => double.Parse(element, NumberFormatInfo.InvariantInfo));
+            var query = (from dataPoint in data.Split("\r\n".ToCharArray(), StringSplitOptions.RemoveEmptyEntries)
+                        select Array.ConvertAll(dataPoint.Split(new char[] { '\t' }, StringSplitOptions.RemoveEmptyEntries), element => double.Parse(element, NumberFormatInfo.InvariantInfo))).ToArray();
 
+            var points = new Point[query.Length];
+
+            var counter = 0;
             foreach (var item in query)
-                dList.AddLast(new Point(item[0] + 1.0, item[1]));
+            {
+                points[counter] = new Point(item[0], item[1]);
+                ++counter;
+            }
+
+            dArr = PointSelector.SelectNPointsPerDecade(ref points, 100);
+
 
             Dispatcher.InvokeAsync(new Action(() =>
             {
                 ds.RaiseDataChanged();
             }));
-        }
-
-        double[] SelectPoints(ref double[] arr, int N)
-        {
-            return arr.Where((value, index) => index % N == 0).ToArray();
-        }
-
-        Point[] SelectPoints(ref Point[] arr, int N)
-        {
-            return arr.Where((value, index) => index % N == 0).ToArray();
-        }
-
-        Point[] SelectNPointsPerDecade(ref Point[] arr, int N)
-        {
-            var minFreq = arr[0].X;
-            var maxFreq = arr[arr.Length - 1].X;
-
-            var nDecades = (int)Math.Log10(maxFreq);
-
-            var res = new Point[] { };
-
-            for (int i = 0; i < nDecades; i++)
-            {
-                var minXPerDecade = arr[arr.Length / nDecades * i].X;
-                var maxXPerDecade = arr[arr.Length / nDecades * (i + 1)].X;
-
-                var selectRangeArr = (from p in arr
-                                      where p.X >= minXPerDecade && p.X < maxXPerDecade
-                                      select p).ToArray();
-
-                if (selectRangeArr.Length > N)
-                {
-                    var factor = (int)(Math.Ceiling((double)selectRangeArr.Length / N));
-                    selectRangeArr = SelectPoints(ref selectRangeArr, factor);
-                }
-
-                res = res.Concat(selectRangeArr).ToArray();
-            }
-
-
-            return res;
         }
     }
 

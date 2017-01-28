@@ -31,6 +31,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NoiseMeasurement", "NoiseMe
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "D3HighPerformanceODS", "D3HighPerformanceODS\D3HighPerformanceODS.csproj", "{CC2EC958-4F1F-4612-8FD8-5CB31AA1CFC5}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "D3Helper", "D3Helper\D3Helper.csproj", "{08A28CF7-E060-48E3-BC2E-F9E29FE89358}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -200,6 +202,16 @@ Global
 		{CC2EC958-4F1F-4612-8FD8-5CB31AA1CFC5}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{CC2EC958-4F1F-4612-8FD8-5CB31AA1CFC5}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{CC2EC958-4F1F-4612-8FD8-5CB31AA1CFC5}.Release|x86.ActiveCfg = Release|Any CPU
+		{08A28CF7-E060-48E3-BC2E-F9E29FE89358}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{08A28CF7-E060-48E3-BC2E-F9E29FE89358}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{08A28CF7-E060-48E3-BC2E-F9E29FE89358}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{08A28CF7-E060-48E3-BC2E-F9E29FE89358}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{08A28CF7-E060-48E3-BC2E-F9E29FE89358}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{08A28CF7-E060-48E3-BC2E-F9E29FE89358}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{08A28CF7-E060-48E3-BC2E-F9E29FE89358}.Release|Any CPU.Build.0 = Release|Any CPU
+		{08A28CF7-E060-48E3-BC2E-F9E29FE89358}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{08A28CF7-E060-48E3-BC2E-F9E29FE89358}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{08A28CF7-E060-48E3-BC2E-F9E29FE89358}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

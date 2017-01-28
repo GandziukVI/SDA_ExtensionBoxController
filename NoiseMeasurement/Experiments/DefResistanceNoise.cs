@@ -37,7 +37,7 @@ namespace NoiseMeasurement.Experiments
 
             b.ConfigureAI_Channels(_ch);
 
-            var freq = 5000;
+            var freq = 200000;
             var updNumber = 2;
             var avgNumber = 10;
 
@@ -51,6 +51,8 @@ namespace NoiseMeasurement.Experiments
             b.AI_ChannelCollection[AnalogInChannelsEnum.AIn1].DataReady += DefResistanceNoise_DataReady;
 
             var sb = new StringBuilder();
+
+            double dt = 0.0, df = 1.0, equivalentNoiseBandwidth, coherentGain;
 
             Parallel.Invoke(
                 () =>
@@ -88,8 +90,6 @@ namespace NoiseMeasurement.Experiments
                                 ++counter;
                             }
 
-                            double dt, df, equivalentNoiseBandwidth, coherentGain;
-
                             var unit = new System.Text.StringBuilder("V", 256);
                             var sw = ScaledWindow.CreateRectangularWindow();
 
@@ -108,7 +108,7 @@ namespace NoiseMeasurement.Experiments
                                 sb = new StringBuilder();
 
                                 for (int i = 0; i < noisePSD.Length; i++)
-                                    sb.AppendFormat("{0}\t{1}\r\n", i.ToString(NumberFormatInfo.InvariantInfo), (noisePSD[i] / (double)averagingCounter).ToString(NumberFormatInfo.InvariantInfo));
+                                    sb.AppendFormat("{0}\t{1}\r\n", ((i + 1) * df).ToString(NumberFormatInfo.InvariantInfo), (noisePSD[i] / (double)averagingCounter).ToString(NumberFormatInfo.InvariantInfo));
 
                                 onDataArrived(new ExpDataArrivedEventArgs(sb.ToString()));
                             }
@@ -118,7 +118,7 @@ namespace NoiseMeasurement.Experiments
                     sb = new StringBuilder();
 
                     for (int i = 0; i < noisePSD.Length; i++)
-                        sb.AppendFormat("{0}\t{1}\r\n", i.ToString(NumberFormatInfo.InvariantInfo), (noisePSD[i] / (double)averagingCounter).ToString(NumberFormatInfo.InvariantInfo));
+                        sb.AppendFormat("{0}\t{1}\r\n", ((i + 1) * df).ToString(NumberFormatInfo.InvariantInfo), (noisePSD[i] / (double)averagingCounter).ToString(NumberFormatInfo.InvariantInfo));
 
                     onDataArrived(new ExpDataArrivedEventArgs(sb.ToString()));
                 });

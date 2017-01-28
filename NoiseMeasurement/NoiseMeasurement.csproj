@@ -154,6 +154,10 @@
       <Project>{0d6daee4-591c-475c-84b8-91326698926f}</Project>
       <Name>Agilent_ExtensionBox</Name>
     </ProjectReference>
+    <ProjectReference Include="..\D3Helper\D3Helper.csproj">
+      <Project>{08a28cf7-e060-48e3-bc2e-f9e29fe89358}</Project>
+      <Name>D3Helper</Name>
+    </ProjectReference>
     <ProjectReference Include="..\D3HighPerformanceODS\D3HighPerformanceODS.csproj">
       <Project>{cc2ec958-4f1f-4612-8fd8-5cb31aa1cfc5}</Project>
       <Name>D3HighPerformanceODS</Name>
