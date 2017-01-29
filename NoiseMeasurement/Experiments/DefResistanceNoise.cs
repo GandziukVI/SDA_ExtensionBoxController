@@ -15,6 +15,7 @@ using System.IO;
 using System.Globalization;
 using System.Threading;
 using System.Windows.Threading;
+using D3Helper;
 
 namespace NoiseMeasurement.Experiments
 {
@@ -41,8 +42,10 @@ namespace NoiseMeasurement.Experiments
             var updNumber = 2;
             var avgNumber = 10;
 
-            double[] autoPSD;
-            double[] noisePSD = new double[freq / 2];
+            double[] autoPSDLowFreq;
+            double[] autoPSDHighFreq;
+
+            Point[] noisePSD = new Point[] { };
 
             if (freq % 2 != 0)
                 throw new ArgumentException("The frequency should be an even number!");
@@ -52,7 +55,10 @@ namespace NoiseMeasurement.Experiments
 
             var sb = new StringBuilder();
 
-            double dt = 0.0, df = 1.0, equivalentNoiseBandwidth, coherentGain;
+            double dtLowFreq = 0.0, dtHighFreq = 0.0;
+            double dfLowFreq = 1.0, dfHighFreq = 0.0;
+            double equivalentNoiseBandwidthLowFreq, equivalentNoiseBandwidthHighFreq;
+            double coherentGainLowFreq, coherentGainHighFreq;
 
             Parallel.Invoke(
                 () =>
@@ -93,22 +99,56 @@ namespace NoiseMeasurement.Experiments
                             var unit = new System.Text.StringBuilder("V", 256);
                             var sw = ScaledWindow.CreateRectangularWindow();
 
-                            sw.Apply(traceData, out equivalentNoiseBandwidth, out coherentGain);
+                            // Calculation of the low-frequency part of the spectrum
 
-                            dt = 1.0 / (double)freq;
+                            sw.Apply(traceData, out equivalentNoiseBandwidthLowFreq, out coherentGainLowFreq);
 
-                            autoPSD = Measurements.AutoPowerSpectrum(traceData, dt, out df);
-                            var singlePSD = Measurements.SpectrumUnitConversion(autoPSD, SpectrumType.Power, ScalingMode.Linear, DisplayUnits.VoltsPeakSquaredPerHZ, df, equivalentNoiseBandwidth, coherentGain, unit);
+                            dtLowFreq = 1.0 / (double)freq;
 
-                            for (int i = 0; i < singlePSD.Length; i++)
-                                noisePSD[i] += singlePSD[i];
+                            autoPSDLowFreq = Measurements.AutoPowerSpectrum(traceData, dtLowFreq, out dfLowFreq);
+                            var singlePSDLowFreq = Measurements.SpectrumUnitConversion(autoPSDLowFreq, SpectrumType.Power, ScalingMode.Linear, DisplayUnits.VoltsPeakSquaredPerHZ, dfLowFreq, equivalentNoiseBandwidthLowFreq, coherentGainLowFreq, unit);
+
+                            // Calculation of the hugh-frequency part of the spectrum
+
+                            var selection64Hz = PointSelector.SelectPoints(ref traceData, 64);
+
+                            sw.Apply(selection64Hz, out equivalentNoiseBandwidthHighFreq, out coherentGainHighFreq);
+
+                            dtHighFreq = 64.0 * 1.0 / (double)freq;
+
+                            autoPSDHighFreq = Measurements.AutoPowerSpectrum(selection64Hz, dtHighFreq, out dfHighFreq);
+                            var singlePSDHighFreq = Measurements.SpectrumUnitConversion(autoPSDHighFreq, SpectrumType.Power, ScalingMode.Linear, DisplayUnits.VoltsPeakSquaredPerHZ, dfHighFreq, equivalentNoiseBandwidthHighFreq, coherentGainHighFreq, unit);
+
+                            var lowFreqSpectrum = singlePSDLowFreq.Select((value, index) => new Point((index + 1) * dfLowFreq, value)).Where(value => value.X <= 1064);
+                            var highFreqSpectrum = singlePSDLowFreq.Select((value, index) => new Point((index + 1) * dfHighFreq, value)).Where(value => value.X > 1064);
+
+                            noisePSD = new Point[lowFreqSpectrum.Count() + highFreqSpectrum.Count()];
+
+                            counter = 0;
+                            foreach (var item in lowFreqSpectrum)
+                            {
+                                noisePSD[counter].X = item.X;
+                                noisePSD[counter].Y += item.Y;
+
+                                ++counter;
+                            }
+                            foreach (var item in highFreqSpectrum)
+                            {
+                                noisePSD[counter].X = item.X;
+                                noisePSD[counter].Y += item.Y;
+
+                                ++counter;
+                            }
+
+                            //for (int i = 0; i < singlePSDLowFreq.Length; i++)
+                            //    noisePSD[i] += singlePSDLowFreq[i];
 
                             if (averagingCounter % updNumber == 0)
                             {
                                 sb = new StringBuilder();
 
                                 for (int i = 0; i < noisePSD.Length; i++)
-                                    sb.AppendFormat("{0}\t{1}\r\n", ((i + 1) * df).ToString(NumberFormatInfo.InvariantInfo), (noisePSD[i] / (double)averagingCounter).ToString(NumberFormatInfo.InvariantInfo));
+                                    sb.AppendFormat("{0}\t{1}\r\n", (noisePSD[i].X).ToString(NumberFormatInfo.InvariantInfo), (noisePSD[i].Y / (double)averagingCounter).ToString(NumberFormatInfo.InvariantInfo));
 
                                 onDataArrived(new ExpDataArrivedEventArgs(sb.ToString()));
                             }
@@ -118,7 +158,7 @@ namespace NoiseMeasurement.Experiments
                     sb = new StringBuilder();
 
                     for (int i = 0; i < noisePSD.Length; i++)
-                        sb.AppendFormat("{0}\t{1}\r\n", ((i + 1) * df).ToString(NumberFormatInfo.InvariantInfo), (noisePSD[i] / (double)averagingCounter).ToString(NumberFormatInfo.InvariantInfo));
+                        sb.AppendFormat("{0}\t{1}\r\n", (noisePSD[i].X).ToString(NumberFormatInfo.InvariantInfo), (noisePSD[i].Y / (double)averagingCounter).ToString(NumberFormatInfo.InvariantInfo));
 
                     onDataArrived(new ExpDataArrivedEventArgs(sb.ToString()));
                 });
