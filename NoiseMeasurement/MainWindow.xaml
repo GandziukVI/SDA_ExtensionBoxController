@@ -3,7 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:ni="http://schemas.ni.com/controls/2009/xaml/presentation"
         xmlns:d3="http://research.microsoft.com/DynamicDataDisplay/1.0" xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        Title="MainWindow" Height="480" Width="640" >
+        Title="MainWindow" Height="480" Width="640" Closing="OnAppClosing" Closed="OnAppClosed" MouseDown="OnMouseDown" >
     <Grid>
         <d3:ChartPlotter Grid.Row="0" Grid.Column="0" x:Name="myChart" Margin="10" LegendVisibility="Collapsed" NewLegendVisible="False">
             <d3:ChartPlotter.DataTransform>

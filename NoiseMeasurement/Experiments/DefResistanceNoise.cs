@@ -22,10 +22,11 @@ namespace NoiseMeasurement.Experiments
     public class DefResistanceNoise : ExperimentBase
     {
         private static int averagingCounter = 0;
+        private BoxController b;
 
         public override void ToDo(object Arg)
         {
-            BoxController b = new BoxController();
+            b = new BoxController();
             b.Init("USB0::0x0957::0x1718::TW54334510::INSTR");
 
             var _ch = new AI_ChannelConfig[4]
@@ -38,8 +39,8 @@ namespace NoiseMeasurement.Experiments
 
             b.ConfigureAI_Channels(_ch);
 
-            var freq = 500;
-            var updNumber = 5;
+            var freq = 500000;
+            var updNumber = 1;
             var avgNumber = 100;
 
             double[] autoPSDLowFreq;
@@ -64,6 +65,7 @@ namespace NoiseMeasurement.Experiments
                 () =>
                 {
                     b.StartAnalogAcquisition(freq);
+                    IsRunning = false;
                 },
                 () =>
                 {
@@ -169,6 +171,15 @@ namespace NoiseMeasurement.Experiments
         void DefResistanceNoise_DataReady(object sender, EventArgs e)
         {
             Interlocked.Increment(ref averagingCounter);
+        }
+
+        public override void Dispose()
+        {
+            if (b != null)
+                while (IsRunning == true)
+                    b.AcquisitionInProgress = false;
+
+            base.Dispose();
         }
     }
 }

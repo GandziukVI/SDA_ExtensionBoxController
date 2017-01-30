@@ -50,6 +50,7 @@ namespace NoiseMeasurement
     {
         EnumerableDataSource<Point> ds;
         LinkedList<Point> dList;
+        IExperiment a;
 
         public MainWindow()
         {
@@ -63,7 +64,7 @@ namespace NoiseMeasurement
             psdGraph.AddToPlotter(myChart);
             myChart.Viewport.FitToView();
 
-            var a = new DefResistanceNoise() as IExperiment;
+            a = new DefResistanceNoise() as IExperiment;
 
             a.DataArrived += a_DataArrived;
             a.Start();
@@ -83,7 +84,7 @@ namespace NoiseMeasurement
 
             var data = (string)DataString;
             var query = (from dataPoint in data.Split("\r\n".ToCharArray(), StringSplitOptions.RemoveEmptyEntries)
-                        select Array.ConvertAll(dataPoint.Split(new char[] { '\t' }, StringSplitOptions.RemoveEmptyEntries), element => double.Parse(element, NumberFormatInfo.InvariantInfo))).ToArray();
+                         select Array.ConvertAll(dataPoint.Split(new char[] { '\t' }, StringSplitOptions.RemoveEmptyEntries), element => double.Parse(element, NumberFormatInfo.InvariantInfo))).ToArray();
 
             var points = new Point[query.Length];
 
@@ -103,6 +104,21 @@ namespace NoiseMeasurement
             {
                 ds.RaiseDataChanged();
             }));
+        }
+
+        private void OnAppClosing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            a.Dispose();
+        }
+
+        private void OnAppClosed(object sender, EventArgs e)
+        {
+            //a.Dispose();
+        }
+
+        private void OnMouseDown(object sender, MouseButtonEventArgs e)
+        {
+            //a.Dispose();
         }
     }
 

@@ -55,7 +55,7 @@ namespace ExperimentController
             }
         }
 
-        public void Dispose()
+        public virtual void Dispose()
         {
             if (experimentThread != null)
                 if (experimentThread.IsAlive)
