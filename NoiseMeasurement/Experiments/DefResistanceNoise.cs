@@ -38,9 +38,9 @@ namespace NoiseMeasurement.Experiments
 
             b.ConfigureAI_Channels(_ch);
 
-            var freq = 200000;
-            var updNumber = 2;
-            var avgNumber = 10;
+            var freq = 500;
+            var updNumber = 5;
+            var avgNumber = 100;
 
             double[] autoPSDLowFreq;
             double[] autoPSDHighFreq;
@@ -155,12 +155,12 @@ namespace NoiseMeasurement.Experiments
                         }
                     }
 
-                    sb = new StringBuilder();
+                    //sb = new StringBuilder();
 
-                    for (int i = 0; i < noisePSD.Length; i++)
-                        sb.AppendFormat("{0}\t{1}\r\n", (noisePSD[i].X).ToString(NumberFormatInfo.InvariantInfo), (noisePSD[i].Y / (double)averagingCounter).ToString(NumberFormatInfo.InvariantInfo));
+                    //for (int i = 0; i < noisePSD.Length; i++)
+                    //    sb.AppendFormat("{0}\t{1}\r\n", (noisePSD[i].X).ToString(NumberFormatInfo.InvariantInfo), (noisePSD[i].Y / (double)averagingCounter).ToString(NumberFormatInfo.InvariantInfo));
 
-                    onDataArrived(new ExpDataArrivedEventArgs(sb.ToString()));
+                    //onDataArrived(new ExpDataArrivedEventArgs(sb.ToString()));
                 });
 
             b.Close();

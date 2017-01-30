@@ -49,14 +49,14 @@ namespace NoiseMeasurement
     public partial class MainWindow : Window
     {
         EnumerableDataSource<Point> ds;
-        Point[] dArr;
+        LinkedList<Point> dList;
 
         public MainWindow()
         {
             InitializeComponent();
 
-            dArr = new Point[] { };
-            ds = new EnumerableDataSource<Point>(dArr);
+            dList = new LinkedList<Point>();
+            ds = new EnumerableDataSource<Point>(dList);
             ds.SetXYMapping(p => p);
 
             var psdGraph = new LineGraph(ds);
@@ -79,6 +79,8 @@ namespace NoiseMeasurement
 
         private void addDataToPlot(object DataString)
         {
+            dList.Clear();
+
             var data = (string)DataString;
             var query = (from dataPoint in data.Split("\r\n".ToCharArray(), StringSplitOptions.RemoveEmptyEntries)
                         select Array.ConvertAll(dataPoint.Split(new char[] { '\t' }, StringSplitOptions.RemoveEmptyEntries), element => double.Parse(element, NumberFormatInfo.InvariantInfo))).ToArray();
@@ -92,7 +94,9 @@ namespace NoiseMeasurement
                 ++counter;
             }
 
-            dArr = PointSelector.SelectNPointsPerDecade(ref points, 100);
+            var toPlot = D3Helper.PointSelector.SelectNPointsPerDecade(ref points, 100);
+            foreach (var item in toPlot)
+                dList.AddLast(item);
 
 
             Dispatcher.InvokeAsync(new Action(() =>
