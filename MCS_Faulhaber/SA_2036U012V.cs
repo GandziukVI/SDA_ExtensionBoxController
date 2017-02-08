@@ -37,7 +37,7 @@ namespace MCS_Faulhaber
                 driver.SendCommandRequest(string.Format("la{0}", Convert.ToString(motorPosition, NumberFormatInfo.InvariantInfo)));
                 driver.SendCommandRequest("np");
                 driver.SendCommandRequest("m");
-                while (!driver.ReceiveDeviceAnswer().Contains('p')) ;
+                //while (!driver.ReceiveDeviceAnswer().Contains('p')) ;
             }
             else
                 throw new Exception("The connection failed! Check the device IO driver.");

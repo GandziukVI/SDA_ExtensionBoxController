@@ -41,7 +41,7 @@ namespace NoiseMeasurement.Experiments
 
             var freq = 500000;
             var updNumber = 1;
-            var avgNumber = 100;
+            var avgNumber = 1000;
 
             double[] autoPSDLowFreq;
             double[] autoPSDHighFreq;

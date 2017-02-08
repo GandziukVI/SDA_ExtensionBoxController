@@ -13,6 +13,14 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
+using DeviceIO;
+using Keithley26xx;
+using SourceMeterUnit;
+using MCBJ.Experiments;
+using System.IO.Ports;
+using MCS_Faulhaber;
+using ExperimentController;
+
 namespace MCBJ
 {
     /// <summary>
@@ -23,6 +31,16 @@ namespace MCBJ
         public MainWindow()
         {
             InitializeComponent();
+
+            var smuDriver = new VisaDevice("GPIB0::26::INSTR") as IDeviceIO;
+            var keithley = new Keithley26xxB<Keithley2601B>(smuDriver);
+            var smu = keithley[Keithley26xxB_Channels.Channel_A];
+
+            var motorDriver = new SerialDevice("COM1", 115200, Parity.None, 8, StopBits.One);
+            var motor = new SA_2036U012V(motorDriver);
+
+            var experiment = new IV_DefinedResistance(smu, motor) as IExperiment;
+            experiment.Start();
         }
     }
 }

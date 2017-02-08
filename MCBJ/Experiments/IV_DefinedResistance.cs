@@ -39,9 +39,10 @@ namespace MCBJ.Experiments
 
         public override void ToDo(object Arg)
         {
-            var setCond = 0.001;
-            var condDev = 20.0;
-            var stabilizationTime = 1.5;
+            var setVolt = 0.02;
+            var setCond = 15.0;
+            var condDev = 5.0;
+            var stabilizationTime = 30.0;
 
             var minPos = 0.0;
             var maxPos = 15.0;
@@ -67,23 +68,28 @@ namespace MCBJ.Experiments
             var sourceMode = SourceMode.Voltage;
 
             motor.Position = setPos;
+            smu.Voltage = setVolt;
+            smu.SwitchON();
 
             while (true)
             {
                 if (!IsRunning)
                     break;
 
-                var scaledConductance = (1.0 / smu.Resistance) / ConductanceQuantum;
+                var scaledConductance = (1.0 / smu.MeasureResistance()) / ConductanceQuantum;
 
-                if (scaledConductance > maxConductance)
-                    motor.Velosity = maxSpeed;
-                else if (scaledConductance < minConductance)
-                    motor.Velosity = minSpeed;
-                else
-                {
-                    var speed = maxSpeed - Math.Abs(Math.Log10(scaledConductance) - Math.Log10(maxConductance)) / diff * maxSpeed;
-                    motor.Velosity = speed;
-                }
+                var speed = minSpeed + (maxSpeed - minSpeed) * Math.Abs(Math.Log10(scaledConductance) - Math.Log10(setCond));
+                motor.Velosity = speed;
+
+                //if (scaledConductance > maxConductance)
+                //    motor.Velosity = maxSpeed;
+                //else if (scaledConductance < minConductance)
+                //    motor.Velosity = minSpeed;
+                //else
+                //{
+                //    var speed = maxSpeed - Math.Abs(Math.Log10(scaledConductance) - Math.Log10(maxConductance)) / diff * maxSpeed;
+                //    motor.Velosity = speed;
+                //}
 
                 if (scaledConductance > setCond)
                     motor.Position = maxPos;
@@ -152,6 +158,8 @@ namespace MCBJ.Experiments
 
                 ++currCycle;
             }
+
+            smu.SwitchOFF();
         }
     }
 }
