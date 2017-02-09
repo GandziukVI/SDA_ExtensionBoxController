@@ -40,8 +40,8 @@ namespace MCBJ.Experiments
         public override void ToDo(object Arg)
         {
             var setVolt = 0.02;
-            var setCond = 20.0;
-            var condDev = 20.0;
+            var setCond = 50.0;
+            var condDev = 5.0;
             var stabilizationTime = 30.0;
 
             var minPos = 0.0;
@@ -67,7 +67,8 @@ namespace MCBJ.Experiments
 
             var sourceMode = SourceMode.Voltage;
 
-            motor.Position = setPos;
+            motor.Enabled = true;
+            motor.Velosity = maxSpeed;
             smu.Voltage = setVolt;
             smu.SwitchON();
 
@@ -99,7 +100,12 @@ namespace MCBJ.Experiments
                         motor.Enabled = false;
 
                     if (!stabilityStopwatch.IsRunning)
+                    {
+                        inRangeCounter = 0;
+                        outsiderCounter = 0;
+
                         stabilityStopwatch.Start();
+                    }
 
                     ++inRangeCounter;
                 }
@@ -128,7 +134,12 @@ namespace MCBJ.Experiments
                             break;
                         }
                         else
+                        {
+                            inRangeCounter = 0;
+                            outsiderCounter = 0;
+
                             stabilityStopwatch.Restart();
+                        }
                     }
                 }
             }
