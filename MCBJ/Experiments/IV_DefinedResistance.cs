@@ -59,11 +59,11 @@ namespace MCBJ.Experiments
             var inRangeCounter = 0;
             var outsiderCounter = 0;
 
-            var minValue = 0.0;
-            var maxValue = 1.0;
+            var minValue = -0.3;
+            var maxValue = 0.3;
             var epsilon = 0.02;
-            var nPoints = 100;
-            var nCycles = 3;
+            var nPoints = 101;
+            var nCycles = 2;
 
             var sourceMode = SourceMode.Voltage;
 
@@ -78,27 +78,24 @@ namespace MCBJ.Experiments
 
                 var scaledConductance = (1.0 / smu.MeasureResistance()) / ConductanceQuantum;
 
-                var speed = minSpeed + (maxSpeed - minSpeed) * Math.Abs(Math.Log10(scaledConductance) - Math.Log10(setCond));
+                var speed = minSpeed;
+                try
+                {
+                    if (scaledConductance >= 0.1)
+                        speed = minSpeed + (maxSpeed - minSpeed) * Math.Abs(Math.Log10(scaledConductance) - Math.Log10(setCond));
+                    else
+                        speed = minSpeed + (maxSpeed - minSpeed) * Math.Abs(Math.Log10(scaledConductance) - Math.Log10(setCond)) / Math.Abs(Math.Log10(scaledConductance));
+                }
+                catch { speed = minSpeed; }
+
                 motor.Velosity = speed;
-
-                //if (scaledConductance > maxConductance)
-                //    motor.Velosity = maxSpeed;
-                //else if (scaledConductance < minConductance)
-                //    motor.Velosity = minSpeed;
-                //else
-                //{
-                //    var speed = maxSpeed - Math.Abs(Math.Log10(scaledConductance) - Math.Log10(maxConductance)) / diff * maxSpeed;
-                //    motor.Velosity = speed;
-                //}
-
-                if (scaledConductance > setCond)
-                    motor.Position = maxPos;
-                else
-                    motor.Position = minPos;
 
                 if ((scaledConductance >= setCond - (setCond * condDev / 100.0)) &&
                     (scaledConductance <= setCond + (setCond * condDev / 100.0)))
                 {
+                    if (motor.IsEnabled == true)
+                        motor.Enabled = false;
+
                     if (!stabilityStopwatch.IsRunning)
                         stabilityStopwatch.Start();
 
@@ -106,7 +103,15 @@ namespace MCBJ.Experiments
                 }
                 else
                 {
-                    if (inRangeCounter != 0)
+                    if (motor.IsEnabled == false)
+                        motor.Enabled = true;
+
+                    if (scaledConductance > setCond)
+                        motor.PositionAsync = maxPos;
+                    else
+                        motor.PositionAsync = minPos;
+
+                    if (stabilityStopwatch.IsRunning == true && inRangeCounter != 0)
                         ++outsiderCounter;
                 }
 

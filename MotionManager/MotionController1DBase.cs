@@ -26,6 +26,11 @@ namespace MotionManager
             throw new NotImplementedException();
         }
 
+        public virtual void SetPositionAsync(double Position)
+        {
+            throw new NotImplementedException();
+        }
+
         public virtual double GetPosition()
         {
             throw new NotImplementedException();
@@ -63,6 +68,11 @@ namespace MotionManager
             {
                 SetPosition(value);
             }
+        }
+
+        public double PositionAsync
+        {
+            set { SetPositionAsync(value); }
         }
 
         public double Velosity

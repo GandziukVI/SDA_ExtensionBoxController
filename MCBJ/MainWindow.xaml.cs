@@ -33,7 +33,7 @@ namespace MCBJ
             InitializeComponent();
 
             var smuDriver = new VisaDevice("GPIB0::26::INSTR") as IDeviceIO;
-            var keithley = new Keithley26xxB<Keithley2601B>(smuDriver);
+            var keithley = new Keithley26xxB<Keithley2602B> (smuDriver);
             var smu = keithley[Keithley26xxB_Channels.Channel_A];
 
             var motorDriver = new SerialDevice("COM1", 115200, Parity.None, 8, StopBits.One);

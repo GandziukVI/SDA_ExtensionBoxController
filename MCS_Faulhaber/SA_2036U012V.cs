@@ -37,7 +37,22 @@ namespace MCS_Faulhaber
                 driver.SendCommandRequest(string.Format("la{0}", Convert.ToString(motorPosition, NumberFormatInfo.InvariantInfo)));
                 driver.SendCommandRequest("np");
                 driver.SendCommandRequest("m");
-                //while (!driver.ReceiveDeviceAnswer().Contains('p')) ;
+                while (!driver.ReceiveDeviceAnswer().Contains('p')) ;
+            }
+            else
+                throw new Exception("The connection failed! Check the device IO driver.");
+        }
+
+        public override void SetPositionAsync(double Position)
+        {
+            if (driver != null)
+            {
+                // Conversion of the position in mm to motor units
+                var motorPosition = (int)(Gear * StepsPerRevolution * Position / MilimetersPerRevolution);
+                // Loading the position to the controller and starting the motion
+                driver.SendCommandRequest(string.Format("la{0}", Convert.ToString(motorPosition, NumberFormatInfo.InvariantInfo)));
+                driver.SendCommandRequest("np");
+                driver.SendCommandRequest("m");
             }
             else
                 throw new Exception("The connection failed! Check the device IO driver.");
