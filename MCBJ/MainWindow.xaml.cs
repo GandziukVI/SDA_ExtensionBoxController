@@ -14,11 +14,12 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 
 using DeviceIO;
-using Keithley26xx;
 using SourceMeterUnit;
+using Keithley26xx;
+using MotionManager;
+using MCS_Faulhaber;
 using MCBJ.Experiments;
 using System.IO.Ports;
-using MCS_Faulhaber;
 using ExperimentController;
 
 namespace MCBJ
@@ -37,7 +38,7 @@ namespace MCBJ
             var smu = keithley[Keithley26xxB_Channels.Channel_A];
 
             var motorDriver = new SerialDevice("COM1", 115200, Parity.None, 8, StopBits.One);
-            var motor = new SA_2036U012V(motorDriver);
+            var motor = new SA_2036U012V(motorDriver) as IMotionController1D;
 
             var experiment = new IV_DefinedResistance(smu, motor) as IExperiment;
             experiment.Start();

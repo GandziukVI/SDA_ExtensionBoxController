@@ -1,4 +1,4 @@
-reset()
+smub.reset()
 
 result_b = nil
 

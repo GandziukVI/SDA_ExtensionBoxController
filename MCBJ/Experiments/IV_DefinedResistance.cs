@@ -40,8 +40,8 @@ namespace MCBJ.Experiments
         public override void ToDo(object Arg)
         {
             var setVolt = 0.02;
-            var setCond = 15.0;
-            var condDev = 5.0;
+            var setCond = 20.0;
+            var condDev = 20.0;
             var stabilizationTime = 30.0;
 
             var minPos = 0.0;
@@ -54,7 +54,7 @@ namespace MCBJ.Experiments
             var diff = Math.Abs(Math.Log10(maxConductance)) + Math.Abs(Math.Log10(minConductance));
 
             var minSpeed = 150.0;
-            var maxSpeed = 15000.0;
+            var maxSpeed = 1500.0;
 
             var inRangeCounter = 0;
             var outsiderCounter = 0;
@@ -81,10 +81,12 @@ namespace MCBJ.Experiments
                 var speed = minSpeed;
                 try
                 {
-                    if (scaledConductance >= 0.1)
-                        speed = minSpeed + (maxSpeed - minSpeed) * Math.Abs(Math.Log10(scaledConductance) - Math.Log10(setCond));
-                    else
-                        speed = minSpeed + (maxSpeed - minSpeed) * Math.Abs(Math.Log10(scaledConductance) - Math.Log10(setCond)) / Math.Abs(Math.Log10(scaledConductance));
+                    var k = (scaledConductance >= 1.0) ? Math.Log10(scaledConductance) : scaledConductance;
+                    var x = Math.Abs(scaledConductance - setCond);
+
+                    var factor = (1.0 - Math.Tanh((-1.0 * x + Math.PI / k) * k)) / 2.0;
+
+                    speed = minSpeed + (maxSpeed - minSpeed) * factor;
                 }
                 catch { speed = minSpeed; }
 
@@ -111,7 +113,7 @@ namespace MCBJ.Experiments
                     else
                         motor.PositionAsync = minPos;
 
-                    if (stabilityStopwatch.IsRunning == true && inRangeCounter != 0)
+                    if (stabilityStopwatch.IsRunning == true)
                         ++outsiderCounter;
                 }
 

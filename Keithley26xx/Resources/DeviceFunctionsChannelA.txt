@@ -1,4 +1,4 @@
-reset()
+smua.reset()
 
 result_a = nil
 
