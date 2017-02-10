@@ -29,6 +29,8 @@ namespace MCBJ
     /// </summary>
     public partial class MainWindow : Window
     {
+        IExperiment experiment;
+
         public MainWindow()
         {
             InitializeComponent();
@@ -40,8 +42,16 @@ namespace MCBJ
             var motorDriver = new SerialDevice("COM1", 115200, Parity.None, 8, StopBits.One);
             var motor = new SA_2036U012V(motorDriver) as IMotionController1D;
 
-            var experiment = new IV_DefinedResistance(smu, motor) as IExperiment;
+            experiment = new IV_DefinedResistance(smu, motor) as IExperiment;
+
+            experiment.DataArrived += experiment_DataArrived;
+
             experiment.Start();
+        }
+
+        void experiment_DataArrived(object sender, ExpDataArrivedEventArgs e)
+        {
+            
         }
     }
 }

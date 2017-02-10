@@ -15,7 +15,7 @@ namespace SourceMeterUnit
         void Initialize(IDeviceIO Driver, string channelID);
 
         ShapeMode SMU_ShapeMode { get; set; }
-        SourceMode SMU_SourceMode { get; set; }
+        SMUSourceMode SourceMode { get; set; }
 
         double Voltage { get; set; }
         double Current { get; set; }
@@ -30,7 +30,7 @@ namespace SourceMeterUnit
 
         void SwitchON();
         void SwitchOFF();
-        void SetCompliance(SourceMode sourceMode, double compliance);
+        void SetCompliance(SMUSourceMode sourceMode, double compliance);
         void SetSourceDelay(double delay);
         void SetSourceVoltage(double val);
         void SetSourceCurrent(double val);

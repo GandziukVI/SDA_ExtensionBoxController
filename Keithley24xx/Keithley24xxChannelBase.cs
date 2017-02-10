@@ -79,19 +79,19 @@ namespace Keithley24xx
             }
         }
 
-        private SourceMode _currentSourceMode = SourceMode.ModeNotSet;
-        private void _SetSourceMode(SourceMode mode)
+        private SMUSourceMode _currentSourceMode = SMUSourceMode.ModeNotSet;
+        private void _SetSourceMode(SMUSourceMode mode)
         {
             if (mode != _currentSourceMode)
             {
                 switch (mode)
                 {
-                    case SourceMode.Voltage:
+                    case SMUSourceMode.Voltage:
                         {
                             _currentSourceMode = mode;
                             _driver.SendCommandRequest(":SOUR:FUNC:MODE VOLT");
                         } break;
-                    case SourceMode.Current:
+                    case SMUSourceMode.Current:
                         {
                             _currentSourceMode = mode;
                             _driver.SendCommandRequest(":SOUR:FUNC:MODE CURR");
@@ -102,7 +102,7 @@ namespace Keithley24xx
             }
         }
 
-        public SourceMode SMU_SourceMode
+        public SMUSourceMode SourceMode
         {
             get { return _currentSourceMode; }
             set 
@@ -112,19 +112,19 @@ namespace Keithley24xx
             }
         }
 
-        private SourceMode _currentFixedSourceMode = SourceMode.ModeNotSet;
-        private void _SetFixedSourceMode(SourceMode mode)
+        private SMUSourceMode _currentFixedSourceMode = SMUSourceMode.ModeNotSet;
+        private void _SetFixedSourceMode(SMUSourceMode mode)
         {
             if (mode != _currentFixedSourceMode)
             {
                 switch (mode)
                 {
-                    case SourceMode.Voltage:
+                    case SMUSourceMode.Voltage:
                         {
                             _currentFixedSourceMode = mode;
                             _driver.SendCommandRequest(":SOUR:VOLT:MODE FIX");
                         } break;
-                    case SourceMode.Current:
+                    case SMUSourceMode.Current:
                         {
                             _currentFixedSourceMode = mode;
                             _driver.SendCommandRequest(":SOUR:CURR:MODE FIX");
@@ -141,11 +141,11 @@ namespace Keithley24xx
         protected double _currentSourceVoltageRange = 0.2;
         protected double _currentSourceCurrentRange = 0.00001;
 
-        private void _SetSourceRange(double val, SourceMode mode)
+        private void _SetSourceRange(double val, SMUSourceMode mode)
         {
             switch (mode)
             {
-                case SourceMode.Voltage:
+                case SMUSourceMode.Voltage:
                     {
                         var query = (from range in _VoltageRanges
                                      where range - Math.Abs(val) > 0.0
@@ -160,7 +160,7 @@ namespace Keithley24xx
                             _driver.SendCommandRequest(string.Format(":SOUR:VOLT:RANG {0}", query.ToString(NumberFormatInfo.InvariantInfo)));
                         }
                     } break;
-                case SourceMode.Current:
+                case SMUSourceMode.Current:
                     {
                         var query = (from range in _CurrentRanges
                                      where range - Math.Abs(val) > 0.0
@@ -285,14 +285,14 @@ namespace Keithley24xx
             }
         }
 
-        private void _SetSourceLevel(double val, SourceMode mode)
+        private void _SetSourceLevel(double val, SMUSourceMode mode)
         {
             switch (mode)
             {
-                case SourceMode.Voltage:
+                case SMUSourceMode.Voltage:
                     _driver.SendCommandRequest(string.Format(":SOUR:VOLT:LEV {0}", val.ToString(NumberFormatInfo.InvariantInfo)));
                     break;
-                case SourceMode.Current:
+                case SMUSourceMode.Current:
                     _driver.SendCommandRequest(string.Format(":SOUR:CURR:LEV {0}", val.ToString(NumberFormatInfo.InvariantInfo)));
                     break;
                 default:
@@ -373,9 +373,9 @@ namespace Keithley24xx
             {
                 switch (_currentSourceMode)
                 {
-                    case SourceMode.Voltage:
+                    case SMUSourceMode.Voltage:
                         return _currentVoltageCompliance;
-                    case SourceMode.Current:
+                    case SMUSourceMode.Current:
                         return _currentCurrentCompliance;
                     default:
                         return double.NaN;
@@ -482,11 +482,11 @@ namespace Keithley24xx
         protected double _minCurrentCompliance;
         protected double _maxCurrentCompliance;
 
-        public void SetCompliance(SourceMode sourceMode, double compliance)
+        public void SetCompliance(SMUSourceMode sourceMode, double compliance)
         {
             switch (sourceMode)
             {
-                case SourceMode.Voltage:
+                case SMUSourceMode.Voltage:
                     {
                         var _compliance = compliance;
                         if (compliance < _minCurrentCompliance)
@@ -500,7 +500,7 @@ namespace Keithley24xx
                             _driver.SendCommandRequest(string.Format(":SENS:CURR:PROT {0}", _compliance.ToString(NumberFormatInfo.InvariantInfo)));
                         }
                     } break;
-                case SourceMode.Current:
+                case SMUSourceMode.Current:
                     {
                         var _compliance = compliance;
                         if (compliance < _minVoltageCompliance)
@@ -529,18 +529,18 @@ namespace Keithley24xx
 
         public void SetSourceVoltage(double val)
         {
-            _SetSourceMode(SourceMode.Voltage);
-            _SetFixedSourceMode(SourceMode.Voltage);
-            _SetSourceRange(val, SourceMode.Voltage);
-            _SetSourceLevel(val, SourceMode.Voltage);
+            _SetSourceMode(SMUSourceMode.Voltage);
+            _SetFixedSourceMode(SMUSourceMode.Voltage);
+            _SetSourceRange(val, SMUSourceMode.Voltage);
+            _SetSourceLevel(val, SMUSourceMode.Voltage);
         }
 
         public void SetSourceCurrent(double val)
         {
-            _SetSourceMode(SourceMode.Current);
-            _SetFixedSourceMode(SourceMode.Current);
-            _SetSourceRange(val, SourceMode.Current);
-            _SetSourceLevel(val, SourceMode.Current);
+            _SetSourceMode(SMUSourceMode.Current);
+            _SetFixedSourceMode(SMUSourceMode.Current);
+            _SetSourceRange(val, SMUSourceMode.Current);
+            _SetSourceLevel(val, SMUSourceMode.Current);
         }
 
         private int _currentAveraging;
@@ -816,7 +816,7 @@ namespace Keithley24xx
         {
             VoltageTrace_InProgress = true;
 
-            SetCompliance(SourceMode.Current, srcLimitV);
+            SetCompliance(SMUSourceMode.Current, srcLimitV);
             SetNPLC(devNPLC);
             SetSourceCurrent(srcCurr);
             SwitchON();
@@ -834,7 +834,7 @@ namespace Keithley24xx
         {
             CurrentTrace_InProgress = true;
 
-            SetCompliance(SourceMode.Voltage, srcLimitI);
+            SetCompliance(SMUSourceMode.Voltage, srcLimitI);
             SetNPLC(devNPLC);
             SetSourceVoltage(srcVolt);
             SwitchON();

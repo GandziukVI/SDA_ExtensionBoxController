@@ -110,8 +110,8 @@ namespace Keithley26xx
             }
         }
 
-        private SourceMode _currentSourceMode = SourceMode.ModeNotSet;
-        public SourceMode SMU_SourceMode
+        private SMUSourceMode _currentSourceMode = SMUSourceMode.ModeNotSet;
+        public SMUSourceMode SourceMode
         {
             get
             {
@@ -158,9 +158,9 @@ namespace Keithley26xx
             {
                 switch (_currentSourceMode)
                 {
-                    case SourceMode.Voltage:
+                    case SMUSourceMode.Voltage:
                         return _currentCurrentCompliance;
-                    case SourceMode.Current:
+                    case SMUSourceMode.Current:
                         return _currentVoltageCompliance;
                     default:
                         return double.NaN;
@@ -247,11 +247,11 @@ namespace Keithley26xx
         protected double _minCurrentCompliance;
         protected double _maxCurrentCompliance;
 
-        public void SetCompliance(SourceMode sourceMode, double compliance)
+        public void SetCompliance(SMUSourceMode sourceMode, double compliance)
         {
             switch (sourceMode)
             {
-                case SourceMode.Voltage:
+                case SMUSourceMode.Voltage:
                     {
                         var _compliance = compliance;
                         if (compliance < _minCurrentCompliance)
@@ -262,7 +262,7 @@ namespace Keithley26xx
                         if (_compliance != _currentCurrentCompliance)
                             _currentCurrentCompliance = _compliance;
                     } break;
-                case SourceMode.Current:
+                case SMUSourceMode.Current:
                     {
                         var _compliance = compliance;
                         if (compliance < _minVoltageCompliance)
@@ -297,8 +297,8 @@ namespace Keithley26xx
                 _display.smuX.limit.func = Keithley26xxBLimitFunctions.LIMIT_IV;
             }
 
-            if (SMU_SourceMode != SourceMode.Voltage)
-                SMU_SourceMode = SourceMode.Voltage;
+            if (SourceMode != SMUSourceMode.Voltage)
+                SourceMode = SMUSourceMode.Voltage;
 
             var toSet = val;
             if (val < minVoltageVal)
@@ -319,8 +319,8 @@ namespace Keithley26xx
                 _display.smuX.limit.func = Keithley26xxBLimitFunctions.LIMIT_IV;
             }
 
-            if (SMU_SourceMode != SourceMode.Current)
-                SMU_SourceMode = SourceMode.Current;
+            if (SourceMode != SMUSourceMode.Current)
+                SourceMode = SMUSourceMode.Current;
 
             var toSet = val;
             if (val < minCurrentVal)
@@ -583,7 +583,7 @@ namespace Keithley26xx
         {
             VoltageTrace_InProgress = true;
 
-            SetCompliance(SourceMode.Current, srcLimitV);
+            SetCompliance(SMUSourceMode.Current, srcLimitV);
             SetNPLC(devNPLC);
             SetSourceCurrent(srcCurr);
             SwitchON();
@@ -601,7 +601,7 @@ namespace Keithley26xx
         {
             CurrentTrace_InProgress = true;
 
-            SetCompliance(SourceMode.Voltage, srcLimitI);
+            SetCompliance(SMUSourceMode.Voltage, srcLimitI);
             SetNPLC(devNPLC);
             SetSourceVoltage(srcVolt);
             SwitchON();

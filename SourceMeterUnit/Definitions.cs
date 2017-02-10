@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace SourceMeterUnit
 {
-    public enum SourceMode
+    public enum SMUSourceMode
     {
         Voltage,
         Current,
