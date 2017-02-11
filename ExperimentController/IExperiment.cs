@@ -14,5 +14,6 @@ namespace ExperimentController
         void Stop();
 
         event EventHandler<ExpDataArrivedEventArgs> DataArrived;
+        event EventHandler<StatusEventArgs> Status;
     }
 }

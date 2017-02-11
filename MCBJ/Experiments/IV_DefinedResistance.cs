@@ -39,42 +39,43 @@ namespace MCBJ.Experiments
 
         public override void ToDo(object Arg)
         {
-            var setVolt = 0.02;
-            var setCond = 45.0;
-            var condDev = 5.0;
-            var stabilizationTime = 60.0;
+            onStatusChanged(new StatusEventArgs("Starting the measurement."));
 
-            var minPos = 0.0;
-            var maxPos = 15.0;
-            var setPos = minPos;
+            var settings = (IV_DefinedResistanceInfo)Arg;
 
-            var minConductance = 0.00001;
-            var maxConductance = 10;
+            var setVolt = settings.ScanningVoltage;
+            var setCond = settings.SetConductance;
+            var condDev = settings.Deviation;
+            var stabilizationTime = settings.StabilizationTime;
 
-            var diff = Math.Abs(Math.Log10(maxConductance)) + Math.Abs(Math.Log10(minConductance));
+            var minSpeed = settings.MinSpeed;
+            var maxSpeed = settings.MaxSpeed;
 
-            var minSpeed = 150.0;
-            var maxSpeed = 750.0;
+            var minValue = settings.IVMinvalue;
+            var maxValue = settings.IVMaxvalue;
+
+            var epsilon = settings.Epsilon;
+            var nPoints = settings.NPoints;
+            var nCycles = settings.NCycles;
+
+            var sourceMode = settings.SourceMode;
+            var compliance = settings.Compliance;
+
+            var minPos = settings.MotorMinPos;
+            var maxPos = settings.MotorMaxPos;
 
             var inRangeCounter = 0;
             var outsiderCounter = 0;
 
-            var minValue = -0.1;
-            var maxValue = 0.1;
-
-            var epsilon = 0.02;
-            var nPoints = 101;
-            var nCycles = 1;
-
-            var sourceMode = SMUSourceMode.Voltage;
-
             motor.Enabled = true;
             motor.Velosity = maxSpeed;
 
-            smu.SourceMode = SMUSourceMode.Voltage;
-            smu.Compliance = 0.001;
+            smu.SourceMode = sourceMode;
+            smu.Compliance = compliance;
             smu.Voltage = setVolt;
             smu.SwitchON();
+
+            onStatusChanged(new StatusEventArgs("Reaching the specified resistance / conductance value."));
 
             while (true)
             {
@@ -109,6 +110,8 @@ namespace MCBJ.Experiments
                         outsiderCounter = 0;
 
                         stabilityStopwatch.Start();
+
+                        onStatusChanged(new StatusEventArgs("Stabilizing the specified resistance / conductance value."));
                     }
 
                     ++inRangeCounter;
@@ -147,6 +150,8 @@ namespace MCBJ.Experiments
                     }
                 }
             }
+
+            onStatusChanged(new StatusEventArgs("Measuring I-V curve(s) in a defined range."));
 
             var currCycle = 1;
 
@@ -189,6 +194,8 @@ namespace MCBJ.Experiments
                 smu.Dispose();
 
             this.Stop();
+
+            onStatusChanged(new StatusEventArgs("Measurement is done!"));
         }
     }
 }

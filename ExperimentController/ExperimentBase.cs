@@ -24,6 +24,13 @@ namespace ExperimentController
             if (DataArrived != null)
                 DataArrived(this, e);
         }
+        
+        public event EventHandler<StatusEventArgs> Status;
+        protected void onStatusChanged(StatusEventArgs e)
+        {
+            if (Status != null)
+                Status(this, e);
+        }
 
         public virtual void ToDo(object Arg)
         {

@@ -13,6 +13,7 @@
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <WarningLevel>4</WarningLevel>
+    <ExpressionBlendVersion>12.0.41002.1</ExpressionBlendVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -34,6 +35,21 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="DynamicDataDisplay">
+      <HintPath>..\Third_Part_Libraries\D3Assemblies\DynamicDataDisplay.dll</HintPath>
+    </Reference>
+    <Reference Include="DynamicDataDisplay.Controls">
+      <HintPath>..\Third_Part_Libraries\D3Assemblies\DynamicDataDisplay.Controls.dll</HintPath>
+    </Reference>
+    <Reference Include="DynamicDataDisplay.Design">
+      <HintPath>..\Third_Part_Libraries\D3Assemblies\DynamicDataDisplay.Design.dll</HintPath>
+    </Reference>
+    <Reference Include="DynamicDataDisplay.Markers">
+      <HintPath>..\Third_Part_Libraries\D3Assemblies\DynamicDataDisplay.Markers.dll</HintPath>
+    </Reference>
+    <Reference Include="DynamicDataDisplay.Markers.Design">
+      <HintPath>..\Third_Part_Libraries\D3Assemblies\DynamicDataDisplay.Markers.Design.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
@@ -47,12 +63,19 @@
     <Reference Include="WindowsBase" />
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
+    <Reference Include="Xceed.Wpf.Toolkit">
+      <HintPath>..\..\..\Visual Studio 2013\Projects\SDA_ExtensionBoxController\Third_Part_Libraries\Xceed.Wpf.Toolkit.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <ApplicationDefinition Include="App.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Page Include="Experiments\IV_at_DefinedResistance.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -61,7 +84,11 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Experiments\IV_at_DefinedResistance.xaml.cs">
+      <DependentUpon>IV_at_DefinedResistance.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Experiments\IV_DefinedResistance.cs" />
+    <Compile Include="Experiments\IV_DefinedResistanceInfo.cs" />
     <Compile Include="Experiments\TT_SmartMode.cs" />
     <Compile Include="Experiments\TT_SmartModeInfo.cs" />
     <Compile Include="MainWindow.xaml.cs">
