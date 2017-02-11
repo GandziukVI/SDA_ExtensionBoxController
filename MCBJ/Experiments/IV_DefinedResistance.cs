@@ -32,7 +32,7 @@ namespace MCBJ.Experiments
         {
             var resultString = "";
             for (int i = 0; i < Data.Length; i++)
-                resultString += string.Format("{0}\t{1}\r\n", Data[i].Voltage.ToString(NumberFormatInfo.InvariantInfo), Data[i].Current.ToString(NumberFormatInfo.InvariantInfo));
+                resultString += string.Format("{0},{1}\r\n", Data[i].Voltage.ToString(NumberFormatInfo.InvariantInfo), Data[i].Current.ToString(NumberFormatInfo.InvariantInfo));
 
             return resultString;
         }
@@ -40,7 +40,7 @@ namespace MCBJ.Experiments
         public override void ToDo(object Arg)
         {
             var setVolt = 0.02;
-            var setCond = 50.0;
+            var setCond = 45.0;
             var condDev = 5.0;
             var stabilizationTime = 60.0;
 
@@ -54,16 +54,17 @@ namespace MCBJ.Experiments
             var diff = Math.Abs(Math.Log10(maxConductance)) + Math.Abs(Math.Log10(minConductance));
 
             var minSpeed = 150.0;
-            var maxSpeed = 1500.0;
+            var maxSpeed = 750.0;
 
             var inRangeCounter = 0;
             var outsiderCounter = 0;
 
-            var minValue = -0.2;
-            var maxValue = 0.2;
+            var minValue = -0.1;
+            var maxValue = 0.1;
+
             var epsilon = 0.02;
             var nPoints = 101;
-            var nCycles = 2;
+            var nCycles = 1;
 
             var sourceMode = SMUSourceMode.Voltage;
 
@@ -71,81 +72,81 @@ namespace MCBJ.Experiments
             motor.Velosity = maxSpeed;
 
             smu.SourceMode = SMUSourceMode.Voltage;
-            smu.Compliance = 0.01;
+            smu.Compliance = 0.001;
             smu.Voltage = setVolt;
             smu.SwitchON();
 
-            //while (true)
-            //{
-            //    if (!IsRunning)
-            //        break;
+            while (true)
+            {
+                if (!IsRunning)
+                    break;
 
-            //    var scaledConductance = (1.0 / smu.MeasureResistance()) / ConductanceQuantum;
+                var scaledConductance = (1.0 / smu.MeasureResistance()) / ConductanceQuantum;
 
-            //    var speed = minSpeed;
-            //    try
-            //    {
-            //        var k = (scaledConductance >= 1.0) ? Math.Log10(scaledConductance) : scaledConductance;
-            //        var x = Math.Abs(scaledConductance - setCond);
+                var speed = minSpeed;
+                try
+                {
+                    var k = (scaledConductance >= 1.0) ? Math.Log10(scaledConductance) : scaledConductance;
+                    var x = Math.Abs(scaledConductance - setCond);
 
-            //        var factor = (1.0 - Math.Tanh((-1.0 * x + Math.PI / k) * k)) / 2.0;
+                    var factor = (1.0 - Math.Tanh((-1.0 * x + Math.PI / k) * k)) / 2.0;
 
-            //        speed = minSpeed + (maxSpeed - minSpeed) * factor;
-            //    }
-            //    catch { speed = minSpeed; }
+                    speed = minSpeed + (maxSpeed - minSpeed) * factor;
+                }
+                catch { speed = minSpeed; }
 
-            //    motor.Velosity = speed;
+                motor.Velosity = speed;
 
-            //    if ((scaledConductance >= setCond - (setCond * condDev / 100.0)) &&
-            //        (scaledConductance <= setCond + (setCond * condDev / 100.0)))
-            //    {
-            //        if (motor.IsEnabled == true)
-            //            motor.Enabled = false;
+                if ((scaledConductance >= setCond - (setCond * condDev / 100.0)) &&
+                    (scaledConductance <= setCond + (setCond * condDev / 100.0)))
+                {
+                    if (motor.IsEnabled == true)
+                        motor.Enabled = false;
 
-            //        if (!stabilityStopwatch.IsRunning)
-            //        {
-            //            inRangeCounter = 0;
-            //            outsiderCounter = 0;
+                    if (!stabilityStopwatch.IsRunning)
+                    {
+                        inRangeCounter = 0;
+                        outsiderCounter = 0;
 
-            //            stabilityStopwatch.Start();
-            //        }
+                        stabilityStopwatch.Start();
+                    }
 
-            //        ++inRangeCounter;
-            //    }
-            //    else
-            //    {
-            //        if (motor.IsEnabled == false)
-            //            motor.Enabled = true;
+                    ++inRangeCounter;
+                }
+                else
+                {
+                    if (motor.IsEnabled == false)
+                        motor.Enabled = true;
 
-            //        if (scaledConductance > setCond)
-            //            motor.PositionAsync = maxPos;
-            //        else
-            //            motor.PositionAsync = minPos;
+                    if (scaledConductance > setCond)
+                        motor.PositionAsync = maxPos;
+                    else
+                        motor.PositionAsync = minPos;
 
-            //        if (stabilityStopwatch.IsRunning == true)
-            //            ++outsiderCounter;
-            //    }
+                    if (stabilityStopwatch.IsRunning == true)
+                        ++outsiderCounter;
+                }
 
-            //    if (stabilityStopwatch.IsRunning)
-            //    {
-            //        if ((double)stabilityStopwatch.ElapsedMilliseconds / 1000.0 >= stabilizationTime)
-            //        {
-            //            var divider = outsiderCounter > 0 ? (double)outsiderCounter : 1.0;
-            //            if (Math.Log10((double)inRangeCounter / divider) >= 1.0)
-            //            {
-            //                stabilityStopwatch.Stop();
-            //                break;
-            //            }
-            //            else
-            //            {
-            //                inRangeCounter = 0;
-            //                outsiderCounter = 0;
+                if (stabilityStopwatch.IsRunning)
+                {
+                    if ((double)stabilityStopwatch.ElapsedMilliseconds / 1000.0 >= stabilizationTime)
+                    {
+                        var divider = outsiderCounter > 0 ? (double)outsiderCounter : 1.0;
+                        if (Math.Log10((double)inRangeCounter / divider) >= 1.0)
+                        {
+                            stabilityStopwatch.Stop();
+                            break;
+                        }
+                        else
+                        {
+                            inRangeCounter = 0;
+                            outsiderCounter = 0;
 
-            //                stabilityStopwatch.Restart();
-            //            }
-            //        }
-            //    }
-            //}
+                            stabilityStopwatch.Restart();
+                        }
+                    }
+                }
+            }
 
             var currCycle = 1;
 
