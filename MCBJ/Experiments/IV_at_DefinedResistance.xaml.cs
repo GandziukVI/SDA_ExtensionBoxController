@@ -23,5 +23,13 @@ namespace MCBJ
 		{
             this.InitializeComponent();
 		}
+
+        private void on_cmdOpenClick(object sender, RoutedEventArgs e)
+        {
+            var dialog = new System.Windows.Forms.FolderBrowserDialog();
+            dialog.ShowDialog();
+
+            Settings.FilePath = dialog.SelectedPath;
+        }
 	}
 }

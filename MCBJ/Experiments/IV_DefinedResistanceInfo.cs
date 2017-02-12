@@ -266,6 +266,9 @@ namespace MCBJ.Experiments
             get { return saveFileName; }
             set 
             {
+                if (!value.EndsWith(".dat"))
+                    value += ".dat";
+
                 saveFileName = value;
                 onPropertyChanged("SaveFileName");
             }

@@ -72,6 +72,7 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Core" />
@@ -106,9 +107,11 @@
     </Compile>
     <Compile Include="Experiments\IV_at_DefinedResistance.xaml.cs">
       <DependentUpon>IV_at_DefinedResistance.xaml</DependentUpon>
+      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Experiments\IV_DefinedResistance.cs" />
     <Compile Include="Experiments\IV_DefinedResistanceInfo.cs" />
+    <Compile Include="Experiments\ParametersConverter.cs" />
     <Compile Include="Experiments\TT_SmartMode.cs" />
     <Compile Include="Experiments\TT_SmartModeInfo.cs" />
     <Compile Include="MainWindow.xaml.cs">

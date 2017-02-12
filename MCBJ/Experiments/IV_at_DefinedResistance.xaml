@@ -16,6 +16,8 @@
     </UserControl.DataContext>
     
     <UserControl.Resources>
+		<Experiments:SourceModeConverter x:Key="ModeConverter" />
+
         <Style TargetType="TextBlock">
 			<Setter Property="Margin" Value="2.5" />
 			<Setter Property="HorizontalAlignment" Value="Stretch" />
@@ -42,6 +44,12 @@
 			<Setter Property="Height" Value="35" />
 			<Setter Property="HorizontalAlignment" Value="Stretch" />
 			<Setter Property="VerticalAlignment" Value="Bottom" />
+		</Style>
+		<Style TargetType="ComboBox">
+			<Setter Property="Margin" Value="2.5" />
+		</Style>
+		<Style TargetType="TextBox">
+			<Setter Property="Margin" Value="2.5" />
 		</Style>
 	</UserControl.Resources>
 
@@ -79,6 +87,8 @@
 				<RowDefinition Height="Auto"/>
 				<RowDefinition Height="Auto"/>
 				<RowDefinition Height="Auto"/>
+				<RowDefinition Height="Auto"/>
+				<RowDefinition Height="Auto"/>
 				<RowDefinition/>
 			</Grid.RowDefinitions>
 			<TextBlock TextWrapping="Wrap" Text="Scanning voltage" />
@@ -99,6 +109,10 @@
 			<wpfTool:DoubleUpDown Grid.Row="1" Grid.Column="1" Value="{Binding SetConductance, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
 			<wpfTool:DoubleUpDown Grid.Row="2" Grid.Column="1" Value="{Binding SetResistance, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
 			<wpfTool:DoubleUpDown Grid.Row="3" Grid.Column="1" Value="{Binding Deviation, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+			<ComboBox Grid.Row="4" Grid.Column="1" SelectedIndex="{Binding SourceMode, Converter={StaticResource ModeConverter}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+				<ComboBoxItem Content="Voltage"/>
+				<ComboBoxItem Content="Current"/>
+			</ComboBox>
 			<wpfTool:DoubleUpDown Grid.Row="5" Grid.Column="1" Value="{Binding Compliance, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
 			<wpfTool:DoubleUpDown Grid.Row="6" Grid.Column="1" Value="{Binding IVMinvalue, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
 			<wpfTool:DoubleUpDown Grid.Row="7" Grid.Column="1" Value="{Binding IVMaxvalue, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
@@ -108,8 +122,19 @@
 			<wpfTool:DoubleUpDown Grid.Row="11" Grid.Column="1" Value="{Binding MotorMinPos, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
 			<wpfTool:DoubleUpDown Grid.Row="12" Grid.Column="1" Value="{Binding MotorMaxPos, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
 
-			<Button x:Name="cmdStart" Content="START" Grid.Row="14" Height="35"/>
-			<Button x:Name="cmdStop" Content="STOP" Grid.Row="14" Grid.Column="2"/>
+			<Separator BorderThickness="1,2" Height="1" Grid.Row="14" Grid.ColumnSpan="2" Margin="2.5,5,2.5,20" Background="Black" BorderBrush="#FFAAAAAA" />
+			<Grid Grid.Row="15" Grid.ColumnSpan="2">
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="Auto"/>
+					<ColumnDefinition />
+				</Grid.ColumnDefinitions>
+				<Button x:Name="cmdOpenFolder" Content="..." HorizontalAlignment="Left" VerticalAlignment="Top" Width="35" Click="on_cmdOpenClick"/>
+				<TextBox TextWrapping="Wrap" Grid.Column="1" Margin="10,2.5,2.5,2" VerticalContentAlignment="Center" Height="35" Text="I-V Data File_"/>
+				
+			</Grid>
+
+			<Button x:Name="cmdStart" Content="START" Grid.Row="16" Height="35"/>
+			<Button x:Name="cmdStop" Content="STOP" Grid.Row="16" Grid.Column="2"/>
 		</Grid>
 		</ScrollViewer>
 	</Grid>
