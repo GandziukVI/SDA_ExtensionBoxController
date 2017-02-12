@@ -23,6 +23,10 @@ using System.IO.Ports;
 using ExperimentController;
 using System.IO;
 using System.Globalization;
+using DynamicDataDisplay.Markers.DataSources;
+using Microsoft.Research.DynamicDataDisplay.DataSources;
+using Microsoft.Research.DynamicDataDisplay;
+using System.Threading;
 
 namespace MCBJ
 {
@@ -34,84 +38,112 @@ namespace MCBJ
         IExperiment experiment;
         StringBuilder sb;
         int dataCounter = 0;
+        object expStartInfo;
+
+        EnumerableDataSource<Point> ds;
+        LinkedList<Point> dList;
 
         public MainWindow()
         {
+
+            dList = new LinkedList<Point>();
+            ds = new EnumerableDataSource<Point>(dList);
+            ds.SetXYMapping(p => p);
+
             InitializeComponent();
-
-            //var smuDriver = new VisaDevice("GPIB0::26::INSTR") as IDeviceIO;
-            //var keithley = new Keithley26xxB<Keithley2602B>(smuDriver);
-            //var smu = keithley[Keithley26xxB_Channels.Channel_A];
-
-            //var motorDriver = new SerialDevice("COM1", 115200, Parity.None, 8, StopBits.One);
-            //var motor = new SA_2036U012V(motorDriver) as IMotionController1D;
-
-            //experiment = new IV_DefinedResistance(smu, motor) as IExperiment;
-
-            //experiment.DataArrived += experiment_DataArrived;
-
-            //experiment.Start();
-        }
-
-        void experiment_DataArrived(object sender, ExpDataArrivedEventArgs e)
-        {
-            //var fileName = "E:\\MCBJ\\2017\\2017.02.10\\IV\\Temp\\CurrentI-V.csv";
-
-            //if(dataCounter == 0)
-            //{
-            //    sb = new StringBuilder();
-
-            //    var data = e.Data.Split("\r\n".ToCharArray(), StringSplitOptions.RemoveEmptyEntries);
-            //    var dataQuery = from item in data
-            //                select new
-            //                {
-            //                    voltage = double.Parse(item.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries)[0], NumberFormatInfo.InvariantInfo),
-            //                    current = double.Parse(item.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries)[1], NumberFormatInfo.InvariantInfo)
-            //                };
-            //    var query = from item in dataQuery
-            //                where item.voltage >= 0
-            //                select item;
-
-            //    foreach (var item in query)
-            //        sb.AppendFormat("{0},{1}\r\n", item.voltage.ToString(NumberFormatInfo.InvariantInfo), item.current.ToString(NumberFormatInfo.InvariantInfo));
-            //}
-            //else if (dataCounter == 1)
-            //{
-            //    var data = e.Data.Split("\r\n".ToCharArray(), StringSplitOptions.RemoveEmptyEntries);
-            //    var dataQuery = from item in data
-            //                    select new
-            //                    {
-            //                        voltage = double.Parse(item.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries)[0], NumberFormatInfo.InvariantInfo),
-            //                        current = double.Parse(item.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries)[1], NumberFormatInfo.InvariantInfo)
-            //                    };
-            //    var query = from item in dataQuery
-            //                where item.voltage < 0
-            //                select item;
-
-            //    foreach (var item in query)
-            //        sb.AppendFormat("{0},{1}\r\n", item.voltage.ToString(NumberFormatInfo.InvariantInfo), item.current.ToString(NumberFormatInfo.InvariantInfo));
-
-            //    using (var sw = new StreamWriter(new FileStream(fileName, FileMode.Create, FileAccess.Write)))
-            //    {
-            //        sw.Write(sb.ToString());
-            //    }
-            //}
-
-            //++dataCounter;
         }
 
         private void onMainWindowClosing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            //if (experiment.IsRunning)
-            //    experiment.Stop();
+            if (experiment != null)
+                if (experiment.IsRunning)
+                    experiment.Stop();
         }
+
+        #region I-V at defined resistance implementation
 
         private void onIVdefR_Click(object sender, RoutedEventArgs e)
         {
-            var expControl = new IV_at_DefinedResistance();
+            var control = new IV_at_DefinedResistance();
 
-            //Grid.SetRow(expControl, 1);
-            //Grid.SetColumn(expControl, 0);
+            Grid.SetRow(control, 1);
+            Grid.SetColumn(control, 0);
+
+            control.cmdStart.Click += cmdStartIV_at_defR_Click;
+            control.cmdStop.Click += cmdStopIV_at_defR_Click;
+
+            this.expParentGrid.Children.Add(control);
+
+            var psdGraph = new LineGraph(ds);
+            psdGraph.AddToPlotter(control.chartIV);
+            control.chartIV.Viewport.FitToView();
+
+            expStartInfo = control.Settings;
         }
+
+        void cmdStartIV_at_defR_Click(object sender, RoutedEventArgs e)
+        {
+            // Has to be implemented in another section of code
+
+            var smuDriver = new VisaDevice("GPIB0::26::INSTR") as IDeviceIO;
+            var keithley = new Keithley26xxB<Keithley2602B>(smuDriver);
+            var smu = keithley[Keithley26xxB_Channels.Channel_A];
+
+            var motorDriver = new SerialDevice("COM1", 115200, Parity.None, 8, StopBits.One);
+            var motor = new SA_2036U012V(motorDriver) as IMotionController1D;
+
+            experiment = new IV_DefinedResistance(smu, motor) as IExperiment;
+            experiment.DataArrived += experimentIV_at_def_R_DataArrived;
+
+            if (expStartInfo != null)
+                experiment.Start(expStartInfo);
+
+            experiment.Status += experimentIV_at_def_R_Status;
+            experiment.Progress += experimentIV_at_def_R_Progress;
+        }
+
+        void cmdStopIV_at_defR_Click(object sender, RoutedEventArgs e)
+        {
+            if (experiment != null)
+                experiment.Stop();
+        }
+
+        void experimentIV_at_def_R_DataArrived(object sender, ExpDataArrivedEventArgs e)
+        {
+            var ts = new ParameterizedThreadStart(addIVDataToPlot);
+            var th = new Thread(ts);
+
+            th.Start(e.Data);
+        }
+
+        void addIVDataToPlot(object IVDataString)
+        {
+            dList.Clear();
+
+            var data = IV_Data.FromString((string)IVDataString);
+
+            var points = from dataPoint in data
+                         select new Point(dataPoint.Voltage, dataPoint.Current);
+
+            foreach (var item in points)
+                dList.AddLast(item);
+
+            Dispatcher.InvokeAsync(new Action(() =>
+            {
+                ds.RaiseDataChanged();
+            }));
+        }
+
+        private void experimentIV_at_def_R_Status(object sender, StatusEventArgs e)
+        {
+            expStatus.Text = e.StatusMessage;
+        }
+
+        void experimentIV_at_def_R_Progress(object sender, ProgressEventArgs e)
+        {
+            expProgress.Value = e.Progress;
+        }
+
+        #endregion
     }
 }

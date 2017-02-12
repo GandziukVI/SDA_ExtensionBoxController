@@ -60,6 +60,7 @@
     <Compile Include="ExpDataArrivedEventArgs.cs" />
     <Compile Include="ExperimentBase.cs" />
     <Compile Include="IExperiment.cs" />
+    <Compile Include="ProgressEventArgs.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="StatusEventArgs.cs" />
   </ItemGroup>

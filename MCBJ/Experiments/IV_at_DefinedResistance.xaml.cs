@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MCBJ.Experiments;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Windows;
@@ -20,7 +21,7 @@ namespace MCBJ
 	{
 		public IV_at_DefinedResistance()
 		{
-			this.InitializeComponent();
+            this.InitializeComponent();
 		}
 	}
 }

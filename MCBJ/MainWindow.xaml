@@ -3,14 +3,16 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:wpfTool="clr-namespace:Xceed.Wpf.Toolkit;assembly=Xceed.Wpf.Toolkit"
         xmlns:d3="http://research.microsoft.com/DynamicDataDisplay/1.0" xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:MCBJ ="clr-namespace:MCBJ"
         Title="MainWindow" Height="350" Width="525" Closing="onMainWindowClosing">
     <Grid x:Name="expParentGrid">
-    	<Grid.RowDefinitions>
-    		<RowDefinition Height="Auto"/>
-    		<RowDefinition/>
-    		<RowDefinition Height="Auto"/>
-    	</Grid.RowDefinitions>
-    	<Grid Grid.Row="2">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <Grid Grid.Row="2" Margin="5,0,5,5">
     		<Grid.RowDefinitions>
     			<RowDefinition/>
     			<RowDefinition/>
@@ -23,15 +25,12 @@
     		<TextBlock x:Name="expProgressLabel" Text="{Binding Value, ElementName=expProgress, Mode=TwoWay, StringFormat=\{0:0\}%}" HorizontalAlignment="Center" VerticalAlignment="Center" Padding="0" Grid.Row="1" Grid.Column="1"/>
     		<TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" Text="Status:" VerticalAlignment="Center" Margin="0,0,20,0"/>
     		<TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" Text="Progress:" VerticalAlignment="Center" Grid.Row="1" Margin="0,0,20,0"/>
-    		<TextBlock x:Name="expStatus" HorizontalAlignment="Left" TextWrapping="Wrap" Text="Ready to the action." VerticalAlignment="Center" Grid.Column="1" Margin="2.5"/>
-    	</Grid>
-    	<Menu x:Name="menuMain">
-    		<MenuItem x:Name="menuSelectExperimentType" Header="_Experiment type">
-    			<MenuItem x:Name="expIVdefR" Header="_I-V def. resistance" HorizontalAlignment="Left" Click="onIVdefR_Click"/>
-    		</MenuItem>
-    	</Menu>
-    	
-
-    	
+            <TextBlock x:Name="expStatus" HorizontalAlignment="Left" TextWrapping="Wrap" Text="Ready to the action." VerticalAlignment="Center" Grid.Column="1" Margin="2.5"/>
+        </Grid>
+        <Menu x:Name="menuMain" Margin="0,0,0,-2" Height="20">
+            <MenuItem x:Name="menuSelectExperimentType" Header="_Experiment type">
+                <MenuItem x:Name="expIVdefR" Header="_I-V def. resistance" HorizontalAlignment="Left" Click="onIVdefR_Click"/>
+            </MenuItem>
+        </Menu>
     </Grid>
 </Window>

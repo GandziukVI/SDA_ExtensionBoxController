@@ -44,8 +44,8 @@ namespace SourceMeterUnit
 
     public class IV_Data
     {
-        char[] _delimeters = { '\r', '\n' };
-        char[] _separators = { ' ' };
+        static char[] _delimeters = { '\r', '\n' };
+        static char[] _separators = { ' ', '\t', ',' };
 
         private double _Time;
 
@@ -98,6 +98,19 @@ namespace SourceMeterUnit
             get { return _Current; }
             set { _Current = value; }
         }
+
+        public override string ToString()
+        {
+            return string.Join("\t", Voltage.ToString(NumberFormatInfo.InvariantInfo), Current.ToString(NumberFormatInfo.InvariantInfo));
+        }
+
+        public static IV_Data[] FromString(string DataString)
+        {
+            var query = (from item in DataString.Split(_separators, StringSplitOptions.RemoveEmptyEntries)
+                        select new IV_Data(item)).ToArray();                        
+
+            return query;
+        }
     }
 
     public class TraceData
@@ -140,7 +153,7 @@ namespace SourceMeterUnit
 
             var successTime = double.TryParse(data[0], NumberStyles.Float, NumberFormatInfo.InvariantInfo, out _Time);
             var successValue = double.TryParse(data[1], NumberStyles.Float, NumberFormatInfo.InvariantInfo, out _Value);
-            
+
             if (!(successTime && successValue))
                 throw new Exception("Canno't interpert input data!");
         }

@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -23,7 +24,7 @@ namespace MCBJ.Experiments
 
         #endregion
 
-        double scanningVoltage;
+        double scanningVoltage = 0.02;
         public double ScanningVoltage
         {
             get { return scanningVoltage; }
@@ -34,14 +35,16 @@ namespace MCBJ.Experiments
             }
         }
 
-        private double setConductance;
+        private static double conductanceQuantum = 0.0000774809173;
+
+        private double setConductance = 1.0;
         public double SetConductance
         {
             get { return setConductance; }
             set
             {
                 if (value > 0)
-                    setResistance = 1.0 / value;
+                    setResistance = 1.0 / conductanceQuantum / value;
                 else
                     throw new ArgumentException("Conductance value should me greater than zero.");
 
@@ -53,14 +56,14 @@ namespace MCBJ.Experiments
         }
 
 
-        private double setResistance;
+        private static double setResistance = 1.0 / conductanceQuantum;
         public double SetResistance
         {
             get { return setResistance; }
             set
             {
                 if (value > 0)
-                    setConductance = 1.0 / value;
+                    setConductance = 1.0 / conductanceQuantum / value;
                 else
                     throw new ArgumentException("Resistance value should me greater than zero.");
 
@@ -71,7 +74,7 @@ namespace MCBJ.Experiments
             }
         }
 
-        double deviation;
+        double deviation = 5.0;
         public double Deviation
         {
             get { return deviation; }
@@ -86,7 +89,7 @@ namespace MCBJ.Experiments
             }
         }
 
-        double stabilizationTime;
+        double stabilizationTime = 60.0;
         public double StabilizationTime
         {
             get { return stabilizationTime; }
@@ -132,7 +135,7 @@ namespace MCBJ.Experiments
             }
         }
 
-        private SMUSourceMode sourceMode;
+        private SMUSourceMode sourceMode = SMUSourceMode.Voltage;
         public SMUSourceMode SourceMode
         {
             get { return sourceMode; }
@@ -212,7 +215,7 @@ namespace MCBJ.Experiments
             }
         }
 
-        private double compliance;
+        private double compliance = 0.00001;
         public double Compliance
         {
             get { return compliance; }
@@ -243,6 +246,28 @@ namespace MCBJ.Experiments
             {
                 motorMaxPos = value;
                 onPropertyChanged("MotorMaxPos");
+            }
+        }
+
+        private string filePath = Directory.GetCurrentDirectory();
+        public string FilePath
+        {
+            get { return filePath; }
+            set
+            {
+                filePath = value;
+                onPropertyChanged("FilePath");
+            }
+        }
+
+        private string saveFileName = "I-V data.dat";
+        public string SaveFileName
+        {
+            get { return saveFileName; }
+            set 
+            {
+                saveFileName = value;
+                onPropertyChanged("SaveFileName");
             }
         }
     }

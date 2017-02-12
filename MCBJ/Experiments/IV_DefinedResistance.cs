@@ -5,12 +5,20 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace MCBJ.Experiments
 {
+    class IV_DataComparer : IComparer<IV_Data>
+    {
+        int IComparer<IV_Data>.Compare(IV_Data x, IV_Data y)
+        {
+            return x.Voltage.CompareTo(y.Voltage);
+        }
+    }
     public class IV_DefinedResistance : ExperimentBase
     {
         private ISourceMeterUnit smu;
@@ -20,21 +28,27 @@ namespace MCBJ.Experiments
 
         private Stopwatch stabilityStopwatch;
 
+
+        LinkedList<IV_Data[]> IVData;
+
         public IV_DefinedResistance(ISourceMeterUnit SMU, IMotionController1D Motor)
         {
             smu = SMU;
             motor = Motor;
 
             stabilityStopwatch = new Stopwatch();
+
+            IVData = new LinkedList<IV_Data[]>();
         }
 
         private string getIVString(ref IV_Data[] Data)
         {
-            var resultString = "";
-            for (int i = 0; i < Data.Length; i++)
-                resultString += string.Format("{0},{1}\r\n", Data[i].Voltage.ToString(NumberFormatInfo.InvariantInfo), Data[i].Current.ToString(NumberFormatInfo.InvariantInfo));
+            var sb = new StringBuilder();
 
-            return resultString;
+            for (int i = 0; i < Data.Length; i++)
+                sb.AppendFormat("{0}\t{1}\t{2}\r\n", Data[i].Time.ToString(NumberFormatInfo.InvariantInfo), Data[i].Voltage.ToString(NumberFormatInfo.InvariantInfo), Data[i].Current.ToString(NumberFormatInfo.InvariantInfo));
+
+            return sb.ToString();
         }
 
         public override void ToDo(object Arg)
@@ -63,6 +77,8 @@ namespace MCBJ.Experiments
 
             var minPos = settings.MotorMinPos;
             var maxPos = settings.MotorMaxPos;
+
+            var fileName = string.Join("\\", settings.FilePath, settings.SaveFileName);
 
             var inRangeCounter = 0;
             var outsiderCounter = 0;
@@ -132,6 +148,8 @@ namespace MCBJ.Experiments
 
                 if (stabilityStopwatch.IsRunning)
                 {
+                    onProgressChanged(new ProgressEventArgs(stabilizationTime * 1000.0 / (double)stabilityStopwatch.ElapsedMilliseconds));
+
                     if ((double)stabilityStopwatch.ElapsedMilliseconds / 1000.0 >= stabilizationTime)
                     {
                         var divider = outsiderCounter > 0 ? (double)outsiderCounter : 1.0;
@@ -161,23 +179,27 @@ namespace MCBJ.Experiments
                 {
                     case SMUSourceMode.Voltage:
                         {
-                            var ivData = smu.LinearVoltageSweep(-1.0 * epsilon, maxValue, nPoints);
+                            var ivDataFirstBranch = smu.LinearVoltageSweep(-1.0 * epsilon, maxValue, nPoints);
+                            var ivDataSecondBranch = smu.LinearVoltageSweep(epsilon, minValue, nPoints);
 
-                            onDataArrived(new ExpDataArrivedEventArgs(getIVString(ref ivData)));
+                            IV_Data[] res;
 
-                            ivData = smu.LinearVoltageSweep(epsilon, minValue, nPoints);
-
-                            onDataArrived(new ExpDataArrivedEventArgs(getIVString(ref ivData)));
+                            selectIV_Data(ref ivDataFirstBranch, ref ivDataSecondBranch, out res);                            
+                            IVData.AddLast(res);
+                            
+                            onDataArrived(new ExpDataArrivedEventArgs(getIVString(ref res)));
                         } break;
                     case SMUSourceMode.Current:
                         {
-                            var ivData = smu.LinearCurrentSweep(-1.0 * epsilon, maxValue, nPoints);
+                            var ivDataFirstBranch = smu.LinearCurrentSweep(-1.0 * epsilon, maxValue, nPoints);
+                            var ivDataSecondBranch = smu.LinearCurrentSweep(epsilon, minValue, nPoints);
 
-                            onDataArrived(new ExpDataArrivedEventArgs(getIVString(ref ivData)));
+                            IV_Data[] res;
 
-                            ivData = smu.LinearCurrentSweep(epsilon, minValue, nPoints);
+                            selectIV_Data(ref ivDataFirstBranch, ref ivDataSecondBranch, out res);
+                            IVData.AddLast(res);
 
-                            onDataArrived(new ExpDataArrivedEventArgs(getIVString(ref ivData)));
+                            onDataArrived(new ExpDataArrivedEventArgs(getIVString(ref res)));
                         } break;
                     case SMUSourceMode.ModeNotSet:
                         throw new ArgumentException();
@@ -195,7 +217,70 @@ namespace MCBJ.Experiments
 
             this.Stop();
 
+            onStatusChanged(new StatusEventArgs("Saving data to file."));
+            SaveToFile(fileName);
             onStatusChanged(new StatusEventArgs("Measurement is done!"));
+        }
+
+        void selectIV_Data(ref IV_Data[] positiveBranch, ref IV_Data[] negativeBranch, out IV_Data[] res)
+        {
+            var dataComparer = new IV_DataComparer();
+
+            var first = (from item in positiveBranch
+                         where item.Voltage >= 0
+                         select item).ToArray();
+            var second = (from item in negativeBranch
+                          where item.Voltage < 0
+                          select item).ToArray();
+
+            res = new IV_Data[first.Length + second.Length];
+
+            Array.Copy(first, res, first.Length);
+            Array.Copy(second, 0, res, first.Length, second.Length);
+            Array.Sort(res, dataComparer);
+        }
+
+        public override void SaveToFile(string FileName)
+        {
+            var formatBiulder = new StringBuilder();
+            var dataBuilder = new StringBuilder();
+
+            var counter = 0;
+            for (int i = 0; i < IVData.Count; i++)
+            {
+                formatBiulder.AppendFormat("{{0}}\t{{1}}\t", counter.ToString(NumberFormatInfo.InvariantInfo), (counter + 1).ToString(NumberFormatInfo.InvariantInfo));
+                counter += 2;
+            }
+
+            var stringFormat = formatBiulder.ToString().TrimEnd('\t') + "\r\n";
+
+            var minLen = IVData.First.Value.Length;
+
+            foreach (var item in IVData)
+            {
+                if (item.Length > minLen)
+                    minLen = item.Length;
+            }
+            
+            for (int i = 0; i < minLen; i++)
+            {
+                counter = 0;
+                var arr = new string[IVData.Count * 2];
+                for (int j = 0; j < IVData.Count; j++)
+                {
+                    arr[counter] = IVData.ElementAt(j)[i].Voltage.ToString(NumberFormatInfo.InvariantInfo);
+                    arr[counter + 1] = IVData.ElementAt(j)[i].Current.ToString(NumberFormatInfo.InvariantInfo);
+
+                    counter += 2;
+                }
+
+                dataBuilder.AppendFormat(stringFormat, arr);
+            }
+
+            using (var writer = new StreamWriter(new FileStream(FileName, FileMode.Create, FileAccess.Write)))
+            {
+                writer.Write(dataBuilder.ToString());
+            }
         }
     }
 }

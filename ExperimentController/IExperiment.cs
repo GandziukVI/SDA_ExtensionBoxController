@@ -11,9 +11,12 @@ namespace ExperimentController
         bool IsRunning { get; set; }
         void ToDo(object Arg);
         void Start();
+        void Start(object StartInfo);
         void Stop();
+        void SaveToFile(string FileName);
 
         event EventHandler<ExpDataArrivedEventArgs> DataArrived;
         event EventHandler<StatusEventArgs> Status;
+        event EventHandler<ProgressEventArgs> Progress;
     }
 }

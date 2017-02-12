@@ -32,6 +32,13 @@ namespace ExperimentController
                 Status(this, e);
         }
 
+        public event EventHandler<ProgressEventArgs> Progress;
+        protected void onProgressChanged(ProgressEventArgs e)
+        {
+            if (Progress != null)
+                Progress(this, e);
+        }
+
         public virtual void ToDo(object Arg)
         {
             throw new NotImplementedException();
@@ -49,6 +56,18 @@ namespace ExperimentController
             experimentThread.Start();
         }
 
+        public void Start(object StartInfo)
+        {
+            Dispose();
+
+            var expThreadInfo = new ParameterizedThreadStart(ToDo);
+            experimentThread = new Thread(expThreadInfo);
+            experimentThread.Priority = ThreadPriority.AboveNormal;
+
+            IsRunning = true;
+            experimentThread.Start(StartInfo);
+        }
+
         public void Stop()
         {
             IsRunning = false;
@@ -60,6 +79,11 @@ namespace ExperimentController
                 if (experimentThread.IsAlive)
                     experimentThread.Join();
             }
+        }
+
+        public virtual void SaveToFile(string FileName)
+        {
+            throw new NotImplementedException();
         }
 
         public virtual void Dispose()
