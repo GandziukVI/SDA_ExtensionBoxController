@@ -87,7 +87,7 @@ namespace MCBJ
 
             var smuDriver = new VisaDevice("GPIB0::26::INSTR") as IDeviceIO;
             var keithley = new Keithley26xxB<Keithley2602B>(smuDriver);
-            var smu = keithley[Keithley26xxB_Channels.Channel_A];
+            var smu = keithley[Keithley26xxB_Channels.Channel_B];
 
             var motorDriver = new SerialDevice("COM1", 115200, Parity.None, 8, StopBits.One);
             var motor = new SA_2036U012V(motorDriver) as IMotionController1D;
@@ -136,12 +136,18 @@ namespace MCBJ
 
         private void experimentIV_at_def_R_Status(object sender, StatusEventArgs e)
         {
-            expStatus.Text = e.StatusMessage;
+            Dispatcher.InvokeAsync(new Action(() =>
+            {
+                expStatus.Text = e.StatusMessage;
+            }));
         }
 
         void experimentIV_at_def_R_Progress(object sender, ProgressEventArgs e)
         {
-            expProgress.Value = e.Progress;
+            Dispatcher.InvokeAsync(new Action(() =>
+            {
+                expProgress.Value = e.Progress;
+            }));
         }
 
         #endregion

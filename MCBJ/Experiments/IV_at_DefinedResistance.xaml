@@ -128,7 +128,7 @@
 					<ColumnDefinition Width="Auto"/>
 					<ColumnDefinition />
 				</Grid.ColumnDefinitions>
-				<Button x:Name="cmdOpenFolder" Content="..." HorizontalAlignment="Left" VerticalAlignment="Top" Width="35"/>
+				<Button x:Name="cmdOpenFolder" Content="..." HorizontalAlignment="Left" VerticalAlignment="Top" Width="35" Click="on_cmdOpenClick"/>
 				<TextBox TextWrapping="Wrap" Grid.Column="1" Margin="10,2.5,2.5,2" VerticalContentAlignment="Center" Height="35" Text="{Binding SaveFileName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
 				
 			</Grid>
