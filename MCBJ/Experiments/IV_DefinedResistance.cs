@@ -53,8 +53,6 @@ namespace MCBJ.Experiments
 
         public override void ToDo(object Arg)
         {
-            onStatusChanged(new StatusEventArgs("Starting the measurement."));
-
             var settings = (IV_DefinedResistanceInfo)Arg;
 
             var setVolt = settings.ScanningVoltage;
@@ -82,6 +80,9 @@ namespace MCBJ.Experiments
 
             var inRangeCounter = 0;
             var outsiderCounter = 0;
+
+            onStatusChanged(new StatusEventArgs("Starting the measurement."));
+            onProgressChanged(new ProgressEventArgs(0.0));
 
             motor.Enabled = true;
             motor.Velosity = maxSpeed;
@@ -148,7 +149,8 @@ namespace MCBJ.Experiments
 
                 if (stabilityStopwatch.IsRunning)
                 {
-                    onProgressChanged(new ProgressEventArgs(stabilizationTime * 1000.0 / (double)stabilityStopwatch.ElapsedMilliseconds));
+                    if (stabilityStopwatch.ElapsedMilliseconds > 0)
+                        onProgressChanged(new ProgressEventArgs((double)stabilityStopwatch.ElapsedMilliseconds / 1000.0 / stabilizationTime * 100));
 
                     if ((double)stabilityStopwatch.ElapsedMilliseconds / 1000.0 >= stabilizationTime)
                     {
@@ -184,9 +186,9 @@ namespace MCBJ.Experiments
 
                             IV_Data[] res;
 
-                            selectIV_Data(ref ivDataFirstBranch, ref ivDataSecondBranch, out res);                            
+                            selectIV_Data(ref ivDataFirstBranch, ref ivDataSecondBranch, out res);
                             IVData.AddLast(res);
-                            
+
                             onDataArrived(new ExpDataArrivedEventArgs(getIVString(ref res)));
                         } break;
                     case SMUSourceMode.Current:
@@ -210,16 +212,16 @@ namespace MCBJ.Experiments
 
             smu.SwitchOFF();
 
+            onStatusChanged(new StatusEventArgs("Saving data to file."));
+            SaveToFile(fileName);
+            onStatusChanged(new StatusEventArgs("Measurement is done!"));
+
             if (motor != null)
                 motor.Dispose();
             if (smu != null)
                 smu.Dispose();
 
             this.Stop();
-
-            onStatusChanged(new StatusEventArgs("Saving data to file."));
-            SaveToFile(fileName);
-            onStatusChanged(new StatusEventArgs("Measurement is done!"));
         }
 
         void selectIV_Data(ref IV_Data[] positiveBranch, ref IV_Data[] negativeBranch, out IV_Data[] res)
@@ -261,7 +263,7 @@ namespace MCBJ.Experiments
                 if (item.Length > minLen)
                     minLen = item.Length;
             }
-            
+
             for (int i = 0; i < minLen; i++)
             {
                 counter = 0;

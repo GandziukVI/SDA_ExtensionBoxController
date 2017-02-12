@@ -89,7 +89,7 @@ namespace MCBJ.Experiments
             }
         }
 
-        double stabilizationTime = 60.0;
+        double stabilizationTime = 30.0;
         public double StabilizationTime
         {
             get { return stabilizationTime; }
@@ -120,7 +120,7 @@ namespace MCBJ.Experiments
         }
 
 
-        private double maxSpeed = 750.0;
+        private double maxSpeed = 300.0;
         public double MaxSpeed
         {
             get { return maxSpeed; }
