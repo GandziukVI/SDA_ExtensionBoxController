@@ -119,6 +119,7 @@
     </Compile>
     <Compile Include="Experiments\IV_DefinedResistance.cs" />
     <Compile Include="Experiments\IV_DefinedResistanceInfo.cs" />
+    <Compile Include="Experiments\Noise_DefinedResistance.cs" />
     <Compile Include="Experiments\ParametersConverter.cs" />
     <Compile Include="Experiments\TT_SmartMode.cs" />
     <Compile Include="Experiments\TT_SmartModeInfo.cs" />
@@ -156,6 +157,10 @@
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
+    <ProjectReference Include="..\Agilent_ExtensionBox\Agilent_ExtensionBox.csproj">
+      <Project>{0d6daee4-591c-475c-84b8-91326698926f}</Project>
+      <Name>Agilent_ExtensionBox</Name>
+    </ProjectReference>
     <ProjectReference Include="..\D3Helper\D3Helper.csproj">
       <Project>{08a28cf7-e060-48e3-bc2e-f9e29fe89358}</Project>
       <Name>D3Helper</Name>

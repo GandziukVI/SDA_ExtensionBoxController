@@ -32,6 +32,7 @@ namespace MCBJ.Experiments
         LinkedList<IV_Data[]> IVData;
 
         public IV_DefinedResistance(ISourceMeterUnit SMU, IMotionController1D Motor)
+            : base()
         {
             smu = SMU;
             motor = Motor;
