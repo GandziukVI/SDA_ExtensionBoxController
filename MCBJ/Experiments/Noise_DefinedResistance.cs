@@ -12,6 +12,8 @@ using Agilent_ExtensionBox.IO;
 using Agilent_ExtensionBox.Internal;
 using System.Diagnostics;
 using System.Windows;
+using System.Globalization;
+using System.Threading;
 
 namespace MCBJ.Experiments
 {
@@ -22,13 +24,29 @@ namespace MCBJ.Experiments
 
         Stopwatch stabilityStopwatch;
 
+        bool connectionEstablished = false;
+        bool decreasing = false;
+
         public Noise_DefinedResistance()
             : base()
         {
             boxController = new BoxController();
             channelSwitch = new ChannelSwitch();
 
+            channelSwitch.ConnectionEstablished += channelSwitch_ConnectionEstablished;
+            channelSwitch.ConnectionLost += channelSwitch_ConnectionLost;
+
             stabilityStopwatch = new Stopwatch();
+        }
+
+        void channelSwitch_ConnectionLost(object sender, EventArgs e)
+        {
+            connectionEstablished = false;
+        }
+
+        void channelSwitch_ConnectionEstablished(object sender, EventArgs e)
+        {
+            connectionEstablished = true;
         }
 
         RangesEnum setRangeForGivenVoltage(double Voltage)
@@ -72,7 +90,7 @@ namespace MCBJ.Experiments
             var config = new AI_ChannelConfig[4]
             {
                 new AI_ChannelConfig(){ ChannelName = AnalogInChannelsEnum.AIn1, Enabled = true, Mode = ChannelModeEnum.AC, Polarity = PolarityEnum.Polarity_Bipolar, Range = Vs_Range},   // Vs
-                new AI_ChannelConfig(){ ChannelName = AnalogInChannelsEnum.AIn2, Enabled = false, Mode = ChannelModeEnum.DC, Polarity = PolarityEnum.Polarity_Bipolar, Range = Vm_Range},   // Vm
+                new AI_ChannelConfig(){ ChannelName = AnalogInChannelsEnum.AIn2, Enabled = false, Mode = ChannelModeEnum.DC, Polarity = PolarityEnum.Polarity_Bipolar, Range = Vs_Range},   // Vm
                 new AI_ChannelConfig(){ ChannelName = AnalogInChannelsEnum.AIn3, Enabled = false, Mode = ChannelModeEnum.DC, Polarity = PolarityEnum.Polarity_Bipolar, Range = Vs_Range},
                 new AI_ChannelConfig(){ ChannelName = AnalogInChannelsEnum.AIn4, Enabled = false, Mode = ChannelModeEnum.DC, Polarity = PolarityEnum.Polarity_Bipolar, Range = Vs_Range}
             };
@@ -80,18 +98,20 @@ namespace MCBJ.Experiments
             return config;
         }
 
-        int averagingNumberFast = 5;
+        int averagingNumberFast = 1;
         int averagingNumberSlow = 100;
 
         short stopSpeed = 0;
-        short minSpeed = 25;
+        short minSpeed = 128;
         short maxSpeed = 255;
+
+        short channelIdentifyer = 1;
 
         void confAIChannelsForDC_Measurement()
         {
             var init_conf = setDCConf(9.99, 9.99);
             boxController.ConfigureAI_Channels(init_conf);
-
+            Thread.Sleep(1000);
             var voltages = boxController.VoltageMeasurement_AllChannels(averagingNumberSlow);
             var real_conf = setDCConf(voltages[0], voltages[1]);
             boxController.ConfigureAI_Channels(real_conf);
@@ -103,12 +123,14 @@ namespace MCBJ.Experiments
         void setDrainVoltage(double drainVoltage, double voltageDev, double stabilizationTime)
         {
             drainVoltage = Math.Abs(drainVoltage);
+
+            confAIChannelsForDC_Measurement();
             channelSwitch.Initialize();
+
+            while (!connectionEstablished) ;
 
             if (channelSwitch.Initialized == true)
             {
-                confAIChannelsForDC_Measurement();
-
                 while (true)
                 {
                     var voltages = boxController.VoltageMeasurement_AllChannels(averagingNumberFast);
@@ -130,7 +152,7 @@ namespace MCBJ.Experiments
                     if ((drainVoltageCurr >= drainVoltage - (drainVoltage * voltageDev / 100.0)) &&
                         (drainVoltageCurr <= drainVoltage + (drainVoltage * voltageDev / 100.0)))
                     {
-                        channelSwitch.MoveMotor(0, stopSpeed);
+                        channelSwitch.MoveMotor(channelIdentifyer, stopSpeed);
 
                         if (!stabilityStopwatch.IsRunning)
                         {
@@ -147,9 +169,20 @@ namespace MCBJ.Experiments
                     else
                     {
                         if (drainVoltageCurr > drainVoltage)
-                            channelSwitch.MoveMotor(0, speed);
+                        {
+                            //if (!decreasing)
+                                channelSwitch.MoveMotor(channelIdentifyer, speed);
+
+                            //decreasing = true;
+                        }
                         else
-                            channelSwitch.MoveMotor(0, (short)(-1.0 * speed));
+                        {
+                            //if (decreasing)
+                                channelSwitch.MoveMotor(channelIdentifyer, (short)(-1.0 * speed));
+
+                            //decreasing = false;
+                        }
+
 
                         if (stabilityStopwatch.IsRunning == true)
                             ++outsiderCounter;
@@ -193,7 +226,7 @@ namespace MCBJ.Experiments
             // Erasing the data queue
 
             Point[] temp;
-            while(!boxController.AI_ChannelCollection[0].ChannelData.IsEmpty)
+            while (!boxController.AI_ChannelCollection[0].ChannelData.IsEmpty)
                 boxController.AI_ChannelCollection[0].ChannelData.TryDequeue(out temp);
 
             // Acquiring single shot with AC data
@@ -209,7 +242,18 @@ namespace MCBJ.Experiments
 
         public override void ToDo(object Arg)
         {
+            var firstIdentifyer = 0x0957;
+            var secondIdentifyer = 0x1718;
+            var visaBuilder = new StringBuilder();
 
+            visaBuilder.AppendFormat("USB0::{0}::{1}::TW54334510::INSTR", firstIdentifyer.ToString(NumberFormatInfo.InvariantInfo), secondIdentifyer.ToString(NumberFormatInfo.InvariantInfo));
+
+            var boxConnection = boxController.Init(visaBuilder.ToString());
+
+            if (boxConnection == true)
+                setDrainVoltage(0.05, 1.0, 15);
+            else
+                throw new Exception("Cannot establisch the connection to the box.");
         }
     }
 }

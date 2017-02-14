@@ -45,6 +45,9 @@ namespace MCBJ
 
         public MainWindow()
         {
+            var a = new Noise_DefinedResistance() as IExperiment;
+            a.Start();
+
 
             dList = new LinkedList<Point>();
             ds = new EnumerableDataSource<Point>(dList);
