@@ -116,10 +116,14 @@ namespace Agilent_ExtensionBox
 
             for (int i = 0; i < AveragingNumber; i++)
             {
-                _Driver.AnalogIn.Measurement.ReadMultiple("AIn1,AIn2,AIn3,AIn4", ref singleReading);
+                try
+                {
+                    _Driver.AnalogIn.Measurement.ReadMultiple("AIn1,AIn2,AIn3,AIn4", ref singleReading);
 
-                for (int j = 0; j < result.Length; j++)
-                    result[j] += singleReading[j];
+                    for (int j = 0; j < result.Length; j++)
+                        result[j] += singleReading[j];
+                }
+                catch { }
             }
 
             for (int i = 0; i < result.Length; i++)

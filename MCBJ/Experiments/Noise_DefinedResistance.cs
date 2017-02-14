@@ -25,7 +25,6 @@ namespace MCBJ.Experiments
         Stopwatch stabilityStopwatch;
 
         bool connectionEstablished = false;
-        bool decreasing = false;
 
         public Noise_DefinedResistance()
             : base()
@@ -102,7 +101,7 @@ namespace MCBJ.Experiments
         int averagingNumberSlow = 100;
 
         short stopSpeed = 0;
-        short minSpeed = 128;
+        short minSpeed = 16;
         short maxSpeed = 255;
 
         short channelIdentifyer = 1;
@@ -111,7 +110,6 @@ namespace MCBJ.Experiments
         {
             var init_conf = setDCConf(9.99, 9.99);
             boxController.ConfigureAI_Channels(init_conf);
-            Thread.Sleep(1000);
             var voltages = boxController.VoltageMeasurement_AllChannels(averagingNumberSlow);
             var real_conf = setDCConf(voltages[0], voltages[1]);
             boxController.ConfigureAI_Channels(real_conf);
@@ -170,17 +168,11 @@ namespace MCBJ.Experiments
                     {
                         if (drainVoltageCurr > drainVoltage)
                         {
-                            //if (!decreasing)
                                 channelSwitch.MoveMotor(channelIdentifyer, speed);
-
-                            //decreasing = true;
                         }
                         else
                         {
-                            //if (decreasing)
                                 channelSwitch.MoveMotor(channelIdentifyer, (short)(-1.0 * speed));
-
-                            //decreasing = false;
                         }
 
 
@@ -251,7 +243,7 @@ namespace MCBJ.Experiments
             var boxConnection = boxController.Init(visaBuilder.ToString());
 
             if (boxConnection == true)
-                setDrainVoltage(0.05, 1.0, 15);
+                setDrainVoltage(0.1, 5.0, 5);
             else
                 throw new Exception("Cannot establisch the connection to the box.");
         }
