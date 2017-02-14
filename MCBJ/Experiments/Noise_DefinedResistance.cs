@@ -243,7 +243,7 @@ namespace MCBJ.Experiments
             var boxConnection = boxController.Init(visaBuilder.ToString());
 
             if (boxConnection == true)
-                setDrainVoltage(0.1, 5.0, 5);
+                setDrainVoltage(0.5, 4.0, 5);
             else
                 throw new Exception("Cannot establisch the connection to the box.");
         }
