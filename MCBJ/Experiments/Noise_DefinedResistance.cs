@@ -11,6 +11,7 @@ using Agilent_ExtensionBox;
 using Agilent_ExtensionBox.IO;
 using Agilent_ExtensionBox.Internal;
 using System.Diagnostics;
+using System.Windows;
 
 namespace MCBJ.Experiments
 {
@@ -64,6 +65,21 @@ namespace MCBJ.Experiments
             return config;
         }
 
+        AI_ChannelConfig[] setACConf(double Vs)
+        {
+            var Vs_Range = setRangeForGivenVoltage(Vs);
+
+            var config = new AI_ChannelConfig[4]
+            {
+                new AI_ChannelConfig(){ ChannelName = AnalogInChannelsEnum.AIn1, Enabled = true, Mode = ChannelModeEnum.AC, Polarity = PolarityEnum.Polarity_Bipolar, Range = Vs_Range},   // Vs
+                new AI_ChannelConfig(){ ChannelName = AnalogInChannelsEnum.AIn2, Enabled = false, Mode = ChannelModeEnum.DC, Polarity = PolarityEnum.Polarity_Bipolar, Range = Vm_Range},   // Vm
+                new AI_ChannelConfig(){ ChannelName = AnalogInChannelsEnum.AIn3, Enabled = false, Mode = ChannelModeEnum.DC, Polarity = PolarityEnum.Polarity_Bipolar, Range = Vs_Range},
+                new AI_ChannelConfig(){ ChannelName = AnalogInChannelsEnum.AIn4, Enabled = false, Mode = ChannelModeEnum.DC, Polarity = PolarityEnum.Polarity_Bipolar, Range = Vs_Range}
+            };
+
+            return config;
+        }
+
         int averagingNumberFast = 5;
         int averagingNumberSlow = 100;
 
@@ -86,6 +102,7 @@ namespace MCBJ.Experiments
 
         void setDrainVoltage(double drainVoltage, double voltageDev, double stabilizationTime)
         {
+            drainVoltage = Math.Abs(drainVoltage);
             channelSwitch.Initialize();
 
             if (channelSwitch.Initialized == true)
@@ -130,9 +147,9 @@ namespace MCBJ.Experiments
                     else
                     {
                         if (drainVoltageCurr > drainVoltage)
-                            channelSwitch.MoveMotor(0, 255);
+                            channelSwitch.MoveMotor(0, speed);
                         else
-                            channelSwitch.MoveMotor(0, -255);
+                            channelSwitch.MoveMotor(0, (short)(-1.0 * speed));
 
                         if (stabilityStopwatch.IsRunning == true)
                             ++outsiderCounter;
@@ -170,13 +187,23 @@ namespace MCBJ.Experiments
 
         void confAIChannelsForAC_Measurement()
         {
-            // Needs to be reimplemented
-
-            var init_conf = setDCConf(9.99, 9.99);
+            var init_conf = setACConf(4.99);
             boxController.ConfigureAI_Channels(init_conf);
 
-            var voltages = boxController.VoltageMeasurement_AllChannels(averagingNumberSlow);
-            var real_conf = setDCConf(voltages[0], voltages[1]);
+            // Erasing the data queue
+
+            Point[] temp;
+            while(!boxController.AI_ChannelCollection[0].ChannelData.IsEmpty)
+                boxController.AI_ChannelCollection[0].ChannelData.TryDequeue(out temp);
+
+            // Acquiring single shot with AC data
+
+            boxController.AcquireSingleShot(1000);
+            var maxAcquiredVoltage = boxController.AI_ChannelCollection[0].ChannelData.Last().Max(p => p.Y);
+
+            // Configuring the channels to measure noise
+
+            var real_conf = setACConf(maxAcquiredVoltage);
             boxController.ConfigureAI_Channels(real_conf);
         }
 
