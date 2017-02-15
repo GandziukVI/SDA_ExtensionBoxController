@@ -95,6 +95,9 @@ namespace MCBJ.Experiments
 
             onStatusChanged(new StatusEventArgs("Reaching the specified resistance / conductance value."));
 
+            // Was changed here
+            var interval = setCond * (1.0 - 1.0 / Math.Sqrt(2.0));
+
             while (true)
             {
                 if (!IsRunning)
@@ -105,10 +108,12 @@ namespace MCBJ.Experiments
                 var speed = minSpeed;
                 try
                 {
-                    var k = (scaledConductance >= 1.0) ? Math.Log10(scaledConductance) : scaledConductance;
-                    var x = Math.Abs(scaledConductance - setCond);
+                    //var k = (scaledConductance >= 1.0) ? Math.Log10(scaledConductance) : scaledConductance;
+                    //var x = Math.Abs(scaledConductance - setCond);
 
-                    var factor = (1.0 - Math.Tanh((-1.0 * x + Math.PI / k) * k)) / 2.0;
+                    //var factor = (1.0 - Math.Tanh((-1.0 * x + Math.PI / k) * k)) / 2.0;
+
+                    var factor = (1.0 - Math.Tanh(-1.0 * Math.Abs(scaledConductance - setCond) / interval * Math.PI + Math.PI)) / 2.0;
 
                     speed = minSpeed + (maxSpeed - minSpeed) * factor;
                 }
@@ -284,6 +289,16 @@ namespace MCBJ.Experiments
             {
                 writer.Write(dataBuilder.ToString());
             }
+        }
+
+        public override void Dispose()
+        {
+            if (motor != null)
+                motor.Dispose();
+            if (smu != null)
+                smu.Dispose();
+
+            base.Dispose();
         }
     }
 }

@@ -36,8 +36,6 @@ namespace MCBJ
     public partial class MainWindow : Window
     {
         IExperiment experiment;
-        StringBuilder sb;
-        int dataCounter = 0;
         object expStartInfo;
 
         EnumerableDataSource<Point> ds;
@@ -45,10 +43,6 @@ namespace MCBJ
 
         public MainWindow()
         {
-            var a = new Noise_DefinedResistance() as IExperiment;
-            a.Start();
-
-
             dList = new LinkedList<Point>();
             ds = new EnumerableDataSource<Point>(dList);
             ds.SetXYMapping(p => p);

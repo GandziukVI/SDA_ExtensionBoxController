@@ -120,6 +120,7 @@
     <Compile Include="Experiments\IV_DefinedResistance.cs" />
     <Compile Include="Experiments\IV_DefinedResistanceInfo.cs" />
     <Compile Include="Experiments\Noise_DefinedResistance.cs" />
+    <Compile Include="Experiments\Noise_DefinedResistanceInfo.cs" />
     <Compile Include="Experiments\ParametersConverter.cs" />
     <Compile Include="Experiments\TT_SmartMode.cs" />
     <Compile Include="Experiments\TT_SmartModeInfo.cs" />

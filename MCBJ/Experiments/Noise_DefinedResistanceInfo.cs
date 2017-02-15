@@ -1,5 +1,4 @@
-﻿using SourceMeterUnit;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
@@ -9,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace MCBJ.Experiments
 {
-    public class IV_DefinedResistanceInfo : INotifyPropertyChanged
+    public class Noise_DefinedResistanceInfo : INotifyPropertyChanged
     {
         #region INotifyPropertyChanged implementation
 
@@ -132,98 +131,6 @@ namespace MCBJ.Experiments
                     throw new ArgumentException("The maximum speed should have positive value.");
 
                 onPropertyChanged("MaxSpeed");
-            }
-        }
-
-        private SMUSourceMode sourceMode = SMUSourceMode.Voltage;
-        public SMUSourceMode SourceMode
-        {
-            get { return sourceMode; }
-            set
-            {
-                sourceMode = value;
-                onPropertyChanged("SourceMode");
-            }
-        }
-
-        private double ivMinValue = -0.05;
-        public double IVMinvalue
-        {
-            get { return ivMinValue; }
-            set
-            {
-                ivMinValue = value;
-                onPropertyChanged("IVMinvalue");
-            }
-        }
-
-        private double ivMaxValue = 0.05;
-        public double IVMaxvalue
-        {
-            get { return ivMaxValue; }
-            set
-            {
-                ivMaxValue = value;
-                onPropertyChanged("IVMaxvalue");
-            }
-        }
-
-        private double epsilon = 0.01;
-        public double Epsilon
-        {
-            get { return epsilon; }
-            set
-            {
-                if (value >= 0 && value <= ivMaxValue)
-                    epsilon = value;
-                else if (value > ivMaxValue)
-                    throw new ArgumentException("The epsilon value must be lower or equal than IVMaxValue.");
-                else
-                    throw new ArgumentException("The epsilon should have a positive value.");
-
-                onPropertyChanged("Epsilon");
-            }
-        }
-
-        private int nPoints = 101;
-        public int NPoints
-        {
-            get { return nPoints; }
-            set
-            {
-                if (value > 0)
-                    nPoints = value;
-                else
-                    throw new ArgumentException("The NPoints should have a positive value.");
-
-                onPropertyChanged("NPoints");
-            }
-        }
-
-        private int nCycles = 1;
-        public int NCycles
-        {
-            get { return nCycles; }
-            set
-            {
-                if (NCycles > 0)
-                    nCycles = value;
-                else
-                    throw new ArgumentException("The NCycles should have a positive value.");
-
-                onPropertyChanged("NCycles");
-            }
-        }
-
-        private double compliance = 0.00001;
-        public double Compliance
-        {
-            get { return compliance; }
-            set
-            {
-                compliance = Math.Abs(value);
-
-                onPropertyChanged("CurrentComplinace");
             }
         }
 
