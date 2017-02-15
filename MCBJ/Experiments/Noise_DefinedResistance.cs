@@ -36,7 +36,10 @@ namespace MCBJ.Experiments
         {
             boxController = new BoxController();
 
-            boxController.Init(SDA_ConnectionString);
+            var boxInit = boxController.Init(SDA_ConnectionString);
+
+            if (!boxInit)
+                throw new Exception("Cannot connect the box.");
 
             channelSwitch = new ChannelSwitch();
 
@@ -44,6 +47,7 @@ namespace MCBJ.Experiments
             channelSwitch.ConnectionLost += channelSwitch_ConnectionLost;
 
             channelSwitch.Initialize();
+            while (!connectionEstablished) ;
 
             motor = Motor;
 
@@ -118,8 +122,8 @@ namespace MCBJ.Experiments
             return config;
         }
 
-        int averagingNumberFast = 100;
-        int averagingNumberSlow = 1000;
+        int averagingNumberFast = 2;
+        int averagingNumberSlow = 100;
 
         short stopSpeed = 0;
         short minSpeed = 10;
@@ -170,7 +174,7 @@ namespace MCBJ.Experiments
 
             confAIChannelsForDC_Measurement();
 
-            while (!connectionEstablished) ;
+            //while (!connectionEstablished) ;
 
             while (true)
             {
@@ -245,7 +249,6 @@ namespace MCBJ.Experiments
             }
 
             channelSwitch.MoveMotor(channelIdentifyer, 0);
-            channelSwitch.Exit();
         }
 
         double measureResistance(double LoadResistance = 5000.0, int nAveraging = 100, double SetVoltage = 0.02, double voltageTreshold = 0.05)
@@ -387,29 +390,24 @@ namespace MCBJ.Experiments
 
         public override void ToDo(object Arg)
         {
-            var firstIdentifyer = 0x0957;
-            var secondIdentifyer = 0x1718;
-            var visaBuilder = new StringBuilder();
-
-            visaBuilder.AppendFormat("USB0::{0}::{1}::TW54334510::INSTR", firstIdentifyer.ToString(NumberFormatInfo.InvariantInfo), secondIdentifyer.ToString(NumberFormatInfo.InvariantInfo));
-
-            var boxConnection = boxController.Init(visaBuilder.ToString());
-
-            if (boxConnection == true)
-                setDrainVoltage(0.05, 0.003, 5);
-            else
-                throw new Exception("Cannot establisch the connection to the box.");
+            setDrainVoltage(0.02, 0.003, 5);
+            setDrainVoltage(0.05, 0.003, 5);
+            setDrainVoltage(0.01, 0.003, 5);
+            
+            Dispose();
         }
 
         public override void Dispose()
         {
-            if (channelSwitch != null)
-                if (channelSwitch.Initialized == true)
-                    channelSwitch.Exit();
+            if (IsRunning)
+            {
+                if (channelSwitch != null)
+                    if (channelSwitch.Initialized == true)
+                        channelSwitch.Exit();
 
-            if (motor != null)
-                motor.Dispose();
-
+                if (motor != null)
+                    motor.Dispose();
+            }
 
             base.Dispose();
         }

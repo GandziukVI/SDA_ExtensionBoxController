@@ -293,10 +293,13 @@ namespace MCBJ.Experiments
 
         public override void Dispose()
         {
-            if (motor != null)
-                motor.Dispose();
-            if (smu != null)
-                smu.Dispose();
+            if (IsRunning)
+            {
+                if (motor != null)
+                    motor.Dispose();
+                if (smu != null)
+                    smu.Dispose();
+            }
 
             base.Dispose();
         }
