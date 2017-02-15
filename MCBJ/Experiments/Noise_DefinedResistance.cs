@@ -101,7 +101,7 @@ namespace MCBJ.Experiments
         int averagingNumberSlow = 100;
 
         short stopSpeed = 0;
-        short minSpeed = 16;
+        short minSpeed = 8;
         short maxSpeed = 255;
 
         short channelIdentifyer = 1;
@@ -123,6 +123,8 @@ namespace MCBJ.Experiments
             drainVoltage = Math.Abs(drainVoltage);
             var interval = drainVoltage * (1.0 - 1.0 / Math.Sqrt(2.0));
 
+            double drainVoltageCurr;
+
             confAIChannelsForDC_Measurement();
             channelSwitch.Initialize();
 
@@ -134,19 +136,19 @@ namespace MCBJ.Experiments
                 {
                     var voltages = boxController.VoltageMeasurement_AllChannels(averagingNumberFast);
 
-                    var drainVoltageCurr = Math.Abs(voltages[0]);
+                    drainVoltageCurr = Math.Abs(voltages[0]);
 
                     var speed = minSpeed;
                     try
                     {
-                        var factor = (1.0 - Math.Tanh(-1.0 * drainVoltageCurr / interval * Math.PI + Math.PI)) / 2.0;
+                        var factor = (1.0 - Math.Tanh(-1.0 * Math.Abs(drainVoltage - drainVoltageCurr) / interval * Math.PI + Math.PI)) / 2.0;
 
                         speed = (short)(minSpeed + (maxSpeed - minSpeed) * factor);
                     }
                     catch { speed = minSpeed; }
 
-                    if ((drainVoltageCurr >= drainVoltage - (drainVoltage * voltageDev / 100.0)) &&
-                        (drainVoltageCurr <= drainVoltage + (drainVoltage * voltageDev / 100.0)))
+                    if ((drainVoltageCurr >= Math.Abs(drainVoltage - voltageDev)) &&
+                        (drainVoltageCurr <= Math.Abs(drainVoltage + voltageDev)))
                     {
                         channelSwitch.MoveMotor(channelIdentifyer, stopSpeed);
 
@@ -202,6 +204,7 @@ namespace MCBJ.Experiments
                     }
                 }
 
+                channelSwitch.MoveMotor(channelIdentifyer, 0);
                 channelSwitch.Exit();
             }
             else
@@ -241,7 +244,7 @@ namespace MCBJ.Experiments
             var boxConnection = boxController.Init(visaBuilder.ToString());
 
             if (boxConnection == true)
-                setDrainVoltage(0.5, 4.0, 5);
+                setDrainVoltage(0.05, 0.003, 5);
             else
                 throw new Exception("Cannot establisch the connection to the box.");
         }
