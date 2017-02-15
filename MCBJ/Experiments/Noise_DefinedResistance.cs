@@ -121,6 +121,7 @@ namespace MCBJ.Experiments
         void setDrainVoltage(double drainVoltage, double voltageDev, double stabilizationTime)
         {
             drainVoltage = Math.Abs(drainVoltage);
+            var interval = drainVoltage * (1.0 - 1.0 / Math.Sqrt(2.0));
 
             confAIChannelsForDC_Measurement();
             channelSwitch.Initialize();
@@ -138,10 +139,7 @@ namespace MCBJ.Experiments
                     var speed = minSpeed;
                     try
                     {
-                        var k = (drainVoltageCurr >= 1.0) ? Math.Log10(drainVoltageCurr) : drainVoltageCurr;
-                        var x = Math.Abs(drainVoltageCurr - drainVoltage);
-
-                        var factor = (1.0 - Math.Tanh((-1.0 * x + Math.PI / k) * k)) / 2.0;
+                        var factor = (1.0 - Math.Tanh(-1.0 * drainVoltageCurr / interval * Math.PI + Math.PI)) / 2.0;
 
                         speed = (short)(minSpeed + (maxSpeed - minSpeed) * factor);
                     }
@@ -168,11 +166,11 @@ namespace MCBJ.Experiments
                     {
                         if (drainVoltageCurr > drainVoltage)
                         {
-                                channelSwitch.MoveMotor(channelIdentifyer, speed);
+                            channelSwitch.MoveMotor(channelIdentifyer, speed);
                         }
                         else
                         {
-                                channelSwitch.MoveMotor(channelIdentifyer, (short)(-1.0 * speed));
+                            channelSwitch.MoveMotor(channelIdentifyer, (short)(-1.0 * speed));
                         }
 
 

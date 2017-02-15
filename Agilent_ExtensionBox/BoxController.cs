@@ -123,7 +123,7 @@ namespace Agilent_ExtensionBox
                     for (int j = 0; j < result.Length; j++)
                         result[j] += singleReading[j];
                 }
-                catch { }
+                catch { --i; }
             }
 
             for (int i = 0; i < result.Length; i++)
