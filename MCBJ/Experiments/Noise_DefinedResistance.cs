@@ -186,7 +186,7 @@ namespace MCBJ.Experiments
                 var Vs = voltages[0];
                 var Vm = voltages[1];
 
-                var Is = (Vm - Vs) / 1000.0;
+                var Is = (Vm - Vs) / 5000.0;
                 var Rs = Vs / Is;
 
                 onStatusChanged(new StatusEventArgs(string.Format("The voltages: Vs = {0}, Vm = {1}, Rs = {2}", Math.Round(Vs, 4).ToString("0.####", NumberFormatInfo.InvariantInfo), Math.Round(Vm, 4).ToString("0.0000", NumberFormatInfo.InvariantInfo), Math.Round(Rs, 4).ToString("0.0000", NumberFormatInfo.InvariantInfo))));
@@ -216,7 +216,12 @@ namespace MCBJ.Experiments
 
                     if (drainVoltageCurr > drainVoltage)
                     {
-                        if (drainVoltageCurr - drainVoltage > 2.0 * voltageDev)
+                        if (voltageDev >= 0.001)
+                        {
+                            averagingNumberFast = 2;
+                            channelSwitch.MoveMotor(channelIdentifyer, speed);
+                        }
+                        else if (drainVoltageCurr - drainVoltage > 2.0 * voltageDev)
                         {
                             averagingNumberFast = 2;
                             channelSwitch.MoveMotor(channelIdentifyer, speed);
@@ -226,12 +231,17 @@ namespace MCBJ.Experiments
                             channelSwitch.MoveMotor(channelIdentifyer, speed);
                             Thread.Sleep((int)(stepTime));
                             channelSwitch.MoveMotor(channelIdentifyer, stopSpeed);
-                            averagingNumberFast = 50;
+                            averagingNumberFast = 25;
                         }
                     }
                     else
                     {
-                        if (drainVoltage - drainVoltageCurr > 2.0 * voltageDev)
+                        if (voltageDev >= 0.001)
+                        {
+                            averagingNumberFast = 2;
+                            channelSwitch.MoveMotor(channelIdentifyer, (short)(-1.0 * speed));
+                        }
+                        else if (drainVoltage - drainVoltageCurr > 2.0 * voltageDev)
                         {
                             averagingNumberFast = 2;
                             channelSwitch.MoveMotor(channelIdentifyer, (short)(-1.0 * speed));
@@ -241,7 +251,7 @@ namespace MCBJ.Experiments
                             channelSwitch.MoveMotor(channelIdentifyer, (short)(-1.0 * speed));
                             Thread.Sleep((int)(stepTime));
                             channelSwitch.MoveMotor(channelIdentifyer, stopSpeed);
-                            averagingNumberFast = 50;
+                            averagingNumberFast = 25;
                         }
                     }
                 }
@@ -252,7 +262,6 @@ namespace MCBJ.Experiments
 
         double measureResistance(double LoadResistance = 5000.0, int nAveraging = 100, double SetVoltage = 0.02, double voltageTreshold = 0.05)
         {
-            confAIChannelsForDC_Measurement();
             var voltages = boxController.VoltageMeasurement_AllChannels(nAveraging);
 
             if (voltages[0] > voltageTreshold)
@@ -260,10 +269,10 @@ namespace MCBJ.Experiments
                 if (motor.IsEnabled == true)
                     motor.Enabled = false;
 
-                setDrainVoltage(SetVoltage, 0.005);
-            }
+                setDrainVoltage(SetVoltage, 0.0001);
 
-            voltages = boxController.VoltageMeasurement_AllChannels(nAveraging);
+                voltages = boxController.VoltageMeasurement_AllChannels(nAveraging);
+            }
 
             var Vs = voltages[0];
             var Vm = voltages[1];
@@ -272,7 +281,7 @@ namespace MCBJ.Experiments
 
             var res = Is != 0 ? Vs / Is : 0.0;
 
-            return res;
+            return Math.Abs(res);
         }
 
         void setJunctionResistance(Noise_DefinedResistanceInfo Arg)
@@ -290,9 +299,9 @@ namespace MCBJ.Experiments
             var minPos = settings.MotorMinPos;
             var maxPos = settings.MotorMaxPos;
 
-            var nAverages = 100;
+            var nAverages = 2;
             var loadResistance = 5000.0;
-            var voltageTreshold = 0.05;
+            var voltageTreshold = 0.1;
 
             var fileName = string.Join("\\", settings.FilePath, settings.SaveFileName);
 
@@ -317,6 +326,7 @@ namespace MCBJ.Experiments
                     break;
 
                 var scaledConductance = (1.0 / measureResistance(loadResistance, nAverages, setVolt, voltageTreshold)) / ConductanceQuantum;
+                onStatusChanged(new StatusEventArgs(string.Format("Current scaled condctance value is {0}.", scaledConductance.ToString(NumberFormatInfo.InvariantInfo))));
 
                 var speed = minSpeed;
                 try
@@ -389,27 +399,49 @@ namespace MCBJ.Experiments
 
         public override void ToDo(object Arg)
         {
-            setDrainVoltage(0.05, 0.0001);
+            //setDrainVoltage(0.05, 0.0001);
 
-            var resistance = measureResistance(1000.0, 100, 0.02, 0.1);
-            onStatusChanged(new StatusEventArgs(string.Format("Current resistance value = {0}", Math.Round(resistance, 4))));
-
-            setDrainVoltage(0.02, 0.0001);
-
-            resistance = measureResistance(1000.0, 100, 0.02, 0.15);
-            onStatusChanged(new StatusEventArgs(string.Format("Current resistance value = {0}", Math.Round(resistance, 4))));
-
-            //setDrainVoltage(0.01, 0.0005);
-
-            //resistance = measureResistance(1000.0, 100, 0.02, 0.1);
+            //var resistance = measureResistance(1000.0, 100, 0.02, 0.1);
             //onStatusChanged(new StatusEventArgs(string.Format("Current resistance value = {0}", Math.Round(resistance, 4))));
+
+            //setDrainVoltage(0.02, 0.0001);
+
+            //resistance = measureResistance(1000.0, 100, 0.02, 0.15);
+            //onStatusChanged(new StatusEventArgs(string.Format("Current resistance value = {0}", Math.Round(resistance, 4))));
+
+            setDrainVoltage(0.02, 0.001);
+
+            var settings = new Noise_DefinedResistanceInfo();
+
+            settings.MaxSpeed = 300;
+            settings.MinSpeed = 150;
+
+            settings.MotorMaxPos = 15.0;
+            settings.MotorMinPos = 0.0;
+
+            settings.ScanningVoltage = 0.05;
+            settings.SetConductance = 1;
+            settings.Deviation = 10.0;
+            settings.StabilizationTime = 30.0;
+
+            settings.FilePath = "E:\\TestingData\\2017.02.16";
+            settings.SaveFileName = "Testing res. stab.txt";
+
+            setJunctionResistance(settings);
+
+            setDrainVoltage(0.05, 0.001);
 
             if (channelSwitch != null)
                 if (channelSwitch.Initialized == true)
                     channelSwitch.Exit();
 
             if (motor != null)
+            {
+                motor.Disable();
                 motor.Dispose();
+            }
+
+            onStatusChanged(new StatusEventArgs("The measurement is done!"));
         }
 
         public override void Dispose()
