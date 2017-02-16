@@ -420,8 +420,8 @@ namespace MCBJ.Experiments
             settings.MotorMinPos = 0.0;
 
             settings.ScanningVoltage = 0.05;
-            settings.SetConductance = 1;
-            settings.Deviation = 10.0;
+            settings.SetConductance = 2.0;
+            settings.Deviation = 5.0;
             settings.StabilizationTime = 30.0;
 
             settings.FilePath = "E:\\TestingData\\2017.02.16";
