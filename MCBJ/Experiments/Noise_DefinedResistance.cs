@@ -129,6 +129,9 @@ namespace MCBJ.Experiments
         short minSpeed = 10;
         short maxSpeed = 255;
 
+        int minStepTime = 10;
+        int maxStepTime = 100;
+
         short channelIdentifyer = 1;
 
         void confAIChannelsForDC_Measurement()
@@ -162,30 +165,39 @@ namespace MCBJ.Experiments
             boxController.ConfigureAI_Channels(real_conf);
         }
 
-        int inRangeCounter;
-        int outsiderCounter;
-
-        void setDrainVoltage(double drainVoltage, double voltageDev, double stabilizationTime)
+        void setDrainVoltage(double drainVoltage, double voltageDev)
         {
             drainVoltage = Math.Abs(drainVoltage);
-            var interval = drainVoltage * (1.0 - 1.0 / Math.Sqrt(2.0));
+            var intervalCoarse = drainVoltage * (1.0 - 1.0 / Math.Sqrt(2.0));
+            var intervalFine = 0.0;
 
-            double drainVoltageCurr, factor = 0.0;
+            double drainVoltageCurr,
+                factorCoarse = 0.0,
+                factorFine = 0.0;
 
             confAIChannelsForDC_Measurement();
+
+            while (!connectionEstablished) ;
 
             while (true)
             {
                 var voltages = boxController.VoltageMeasurement_AllChannels(averagingNumberFast);
+
+                var Vs = voltages[0];
+                var Vm = voltages[1];
+
+                var Is = (Vm - Vs) / 1000.0;
+                var Rs = Vs / Is;
+
+                onStatusChanged(new StatusEventArgs(string.Format("The voltages: Vs = {0}, Vm = {1}, Rs = {2}", Math.Round(Vs, 4).ToString("0.####", NumberFormatInfo.InvariantInfo), Math.Round(Vm, 4).ToString("0.0000", NumberFormatInfo.InvariantInfo), Math.Round(Rs, 4).ToString("0.0000", NumberFormatInfo.InvariantInfo))));
 
                 drainVoltageCurr = Math.Abs(voltages[0]);
 
                 var speed = minSpeed;
                 try
                 {
-                    factor = (1.0 - Math.Tanh(-1.0 * Math.Abs(drainVoltage - drainVoltageCurr) / interval * Math.PI + Math.PI)) / 2.0;
-
-                    speed = (short)(minSpeed + (maxSpeed - minSpeed) * factor);
+                    factorCoarse = (1.0 - Math.Tanh(-1.0 * Math.Abs(drainVoltage - drainVoltageCurr) / intervalCoarse * Math.PI + Math.PI)) / 2.0;
+                    speed = (short)(minSpeed + (maxSpeed - minSpeed) * factorCoarse);
                 }
                 catch { speed = minSpeed; }
 
@@ -193,72 +205,43 @@ namespace MCBJ.Experiments
                     (drainVoltageCurr <= Math.Abs(drainVoltage + voltageDev)))
                 {
                     channelSwitch.MoveMotor(channelIdentifyer, stopSpeed);
-
-                    if (!stabilityStopwatch.IsRunning)
-                    {
-                        inRangeCounter = 0;
-                        outsiderCounter = 0;
-
-                        stabilityStopwatch.Start();
-
-                        onStatusChanged(new StatusEventArgs("Stabilizing the specified resistance / conductance value."));
-                    }
-
-                    ++inRangeCounter;
+                    break;
                 }
                 else
                 {
+                    intervalFine = drainVoltage * (1.0 - 1.0 / Math.Sqrt(2.0)) * 2.0 * voltageDev;
+                    factorFine = (1.0 - Math.Tanh(-1.0 * Math.Abs(drainVoltage - drainVoltageCurr) / intervalFine * Math.PI + Math.PI)) / 2.0;
+
+                    var stepTime = (int)(minStepTime + (maxStepTime - minStepTime) * factorFine);
+
                     if (drainVoltageCurr > drainVoltage)
                     {
                         if (drainVoltageCurr - drainVoltage > 2.0 * voltageDev)
                         {
+                            averagingNumberFast = 2;
                             channelSwitch.MoveMotor(channelIdentifyer, speed);
                         }
                         else
                         {
                             channelSwitch.MoveMotor(channelIdentifyer, speed);
-                            Thread.Sleep((int)(100 * (1.0 - factor)));
-                            channelSwitch.MoveMotor(channelIdentifyer, 0);
+                            Thread.Sleep((int)(stepTime));
+                            channelSwitch.MoveMotor(channelIdentifyer, stopSpeed);
+                            averagingNumberFast = 50;
                         }
                     }
                     else
                     {
                         if (drainVoltage - drainVoltageCurr > 2.0 * voltageDev)
                         {
+                            averagingNumberFast = 2;
                             channelSwitch.MoveMotor(channelIdentifyer, (short)(-1.0 * speed));
                         }
                         else
                         {
                             channelSwitch.MoveMotor(channelIdentifyer, (short)(-1.0 * speed));
-                            Thread.Sleep((int)(100 * (1.0 - factor)));
-                            channelSwitch.MoveMotor(channelIdentifyer, 0);
-                        }
-                    }
-
-
-                    if (stabilityStopwatch.IsRunning == true)
-                        ++outsiderCounter;
-                }
-
-                if (stabilityStopwatch.IsRunning)
-                {
-                    if (stabilityStopwatch.ElapsedMilliseconds > 0)
-                        onProgressChanged(new ProgressEventArgs((double)stabilityStopwatch.ElapsedMilliseconds / 1000.0 / stabilizationTime * 100));
-
-                    if ((double)stabilityStopwatch.ElapsedMilliseconds / 1000.0 >= stabilizationTime)
-                    {
-                        var divider = outsiderCounter > 0 ? (double)outsiderCounter : 1.0;
-                        if (Math.Log10((double)inRangeCounter / divider) >= 1.0)
-                        {
-                            stabilityStopwatch.Stop();
-                            break;
-                        }
-                        else
-                        {
-                            inRangeCounter = 0;
-                            outsiderCounter = 0;
-
-                            stabilityStopwatch.Restart();
+                            Thread.Sleep((int)(stepTime));
+                            channelSwitch.MoveMotor(channelIdentifyer, stopSpeed);
+                            averagingNumberFast = 50;
                         }
                     }
                 }
@@ -277,7 +260,7 @@ namespace MCBJ.Experiments
                 if (motor.IsEnabled == true)
                     motor.Enabled = false;
 
-                setDrainVoltage(SetVoltage, 0.005, 5);
+                setDrainVoltage(SetVoltage, 0.005);
             }
 
             voltages = boxController.VoltageMeasurement_AllChannels(nAveraging);
@@ -406,11 +389,27 @@ namespace MCBJ.Experiments
 
         public override void ToDo(object Arg)
         {
-            setDrainVoltage(0.02, 0.003, 5);
-            setDrainVoltage(0.05, 0.003, 5);
-            setDrainVoltage(0.01, 0.003, 5);
+            setDrainVoltage(0.05, 0.0001);
 
-            Dispose();
+            var resistance = measureResistance(1000.0, 100, 0.02, 0.1);
+            onStatusChanged(new StatusEventArgs(string.Format("Current resistance value = {0}", Math.Round(resistance, 4))));
+
+            setDrainVoltage(0.02, 0.0001);
+
+            resistance = measureResistance(1000.0, 100, 0.02, 0.15);
+            onStatusChanged(new StatusEventArgs(string.Format("Current resistance value = {0}", Math.Round(resistance, 4))));
+
+            //setDrainVoltage(0.01, 0.0005);
+
+            //resistance = measureResistance(1000.0, 100, 0.02, 0.1);
+            //onStatusChanged(new StatusEventArgs(string.Format("Current resistance value = {0}", Math.Round(resistance, 4))));
+
+            if (channelSwitch != null)
+                if (channelSwitch.Initialized == true)
+                    channelSwitch.Exit();
+
+            if (motor != null)
+                motor.Dispose();
         }
 
         public override void Dispose()

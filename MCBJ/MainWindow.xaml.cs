@@ -53,6 +53,7 @@ namespace MCBJ
             var motor = new SA_2036U012V(motorDriver) as IMotionController1D;
 
             var a = new Noise_DefinedResistance(visaBuilder.ToString(), motor);
+            a.Status += a_Status;
 
             a.Start();
             
@@ -61,6 +62,14 @@ namespace MCBJ
             ds.SetXYMapping(p => p);
 
             InitializeComponent();
+        }
+
+        void a_Status(object sender, StatusEventArgs e)
+        {
+            Dispatcher.InvokeAsync(new Action(() =>
+            {
+                expStatus.Text = e.StatusMessage;
+            }));
         }
 
         private void onMainWindowClosing(object sender, System.ComponentModel.CancelEventArgs e)
