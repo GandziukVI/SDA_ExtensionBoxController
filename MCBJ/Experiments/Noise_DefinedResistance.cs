@@ -170,11 +170,9 @@ namespace MCBJ.Experiments
             drainVoltage = Math.Abs(drainVoltage);
             var interval = drainVoltage * (1.0 - 1.0 / Math.Sqrt(2.0));
 
-            double drainVoltageCurr;
+            double drainVoltageCurr, factor = 0.0;
 
             confAIChannelsForDC_Measurement();
-
-            //while (!connectionEstablished) ;
 
             while (true)
             {
@@ -185,7 +183,7 @@ namespace MCBJ.Experiments
                 var speed = minSpeed;
                 try
                 {
-                    var factor = (1.0 - Math.Tanh(-1.0 * Math.Abs(drainVoltage - drainVoltageCurr) / interval * Math.PI + Math.PI)) / 2.0;
+                    factor = (1.0 - Math.Tanh(-1.0 * Math.Abs(drainVoltage - drainVoltageCurr) / interval * Math.PI + Math.PI)) / 2.0;
 
                     speed = (short)(minSpeed + (maxSpeed - minSpeed) * factor);
                 }
@@ -212,11 +210,29 @@ namespace MCBJ.Experiments
                 {
                     if (drainVoltageCurr > drainVoltage)
                     {
-                        channelSwitch.MoveMotor(channelIdentifyer, speed);
+                        if (drainVoltageCurr - drainVoltage > 2.0 * voltageDev)
+                        {
+                            channelSwitch.MoveMotor(channelIdentifyer, speed);
+                        }
+                        else
+                        {
+                            channelSwitch.MoveMotor(channelIdentifyer, speed);
+                            Thread.Sleep((int)(100 * (1.0 - factor)));
+                            channelSwitch.MoveMotor(channelIdentifyer, 0);
+                        }
                     }
                     else
                     {
-                        channelSwitch.MoveMotor(channelIdentifyer, (short)(-1.0 * speed));
+                        if (drainVoltage - drainVoltageCurr > 2.0 * voltageDev)
+                        {
+                            channelSwitch.MoveMotor(channelIdentifyer, (short)(-1.0 * speed));
+                        }
+                        else
+                        {
+                            channelSwitch.MoveMotor(channelIdentifyer, (short)(-1.0 * speed));
+                            Thread.Sleep((int)(100 * (1.0 - factor)));
+                            channelSwitch.MoveMotor(channelIdentifyer, 0);
+                        }
                     }
 
 
@@ -393,7 +409,7 @@ namespace MCBJ.Experiments
             setDrainVoltage(0.02, 0.003, 5);
             setDrainVoltage(0.05, 0.003, 5);
             setDrainVoltage(0.01, 0.003, 5);
-            
+
             Dispose();
         }
 
