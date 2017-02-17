@@ -187,7 +187,7 @@ namespace MCBJ.Experiments
                 var Vm = voltages[1];
 
                 var Is = (Vm - Vs) / 5000.0;
-                var Rs = Vs / Is;
+                var Rs = Math.Abs(Vs / Is);
 
                 onStatusChanged(new StatusEventArgs(string.Format("The voltages: Vs = {0}, Vm = {1}, Rs = {2}", Math.Round(Vs, 4).ToString("0.####", NumberFormatInfo.InvariantInfo), Math.Round(Vm, 4).ToString("0.0000", NumberFormatInfo.InvariantInfo), Math.Round(Rs, 4).ToString("0.0000", NumberFormatInfo.InvariantInfo))));
 
@@ -301,7 +301,7 @@ namespace MCBJ.Experiments
 
             var nAverages = 2;
             var loadResistance = 5000.0;
-            var voltageTreshold = 0.1;
+            var voltageTreshold = 0.15;
 
             var fileName = string.Join("\\", settings.FilePath, settings.SaveFileName);
 
@@ -419,8 +419,8 @@ namespace MCBJ.Experiments
             settings.MotorMaxPos = 15.0;
             settings.MotorMinPos = 0.0;
 
-            settings.ScanningVoltage = 0.05;
-            settings.SetConductance = 2.0;
+            settings.ScanningVoltage = 0.11;
+            settings.SetConductance = 1.0;
             settings.Deviation = 5.0;
             settings.StabilizationTime = 30.0;
 
@@ -429,7 +429,7 @@ namespace MCBJ.Experiments
 
             setJunctionResistance(settings);
 
-            setDrainVoltage(0.05, 0.001);
+            setDrainVoltage(0.11, 0.001);
 
             if (channelSwitch != null)
                 if (channelSwitch.Initialized == true)
