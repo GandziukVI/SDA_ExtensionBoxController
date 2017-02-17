@@ -186,7 +186,7 @@ namespace MCBJ.Experiments
                 var Vs = voltages[0];
                 var Vm = voltages[1];
 
-                var Is = (Vm - Vs) / 5000.0;
+                var Is = (Vm - Vs) / 1000.0;
                 var Rs = Math.Abs(Vs / Is);
 
                 onStatusChanged(new StatusEventArgs(string.Format("The voltages: Vs = {0}, Vm = {1}, Rs = {2}", Math.Round(Vs, 4).ToString("0.####", NumberFormatInfo.InvariantInfo), Math.Round(Vm, 4).ToString("0.0000", NumberFormatInfo.InvariantInfo), Math.Round(Rs, 4).ToString("0.0000", NumberFormatInfo.InvariantInfo))));
@@ -300,7 +300,7 @@ namespace MCBJ.Experiments
             var maxPos = settings.MotorMaxPos;
 
             var nAverages = 2;
-            var loadResistance = 5000.0;
+            var loadResistance = 1000.0;
             var voltageTreshold = 0.15;
 
             var fileName = string.Join("\\", settings.FilePath, settings.SaveFileName);
@@ -409,7 +409,10 @@ namespace MCBJ.Experiments
             //resistance = measureResistance(1000.0, 100, 0.02, 0.15);
             //onStatusChanged(new StatusEventArgs(string.Format("Current resistance value = {0}", Math.Round(resistance, 4))));
 
-            setDrainVoltage(0.02, 0.001);
+            var setVoltage = 0.05;
+            var voltTreshold = 0.15;
+
+            setDrainVoltage(setVoltage, 0.001);
 
             var settings = new Noise_DefinedResistanceInfo();
 
@@ -419,9 +422,17 @@ namespace MCBJ.Experiments
             settings.MotorMaxPos = 15.0;
             settings.MotorMinPos = 0.0;
 
-            settings.ScanningVoltage = 0.11;
-            settings.SetConductance = 1.0;
-            settings.Deviation = 5.0;
+            settings.ScanningVoltage = setVoltage;
+
+            // For cganging the resistance change the value of scaled
+            // conductance here in units [G / G0]
+
+            settings.SetConductance = 46.0;
+
+            // End settings
+
+
+            settings.Deviation = 3.0;
             settings.StabilizationTime = 30.0;
 
             settings.FilePath = "E:\\TestingData\\2017.02.16";
@@ -429,7 +440,7 @@ namespace MCBJ.Experiments
 
             setJunctionResistance(settings);
 
-            setDrainVoltage(0.11, 0.001);
+            setDrainVoltage(setVoltage, 0.001);
 
             if (channelSwitch != null)
                 if (channelSwitch.Initialized == true)
