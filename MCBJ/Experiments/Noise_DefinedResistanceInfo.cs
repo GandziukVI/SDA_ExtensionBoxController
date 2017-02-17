@@ -156,6 +156,41 @@ namespace MCBJ.Experiments
             }
         }
 
+        private double loadResistance = 5000.0;
+        public double LoadResistance
+        {
+            get { return loadResistance; }
+            set
+            {
+                loadResistance = value;
+                onPropertyChanged("LoadResistance");
+            }
+        }
+
+        private double voltageTreshold = 0.15;
+        public double VoltageTreshold
+        {
+            get { return voltageTreshold; }
+            set
+            {
+                voltageTreshold = value;
+                onPropertyChanged("VoltageTreshold");
+            }
+        }
+
+        private int nAveragesFast=  2;
+
+        public int NAveragesFast
+        {
+            get { return nAveragesFast; }
+            set 
+            {
+                nAveragesFast = value;
+                onPropertyChanged("NAveragesFast");
+            }
+        }
+
+
         private string filePath = Directory.GetCurrentDirectory();
         public string FilePath
         {

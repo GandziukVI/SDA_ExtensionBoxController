@@ -104,7 +104,7 @@ namespace MCBJ.Experiments
             }
         }
 
-        private double minSpeed = 150.0;
+        private double minSpeed = 0.049;
         public double MinSpeed
         {
             get { return minSpeed; }
@@ -120,7 +120,7 @@ namespace MCBJ.Experiments
         }
 
 
-        private double maxSpeed = 300.0;
+        private double maxSpeed = 0.098;
         public double MaxSpeed
         {
             get { return maxSpeed; }

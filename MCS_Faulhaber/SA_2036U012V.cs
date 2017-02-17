@@ -47,7 +47,7 @@ namespace MCS_Faulhaber
         {
             if (driver != null)
             {
-                // Conversion of the position in mm to motor units
+                // Conversion of the position in mm to motor units<wpfTool:DoubleUpDown Grid.Row="14" Grid.Column="1" Value="{Binding MotorMaxPos, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>velocdcdc
                 var motorPosition = (int)(Gear * StepsPerRevolution * Position / MilimetersPerRevolution);
                 // Loading the position to the controller and starting the motion
                 driver.SendCommandRequest(string.Format("la{0}", Convert.ToString(motorPosition, NumberFormatInfo.InvariantInfo)));
@@ -72,7 +72,7 @@ namespace MCS_Faulhaber
         private double currentVelosity;
         public override void SetVelosity(double Velosity)
         {
-            var speedRPM = Velosity / MilimetersPerRevolution;
+            var speedRPM = (int)(Velosity / (1.0 / gear * MilimetersPerRevolution));
             
             if (speedRPM < 150)
                 speedRPM = 150;
