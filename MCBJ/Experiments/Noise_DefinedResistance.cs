@@ -620,6 +620,10 @@ namespace MCBJ.Experiments
                 motor.Dispose();
             }
 
+            if (boxController != null)
+                while (IsRunning == true)
+                    boxController.AcquisitionInProgress = false;
+
             onStatusChanged(new StatusEventArgs("The measurement is done!"));
         }
 
