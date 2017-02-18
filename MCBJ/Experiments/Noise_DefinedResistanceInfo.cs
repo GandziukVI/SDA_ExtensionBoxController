@@ -248,6 +248,28 @@ namespace MCBJ.Experiments
                 onPropertyChanged("UpdateNumber");
             }
         }
+
+        private double kPreAmpl;
+        public double KPreAmpl
+        {
+            get { return kPreAmpl; }
+            set 
+            {
+                kPreAmpl = value;
+                onPropertyChanged("KPreAmpl");
+            }
+        }
+
+        private double kAmpl;
+        public double KAmpl
+        {
+            get { return kAmpl; }
+            set
+            {
+                kAmpl = value;
+                onPropertyChanged("KAmpl");
+            }
+        }
         
         private string filePath = Directory.GetCurrentDirectory();
         public string FilePath

@@ -1,6 +1,7 @@
 ﻿using ExperimentController;
 using System;
 using System.Collections.Generic;
+using System.Collections.Concurrent;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -19,6 +20,7 @@ using MotionManager;
 using NationalInstruments.Analysis.Dsp;
 using NationalInstruments.Analysis.SpectralMeasurements;
 using D3Helper;
+using System.IO;
 
 namespace MCBJ.Experiments
 {
@@ -446,8 +448,19 @@ namespace MCBJ.Experiments
             }
         }
 
+        private static string TTSaveFileName = "TT.dat";
+        private string NoiseSpectrumFinal = string.Empty;
+
+
         private static int averagingCounter = 0;
-        void measureNoiseSpectra(int samplingFrequency, int nAverages, int updateNumber)
+        void measureNoiseSpectra(
+
+            int samplingFrequency,
+            int nAverages,
+            int updateNumber,
+            double kAmpl
+
+            )
         {
             confAIChannelsForAC_Measurement();
 
@@ -496,8 +509,9 @@ namespace MCBJ.Experiments
                         if (dataReadingSuccess)
                         {
                             sb = new StringBuilder();
+                            sb.Append("TT");
                             foreach (var item in timeTrace)
-                                sb.AppendFormat("{0}\t{1}\r\n", item.X.ToString(NumberFormatInfo.InvariantInfo), item.Y.ToString(NumberFormatInfo.InvariantInfo));
+                                sb.AppendFormat("{0}\t{1}\r\n", item.X.ToString(NumberFormatInfo.InvariantInfo), (item.Y / kAmpl).ToString(NumberFormatInfo.InvariantInfo));
 
                             // First sending the time trace data before FFT
                             onDataArrived(new ExpDataArrivedEventArgs(sb.ToString()));
@@ -552,9 +566,10 @@ namespace MCBJ.Experiments
                             if (averagingCounter % updateNumber == 0)
                             {
                                 sb = new StringBuilder();
+                                sb.Append("NS");
 
                                 for (int i = 0; i < noisePSD.Length; i++)
-                                    sb.AppendFormat("{0}\t{1}\r\n", (noisePSD[i].X).ToString(NumberFormatInfo.InvariantInfo), (noisePSD[i].Y / (double)averagingCounter).ToString(NumberFormatInfo.InvariantInfo));
+                                    sb.AppendFormat("{0}\t{1}\r\n", (noisePSD[i].X).ToString(NumberFormatInfo.InvariantInfo), (noisePSD[i].Y / (double)averagingCounter / (kAmpl * kAmpl)).ToString(NumberFormatInfo.InvariantInfo));
 
                                 // Seinding the calculated spectrum data
                                 onDataArrived(new ExpDataArrivedEventArgs(sb.ToString()));
@@ -572,6 +587,8 @@ namespace MCBJ.Experiments
             {
                 foreach (var voltage in settings.ScanningVoltageCollection)
                 {
+                    TTSaveFileName = GetFileNameWithIncrement(string.Join("\\", settings.FilePath, "Time Traces", settings.SaveFileName));
+
                     setDrainVoltage(voltage, settings.VoltageDeviation);
 
                     setJunctionResistance(
@@ -599,14 +616,16 @@ namespace MCBJ.Experiments
                         if (item.IsEnabled)
                             item.Parameters.SetParams(FilterCutOffFrequencies.Freq_150kHz, FilterGain.gain1, PGA_GainsEnum.gain1);
 
-                    measureNoiseSpectra(settings.SamplingFrequency, settings.SpectraAveraging, settings.UpdateNumber);
+                    measureNoiseSpectra(settings.SamplingFrequency, settings.SpectraAveraging, settings.UpdateNumber, settings.KPreAmpl * settings.KAmpl);
 
                     confAIChannelsForDC_Measurement();
                     var voltagesAfterNoiseMeasurement = boxController.VoltageMeasurement_AllChannels(settings.NAveragesSlow);
 
-                    var fileName = string.Join("\\", settings.FilePath, settings.SaveFileName);
+                    var fileName = string.Join("\\", settings.FilePath, "Noise", settings.SaveFileName);
 
-                    SaveToFile(fileName);
+                    SaveToFile(GetFileNameWithIncrement(fileName));
+
+                    // Saving to log file all the parameters of the measurement
                 }
             }
 
@@ -632,14 +651,56 @@ namespace MCBJ.Experiments
             Interlocked.Increment(ref averagingCounter);
         }
 
-        void Noise_DefinedResistance_DataArrived(object sender, ExpDataArrivedEventArgs e)
+        private static int FileCounter;
+        private string GetFileNameWithIncrement(string FileName)
         {
+            string result;
+            FileCounter = 0;
 
+            while (true)
+            {
+                result = FileName.Insert(FileName.LastIndexOf('.'), String.Format("_{0}{1}{2}", (FileCounter / 100) % 10, (FileCounter / 10) % 10, FileCounter % 10));
+
+                if (!File.Exists(result))
+                    break;
+                ++FileCounter;
+            }
+
+            return result;
         }
 
-        public override void SaveToFile(string FileName)
+        private async Task WriteData(byte[] __ToWrite, string fileName, FileMode mode, FileAccess access)
         {
+            using (var fs = new FileStream(fileName, mode, access, FileShare.Write, 4098, true))
+            {
+                await (fs.WriteAsync(__ToWrite, 0, __ToWrite.Length));
+            }
+        }
 
+        async void Noise_DefinedResistance_DataArrived(object sender, ExpDataArrivedEventArgs e)
+        {
+            if (e.Data.StartsWith("TT"))
+            {
+                var mode = FileMode.Create;
+                var access = FileAccess.Write;
+
+                if (File.Exists(TTSaveFileName))
+                    mode = FileMode.Append;
+
+                var toWrite = Encoding.ASCII.GetBytes(e.Data.Substring(2));
+
+                await WriteData(toWrite, TTSaveFileName, mode, access);
+            }
+            else if (e.Data.StartsWith("NS"))
+            {
+                NoiseSpectrumFinal = e.Data.Substring(2);
+            }
+        }
+
+        public override async void SaveToFile(string FileName)
+        {
+            var toWrite = Encoding.ASCII.GetBytes(NoiseSpectrumFinal);
+            await WriteData(toWrite, FileName, FileMode.Create, FileAccess.Write);
         }
 
         public override void Dispose()
