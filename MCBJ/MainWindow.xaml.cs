@@ -43,19 +43,19 @@ namespace MCBJ
 
         public MainWindow()
         {
-            var firstIdentifyer = 0x0957;
-            var secondIdentifyer = 0x1718;
-            var visaBuilder = new StringBuilder();
+            //var firstIdentifyer = 0x0957;
+            //var secondIdentifyer = 0x1718;
+            //var visaBuilder = new StringBuilder();
 
-            visaBuilder.AppendFormat("USB0::{0}::{1}::TW54334510::INSTR", firstIdentifyer.ToString(NumberFormatInfo.InvariantInfo), secondIdentifyer.ToString(NumberFormatInfo.InvariantInfo));
+            //visaBuilder.AppendFormat("USB0::{0}::{1}::TW54334510::INSTR", firstIdentifyer.ToString(NumberFormatInfo.InvariantInfo), secondIdentifyer.ToString(NumberFormatInfo.InvariantInfo));
 
-            var motorDriver = new SerialDevice("COM1", 115200, Parity.None, 8, StopBits.One);
-            var motor = new SA_2036U012V(motorDriver) as IMotionController1D;
+            //var motorDriver = new SerialDevice("COM1", 115200, Parity.None, 8, StopBits.One);
+            //var motor = new SA_2036U012V(motorDriver) as IMotionController1D;
 
-            var a = new Noise_DefinedResistance(visaBuilder.ToString(), motor);
-            a.Status += a_Status;
+            //var a = new Noise_DefinedResistance(visaBuilder.ToString(), motor);
+            //a.Status += a_Status;
 
-            a.Start();
+            //a.Start();
             
             dList = new LinkedList<Point>();
             ds = new EnumerableDataSource<Point>(dList);

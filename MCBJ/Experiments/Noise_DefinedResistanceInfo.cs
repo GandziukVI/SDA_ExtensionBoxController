@@ -23,68 +23,96 @@ namespace MCBJ.Experiments
 
         #endregion
 
-        double scanningVoltage = 0.02;
-        public double ScanningVoltage
+        double[] scanningVoltageCollection = new double[] { 0.02 };
+        public double[] ScanningVoltageCollection
         {
-            get { return scanningVoltage; }
+            get { return scanningVoltageCollection; }
             set
             {
-                scanningVoltage = value;
-                onPropertyChanged("ScanningVoltage");
+                scanningVoltageCollection = value;
+                onPropertyChanged("ScanningVoltageCollection");
+            }
+        }
+
+        private double voltageDeviation;
+        public double VoltageDeviation
+        {
+            get { return voltageDeviation; }
+            set
+            {
+                voltageDeviation = value;
+                onPropertyChanged("VoltageDeviation");
+            }
+        }
+
+        private double voltageTreshold = 0.15;
+        public double VoltageTreshold
+        {
+            get { return voltageTreshold; }
+            set
+            {
+                voltageTreshold = value;
+                onPropertyChanged("VoltageTreshold");
             }
         }
 
         private static double conductanceQuantum = 0.0000774809173;
 
-        private double setConductance = 1.0;
-        public double SetConductance
+        private double[] setConductanceCollection = new double[] { 1.0 };
+        public double[] SetConductanceCollection
         {
-            get { return setConductance; }
+            get { return setConductanceCollection; }
             set
             {
-                if (value > 0)
-                    setResistance = 1.0 / conductanceQuantum / value;
-                else
-                    throw new ArgumentException("Conductance value should me greater than zero.");
+                if (setResistanceCollection.Length != value.Length)
+                    setResistanceCollection = new double[value.Length];
 
-                setConductance = value;
+                for (int i = 0; i < value.Length; i++)
+                    if (value[i] > 0)
+                        setResistanceCollection[i] = 1.0 / conductanceQuantum / value[i];
+                    else
+                        throw new ArgumentException("Conductance value should me greater than zero.");
 
-                onPropertyChanged("SetConductance");
-                onPropertyChanged("SetResistance");
+                setConductanceCollection = value;
+
+                onPropertyChanged("SetConductanceCollection");
+                onPropertyChanged("SetResistanceCollection");
             }
         }
 
-
-        private static double setResistance = 1.0 / conductanceQuantum;
-        public double SetResistance
+        private static double[] setResistanceCollection = new double[] { 1.0 / conductanceQuantum };
+        public double[] SetResistanceCollection
         {
-            get { return setResistance; }
+            get { return setResistanceCollection; }
             set
             {
-                if (value > 0)
-                    setConductance = 1.0 / conductanceQuantum / value;
-                else
-                    throw new ArgumentException("Resistance value should me greater than zero.");
+                if (setConductanceCollection.Length != value.Length)
+                    setConductanceCollection = new double[value.Length];
+                for (int i = 0; i < value.Length; i++)
+                    if (value[i] > 0)
+                        setConductanceCollection[i] = 1.0 / conductanceQuantum / value[i];
+                    else
+                        throw new ArgumentException("Resistance value should me greater than zero.");
 
-                setResistance = value;
+                setResistanceCollection = value;
 
-                onPropertyChanged("SetResistance");
-                onPropertyChanged("SetConductance");
+                onPropertyChanged("SetResistanceCollection");
+                onPropertyChanged("SetConductanceCollection");
             }
         }
 
-        double deviation = 5.0;
-        public double Deviation
+        double conductanceDeviation = 5.0;
+        public double ConductanceDeviation
         {
-            get { return deviation; }
+            get { return conductanceDeviation; }
             set
             {
                 if (value >= 0)
-                    deviation = value;
+                    conductanceDeviation = value;
                 else
                     throw new ArgumentException("The deviation should have positive value.");
 
-                onPropertyChanged("Deviation");
+                onPropertyChanged("ConductanceDeviation");
             }
         }
 
@@ -103,34 +131,33 @@ namespace MCBJ.Experiments
             }
         }
 
-        private double minSpeed = 150.0;
-        public double MinSpeed
+        private double motionMinSpeed = 150.0;
+        public double MotionMinSpeed
         {
-            get { return minSpeed; }
+            get { return motionMinSpeed; }
             set
             {
                 if (value >= 0)
-                    minSpeed = value;
+                    motionMinSpeed = value;
                 else
                     throw new ArgumentException("The minimum speed should have positive value.");
 
-                onPropertyChanged("MinSpeed");
+                onPropertyChanged("MotionMinSpeed");
             }
         }
 
-
-        private double maxSpeed = 300.0;
-        public double MaxSpeed
+        private double motionMaxSpeed = 300.0;
+        public double MotionMaxSpeed
         {
-            get { return maxSpeed; }
+            get { return motionMaxSpeed; }
             set
             {
                 if (value >= 0)
-                    maxSpeed = value;
+                    motionMaxSpeed = value;
                 else
                     throw new ArgumentException("The maximum speed should have positive value.");
 
-                onPropertyChanged("MaxSpeed");
+                onPropertyChanged("MotionMaxSpeed");
             }
         }
 
@@ -167,30 +194,61 @@ namespace MCBJ.Experiments
             }
         }
 
-        private double voltageTreshold = 0.15;
-        public double VoltageTreshold
-        {
-            get { return voltageTreshold; }
-            set
-            {
-                voltageTreshold = value;
-                onPropertyChanged("VoltageTreshold");
-            }
-        }
-
-        private int nAveragesFast=  2;
-
+        private int nAveragesFast = 2;
         public int NAveragesFast
         {
             get { return nAveragesFast; }
-            set 
+            set
             {
                 nAveragesFast = value;
                 onPropertyChanged("NAveragesFast");
             }
         }
 
+        private int nAveragesSlow = 100;
+        public int NAveragesSlow
+        {
+            get { return nAveragesSlow; }
+            set
+            {
+                nAveragesFast = value;
+                onPropertyChanged("NAveragesSlow");
+            }
+        }
 
+        private int samplingFrequency = 200000;
+        public int SamplingFrequency
+        {
+            get { return samplingFrequency; }
+            set 
+            {
+                samplingFrequency = value;
+                onPropertyChanged("SamplingFrequency");
+            }
+        }
+
+        private int spectraAveraging = 100;
+        public int SpectraAveraging
+        {
+            get { return spectraAveraging; }
+            set 
+            {
+                spectraAveraging = value;
+                onPropertyChanged("SpectraAveraging");
+            }
+        }
+
+        private int updateNumber = 10;
+        public int UpdateNumber
+        {
+            get { return updateNumber; }
+            set 
+            {
+                updateNumber = value;
+                onPropertyChanged("UpdateNumber");
+            }
+        }
+        
         private string filePath = Directory.GetCurrentDirectory();
         public string FilePath
         {
@@ -202,7 +260,7 @@ namespace MCBJ.Experiments
             }
         }
 
-        private string saveFileName = "I-V data.dat";
+        private string saveFileName = "Noise data.dat";
         public string SaveFileName
         {
             get { return saveFileName; }
