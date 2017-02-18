@@ -22,6 +22,8 @@ using NationalInstruments.Analysis.SpectralMeasurements;
 using D3Helper;
 using System.IO;
 
+using MCBJ.Experiments.DataLog;
+
 namespace MCBJ.Experiments
 {
     public class Noise_DefinedResistance : ExperimentBase
@@ -587,7 +589,7 @@ namespace MCBJ.Experiments
             {
                 foreach (var voltage in settings.ScanningVoltageCollection)
                 {
-                    TTSaveFileName = GetFileNameWithIncrement(string.Join("\\", settings.FilePath, "Time Traces", settings.SaveFileName));
+                    TTSaveFileName = GetFileNameWithIncrement(string.Join("\\", settings.FilePath, "Time traces", settings.SaveFileName));
 
                     setDrainVoltage(voltage, settings.VoltageDeviation);
 
@@ -621,11 +623,38 @@ namespace MCBJ.Experiments
                     confAIChannelsForDC_Measurement();
                     var voltagesAfterNoiseMeasurement = boxController.VoltageMeasurement_AllChannels(settings.NAveragesSlow);
 
-                    var fileName = string.Join("\\", settings.FilePath, "Noise", settings.SaveFileName);
-
-                    SaveToFile(GetFileNameWithIncrement(fileName));
-
                     // Saving to log file all the parameters of the measurement
+
+                    var fileName = string.Join("\\", settings.FilePath, "Noise", settings.SaveFileName);
+                    var dataFileName = GetFileNameWithIncrement(fileName);
+
+                    SaveToFile(dataFileName);
+
+                    var noiseMeasLog = new NoiseMeasurementDataLog();
+
+                    noiseMeasLog.SampleVoltage = voltagesAfterNoiseMeasurement[0];
+                    noiseMeasLog.SampleCurrent = (voltagesAfterNoiseMeasurement[1] - voltagesBeforeNoiseMeasurement[0]) / settings.LoadResistance;
+                    noiseMeasLog.FileName = dataFileName;
+                    noiseMeasLog.Rload = settings.LoadResistance;
+                    noiseMeasLog.Uwhole = voltagesAfterNoiseMeasurement[1];
+                    noiseMeasLog.URload = voltagesAfterNoiseMeasurement[1] - voltagesBeforeNoiseMeasurement[0];
+                    noiseMeasLog.U0sample = voltagesBeforeNoiseMeasurement[0];
+                    noiseMeasLog.U0whole = voltagesBeforeNoiseMeasurement[1];
+                    noiseMeasLog.U0Rload = voltagesBeforeNoiseMeasurement[1] - voltagesBeforeNoiseMeasurement[0];
+                    noiseMeasLog.U0Gate = voltagesBeforeNoiseMeasurement[2];
+                    noiseMeasLog.R0sample = noiseMeasLog.U0sample / (noiseMeasLog.U0Rload / noiseMeasLog.Rload);
+                    noiseMeasLog.REsample = noiseMeasLog.URload / (noiseMeasLog.URload / noiseMeasLog.Rload);
+                    noiseMeasLog.Temperature0 = settings.Temperature0;
+                    noiseMeasLog.TemperatureE = settings.TemperatureE;
+                    noiseMeasLog.kAmpl = settings.KAmpl;
+                    noiseMeasLog.NAver = settings.SpectraAveraging;
+                    noiseMeasLog.Vg = voltagesAfterNoiseMeasurement[2];
+
+                    var logFileName = string.Join("\\", settings.FilePath, "Noise", noiseMeasLog.DataLogFileName);
+                    var logFileCaptureName = string.Join("\\", settings.FilePath, "Time traces", "MeasurDataCapture.dat");
+                    
+                    SaveDataToLog(logFileName, noiseMeasLog.ToString());
+                    SaveDataToLog(logFileCaptureName, noiseMeasLog.ToString());
                 }
             }
 
@@ -701,6 +730,18 @@ namespace MCBJ.Experiments
         {
             var toWrite = Encoding.ASCII.GetBytes(NoiseSpectrumFinal);
             await WriteData(toWrite, FileName, FileMode.Create, FileAccess.Write);
+        }
+        
+        private async void SaveDataToLog(string DataLogFileName, string LogData)
+        {
+            var mode = FileMode.Create;
+            var access = FileAccess.Write;
+
+            if (File.Exists(DataLogFileName))
+                mode = FileMode.Append;
+
+            var toWrite = Encoding.ASCII.GetBytes(LogData);
+            await WriteData(toWrite, DataLogFileName, mode, access);
         }
 
         public override void Dispose()

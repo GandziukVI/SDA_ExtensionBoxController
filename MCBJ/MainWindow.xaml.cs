@@ -64,14 +64,6 @@ namespace MCBJ
             InitializeComponent();
         }
 
-        void a_Status(object sender, StatusEventArgs e)
-        {
-            Dispatcher.InvokeAsync(new Action(() =>
-            {
-                expStatus.Text = e.StatusMessage;
-            }));
-        }
-
         private void onMainWindowClosing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             if (experiment != null)
@@ -170,5 +162,34 @@ namespace MCBJ
         }
 
         #endregion
+
+        private void onNoisedefR_Click(object sender, System.Windows.RoutedEventArgs e)
+        {
+            var control = new Noise_at_DefinedResistance();
+
+            Grid.SetRow(control, 1);
+            Grid.SetColumn(control, 0);
+
+            control.cmdStart.Click += on_cmd_startNoiseDefR;
+            control.cmdStop.Click += on_cmd_stopNoiseDefR;
+
+            this.expParentGrid.Children.Add(control);
+
+            var psdGraph = new LineGraph(ds);
+            psdGraph.AddToPlotter(control.chartIV);
+            control.chartIV.Viewport.FitToView();
+
+            expStartInfo = control.Settings;
+        }
+
+        void on_cmd_startNoiseDefR(object sender, RoutedEventArgs e)
+        {
+            throw new NotImplementedException();
+        }
+
+        void on_cmd_stopNoiseDefR(object sender, RoutedEventArgs e)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

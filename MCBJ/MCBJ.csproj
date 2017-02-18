@@ -108,6 +108,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Experiments\Noise_at_DefinedResistance.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -116,11 +120,15 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Experiments\DataLog\NoiseMeasurementDataLog.cs" />
     <Compile Include="Experiments\IV_at_DefinedResistance.xaml.cs">
       <DependentUpon>IV_at_DefinedResistance.xaml</DependentUpon>
     </Compile>
     <Compile Include="Experiments\IV_DefinedResistance.cs" />
     <Compile Include="Experiments\IV_DefinedResistanceInfo.cs" />
+    <Compile Include="Experiments\Noise_at_DefinedResistance.xaml.cs">
+      <DependentUpon>Noise_at_DefinedResistance.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Experiments\Noise_DefinedResistance.cs" />
     <Compile Include="Experiments\Noise_DefinedResistanceInfo.cs" />
     <Compile Include="Experiments\ParametersConverter.cs" />

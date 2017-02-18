@@ -1,6 +1,7 @@
 ﻿using SourceMeterUnit;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -43,6 +44,37 @@ namespace MCBJ.Experiments
                 default:
                     throw new ArgumentException("Not able to convert units.");
             }
+        }
+    }
+
+    [ValueConversion(typeof(string), typeof(double[]))]
+    public class ValueCollectionConverter : IValueConverter
+    {
+        char[] separators = "[], ".ToCharArray();
+
+        public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        {
+            var values = (double[])value;
+
+            var sb = new StringBuilder();
+            sb.Append("[ ");
+
+            foreach (var item in values)
+                sb.AppendFormat("{0}, ", item.ToString("0.000", NumberFormatInfo.InvariantInfo));
+
+            sb.Append("]");
+
+            return sb.ToString();
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        {
+            var arrayString = (string)value;
+
+            var query = from item in arrayString.Split(separators, StringSplitOptions.RemoveEmptyEntries)
+                        select double.Parse(item, NumberFormatInfo.InvariantInfo);
+
+            return query.ToArray();
         }
     }
 }

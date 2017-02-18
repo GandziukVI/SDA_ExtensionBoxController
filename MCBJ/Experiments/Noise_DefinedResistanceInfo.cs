@@ -34,7 +34,7 @@ namespace MCBJ.Experiments
             }
         }
 
-        private double voltageDeviation;
+        private double voltageDeviation = 0.0001;
         public double VoltageDeviation
         {
             get { return voltageDeviation; }
@@ -131,7 +131,7 @@ namespace MCBJ.Experiments
             }
         }
 
-        private double motionMinSpeed = 150.0;
+        private double motionMinSpeed = 0.049;
         public double MotionMinSpeed
         {
             get { return motionMinSpeed; }
@@ -146,7 +146,7 @@ namespace MCBJ.Experiments
             }
         }
 
-        private double motionMaxSpeed = 300.0;
+        private double motionMaxSpeed = 0.098;
         public double MotionMaxSpeed
         {
             get { return motionMaxSpeed; }
@@ -249,7 +249,7 @@ namespace MCBJ.Experiments
             }
         }
 
-        private double kPreAmpl;
+        private double kPreAmpl = 177.0;
         public double KPreAmpl
         {
             get { return kPreAmpl; }
@@ -260,7 +260,7 @@ namespace MCBJ.Experiments
             }
         }
 
-        private double kAmpl;
+        private double kAmpl = 10.0;
         public double KAmpl
         {
             get { return kAmpl; }
@@ -268,6 +268,28 @@ namespace MCBJ.Experiments
             {
                 kAmpl = value;
                 onPropertyChanged("KAmpl");
+            }
+        }
+
+        private double temperature0 = 277.0;
+        public double Temperature0
+        {
+            get { return temperature0; }
+            set
+            {
+                temperature0 = value;
+                onPropertyChanged("Temperature0");
+            }
+        }
+
+        private double temperatureE = 277.0;
+        public double TemperatureE
+        {
+            get { return temperatureE; }
+            set
+            {
+                temperatureE = value;
+                onPropertyChanged("TemperatureE");
             }
         }
         

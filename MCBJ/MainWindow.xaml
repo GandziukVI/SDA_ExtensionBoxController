@@ -30,6 +30,7 @@
         <Menu x:Name="menuMain" Margin="0,0,0,-2" Height="20">
             <MenuItem x:Name="menuSelectExperimentType" Header="_Experiment type">
                 <MenuItem x:Name="expIVdefR" Header="_I-V def. resistance" HorizontalAlignment="Left" Click="onIVdefR_Click"/>
+                <MenuItem x:Name="expNoiseDefR" Header="_Noise def. resistance" HorizontalAlignment="Left" Click="onNoisedefR_Click"/>
             </MenuItem>
         </Menu>
     </Grid>
