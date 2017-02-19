@@ -54,6 +54,7 @@ namespace MCBJ.Experiments
 
             channelSwitch = new ChannelSwitch();
 
+            channelSwitch.Connecting += channelSwitch_Connecting;
             channelSwitch.ConnectionEstablished += channelSwitch_ConnectionEstablished;
             channelSwitch.ConnectionLost += channelSwitch_ConnectionLost;
 
@@ -67,14 +68,21 @@ namespace MCBJ.Experiments
             this.DataArrived += Noise_DefinedResistance_DataArrived;
         }
 
+        void channelSwitch_Connecting(object sender, EventArgs e)
+        {
+            onStatusChanged(new StatusEventArgs("Connecting to the voltages controller module..."));
+        }
+
         void channelSwitch_ConnectionEstablished(object sender, EventArgs e)
         {
             connectionEstablished = true;
+            onStatusChanged(new StatusEventArgs("Connection to the voltages controller module is established."));
         }
 
         void channelSwitch_ConnectionLost(object sender, EventArgs e)
         {
             connectionEstablished = false;
+            onStatusChanged(new StatusEventArgs("Connection to the voltages controller module is lost. Trying to reconnect."));
             try
             {
                 channelSwitch.Initialize();
@@ -82,6 +90,7 @@ namespace MCBJ.Experiments
             }
             catch
             {
+                onStatusChanged(new StatusEventArgs("Connection to the voltages controller module is failed."));
                 throw new Exception("Couldn't reestablisch the connection with channel switch.");
             }
         }
@@ -209,7 +218,7 @@ namespace MCBJ.Experiments
             {
                 var voltages = boxController.VoltageMeasurement_AllChannels(averagingNumberFast);
 
-                onStatusChanged(new StatusEventArgs(string.Format("Vs = {0}, Vm = {1}", voltages[0].ToString("0.0000", NumberFormatInfo.InvariantInfo), voltages[1].ToString("0.0000", NumberFormatInfo.InvariantInfo))));
+                onStatusChanged(new StatusEventArgs(string.Format("Vs = {0} (=> {1} V), Vm = {2}", voltages[0].ToString("0.0000", NumberFormatInfo.InvariantInfo), voltage.ToString("0.0000", NumberFormatInfo.InvariantInfo), voltages[1].ToString("0.0000", NumberFormatInfo.InvariantInfo))));
 
                 drainVoltageCurr = Math.Abs(voltages[0]);
 

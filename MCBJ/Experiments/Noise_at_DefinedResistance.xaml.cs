@@ -13,19 +13,49 @@ using System.Windows.Shapes;
 
 namespace MCBJ
 {
-	/// <summary>
-	/// Interaction logic for Noise_at_DefinedResistance.xaml
-	/// </summary>
-	public partial class Noise_at_DefinedResistance : UserControl
-	{
-		public Noise_at_DefinedResistance()
-		{
-			this.InitializeComponent();
-		}
+    /// <summary>
+    /// Interaction logic for Noise_at_DefinedResistance.xaml
+    /// </summary>
+    public partial class Noise_at_DefinedResistance : UserControl
+    {
+        System.Windows.Forms.FolderBrowserDialog dialog;
 
-		private void on_cmdOpenFolderClick(object sender, System.Windows.RoutedEventArgs e)
-		{
-			// TODO: Add event handler implementation here.
-		}
-	}
+        public Noise_at_DefinedResistance()
+        {
+            dialog = new System.Windows.Forms.FolderBrowserDialog();
+            this.InitializeComponent();
+        }
+
+        private void on_cmdOpenFolderClick(object sender, System.Windows.RoutedEventArgs e)
+        {
+            dialog.ShowDialog();
+            Settings.FilePath = dialog.SelectedPath;
+        }
+
+        private void SelectAddress(object sender, System.Windows.RoutedEventArgs e)
+        {
+            TextBox tb = (sender as TextBox);
+
+            if (tb != null)
+            {
+
+                tb.SelectAll();
+
+            }
+        }
+
+        private void SelectivelyIgnoreMouseButton(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            TextBox tb = (sender as TextBox);
+
+            if (tb != null)
+            {
+                if (!tb.IsKeyboardFocusWithin)
+                {
+                    e.Handled = true;
+                    tb.Focus();
+                }
+            }
+        }
+    }
 }

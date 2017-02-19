@@ -42,21 +42,7 @@ namespace MCBJ
         LinkedList<Point> dList;
 
         public MainWindow()
-        {
-            //var firstIdentifyer = 0x0957;
-            //var secondIdentifyer = 0x1718;
-            //var visaBuilder = new StringBuilder();
-
-            //visaBuilder.AppendFormat("USB0::{0}::{1}::TW54334510::INSTR", firstIdentifyer.ToString(NumberFormatInfo.InvariantInfo), secondIdentifyer.ToString(NumberFormatInfo.InvariantInfo));
-
-            //var motorDriver = new SerialDevice("COM1", 115200, Parity.None, 8, StopBits.One);
-            //var motor = new SA_2036U012V(motorDriver) as IMotionController1D;
-
-            //var a = new Noise_DefinedResistance(visaBuilder.ToString(), motor);
-            //a.Status += a_Status;
-
-            //a.Start();
-            
+        {     
             dList = new LinkedList<Point>();
             ds = new EnumerableDataSource<Point>(dList);
             ds.SetXYMapping(p => p);
@@ -106,11 +92,11 @@ namespace MCBJ
             experiment = new IV_DefinedResistance(smu, motor) as IExperiment;
             experiment.DataArrived += experimentIV_at_def_R_DataArrived;
 
-            if (expStartInfo != null)
-                experiment.Start(expStartInfo);
+            experiment.Status += experimentStatus;
+            experiment.Progress += experimentProgress;
 
-            experiment.Status += experimentIV_at_def_R_Status;
-            experiment.Progress += experimentIV_at_def_R_Progress;
+            if (expStartInfo != null)
+                experiment.Start(expStartInfo);            
         }
 
         void cmdStopIV_at_defR_Click(object sender, RoutedEventArgs e)
@@ -143,26 +129,12 @@ namespace MCBJ
             {
                 ds.RaiseDataChanged();
             }));
-        }
-
-        private void experimentIV_at_def_R_Status(object sender, StatusEventArgs e)
-        {
-            Dispatcher.InvokeAsync(new Action(() =>
-            {
-                expStatus.Text = e.StatusMessage;
-            }));
-        }
-
-        void experimentIV_at_def_R_Progress(object sender, ProgressEventArgs e)
-        {
-            Dispatcher.InvokeAsync(new Action(() =>
-            {
-                expProgress.Value = e.Progress;
-            }));
-        }
+        }     
 
         #endregion
 
+
+        #region Noise at defined resistance implenentation
         private void onNoisedefR_Click(object sender, System.Windows.RoutedEventArgs e)
         {
             var control = new Noise_at_DefinedResistance();
@@ -184,12 +156,50 @@ namespace MCBJ
 
         void on_cmd_startNoiseDefR(object sender, RoutedEventArgs e)
         {
-            throw new NotImplementedException();
+            var firstIdentifyer = 0x0957;
+            var secondIdentifyer = 0x1718;
+            var visaBuilder = new StringBuilder();
+
+            visaBuilder.AppendFormat("USB0::{0}::{1}::TW54334510::INSTR", firstIdentifyer.ToString(NumberFormatInfo.InvariantInfo), secondIdentifyer.ToString(NumberFormatInfo.InvariantInfo));
+
+            var motorDriver = new SerialDevice("COM1", 115200, Parity.None, 8, StopBits.One);
+            var motor = new SA_2036U012V(motorDriver) as IMotionController1D;
+
+            experiment = new Noise_DefinedResistance(visaBuilder.ToString(), motor);
+
+            experiment.Status += experimentStatus;
+            experiment.Progress += experimentProgress;
+
+            if (expStartInfo != null)
+                experiment.Start(expStartInfo);
         }
 
         void on_cmd_stopNoiseDefR(object sender, RoutedEventArgs e)
         {
-            throw new NotImplementedException();
+            if (experiment != null)
+                experiment.Stop();
         }
+
+        #endregion
+
+        #region Status and progress for all experiments
+
+        private void experimentStatus(object sender, StatusEventArgs e)
+        {
+            Dispatcher.InvokeAsync(new Action(() =>
+            {
+                expStatus.Text = e.StatusMessage;
+            }));
+        }
+
+        void experimentProgress(object sender, ProgressEventArgs e)
+        {
+            Dispatcher.InvokeAsync(new Action(() =>
+            {
+                expProgress.Value = e.Progress;
+            }));
+        }
+
+        #endregion
     }
 }
