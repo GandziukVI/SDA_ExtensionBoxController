@@ -82,7 +82,7 @@ namespace MCBJ.Experiments
         void channelSwitch_ConnectionLost(object sender, EventArgs e)
         {
             connectionEstablished = false;
-            onStatusChanged(new StatusEventArgs("Connection to the voltages controller module is lost. Trying to reconnect."));
+            onStatusChanged(new StatusEventArgs("Connection to the voltages controller module is lost. Trying to reconnect..."));
             try
             {
                 channelSwitch.Initialize();
@@ -584,6 +584,7 @@ namespace MCBJ.Experiments
 
                                 // Seinding the calculated spectrum data
                                 onDataArrived(new ExpDataArrivedEventArgs(sb.ToString()));
+                                onProgressChanged(new ProgressEventArgs((double)averagingCounter / (double)nAverages * 100.0));
                             }
                         }
                     }
