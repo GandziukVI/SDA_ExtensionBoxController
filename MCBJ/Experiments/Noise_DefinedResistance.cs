@@ -606,9 +606,11 @@ namespace MCBJ.Experiments
 
             if (!File.Exists(FileName))
             {
-                File.Create(FileName);
-                File.WriteAllText(FileName, Header);
-                File.WriteAllText(FileName, Subheader);
+                using (var sw = new StreamWriter(new FileStream(FileName, mode, access)))
+                {
+                    sw.Write(Header);
+                    sw.Write(Subheader);
+                }
 
                 mode = FileMode.Append;
             }
