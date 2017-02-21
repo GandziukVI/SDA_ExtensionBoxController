@@ -593,6 +593,25 @@ namespace MCBJ.Experiments
                 });
         }
 
+        void createDirectoryForFile(string FileName, ref FileMode mode, ref FileAccess access)
+        {
+            mode = FileMode.OpenOrCreate;
+            access = FileAccess.Write;
+
+            var info = new FileInfo(FileName);
+
+            var dirName = info.DirectoryName;
+
+            if (!Directory.Exists(dirName))
+                Directory.CreateDirectory(dirName);
+
+            if (File.Exists(FileName))
+            {
+                File.Create(FileName);
+                mode = FileMode.Append;
+            }
+        }
+
         public override void ToDo(object Arg)
         {
             var settings = (Noise_DefinedResistanceInfo)Arg;
@@ -609,17 +628,7 @@ namespace MCBJ.Experiments
                     var mode = FileMode.OpenOrCreate;
                     var access = FileAccess.Write;
 
-                    var info = new FileInfo(TTSaveFileName);
-
-                    var dirName = info.DirectoryName;
-                    if (!Directory.Exists(dirName))
-                        Directory.CreateDirectory(dirName);
-
-                    if (File.Exists(TTSaveFileName))
-                    {
-                        File.Create(TTSaveFileName);
-                        mode = FileMode.Append;
-                    }
+                    createDirectoryForFile(TTSaveFileName, ref mode, ref access);
 
                     TT_StreamWriter = new StreamWriter(new FileStream(TTSaveFileName, mode, access));
 
@@ -743,29 +752,6 @@ namespace MCBJ.Experiments
             if (e.Data.StartsWith("TT"))
             {
                 await TT_StreamWriter.WriteAsync(e.Data.Substring(2));
-                //var mode = FileMode.OpenOrCreate;
-                //var access = FileAccess.Write;
-
-                //var info = new FileInfo(TTSaveFileName);
-
-                //var dirName = info.DirectoryName;
-                //if (!Directory.Exists(dirName))
-                //    Directory.CreateDirectory(dirName);
-
-                //if (File.Exists(TTSaveFileName))
-                //{
-                //    File.Create(TTSaveFileName);
-                //    mode = FileMode.Append;
-                //}
-
-                //using(var sw = new StreamWriter(new FileStream(TTSaveFileName, mode, access)))
-                //{
-                //    sw.Write(e.Data.Substring(2));
-                //}
-
-                //var toWrite = Encoding.ASCII.GetBytes(e.Data.Substring(2));
-
-                //await WriteData(toWrite, TTSaveFileName, mode, access);
             }
             else if (e.Data.StartsWith("NS"))
             {
@@ -775,8 +761,13 @@ namespace MCBJ.Experiments
 
         public override async void SaveToFile(string FileName)
         {
+            var mode = FileMode.OpenOrCreate;
+            var access = FileAccess.Write;
+
+            createDirectoryForFile(FileName, ref mode, ref access);
+
             var toWrite = Encoding.ASCII.GetBytes(NoiseSpectrumFinal);
-            await WriteData(toWrite, FileName, FileMode.OpenOrCreate, FileAccess.Write);
+            await WriteData(toWrite, FileName, mode, access);
         }
 
         private async void SaveDataToLog(string DataLogFileName, string LogData)

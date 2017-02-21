@@ -56,6 +56,8 @@ namespace Agilent_ExtensionBox
             try
             {
                 _Driver.Initialize(resourceName, false, true, Options);
+                _Driver.DriverOperation.QueryInstrumentStatus = false;
+                _Driver.System.TimeoutMilliseconds = 5000;
 
                 var _ChannelArray = new AgilentU254xDigitalChannel[] {
                     _Driver.Digital.Channels.get_Item("DIOA"),
@@ -204,7 +206,7 @@ namespace Agilent_ExtensionBox
                     var dataReady = (_Driver.AnalogIn.Acquisition.BufferStatus == AgilentU254xBufferStatusEnum.AgilentU254xBufferStatusDataReady);
                     if (dataReady == true)
                         break;
-                    Thread.Sleep(20);
+                    //Thread.Sleep(20);
                 }
                 _Driver.AnalogIn.Acquisition.Fetch(ref results);
 
