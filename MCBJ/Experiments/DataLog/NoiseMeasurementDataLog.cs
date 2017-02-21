@@ -29,17 +29,17 @@ namespace MCBJ.Experiments.DataLog
         public double NAver { get; set; }
         public double Vg { get; set; }
 
-        public string DataHeader
+        public static string DataHeader
         {
-            get { return "U\\-(sample)\tCurrent\tR\\-(Eq)\tFilename\tR\\-(load)\tU\\-(Whole)\tU\\-(Rload)\tU\\-(0sample)\tU\\-(0Whole)\tU\\-(0Rload)\tU\\-(0Gate)\tR\\-(0sample)\tR\\-(Esample)\tTemperature\\-(0)\tTemperature\\-(E)\tk\\-(ampl)\tN\\-(aver)\tV\\-(g)"; }
+            get { return "U\\-(sample)\tCurrent\tR\\-(Eq)\tFilename\tR\\-(load)\tU\\-(Whole)\tU\\-(Rload)\tU\\-(0sample)\tU\\-(0Whole)\tU\\-(0Rload)\tU\\-(0Gate)\tR\\-(0sample)\tR\\-(Esample)\tTemperature\\-(0)\tTemperature\\-(E)\tk\\-(ampl)\tN\\-(aver)\tV\\-(g)\n"; }
         }
 
-        public string DataSubHeader
+        public static string DataSubHeader
         {
-            get { return "V\tA\t\\g(W)\t\t\\g(W)\tV\tV\tV\t\\g(W)\t\\g(W)\tK\tK\t\t\tV"; }
+            get { return "V\tA\t\\g(W)\t\t\\g(W)\tV\tV\tV\t\\g(W)\t\\g(W)\tK\tK\t\t\tV\n"; }
         }
 
-        public string DataLogFileName
+        public static string DataLogFileName
         {
             get { return "MeasurData.dat"; }
         }

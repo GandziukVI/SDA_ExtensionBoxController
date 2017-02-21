@@ -556,7 +556,7 @@ namespace MCBJ.Experiments
                             var singlePSDHighFreq = Measurements.SpectrumUnitConversion(autoPSDHighFreq, SpectrumType.Power, ScalingMode.Linear, DisplayUnits.VoltsPeakSquaredPerHZ, dfHighFreq, equivalentNoiseBandwidthHighFreq, coherentGainHighFreq, unit);
 
                             var lowFreqSpectrum = singlePSDLowFreq.Select((value, index) => new Point((index + 1) * dfLowFreq, value)).Where(value => value.X <= 1064);
-                            var highFreqSpectrum = singlePSDLowFreq.Select((value, index) => new Point((index + 1) * dfHighFreq, value)).Where(value => value.X > 1064);
+                            var highFreqSpectrum = singlePSDHighFreq.Select((value, index) => new Point((index + 1) * dfHighFreq, value)).Where(value => value.X > 1064);
 
                             noisePSD = new Point[lowFreqSpectrum.Count() + highFreqSpectrum.Count()];
 
@@ -593,9 +593,8 @@ namespace MCBJ.Experiments
                 });
         }
 
-        void createDirectoryForFile(string FileName, ref FileMode mode, ref FileAccess access)
+        void createFileWithHeader(string FileName, ref FileMode mode, ref FileAccess access, string Header = "", string Subheader = "")
         {
-            mode = FileMode.OpenOrCreate;
             access = FileAccess.Write;
 
             var info = new FileInfo(FileName);
@@ -605,11 +604,16 @@ namespace MCBJ.Experiments
             if (!Directory.Exists(dirName))
                 Directory.CreateDirectory(dirName);
 
-            if (File.Exists(FileName))
+            if (!File.Exists(FileName))
             {
                 File.Create(FileName);
+                File.WriteAllText(FileName, Header);
+                File.WriteAllText(FileName, Subheader);
+
                 mode = FileMode.Append;
             }
+            else
+                mode = FileMode.OpenOrCreate;
         }
 
         public override void ToDo(object Arg)
@@ -620,6 +624,8 @@ namespace MCBJ.Experiments
             {
                 foreach (var voltage in settings.ScanningVoltageCollection)
                 {
+                    IsRunning = true;
+
                     if (TT_StreamWriter != null)
                         TT_StreamWriter.Close();
 
@@ -628,7 +634,7 @@ namespace MCBJ.Experiments
                     var mode = FileMode.OpenOrCreate;
                     var access = FileAccess.Write;
 
-                    createDirectoryForFile(TTSaveFileName, ref mode, ref access);
+                    createFileWithHeader(TTSaveFileName, ref mode, ref access, NoiseMeasurementDataLog.DataHeader, NoiseMeasurementDataLog.DataSubHeader);
 
                     TT_StreamWriter = new StreamWriter(new FileStream(TTSaveFileName, mode, access));
 
@@ -764,7 +770,7 @@ namespace MCBJ.Experiments
             var mode = FileMode.OpenOrCreate;
             var access = FileAccess.Write;
 
-            createDirectoryForFile(FileName, ref mode, ref access);
+            createFileWithHeader(FileName, ref mode, ref access, NoiseMeasurementDataLog.DataHeader, NoiseMeasurementDataLog.DataSubHeader);
 
             var toWrite = Encoding.ASCII.GetBytes(NoiseSpectrumFinal);
             await WriteData(toWrite, FileName, mode, access);
