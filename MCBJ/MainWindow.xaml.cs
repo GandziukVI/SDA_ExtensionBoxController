@@ -133,8 +133,8 @@ namespace MCBJ
 
         #endregion
 
-
         #region Noise at defined resistance implenentation
+
         private void onNoisedefR_Click(object sender, System.Windows.RoutedEventArgs e)
         {
             var control = new Noise_at_DefinedResistance();
@@ -178,6 +178,24 @@ namespace MCBJ
         {
             if (experiment != null)
                 experiment.Stop();
+        }
+
+        void AddNoiseDataToPlot(object NoiseDataString)
+        {
+            dList.Clear();
+
+            var data = IV_Data.FromString((string)NoiseDataString);
+
+            var points = from dataPoint in data
+                         select new Point(dataPoint.Voltage, dataPoint.Current);
+
+            foreach (var item in points)
+                dList.AddLast(item);
+
+            Dispatcher.InvokeAsync(new Action(() =>
+            {
+                ds.RaiseDataChanged();
+            }));
         }
 
         #endregion

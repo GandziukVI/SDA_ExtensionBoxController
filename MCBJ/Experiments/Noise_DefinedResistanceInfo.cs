@@ -211,7 +211,7 @@ namespace MCBJ.Experiments
             get { return nAveragesSlow; }
             set
             {
-                nAveragesFast = value;
+                nAveragesSlow = value;
                 onPropertyChanged("NAveragesSlow");
             }
         }

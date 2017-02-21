@@ -42,6 +42,8 @@ namespace MCBJ.Experiments
 
         private readonly double ConductanceQuantum = 0.0000774809173;
 
+        private StreamWriter TT_StreamWriter;
+
         public Noise_DefinedResistance(string SDA_ConnectionString, IMotionController1D Motor)
             : base()
         {
@@ -599,7 +601,27 @@ namespace MCBJ.Experiments
             {
                 foreach (var voltage in settings.ScanningVoltageCollection)
                 {
+                    if (TT_StreamWriter != null)
+                        TT_StreamWriter.Close();
+
                     TTSaveFileName = GetFileNameWithIncrement(string.Join("\\", settings.FilePath, "Time traces", settings.SaveFileName));
+
+                    var mode = FileMode.OpenOrCreate;
+                    var access = FileAccess.Write;
+
+                    var info = new FileInfo(TTSaveFileName);
+
+                    var dirName = info.DirectoryName;
+                    if (!Directory.Exists(dirName))
+                        Directory.CreateDirectory(dirName);
+
+                    if (File.Exists(TTSaveFileName))
+                    {
+                        File.Create(TTSaveFileName);
+                        mode = FileMode.Append;
+                    }
+
+                    TT_StreamWriter = new StreamWriter(new FileStream(TTSaveFileName, mode, access));
 
                     setDrainVoltage(voltage, settings.VoltageDeviation);
 
@@ -662,7 +684,7 @@ namespace MCBJ.Experiments
 
                     var logFileName = string.Join("\\", settings.FilePath, "Noise", noiseMeasLog.DataLogFileName);
                     var logFileCaptureName = string.Join("\\", settings.FilePath, "Time traces", "MeasurDataCapture.dat");
-                    
+
                     SaveDataToLog(logFileName, noiseMeasLog.ToString());
                     SaveDataToLog(logFileCaptureName, noiseMeasLog.ToString());
                 }
@@ -710,7 +732,7 @@ namespace MCBJ.Experiments
 
         private async Task WriteData(byte[] __ToWrite, string fileName, FileMode mode, FileAccess access)
         {
-            using (var fs = new FileStream(fileName, mode, access, FileShare.Write, 4098, true))
+            using (var fs = new FileStream(fileName, mode, access, FileShare.None, 4098, true))
             {
                 await (fs.WriteAsync(__ToWrite, 0, __ToWrite.Length));
             }
@@ -720,15 +742,30 @@ namespace MCBJ.Experiments
         {
             if (e.Data.StartsWith("TT"))
             {
-                var mode = FileMode.Create;
-                var access = FileAccess.Write;
+                await TT_StreamWriter.WriteAsync(e.Data.Substring(2));
+                //var mode = FileMode.OpenOrCreate;
+                //var access = FileAccess.Write;
 
-                if (File.Exists(TTSaveFileName))
-                    mode = FileMode.Append;
+                //var info = new FileInfo(TTSaveFileName);
 
-                var toWrite = Encoding.ASCII.GetBytes(e.Data.Substring(2));
+                //var dirName = info.DirectoryName;
+                //if (!Directory.Exists(dirName))
+                //    Directory.CreateDirectory(dirName);
 
-                await WriteData(toWrite, TTSaveFileName, mode, access);
+                //if (File.Exists(TTSaveFileName))
+                //{
+                //    File.Create(TTSaveFileName);
+                //    mode = FileMode.Append;
+                //}
+
+                //using(var sw = new StreamWriter(new FileStream(TTSaveFileName, mode, access)))
+                //{
+                //    sw.Write(e.Data.Substring(2));
+                //}
+
+                //var toWrite = Encoding.ASCII.GetBytes(e.Data.Substring(2));
+
+                //await WriteData(toWrite, TTSaveFileName, mode, access);
             }
             else if (e.Data.StartsWith("NS"))
             {
@@ -739,9 +776,9 @@ namespace MCBJ.Experiments
         public override async void SaveToFile(string FileName)
         {
             var toWrite = Encoding.ASCII.GetBytes(NoiseSpectrumFinal);
-            await WriteData(toWrite, FileName, FileMode.Create, FileAccess.Write);
+            await WriteData(toWrite, FileName, FileMode.OpenOrCreate, FileAccess.Write);
         }
-        
+
         private async void SaveDataToLog(string DataLogFileName, string LogData)
         {
             var mode = FileMode.Create;
