@@ -45,10 +45,10 @@ namespace Agilent_ExtensionBox.IO
         {
             get
             {
-                if (ChannelNumber < 1 || ChannelNumber > 4)
+                if (ChannelNumber < 0 || ChannelNumber > 3)
                     throw new ArgumentException();
 
-                return _channels[ChannelNumber - 1];
+                return _channels[ChannelNumber];
             }
         }
 

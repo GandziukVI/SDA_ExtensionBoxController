@@ -42,6 +42,8 @@ namespace MCBJ.Experiments
 
         private readonly double ConductanceQuantum = 0.0000774809173;
 
+        private StreamWriter TT_StreamWriter;
+
         public Noise_DefinedResistance(string SDA_ConnectionString, IMotionController1D Motor)
             : base()
         {
@@ -591,6 +593,25 @@ namespace MCBJ.Experiments
                 });
         }
 
+        void createDirectoryForFile(string FileName, ref FileMode mode, ref FileAccess access)
+        {
+            mode = FileMode.OpenOrCreate;
+            access = FileAccess.Write;
+
+            var info = new FileInfo(FileName);
+
+            var dirName = info.DirectoryName;
+
+            if (!Directory.Exists(dirName))
+                Directory.CreateDirectory(dirName);
+
+            if (File.Exists(FileName))
+            {
+                File.Create(FileName);
+                mode = FileMode.Append;
+            }
+        }
+
         public override void ToDo(object Arg)
         {
             var settings = (Noise_DefinedResistanceInfo)Arg;
@@ -599,7 +620,17 @@ namespace MCBJ.Experiments
             {
                 foreach (var voltage in settings.ScanningVoltageCollection)
                 {
+                    if (TT_StreamWriter != null)
+                        TT_StreamWriter.Close();
+
                     TTSaveFileName = GetFileNameWithIncrement(string.Join("\\", settings.FilePath, "Time traces", settings.SaveFileName));
+
+                    var mode = FileMode.OpenOrCreate;
+                    var access = FileAccess.Write;
+
+                    createDirectoryForFile(TTSaveFileName, ref mode, ref access);
+
+                    TT_StreamWriter = new StreamWriter(new FileStream(TTSaveFileName, mode, access));
 
                     setDrainVoltage(voltage, settings.VoltageDeviation);
 
@@ -662,7 +693,7 @@ namespace MCBJ.Experiments
 
                     var logFileName = string.Join("\\", settings.FilePath, "Noise", noiseMeasLog.DataLogFileName);
                     var logFileCaptureName = string.Join("\\", settings.FilePath, "Time traces", "MeasurDataCapture.dat");
-                    
+
                     SaveDataToLog(logFileName, noiseMeasLog.ToString());
                     SaveDataToLog(logFileCaptureName, noiseMeasLog.ToString());
                 }
@@ -710,7 +741,7 @@ namespace MCBJ.Experiments
 
         private async Task WriteData(byte[] __ToWrite, string fileName, FileMode mode, FileAccess access)
         {
-            using (var fs = new FileStream(fileName, mode, access, FileShare.Write, 4098, true))
+            using (var fs = new FileStream(fileName, mode, access, FileShare.None, 4098, true))
             {
                 await (fs.WriteAsync(__ToWrite, 0, __ToWrite.Length));
             }
@@ -720,15 +751,7 @@ namespace MCBJ.Experiments
         {
             if (e.Data.StartsWith("TT"))
             {
-                var mode = FileMode.Create;
-                var access = FileAccess.Write;
-
-                if (File.Exists(TTSaveFileName))
-                    mode = FileMode.Append;
-
-                var toWrite = Encoding.ASCII.GetBytes(e.Data.Substring(2));
-
-                await WriteData(toWrite, TTSaveFileName, mode, access);
+                await TT_StreamWriter.WriteAsync(e.Data.Substring(2));
             }
             else if (e.Data.StartsWith("NS"))
             {
@@ -738,10 +761,15 @@ namespace MCBJ.Experiments
 
         public override async void SaveToFile(string FileName)
         {
+            var mode = FileMode.OpenOrCreate;
+            var access = FileAccess.Write;
+
+            createDirectoryForFile(FileName, ref mode, ref access);
+
             var toWrite = Encoding.ASCII.GetBytes(NoiseSpectrumFinal);
-            await WriteData(toWrite, FileName, FileMode.Create, FileAccess.Write);
+            await WriteData(toWrite, FileName, mode, access);
         }
-        
+
         private async void SaveDataToLog(string DataLogFileName, string LogData)
         {
             var mode = FileMode.Create;

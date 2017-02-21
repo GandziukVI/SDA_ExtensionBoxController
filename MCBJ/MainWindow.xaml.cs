@@ -134,6 +134,7 @@ namespace MCBJ
         #endregion
 
         #region Noise at defined resistance implenentation
+
         private void onNoisedefR_Click(object sender, System.Windows.RoutedEventArgs e)
         {
             var control = new Noise_at_DefinedResistance();
@@ -166,6 +167,8 @@ namespace MCBJ
 
             experiment = new Noise_DefinedResistance(visaBuilder.ToString(), motor);
 
+            experiment.DataArrived += Noise_at_der_R_DataArrived;
+
             experiment.Status += experimentStatus;
             experiment.Progress += experimentProgress;
 
@@ -177,6 +180,40 @@ namespace MCBJ
         {
             if (experiment != null)
                 experiment.Stop();
+        }
+
+        void AddNoiseDataToPlot(object NoiseDataString)
+        {
+            dList.Clear();
+
+            var noiseDataString = (string)NoiseDataString;
+
+            if (noiseDataString.StartsWith("NS"))
+            {
+                var data = from item in noiseDataString.Substring(2).Split("\r\n".ToCharArray(), StringSplitOptions.RemoveEmptyEntries)
+                           select Array.ConvertAll(item.Split("\t".ToCharArray(), StringSplitOptions.RemoveEmptyEntries), x => double.Parse(x, NumberFormatInfo.InvariantInfo));
+
+                var points = (from dataPoint in data
+                             select new Point(dataPoint[0], dataPoint[1])).ToArray();
+
+                var toPlot = D3Helper.PointSelector.SelectNPointsPerDecade(ref points, 100);
+
+                foreach (var item in toPlot)
+                    dList.AddLast(item);
+
+                Dispatcher.InvokeAsync(new Action(() =>
+                {
+                    ds.RaiseDataChanged();
+                }));
+            }
+        }
+
+        void Noise_at_der_R_DataArrived(object sender, ExpDataArrivedEventArgs e)
+        {
+            var ts = new ParameterizedThreadStart(AddNoiseDataToPlot);
+            var th = new Thread(ts);
+
+            th.Start(e.Data);
         }
 
         #endregion
