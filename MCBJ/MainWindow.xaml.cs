@@ -133,7 +133,6 @@ namespace MCBJ
 
         #endregion
 
-
         #region Noise at defined resistance implenentation
         private void onNoisedefR_Click(object sender, System.Windows.RoutedEventArgs e)
         {
