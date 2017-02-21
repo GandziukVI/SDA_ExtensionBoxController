@@ -39,7 +39,7 @@ namespace MCBJ.Experiments.DataLog
             get { return "V\tA\t\\g(W)\t\t\\g(W)\tV\tV\tV\t\\g(W)\t\\g(W)\tK\tK\t\t\tV\n"; }
         }
 
-        public static string DataLogFileName
+        public string DataLogFileName
         {
             get { return "MeasurData.dat"; }
         }
