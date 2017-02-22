@@ -35,6 +35,8 @@ namespace MCBJ
     /// </summary>
     public partial class MainWindow : Window
     {
+        UIElement measurementInterface;
+
         IExperiment experiment;
         object expStartInfo;
 
@@ -61,7 +63,13 @@ namespace MCBJ
 
         private void onIVdefR_Click(object sender, RoutedEventArgs e)
         {
+            if (measurementInterface != null)
+                if (expParentGrid.Children.Contains(measurementInterface))
+                    expParentGrid.Children.Remove(measurementInterface);
+
             var control = new IV_at_DefinedResistance();
+
+            measurementInterface = control;
 
             Grid.SetRow(control, 1);
             Grid.SetColumn(control, 0);
@@ -137,15 +145,22 @@ namespace MCBJ
 
         private void onNoisedefR_Click(object sender, System.Windows.RoutedEventArgs e)
         {
+            if (measurementInterface != null)
+                if (expParentGrid.Children.Contains(measurementInterface))
+                    expParentGrid.Children.Remove(measurementInterface);
+
+
             var control = new Noise_at_DefinedResistance();
 
-            Grid.SetRow(control, 1);
-            Grid.SetColumn(control, 0);
+            measurementInterface = control;
+
+            Grid.SetRow(measurementInterface, 1);
+            Grid.SetColumn(measurementInterface, 0);
 
             control.cmdStart.Click += on_cmd_startNoiseDefR;
             control.cmdStop.Click += on_cmd_stopNoiseDefR;
 
-            this.expParentGrid.Children.Add(control);
+            this.expParentGrid.Children.Add(measurementInterface);
 
             var psdGraph = new LineGraph(ds);
             psdGraph.AddToPlotter(control.chartIV);

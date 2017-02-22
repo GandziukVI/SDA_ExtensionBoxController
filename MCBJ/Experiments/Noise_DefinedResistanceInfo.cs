@@ -227,6 +227,17 @@ namespace MCBJ.Experiments
             }
         }
 
+        private int nSubSamples = 1;
+        public int NSubSamples
+        {
+            get { return nSubSamples; }
+            set
+            {
+                nSubSamples = value;
+                onPropertyChanged("NSubSamples");
+            }
+        }
+
         private int spectraAveraging = 100;
         public int SpectraAveraging
         {

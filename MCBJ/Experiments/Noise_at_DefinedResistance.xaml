@@ -106,6 +106,7 @@
 				<RowDefinition Height="Auto"/>
 				<RowDefinition Height="Auto"/>
 				<RowDefinition Height="Auto"/>
+				<RowDefinition Height="Auto"/>
 				<RowDefinition MinHeight="50"/>
 				<RowDefinition Height="Auto"/>				
 			</Grid.RowDefinitions>
@@ -124,12 +125,13 @@
 			<TextBlock TextWrapping="Wrap" Text="n Avg. (slow)" Grid.Row="12"/>
 			<TextBlock TextWrapping="Wrap" Text="Load resistance" Grid.Row="14"/>			
 			<TextBlock TextWrapping="Wrap" Text="Sampling frequency" Grid.Row="15"/>
-			<TextBlock TextWrapping="Wrap" Text="n Spectra avg." Grid.Row="16"/>
-			<TextBlock TextWrapping="Wrap" Text="Update freq." Grid.Row="17"/>
-			<TextBlock TextWrapping="Wrap" Text="k pre-Amp" Grid.Row="18"/>
-			<TextBlock TextWrapping="Wrap" Text="k Amp" Grid.Row="19"/>
-			<TextBlock TextWrapping="Wrap" Text="Temperature 0" Grid.Row="20"/>
-			<TextBlock TextWrapping="Wrap" Text="Temperature E" Grid.Row="21"/>
+			<TextBlock TextWrapping="Wrap" Text="N Sub-samples" Grid.Row="16"/>
+			<TextBlock TextWrapping="Wrap" Text="n Spectra avg." Grid.Row="17"/>
+			<TextBlock TextWrapping="Wrap" Text="Update freq." Grid.Row="18"/>
+			<TextBlock TextWrapping="Wrap" Text="k pre-Amp" Grid.Row="19"/>
+			<TextBlock TextWrapping="Wrap" Text="k Amp" Grid.Row="20"/>
+			<TextBlock TextWrapping="Wrap" Text="Temperature 0" Grid.Row="21"/>
+			<TextBlock TextWrapping="Wrap" Text="Temperature E" Grid.Row="22"/>
 
 			<TextBox Text="{Binding ScanningVoltageCollection, Converter={StaticResource CollectionConverter}, Mode=TwoWay, UpdateSourceTrigger=LostFocus}" Grid.Column="1" TextWrapping="Wrap" Height="100" MaxHeight="100" VerticalContentAlignment="Top" VerticalScrollBarVisibility="Auto" MouseDoubleClick="SelectAddress" PreviewMouseRightButtonUp="SelectivelyIgnoreMouseButton" GotFocus="SelectAddress" PreviewMouseLeftButtonDown="SelectivelyIgnoreMouseButton"/>
 			<wpfTool:DoubleUpDown Grid.Row="1" Grid.Column="1" Value="{Binding VoltageDeviation, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"/>
@@ -146,15 +148,16 @@
 			<wpfTool:IntegerUpDown Grid.Row="12" Grid.Column="1" Value="{Binding NAveragesSlow, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
 			<wpfTool:DoubleUpDown Grid.Row="14" Grid.Column="1" Value="{Binding LoadResistance, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>			
 			<wpfTool:IntegerUpDown Grid.Row="15" Grid.Column="1" Value="{Binding SamplingFrequency, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
-			<wpfTool:IntegerUpDown Grid.Row="16" Grid.Column="1" Value="{Binding SpectraAveraging, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
-			<wpfTool:IntegerUpDown Grid.Row="17" Grid.Column="1" Value="{Binding UpdateNumber, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
-			<wpfTool:DoubleUpDown Grid.Row="18" Grid.Column="1" Value="{Binding KPreAmpl, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
-			<wpfTool:DoubleUpDown Grid.Row="19" Grid.Column="1" Value="{Binding KAmpl, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
-			<wpfTool:DoubleUpDown Grid.Row="20" Grid.Column="1" Value="{Binding Temperature0, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
-			<wpfTool:DoubleUpDown Grid.Row="21" Grid.Column="1" Value="{Binding TemperatureE, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+			<wpfTool:IntegerUpDown Grid.Row="16" Grid.Column="1" Value="{Binding NSubSamples, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"/>
+			<wpfTool:IntegerUpDown Grid.Row="17" Grid.Column="1" Value="{Binding SpectraAveraging, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+			<wpfTool:IntegerUpDown Grid.Row="18" Grid.Column="1" Value="{Binding UpdateNumber, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+			<wpfTool:DoubleUpDown Grid.Row="19" Grid.Column="1" Value="{Binding KPreAmpl, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+			<wpfTool:DoubleUpDown Grid.Row="20" Grid.Column="1" Value="{Binding KAmpl, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+			<wpfTool:DoubleUpDown Grid.Row="21" Grid.Column="1" Value="{Binding Temperature0, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+			<wpfTool:DoubleUpDown Grid.Row="22" Grid.Column="1" Value="{Binding TemperatureE, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
 
-			<Separator BorderThickness="1,2" Height="1" Grid.Row="22" Grid.ColumnSpan="2" Margin="2.5,5,2.5,20" Background="Black" BorderBrush="#FFAAAAAA" />
-			<Grid Grid.Row="23" Grid.ColumnSpan="2">
+			<Separator BorderThickness="1,2" Height="1" Grid.Row="23" Grid.ColumnSpan="2" Margin="2.5,5,2.5,20" Background="Black" BorderBrush="#FFAAAAAA" />
+			<Grid Grid.Row="24" Grid.ColumnSpan="2">
 				<Grid.ColumnDefinitions>
 					<ColumnDefinition Width="Auto" />
 					<ColumnDefinition />
@@ -164,7 +167,7 @@
 				
 			</Grid>
 
-			<Grid Grid.Row="25" Grid.RowSpan="2" Grid.ColumnSpan="2">
+			<Grid Grid.Row="26" Grid.RowSpan="2" Grid.ColumnSpan="2">
 				<Grid.ColumnDefinitions>
 					<ColumnDefinition />
 					<ColumnDefinition />
