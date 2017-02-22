@@ -144,6 +144,7 @@ namespace Agilent_ExtensionBox.IO
         }
 
         public event EventHandler DataReady;
+
         private void On_DataReady()
         {
             var handler = DataReady;

@@ -194,7 +194,7 @@ namespace MCBJ.Experiments
             }
         }
 
-        private int nAveragesFast = 2;
+        private int nAveragesFast = 1;
         public int NAveragesFast
         {
             get { return nAveragesFast; }
@@ -216,7 +216,7 @@ namespace MCBJ.Experiments
             }
         }
 
-        private int samplingFrequency = 200000;
+        private int samplingFrequency = 500000;
         public int SamplingFrequency
         {
             get { return samplingFrequency; }

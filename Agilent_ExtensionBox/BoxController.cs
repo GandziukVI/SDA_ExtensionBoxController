@@ -164,7 +164,7 @@ namespace Agilent_ExtensionBox
             }
         }
 
-        private volatile bool _AcquisitionInProgress = false;
+        private bool _AcquisitionInProgress = false;
         public bool AcquisitionInProgress
         {
             get { return _AcquisitionInProgress; }

@@ -120,7 +120,8 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Experiments\DataLog\NoiseMeasurementDataLog.cs" />
+    <Compile Include="Experiments\DataHandling\NoiseMeasurementDataLog.cs" />
+    <Compile Include="Experiments\DataHandling\SingleNoiseMeasurement.cs" />
     <Compile Include="Experiments\IV_at_DefinedResistance.xaml.cs">
       <DependentUpon>IV_at_DefinedResistance.xaml</DependentUpon>
     </Compile>

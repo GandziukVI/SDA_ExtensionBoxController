@@ -14,9 +14,55 @@ namespace D3Helper
             return arr.Where((value, index) => index % N == 0).ToArray();
         }
 
-        public static Point[] SelectPoints(ref Point[] arr, int N)
+        public static double[] SelectPoints(ref double[] arr, int N, bool averaging = false)
         {
-            return arr.Where((value, index) => index % N == 0).ToArray();
+            if (!averaging)
+                return arr.Where((value, index) => index % N == 0).ToArray();
+            else
+            {
+                var res = new LinkedList<double>();
+
+                for (int i = 0; ; )
+                {
+                    var selection = arr.Where((value, index) => index >= i * N && index < (i + 1) * N).Select(x => x);
+                    
+                    var xAver = selection.Average();
+                    res.AddLast(xAver);
+
+                    if ((i + 1) * N >= arr.Length)
+                        break;
+
+                    ++i;
+                }
+
+                return res.ToArray();
+            }
+        }
+
+        public static Point[] SelectPoints(ref Point[] arr, int N, bool averaging = false)
+        {
+            if (!averaging)
+                return arr.Where((value, index) => index % N == 0).ToArray();
+            else
+            {
+                var res = new Point[N];
+
+                var step = (int)Math.Ceiling((double)arr.Length / (double)N);
+
+                for (int i = 0; i < N; i++)
+                {
+                    var selection = from p in arr
+                                    where p.X >= i * step && p.X < (i + 1) * step
+                                    select p;
+
+                    var xAver = selection.Average(p => p.X);
+                    var yAver = selection.Average(p => p.Y);
+
+                    res[i] = new Point(xAver, yAver);
+                }
+
+                return res;
+            }
         }
 
         public static Point[] SelectNPointsPerDecade(ref Point[] arr, int N)

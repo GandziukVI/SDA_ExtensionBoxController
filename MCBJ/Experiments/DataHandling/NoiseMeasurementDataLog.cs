@@ -6,7 +6,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MCBJ.Experiments.DataLog
+namespace MCBJ.Experiments.DataHandling
 {
     public class NoiseMeasurementDataLog
     {
