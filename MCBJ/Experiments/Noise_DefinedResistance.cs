@@ -54,14 +54,14 @@ namespace MCBJ.Experiments
             if (!boxInit)
                 throw new Exception("Cannot connect the box.");
 
-            //channelSwitch = new ChannelSwitch();
+            channelSwitch = new ChannelSwitch();
 
-            //channelSwitch.Connecting += channelSwitch_Connecting;
-            //channelSwitch.ConnectionEstablished += channelSwitch_ConnectionEstablished;
-            //channelSwitch.ConnectionLost += channelSwitch_ConnectionLost;
+            channelSwitch.Connecting += channelSwitch_Connecting;
+            channelSwitch.ConnectionEstablished += channelSwitch_ConnectionEstablished;
+            channelSwitch.ConnectionLost += channelSwitch_ConnectionLost;
 
-            //channelSwitch.Initialize();
-            //while (!connectionEstablished) ;
+            channelSwitch.Initialize();
+            while (!connectionEstablished) ;
 
             motor = Motor;
 
@@ -373,7 +373,7 @@ namespace MCBJ.Experiments
 
             var setResistance = 1.0 / (setCond * ConductanceQuantum);
 
-            onStatusChanged(new StatusEventArgs(string.Format("Reaching resistance of {0}.", setResistance.ToString(NumberFormatInfo.InvariantInfo))));
+            //onStatusChanged(new StatusEventArgs(string.Format("Reaching resistance of {0}.", setResistance.ToString("0.0000", NumberFormatInfo.InvariantInfo))));
             onProgressChanged(new ProgressEventArgs(0.0));
 
             motor.Enabled = true;
@@ -390,12 +390,6 @@ namespace MCBJ.Experiments
 
                 var currResistance = measureResistance(loadResistance, nAverages, setVolt, voltDev, voltageTreshold);
                 var scaledConductance = (1.0 / currResistance) / ConductanceQuantum;
-
-                onStatusChanged(new StatusEventArgs(string.Format("Gset = {0} G0, G = {1} G0, Rset = {2}, R = {3}",
-                    setCond.ToString("0.0000", NumberFormatInfo.InvariantInfo),
-                    scaledConductance.ToString("0.0000", NumberFormatInfo.InvariantInfo),
-                    setResistance.ToString("0.0000", NumberFormatInfo.InvariantInfo),
-                    currResistance.ToString("0.0000", NumberFormatInfo.InvariantInfo))));
 
                 var speed = minSpeed;
                 try
@@ -437,6 +431,13 @@ namespace MCBJ.Experiments
 
                     if (stabilityStopwatch.IsRunning == true)
                         ++outsiderCounter;
+
+                    onStatusChanged(new StatusEventArgs(string.Format("Reaching: G = {0} G0 ( => {1} G0), R = {2} Ohm ( => {3} Ohm)",
+                            scaledConductance.ToString("0.0000", NumberFormatInfo.InvariantInfo),
+                            setCond.ToString("0.0000", NumberFormatInfo.InvariantInfo),
+                            currResistance.ToString("0.0000", NumberFormatInfo.InvariantInfo),
+                            setResistance.ToString("0.0000", NumberFormatInfo.InvariantInfo)
+                        )));
                 }
 
                 if (stabilityStopwatch.IsRunning)
@@ -700,6 +701,8 @@ namespace MCBJ.Experiments
 
                     setDrainVoltage(voltage, settings.VoltageDeviation);
 
+                    onStatusChanged(new StatusEventArgs("Measuring sample characteristics before noise spectar measurement."));
+
                     confAIChannelsForDC_Measurement();
                     var voltagesBeforeNoiseMeasurement = boxController.VoltageMeasurement_AllChannels(settings.NAveragesSlow);
 
@@ -709,7 +712,10 @@ namespace MCBJ.Experiments
                         if (item.IsEnabled)
                             item.Parameters.SetParams(FilterCutOffFrequencies.Freq_150kHz, FilterGain.gain1, PGA_GainsEnum.gain1);
 
+                    onStatusChanged(new StatusEventArgs("Measuring noise spectra & time traces."));
                     measureNoiseSpectra(settings.SamplingFrequency, settings.NSubSamples, settings.SpectraAveraging, settings.UpdateNumber, settings.KPreAmpl * settings.KAmpl);
+
+                    onStatusChanged(new StatusEventArgs("Measuring sample characteristics after noise spectar measurement."));
 
                     confAIChannelsForDC_Measurement();
                     var voltagesAfterNoiseMeasurement = boxController.VoltageMeasurement_AllChannels(settings.NAveragesSlow);
