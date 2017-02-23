@@ -625,7 +625,7 @@ namespace MCBJ.Experiments
                                 sb.Append("NS");
 
                                 for (int i = 0; i < noisePSD.Length; i++)
-                                    sb.AppendFormat("{0}\t{1}\r\n", (noisePSD[i].X).ToString(NumberFormatInfo.InvariantInfo), (noisePSD[i].Y / (double)averagingCounter / (kAmpl * kAmpl)).ToString(NumberFormatInfo.InvariantInfo));
+                                    sb.AppendFormat("{0}\t{1}\r\n", (noisePSD[i].X).ToString(NumberFormatInfo.InvariantInfo), (noisePSD[i].Y / (double)(averagingCounter * nDataSamples) / (kAmpl * kAmpl)).ToString(NumberFormatInfo.InvariantInfo));
 
                                 // Sending the calculated spectrum data
                                 onDataArrived(new ExpDataArrivedEventArgs(sb.ToString()));
