@@ -561,7 +561,6 @@ namespace MCBJ.Experiments
                                                  select val.Y).ToArray();
 
                                 var unit = new System.Text.StringBuilder("V", 256);
-                                var sw = ScaledWindow.CreateRectangularWindow();
 
                                 // Calculation of the LOW-FREQUENCY part of the spectrum
 
@@ -575,7 +574,7 @@ namespace MCBJ.Experiments
 
                                 var selection64Hz = PointSelector.SelectPoints(ref filteredData, 64, false);
 
-                                sw = ScaledWindow.CreateRectangularWindow();
+                                var sw = ScaledWindow.CreateRectangularWindow();
 
                                 sw.Apply(selection64Hz, out equivalentNoiseBandwidthLowFreq, out coherentGainLowFreq);
 
@@ -584,55 +583,42 @@ namespace MCBJ.Experiments
                                 autoPSDLowFreq = Measurements.AutoPowerSpectrum(selection64Hz, dtLowFreq, out dfLowFreq);
                                 var singlePSD_LOW_Freq = Measurements.SpectrumUnitConversion(autoPSDLowFreq, SpectrumType.Power, ScalingMode.Linear, DisplayUnits.VoltsPeakSquaredPerHZ, dfLowFreq, equivalentNoiseBandwidthLowFreq, coherentGainLowFreq, unit);
 
-                                var lowFreqSpectrum = (singlePSD_LOW_Freq.Select((value, index) => new Point((index + 1) * dfLowFreq, value)).Where(p => p.X <= 1600)).ToArray(); //.Select((value, index) => new Point((index + 1) * dfHighFreq, value)).Where(value => value.X > 1064);
+                                var lowFreqSpectrum = (singlePSD_LOW_Freq.Select((value, index) => new Point((index + 1) * dfLowFreq, value)).Where(p => p.X <= 1600)).ToArray();
 
                                 // Calculation of the HIGH-FREQUENCY part of the spectrum
 
-                                var highFreqSelectionRange = (int)((timeTrace.Length) / 64);
-                                var highFrequencyTimeTraceSelectionList = new LinkedList<double[]>();
-
-                                for (int i = 0; i < 64; i++)
-                                {
-                                    var selection = timeTrace.Where((value, index) => index >= i * highFreqSelectionRange && index < (i + 1) * highFreqSelectionRange).Select(p => p.X);
-                                    highFrequencyTimeTraceSelectionList.AddLast(selection.ToArray());
-                                }
-
-                                var highFreqSpectrum = new Point[] { };
-                                var highSingleFreqSpectrum = new Point[] { };
-
-                                sw.Apply(traceData, out equivalentNoiseBandwidthHighFreq, out coherentGainHighFreq);
-
                                 dtHighFreq = 1.0 / (double)samplingFrequency;
 
-                                autoPSDHighFreq = Measurements.AutoPowerSpectrum(traceData, dtHighFreq, out dfHighFreq);
-                                var singlePSD_HIGH_Freq = Measurements.SpectrumUnitConversion(autoPSDHighFreq, SpectrumType.Power, ScalingMode.Linear, DisplayUnits.VoltsPeakSquaredPerHZ, dfHighFreq, equivalentNoiseBandwidthHighFreq, coherentGainHighFreq, unit);
+                                var highFreqPeriod = 64;
 
-                                highSingleFreqSpectrum = (singlePSD_HIGH_Freq.Select((value, index) => new Point((index + 1) * dfHighFreq, value)).Where(p => p.X > 1664 && p.X <= 102400)).ToArray();
+                                var highFreqSelectionRange = (int)((traceData.Length) / highFreqPeriod);
 
-                                //foreach (var item in highFrequencyTimeTraceSelectionList)
-                                //{
-                                //    sw = ScaledWindow.CreateRectangularWindow();
+                                Point[] highFreqSpectrum = new Point[] { };
+                                Point[] highSingleFreqSpectrum = new Point[] { };
 
-                                //    sw.Apply(item, out equivalentNoiseBandwidthHighFreq, out coherentGainHighFreq);
+                                for (int i = 0; i < 16; i++)
+                                {
+                                    var selection = timeTrace.Where((value, index) => index >= i * highFreqSelectionRange && index < (i + 1) * highFreqSelectionRange).Select(p => p.X).ToArray();                                    
 
-                                //    dtHighFreq = 1.0 / (double)samplingFrequency;
+                                    sw.Apply(selection, out equivalentNoiseBandwidthHighFreq, out coherentGainHighFreq);
+                                    autoPSDHighFreq = Measurements.AutoPowerSpectrum(selection, dtHighFreq, out dfHighFreq);
+                                    var singlePSD_HIGH_Freq = Measurements.SpectrumUnitConversion(autoPSDHighFreq, SpectrumType.Power, ScalingMode.Linear, DisplayUnits.VoltsPeakSquaredPerHZ, dfHighFreq, equivalentNoiseBandwidthHighFreq, coherentGainHighFreq, unit);
+                                    highSingleFreqSpectrum = singlePSD_HIGH_Freq.Select((value, index) => new Point((index + 1) * dfHighFreq, value / (double)highFreqPeriod)).Where(p => p.X > 1600 && p.X <= 102400).ToArray();
 
-                                //    autoPSDHighFreq = Measurements.AutoPowerSpectrum(item, dtHighFreq, out dfHighFreq);
-                                //    var singlePSD_HIGH_Freq = Measurements.SpectrumUnitConversion(autoPSDHighFreq, SpectrumType.Power, ScalingMode.Linear, DisplayUnits.VoltsPeakSquaredPerHZ, dfHighFreq, equivalentNoiseBandwidthHighFreq, coherentGainHighFreq, unit);
+                                    if (highFreqSpectrum.Length == 0)
+                                    {
+                                        highFreqSpectrum = new Point[highSingleFreqSpectrum.Length];
+                                        Array.Copy(highSingleFreqSpectrum, highFreqSpectrum, highSingleFreqSpectrum.Length);
+                                    }
+                                    else
+                                    {
+                                        if (highFreqSpectrum.Length == highSingleFreqSpectrum.Length)
+                                            for (int j = 0; j < highFreqSpectrum.Length; j++)
+                                                highFreqSpectrum[j].Y += highSingleFreqSpectrum[j].Y;
+                                    }
+                                }                                                                                                                          
 
-                                //    highSingleFreqSpectrum = (singlePSD_HIGH_Freq.Select((value, index) => new Point((index + 1) * dfHighFreq, value)).Where(p => p.X > 1664 && p.X <= 102400)).ToArray();
-
-                                //    if (highFreqSpectrum.Length < highSingleFreqSpectrum.Length)
-                                //        highFreqSpectrum = new Point[highSingleFreqSpectrum.Length];
-
-                                //    for (int i = 0; i < highSingleFreqSpectrum.Length; i++)
-                                //    {
-                                //        highFreqSpectrum[i].X = highSingleFreqSpectrum[i].X;
-                                //        highFreqSpectrum[i].Y += highSingleFreqSpectrum[i].Y / 64;
-                                //    }
-                                //}
-
-                                noisePSD = new Point[lowFreqSpectrum.Count() + highFreqSpectrum.Count()];
+                                noisePSD = new Point[lowFreqSpectrum.Count() + highFreqSpectrum.Length];
 
                                 var counter = 0;
                                 foreach (var item in lowFreqSpectrum)
