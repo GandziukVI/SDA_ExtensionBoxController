@@ -15,7 +15,7 @@ namespace MCBJ.Experiments.DataHandling
 
         public static string DataSubHeader
         {
-            get { return "Hz\tV^2\n"; }
+            get { return "Hz\tV^2/Hz\n"; }
         }
 
         public string DataFileName { get; set; }

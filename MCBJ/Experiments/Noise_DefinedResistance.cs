@@ -570,8 +570,8 @@ namespace MCBJ.Experiments
 
                                 // Selecting lower amount of data points to reduce the FFT noise
 
-                                //var selection64Hz = PointSelector.SelectPoints(ref filteredData, 64, false);
-                                var selection64Hz = PointSelector.SelectPoints(ref filteredData, 64, false).Take(4096).ToArray();
+                                var selection64Hz = PointSelector.SelectPoints(ref filteredData, 64, false);
+                                //var selection64Hz = PointSelector.SelectPoints(ref filteredData, 64, false).Take(4096).ToArray();
 
                                 var sw = ScaledWindow.CreateRectangularWindow();
 
@@ -581,8 +581,8 @@ namespace MCBJ.Experiments
                                 dtLowFreq = 64.0 * 1.0 / (double)samplingFrequency;
 
                                 autoPSDLowFreq = Measurements.AutoPowerSpectrum(selection64Hz, dtLowFreq, out dfLowFreq);
-                                //var singlePSD_LOW_Freq = Measurements.SpectrumUnitConversion(autoPSDLowFreq, SpectrumType.Power, ScalingMode.Linear, DisplayUnits.VoltsRmsSquaredPerHZ, dfLowFreq, equivalentNoiseBandwidthLowFreq, coherentGainLowFreq, unit);
-                                var singlePSD_LOW_Freq = Measurements.SpectrumUnitConversion(autoPSDLowFreq, SpectrumType.Power, ScalingMode.DB, DisplayUnits.VoltsPeakSquaredPerHZ, dfLowFreq, equivalentNoiseBandwidthLowFreq, coherentGainLowFreq, unit);
+                                var singlePSD_LOW_Freq = Measurements.SpectrumUnitConversion(autoPSDLowFreq, SpectrumType.Power, ScalingMode.Linear, DisplayUnits.VoltsRmsSquaredPerHZ, dfLowFreq, equivalentNoiseBandwidthLowFreq, coherentGainLowFreq, unit);
+                                //var singlePSD_LOW_Freq = Measurements.SpectrumUnitConversion(autoPSDLowFreq, SpectrumType.Power, ScalingMode.DB, DisplayUnits.VoltsPeakSquaredPerHZ, dfLowFreq, equivalentNoiseBandwidthLowFreq, coherentGainLowFreq, unit);
 
                                 var lowFreqSpectrum = (singlePSD_LOW_Freq.Select((value, index) => new Point((index + 1) * dfLowFreq, value)).Where(p => p.X <= 1600)).ToArray();
 
@@ -597,15 +597,15 @@ namespace MCBJ.Experiments
                                 Point[] highFreqSpectrum = new Point[] { };
                                 Point[] highSingleFreqSpectrum = new Point[] { };
 
-                                var selection = traceData.Take(8192).ToArray();
+                                //var selection = traceData.Take(8192).ToArray();
 
-                                //var selection = traceData.Take(highFreqSelectionRange).ToArray(); //timeTrace.Where((value, index) => index >= i * highFreqSelectionRange && index < (i + 1) * highFreqSelectionRange).Select(p => p.X).ToArray();
+                                var selection = traceData.Take(highFreqSelectionRange).ToArray(); //timeTrace.Where((value, index) => index >= i * highFreqSelectionRange && index < (i + 1) * highFreqSelectionRange).Select(p => p.X).ToArray();
                                 //var selection = traceData;//traceData.Take(highFreqSelectionRange).ToArray(); //timeTrace.Where((value, index) => index >= i * highFreqSelectionRange && index < (i + 1) * highFreqSelectionRange).Select(p => p.X).ToArray();
 
                                 sw.Apply(selection, out equivalentNoiseBandwidthHighFreq, out coherentGainHighFreq);
                                 autoPSDHighFreq = Measurements.AutoPowerSpectrum(selection, dtHighFreq, out dfHighFreq);
-                                //var singlePSD_HIGH_Freq = Measurements.SpectrumUnitConversion(autoPSDHighFreq, SpectrumType.Power, ScalingMode.Linear, DisplayUnits.VoltsRmsSquaredPerHZ, dfHighFreq, equivalentNoiseBandwidthHighFreq, coherentGainHighFreq, unit);
-                                var singlePSD_HIGH_Freq = Measurements.SpectrumUnitConversion(autoPSDHighFreq, SpectrumType.Power, ScalingMode.DB, DisplayUnits.VoltsPeakSquaredPerHZ, dfHighFreq, equivalentNoiseBandwidthHighFreq, coherentGainHighFreq, unit);
+                                var singlePSD_HIGH_Freq = Measurements.SpectrumUnitConversion(autoPSDHighFreq, SpectrumType.Power, ScalingMode.Linear, DisplayUnits.VoltsRmsSquaredPerHZ, dfHighFreq, equivalentNoiseBandwidthHighFreq, coherentGainHighFreq, unit);
+                                //var singlePSD_HIGH_Freq = Measurements.SpectrumUnitConversion(autoPSDHighFreq, SpectrumType.Power, ScalingMode.DB, DisplayUnits.VoltsPeakSquaredPerHZ, dfHighFreq, equivalentNoiseBandwidthHighFreq, coherentGainHighFreq, unit);
                                 highSingleFreqSpectrum = singlePSD_HIGH_Freq.Select((value, index) => new Point((index + 1) * dfHighFreq, value)).Where(p => p.X > 1600 && p.X <= 102400).ToArray();
 
                                 highFreqSpectrum = new Point[highSingleFreqSpectrum.Length];
@@ -691,11 +691,8 @@ namespace MCBJ.Experiments
             var mode = FileMode.OpenOrCreate;
             var access = FileAccess.Write;
 
-            createFileWithHeader(logFileName, ref mode, ref access, SingleNoiseMeasurement.DataHeader, SingleNoiseMeasurement.DataSubHeader);
-            createFileWithHeader(logFileCaptureName, ref mode, ref access, SingleNoiseMeasurement.DataHeader, SingleNoiseMeasurement.DataSubHeader);
-
-            SaveDataToLog(logFileName, noiseMeasLog.ToString());
-            SaveDataToLog(logFileCaptureName, noiseMeasLog.ToString());
+            createFileWithHeader(logFileName, ref mode, ref access, NoiseMeasurementDataLog.DataHeader, NoiseMeasurementDataLog.DataSubHeader);
+            createFileWithHeader(logFileCaptureName, ref mode, ref access, NoiseMeasurementDataLog.DataHeader, NoiseMeasurementDataLog.DataSubHeader);
 
             #endregion
 
@@ -736,7 +733,7 @@ namespace MCBJ.Experiments
 
                     setDrainVoltage(voltage, settings.VoltageDeviation);
 
-                    onStatusChanged(new StatusEventArgs("Measuring sample characteristics before noise spectar measurement."));
+                    onStatusChanged(new StatusEventArgs("Measuring sample characteristics before noise spectra measurement."));
 
                     confAIChannelsForDC_Measurement();
                     var voltagesBeforeNoiseMeasurement = boxController.VoltageMeasurement_AllChannels(settings.NAveragesSlow);
@@ -779,6 +776,9 @@ namespace MCBJ.Experiments
                     noiseMeasLog.kAmpl = settings.KAmpl;
                     noiseMeasLog.NAver = settings.SpectraAveraging;
                     noiseMeasLog.Vg = voltagesAfterNoiseMeasurement[2];
+
+                    SaveDataToLog(logFileName, noiseMeasLog.ToString());
+                    SaveDataToLog(logFileCaptureName, noiseMeasLog.ToString());
                 }
             }
 
