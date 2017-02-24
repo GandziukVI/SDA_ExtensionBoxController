@@ -373,7 +373,6 @@ namespace MCBJ.Experiments
 
             var setResistance = 1.0 / (setCond * ConductanceQuantum);
 
-            //onStatusChanged(new StatusEventArgs(string.Format("Reaching resistance of {0}.", setResistance.ToString("0.0000", NumberFormatInfo.InvariantInfo))));
             onProgressChanged(new ProgressEventArgs(0.0));
 
             motor.Enabled = true;
@@ -571,18 +570,19 @@ namespace MCBJ.Experiments
 
                                 // Selecting lower amount of data points to reduce the FFT noise
 
-                                var selection80Hz = PointSelector.SelectPoints(ref filteredData, 80, false);
+                                //var selection64Hz = PointSelector.SelectPoints(ref filteredData, 64, false);
+                                var selection64Hz = PointSelector.SelectPoints(ref filteredData, 64, false).Take(4096).ToArray();
 
                                 var sw = ScaledWindow.CreateRectangularWindow();
 
-                                sw.Apply(selection80Hz, out equivalentNoiseBandwidthLowFreq, out coherentGainLowFreq);
+                                sw.Apply(selection64Hz, out equivalentNoiseBandwidthLowFreq, out coherentGainLowFreq);
 
                                 //dtLowFreq = 1.0 / (double)samplingFrequency;
-                                dtLowFreq = 80.0 * 1.0 / (double)samplingFrequency;
+                                dtLowFreq = 64.0 * 1.0 / (double)samplingFrequency;
 
-                                autoPSDLowFreq = Measurements.AutoPowerSpectrum(selection80Hz, dtLowFreq, out dfLowFreq);
+                                autoPSDLowFreq = Measurements.AutoPowerSpectrum(selection64Hz, dtLowFreq, out dfLowFreq);
                                 //var singlePSD_LOW_Freq = Measurements.SpectrumUnitConversion(autoPSDLowFreq, SpectrumType.Power, ScalingMode.Linear, DisplayUnits.VoltsRmsSquaredPerHZ, dfLowFreq, equivalentNoiseBandwidthLowFreq, coherentGainLowFreq, unit);
-                                var singlePSD_LOW_Freq = Measurements.SpectrumUnitConversion(autoPSDLowFreq, SpectrumType.Power, ScalingMode.Linear, DisplayUnits.VoltsPeakSquaredPerHZ, dfLowFreq, equivalentNoiseBandwidthLowFreq, coherentGainLowFreq, unit);
+                                var singlePSD_LOW_Freq = Measurements.SpectrumUnitConversion(autoPSDLowFreq, SpectrumType.Power, ScalingMode.DB, DisplayUnits.VoltsPeakSquaredPerHZ, dfLowFreq, equivalentNoiseBandwidthLowFreq, coherentGainLowFreq, unit);
 
                                 var lowFreqSpectrum = (singlePSD_LOW_Freq.Select((value, index) => new Point((index + 1) * dfLowFreq, value)).Where(p => p.X <= 1600)).ToArray();
 
@@ -597,13 +597,15 @@ namespace MCBJ.Experiments
                                 Point[] highFreqSpectrum = new Point[] { };
                                 Point[] highSingleFreqSpectrum = new Point[] { };
 
-                                var selection = traceData.Take(highFreqSelectionRange).ToArray(); //timeTrace.Where((value, index) => index >= i * highFreqSelectionRange && index < (i + 1) * highFreqSelectionRange).Select(p => p.X).ToArray();
+                                var selection = traceData.Take(8192).ToArray();
+
+                                //var selection = traceData.Take(highFreqSelectionRange).ToArray(); //timeTrace.Where((value, index) => index >= i * highFreqSelectionRange && index < (i + 1) * highFreqSelectionRange).Select(p => p.X).ToArray();
                                 //var selection = traceData;//traceData.Take(highFreqSelectionRange).ToArray(); //timeTrace.Where((value, index) => index >= i * highFreqSelectionRange && index < (i + 1) * highFreqSelectionRange).Select(p => p.X).ToArray();
 
                                 sw.Apply(selection, out equivalentNoiseBandwidthHighFreq, out coherentGainHighFreq);
                                 autoPSDHighFreq = Measurements.AutoPowerSpectrum(selection, dtHighFreq, out dfHighFreq);
                                 //var singlePSD_HIGH_Freq = Measurements.SpectrumUnitConversion(autoPSDHighFreq, SpectrumType.Power, ScalingMode.Linear, DisplayUnits.VoltsRmsSquaredPerHZ, dfHighFreq, equivalentNoiseBandwidthHighFreq, coherentGainHighFreq, unit);
-                                var singlePSD_HIGH_Freq = Measurements.SpectrumUnitConversion(autoPSDHighFreq, SpectrumType.Power, ScalingMode.Linear, DisplayUnits.VoltsPeakSquaredPerHZ, dfHighFreq, equivalentNoiseBandwidthHighFreq, coherentGainHighFreq, unit);
+                                var singlePSD_HIGH_Freq = Measurements.SpectrumUnitConversion(autoPSDHighFreq, SpectrumType.Power, ScalingMode.DB, DisplayUnits.VoltsPeakSquaredPerHZ, dfHighFreq, equivalentNoiseBandwidthHighFreq, coherentGainHighFreq, unit);
                                 highSingleFreqSpectrum = singlePSD_HIGH_Freq.Select((value, index) => new Point((index + 1) * dfHighFreq, value)).Where(p => p.X > 1600 && p.X <= 102400).ToArray();
 
                                 highFreqSpectrum = new Point[highSingleFreqSpectrum.Length];
@@ -673,32 +675,6 @@ namespace MCBJ.Experiments
                 });
 
             acquisitionTaskResult.Wait();
-        }
-
-        void createFileWithHeader(string FileName, ref FileMode mode, ref FileAccess access, string Header = "", string Subheader = "")
-        {
-            access = FileAccess.Write;
-            mode = FileMode.OpenOrCreate;
-
-            var info = new FileInfo(FileName);
-
-            var dirName = info.DirectoryName;
-
-            if (!Directory.Exists(dirName))
-                Directory.CreateDirectory(dirName);
-
-            if (!File.Exists(FileName))
-            {
-                using (var sw = new StreamWriter(new FileStream(FileName, mode, access)))
-                {
-                    sw.Write(Header);
-                    sw.Write(Subheader);
-                }
-
-                mode = FileMode.Append;
-            }
-            else
-                mode = FileMode.OpenOrCreate;
         }
 
         public override void ToDo(object Arg)
@@ -840,6 +816,32 @@ namespace MCBJ.Experiments
 
 
         #region File operations
+
+        void createFileWithHeader(string FileName, ref FileMode mode, ref FileAccess access, string Header = "", string Subheader = "")
+        {
+            access = FileAccess.Write;
+            mode = FileMode.OpenOrCreate;
+
+            var info = new FileInfo(FileName);
+
+            var dirName = info.DirectoryName;
+
+            if (!Directory.Exists(dirName))
+                Directory.CreateDirectory(dirName);
+
+            if (!File.Exists(FileName))
+            {
+                using (var sw = new StreamWriter(new FileStream(FileName, mode, access)))
+                {
+                    sw.Write(Header);
+                    sw.Write(Subheader);
+                }
+
+                mode = FileMode.Append;
+            }
+            else
+                mode = FileMode.OpenOrCreate;
+        }
 
         private static int FileCounter;
         private string GetFileNameWithIncrement(string FileName)
