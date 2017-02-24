@@ -492,6 +492,8 @@ namespace MCBJ.Experiments
             if (samplingFrequency % 2 != 0)
                 throw new ArgumentException("The frequency should be an even number!");
 
+            confAIChannelsForAC_Measurement();
+
             boxController.AcquisitionInProgress = true;
 
 
@@ -596,27 +598,37 @@ namespace MCBJ.Experiments
                                 Point[] highFreqSpectrum = new Point[] { };
                                 Point[] highSingleFreqSpectrum = new Point[] { };
 
-                                for (int i = 0; i < 16; i++)
-                                {
-                                    var selection = timeTrace.Where((value, index) => index >= i * highFreqSelectionRange && index < (i + 1) * highFreqSelectionRange).Select(p => p.X).ToArray();                                    
+                                var selection = traceData.Take(highFreqSelectionRange).ToArray(); //timeTrace.Where((value, index) => index >= i * highFreqSelectionRange && index < (i + 1) * highFreqSelectionRange).Select(p => p.X).ToArray();
 
-                                    sw.Apply(selection, out equivalentNoiseBandwidthHighFreq, out coherentGainHighFreq);
-                                    autoPSDHighFreq = Measurements.AutoPowerSpectrum(selection, dtHighFreq, out dfHighFreq);
-                                    var singlePSD_HIGH_Freq = Measurements.SpectrumUnitConversion(autoPSDHighFreq, SpectrumType.Power, ScalingMode.Linear, DisplayUnits.VoltsPeakSquaredPerHZ, dfHighFreq, equivalentNoiseBandwidthHighFreq, coherentGainHighFreq, unit);
-                                    highSingleFreqSpectrum = singlePSD_HIGH_Freq.Select((value, index) => new Point((index + 1) * dfHighFreq, value / (double)highFreqPeriod)).Where(p => p.X > 1600 && p.X <= 102400).ToArray();
+                                sw.Apply(selection, out equivalentNoiseBandwidthHighFreq, out coherentGainHighFreq);
+                                autoPSDHighFreq = Measurements.AutoPowerSpectrum(selection, dtHighFreq, out dfHighFreq);
+                                var singlePSD_HIGH_Freq = Measurements.SpectrumUnitConversion(autoPSDHighFreq, SpectrumType.Power, ScalingMode.Linear, DisplayUnits.VoltsPeakSquaredPerHZ, dfHighFreq, equivalentNoiseBandwidthHighFreq, coherentGainHighFreq, unit);
+                                highSingleFreqSpectrum = singlePSD_HIGH_Freq.Select((value, index) => new Point((index + 1) * dfHighFreq, value * (double)highFreqPeriod)).Where(p => p.X > 1600 && p.X <= 102400).ToArray();
 
-                                    if (highFreqSpectrum.Length == 0)
-                                    {
-                                        highFreqSpectrum = new Point[highSingleFreqSpectrum.Length];
-                                        Array.Copy(highSingleFreqSpectrum, highFreqSpectrum, highSingleFreqSpectrum.Length);
-                                    }
-                                    else
-                                    {
-                                        if (highFreqSpectrum.Length == highSingleFreqSpectrum.Length)
-                                            for (int j = 0; j < highFreqSpectrum.Length; j++)
-                                                highFreqSpectrum[j].Y += highSingleFreqSpectrum[j].Y;
-                                    }
-                                }                                                                                                                          
+                                highFreqSpectrum = new Point[highSingleFreqSpectrum.Length];
+                                Array.Copy(highSingleFreqSpectrum, highFreqSpectrum, highSingleFreqSpectrum.Length);
+
+                                //for (int i = 0; i < 16; i++)
+                                //{
+                                //    var selection = timeTrace.Where((value, index) => index >= i * highFreqSelectionRange && index < (i + 1) * highFreqSelectionRange).Select(p => p.X).ToArray();                                    
+
+                                //    sw.Apply(selection, out equivalentNoiseBandwidthHighFreq, out coherentGainHighFreq);
+                                //    autoPSDHighFreq = Measurements.AutoPowerSpectrum(selection, dtHighFreq, out dfHighFreq);
+                                //    var singlePSD_HIGH_Freq = Measurements.SpectrumUnitConversion(autoPSDHighFreq, SpectrumType.Power, ScalingMode.Linear, DisplayUnits.VoltsPeakSquaredPerHZ, dfHighFreq, equivalentNoiseBandwidthHighFreq, coherentGainHighFreq, unit);
+                                //    highSingleFreqSpectrum = singlePSD_HIGH_Freq.Select((value, index) => new Point((index + 1) * dfHighFreq, value / (double)highFreqPeriod)).Where(p => p.X > 1600 && p.X <= 102400).ToArray();
+
+                                //    if (highFreqSpectrum.Length == 0)
+                                //    {
+                                //        highFreqSpectrum = new Point[highSingleFreqSpectrum.Length];
+                                //        Array.Copy(highSingleFreqSpectrum, highFreqSpectrum, highSingleFreqSpectrum.Length);
+                                //    }
+                                //    else
+                                //    {
+                                //        if (highFreqSpectrum.Length == highSingleFreqSpectrum.Length)
+                                //            for (int j = 0; j < highFreqSpectrum.Length; j++)
+                                //                highFreqSpectrum[j].Y += highSingleFreqSpectrum[j].Y;
+                                //    }
+                                //}                                                                                                                          
 
                                 noisePSD = new Point[lowFreqSpectrum.Count() + highFreqSpectrum.Length];
 
@@ -683,112 +695,130 @@ namespace MCBJ.Experiments
         {
             var settings = (Noise_DefinedResistanceInfo)Arg;
 
-            //confAIChannelsForAC_Measurement();
-            //measureNoiseSpectra(500000, 1, 1, 1, 1770.0);
+            measureNoiseSpectra(500000, 1, 30, 1, 1770.0);
 
-            foreach (var conductance in settings.SetConductanceCollection)
-            {
-                foreach (var voltage in settings.ScanningVoltageCollection)
-                {
-                    IsRunning = true;
+            //measureNoiseSpectra(500000, 1, 2, 1, 1770.0);
+            //measureNoiseSpectra(500000, 1, 3, 1, 1770.0);
+            //measureNoiseSpectra(500000, 1, 4, 1, 1770.0);
+            //measureNoiseSpectra(500000, 1, 5, 1, 1770.0);
+            //measureNoiseSpectra(500000, 1, 6, 1, 1770.0);
+            //measureNoiseSpectra(500000, 1, 7, 1, 1770.0);
+            //measureNoiseSpectra(500000, 1, 8, 1, 1770.0);
+            //measureNoiseSpectra(500000, 1, 9, 1, 1770.0);
+            //measureNoiseSpectra(500000, 1, 10, 1, 1770.0);
 
-                    if (TT_StreamWriter != null)
-                        TT_StreamWriter.Close();
+            //confAIChannelsForDC_Measurement();
 
-                    TTSaveFileName = GetFileNameWithIncrement(string.Join("\\", settings.FilePath, "Time traces", settings.SaveFileName));
+            //foreach (var conductance in settings.SetConductanceCollection)
+            //{
+            //    foreach (var voltage in settings.ScanningVoltageCollection)
+            //    {
+            //        IsRunning = true;
 
-                    var mode = FileMode.OpenOrCreate;
-                    var access = FileAccess.Write;
+            //        if (TT_StreamWriter != null)
+            //            TT_StreamWriter.Close();
 
-                    createFileWithHeader(TTSaveFileName, ref mode, ref access, NoiseMeasurementDataLog.DataHeader, NoiseMeasurementDataLog.DataSubHeader);
+            //        TTSaveFileName = GetFileNameWithIncrement(string.Join("\\", settings.FilePath, "Time traces", settings.SaveFileName));
 
-                    TT_StreamWriter = new StreamWriter(new FileStream(TTSaveFileName, mode, access));
+            //        var mode = FileMode.OpenOrCreate;
+            //        var access = FileAccess.Write;
 
-                    setDrainVoltage(voltage, settings.VoltageDeviation);
+            //        createFileWithHeader(TTSaveFileName, ref mode, ref access, NoiseMeasurementDataLog.DataHeader, NoiseMeasurementDataLog.DataSubHeader);
 
-                    setJunctionResistance(
-                        voltage,
-                        settings.VoltageDeviation,
-                        settings.VoltageTreshold,
-                        conductance,
-                        settings.ConductanceDeviation,
-                        settings.StabilizationTime,
-                        settings.MotionMinSpeed,
-                        settings.MotionMaxSpeed,
-                        settings.MotorMinPos,
-                        settings.MotorMaxPos,
-                        settings.NAveragesFast,
-                        settings.LoadResistance);
+            //        TT_StreamWriter = new StreamWriter(new FileStream(TTSaveFileName, mode, access));
 
-                    setDrainVoltage(voltage, settings.VoltageDeviation);
+            //        setDrainVoltage(voltage, settings.VoltageDeviation);
 
-                    onStatusChanged(new StatusEventArgs("Measuring sample characteristics before noise spectar measurement."));
+            //        setJunctionResistance(
+            //            voltage,
+            //            settings.VoltageDeviation,
+            //            settings.VoltageTreshold,
+            //            conductance,
+            //            settings.ConductanceDeviation,
+            //            settings.StabilizationTime,
+            //            settings.MotionMinSpeed,
+            //            settings.MotionMaxSpeed,
+            //            settings.MotorMinPos,
+            //            settings.MotorMaxPos,
+            //            settings.NAveragesFast,
+            //            settings.LoadResistance);
 
-                    confAIChannelsForDC_Measurement();
-                    var voltagesBeforeNoiseMeasurement = boxController.VoltageMeasurement_AllChannels(settings.NAveragesSlow);
+            //        setDrainVoltage(voltage, settings.VoltageDeviation);
 
-                    confAIChannelsForAC_Measurement();
+            //        onStatusChanged(new StatusEventArgs("Measuring sample characteristics before noise spectar measurement."));
 
-                    foreach (var item in boxController.AI_ChannelCollection)
-                        if (item.IsEnabled)
-                            item.Parameters.SetParams(FilterCutOffFrequencies.Freq_150kHz, FilterGain.gain1, PGA_GainsEnum.gain1);
+            //        confAIChannelsForDC_Measurement();
+            //        var voltagesBeforeNoiseMeasurement = boxController.VoltageMeasurement_AllChannels(settings.NAveragesSlow);
 
-                    onStatusChanged(new StatusEventArgs("Measuring noise spectra & time traces."));
-                    measureNoiseSpectra(settings.SamplingFrequency, settings.NSubSamples, settings.SpectraAveraging, settings.UpdateNumber, settings.KPreAmpl * settings.KAmpl);
+            //        confAIChannelsForAC_Measurement();
 
-                    onStatusChanged(new StatusEventArgs("Measuring sample characteristics after noise spectra measurement."));
+            //        foreach (var item in boxController.AI_ChannelCollection)
+            //            if (item.IsEnabled)
+            //                item.Parameters.SetParams(FilterCutOffFrequencies.Freq_150kHz, FilterGain.gain1, PGA_GainsEnum.gain1);
 
-                    confAIChannelsForDC_Measurement();
-                    var voltagesAfterNoiseMeasurement = boxController.VoltageMeasurement_AllChannels(settings.NAveragesSlow);
+            //        onStatusChanged(new StatusEventArgs("Measuring noise spectra & time traces."));
+            //        measureNoiseSpectra(settings.SamplingFrequency, settings.NSubSamples, settings.SpectraAveraging, settings.UpdateNumber, settings.KPreAmpl * settings.KAmpl);
 
-                    // Saving to log file all the parameters of the measurement
+            //        onStatusChanged(new StatusEventArgs("Measuring sample characteristics after noise spectra measurement."));
 
-                    var fileName = string.Join("\\", settings.FilePath, "Noise", settings.SaveFileName);
-                    var dataFileName = GetFileNameWithIncrement(fileName);
+            //        confAIChannelsForDC_Measurement();
+            //        var voltagesAfterNoiseMeasurement = boxController.VoltageMeasurement_AllChannels(settings.NAveragesSlow);
 
-                    SaveToFile(dataFileName);
+            //        // Saving to log file all the parameters of the measurement
 
-                    var noiseMeasLog = new NoiseMeasurementDataLog();
+            //        var fileName = string.Join("\\", settings.FilePath, "Noise", settings.SaveFileName);
+            //        var dataFileName = GetFileNameWithIncrement(fileName);
 
-                    noiseMeasLog.SampleVoltage = voltagesAfterNoiseMeasurement[0];
-                    noiseMeasLog.SampleCurrent = (voltagesAfterNoiseMeasurement[1] - voltagesBeforeNoiseMeasurement[0]) / settings.LoadResistance;
-                    noiseMeasLog.FileName = dataFileName;
-                    noiseMeasLog.Rload = settings.LoadResistance;
-                    noiseMeasLog.Uwhole = voltagesAfterNoiseMeasurement[1];
-                    noiseMeasLog.URload = voltagesAfterNoiseMeasurement[1] - voltagesBeforeNoiseMeasurement[0];
-                    noiseMeasLog.U0sample = voltagesBeforeNoiseMeasurement[0];
-                    noiseMeasLog.U0whole = voltagesBeforeNoiseMeasurement[1];
-                    noiseMeasLog.U0Rload = voltagesBeforeNoiseMeasurement[1] - voltagesBeforeNoiseMeasurement[0];
-                    noiseMeasLog.U0Gate = voltagesBeforeNoiseMeasurement[2];
-                    noiseMeasLog.R0sample = noiseMeasLog.U0sample / (noiseMeasLog.U0Rload / noiseMeasLog.Rload);
-                    noiseMeasLog.REsample = noiseMeasLog.SampleVoltage / (noiseMeasLog.URload / noiseMeasLog.Rload);
-                    noiseMeasLog.Temperature0 = settings.Temperature0;
-                    noiseMeasLog.TemperatureE = settings.TemperatureE;
-                    noiseMeasLog.kAmpl = settings.KAmpl;
-                    noiseMeasLog.NAver = settings.SpectraAveraging;
-                    noiseMeasLog.Vg = voltagesAfterNoiseMeasurement[2];
+            //        SaveToFile(dataFileName);
 
-                    var logFileName = string.Join("\\", settings.FilePath, "Noise", noiseMeasLog.DataLogFileName);
-                    var logFileCaptureName = string.Join("\\", settings.FilePath, "Time traces", "MeasurDataCapture.dat");
+            //        var noiseMeasLog = new NoiseMeasurementDataLog();
 
-                    SaveDataToLog(logFileName, noiseMeasLog.ToString());
-                    SaveDataToLog(logFileCaptureName, noiseMeasLog.ToString());
-                }
-            }
+            //        noiseMeasLog.SampleVoltage = voltagesAfterNoiseMeasurement[0];
+            //        noiseMeasLog.SampleCurrent = (voltagesAfterNoiseMeasurement[1] - voltagesBeforeNoiseMeasurement[0]) / settings.LoadResistance;
+            //        noiseMeasLog.FileName = dataFileName;
+            //        noiseMeasLog.Rload = settings.LoadResistance;
+            //        noiseMeasLog.Uwhole = voltagesAfterNoiseMeasurement[1];
+            //        noiseMeasLog.URload = voltagesAfterNoiseMeasurement[1] - voltagesBeforeNoiseMeasurement[0];
+            //        noiseMeasLog.U0sample = voltagesBeforeNoiseMeasurement[0];
+            //        noiseMeasLog.U0whole = voltagesBeforeNoiseMeasurement[1];
+            //        noiseMeasLog.U0Rload = voltagesBeforeNoiseMeasurement[1] - voltagesBeforeNoiseMeasurement[0];
+            //        noiseMeasLog.U0Gate = voltagesBeforeNoiseMeasurement[2];
+            //        noiseMeasLog.R0sample = noiseMeasLog.U0sample / (noiseMeasLog.U0Rload / noiseMeasLog.Rload);
+            //        noiseMeasLog.REsample = noiseMeasLog.SampleVoltage / (noiseMeasLog.URload / noiseMeasLog.Rload);
+            //        noiseMeasLog.Temperature0 = settings.Temperature0;
+            //        noiseMeasLog.TemperatureE = settings.TemperatureE;
+            //        noiseMeasLog.kAmpl = settings.KAmpl;
+            //        noiseMeasLog.NAver = settings.SpectraAveraging;
+            //        noiseMeasLog.Vg = voltagesAfterNoiseMeasurement[2];
 
-            if (channelSwitch != null)
-                if (channelSwitch.Initialized == true)
-                    channelSwitch.Exit();
+            //        var logFileName = string.Join("\\", settings.FilePath, "Noise", noiseMeasLog.DataLogFileName);
+            //        var logFileCaptureName = string.Join("\\", settings.FilePath, "Time traces", "MeasurDataCapture.dat");
 
-            if (motor != null)
-            {
-                motor.Disable();
-                motor.Dispose();
-            }
+            //        SaveDataToLog(logFileName, noiseMeasLog.ToString());
+            //        SaveDataToLog(logFileCaptureName, noiseMeasLog.ToString());
+            //    }
+            //}
 
-            if (boxController != null)
-                while (IsRunning == true)
-                    boxController.AcquisitionInProgress = false;
+            //if (channelSwitch != null)
+            //    if (channelSwitch.Initialized == true)
+            //        channelSwitch.Exit();
+
+            //if (motor != null)
+            //{
+            //    motor.Disable();
+            //    motor.Dispose();
+            //}
+
+            //if (boxController != null)
+            //{
+            //    while (boxController.AcquisitionInProgress == true)
+            //    {
+            //        boxController.AcquisitionInProgress = false;
+            //        acquisitionIsRunning = false;
+            //    }
+
+            //    boxController.Close();
+            //}
 
             onStatusChanged(new StatusEventArgs("The measurement is done!"));
         }
@@ -826,14 +856,14 @@ namespace MCBJ.Experiments
 
         void Noise_DefinedResistance_DataArrived(object sender, ExpDataArrivedEventArgs e)
         {
-            if (e.Data.StartsWith("TT"))
-            {
-                TT_StreamWriter.Write(e.Data.Substring(2));
-            }
-            else if (e.Data.StartsWith("NS"))
-            {
-                NoiseSpectrumFinal = e.Data.Substring(2);
-            }
+            //if (e.Data.StartsWith("TT"))
+            //{
+            //    TT_StreamWriter.Write(e.Data.Substring(2));
+            //}
+            //else if (e.Data.StartsWith("NS"))
+            //{
+            //    NoiseSpectrumFinal = e.Data.Substring(2);
+            //}
         }
 
         public override async void SaveToFile(string FileName)
@@ -865,14 +895,26 @@ namespace MCBJ.Experiments
             {
                 if (channelSwitch != null)
                     if (channelSwitch.Initialized == true)
-                        channelSwitch.Exit();
+                    {
+                        try
+                        {
+                            channelSwitch.Exit();
+                        }
+                        catch { }
+                    }
 
                 if (motor != null)
                     motor.Dispose();
 
                 if (boxController != null)
-                    while (IsRunning == true)
+                {
+                    while (boxController.AcquisitionInProgress == true)
                         boxController.AcquisitionInProgress = false;
+
+                    boxController.Close();
+                }
+
+                IsRunning = false;
             }
 
             base.Dispose();

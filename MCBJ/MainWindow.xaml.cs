@@ -171,6 +171,9 @@ namespace MCBJ
 
         void on_cmd_startNoiseDefR(object sender, RoutedEventArgs e)
         {
+            if (experiment != null)
+                experiment.Dispose();
+
             var firstIdentifyer = 0x0957;
             var secondIdentifyer = 0x1718;
             var visaBuilder = new StringBuilder();

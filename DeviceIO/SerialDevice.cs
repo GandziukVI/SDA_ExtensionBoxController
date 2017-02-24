@@ -28,6 +28,8 @@ namespace DeviceIO
 
         public SerialDevice(string portName, int baudRate, Parity parity, int dataBits, StopBits stopBits, string returnToken = "\n")
         {
+            Dispose();
+
             _dataReading = string.Empty;
             _dataQueue = new ConcurrentQueue<string>();
 
@@ -135,21 +137,24 @@ namespace DeviceIO
 
         public void Dispose()
         {
-            _communicatyionIsActive = false;
-            while (_serialThread.IsAlive) ;
-
-            if (_COMPort != null)
+            if (_serialThread != null)
             {
-                if (_COMPort.IsOpen)
-                {
-                    _COMPort.Close();
-                    _COMPort.Dispose();
-                }
-                else
-                    _COMPort.Dispose();
-            }
+                _communicatyionIsActive = false;
+                while (_serialThread.IsAlive) ;
 
-            GC.SuppressFinalize(this);
+                if (_COMPort != null)
+                {
+                    if (_COMPort.IsOpen)
+                    {
+                        _COMPort.Close();
+                        _COMPort.Dispose();
+                    }
+                    else
+                        _COMPort.Dispose();
+                }
+
+                GC.SuppressFinalize(this);
+            }
         }
     }
 }

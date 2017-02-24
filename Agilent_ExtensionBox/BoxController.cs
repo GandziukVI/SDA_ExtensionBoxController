@@ -16,10 +16,12 @@ namespace Agilent_ExtensionBox
 {
     public class BoxController
     {
-        private readonly AgilentU254x _Driver = new AgilentU254x();
+        private AgilentU254x _Driver;
         public AgilentU254x Driver { get { return _Driver; } }
 
-        private static readonly string Options = "Simulate=false, Cache=false, QueryInstrStatus=true";
+        private static readonly string Options = "Simulate=false, Cache=false, QueryInstrStatus=false";
+
+        private string _ResourceName = "";
 
         private static bool _IsInitialized = false;
         public static bool IsInistialized
@@ -50,11 +52,21 @@ namespace Agilent_ExtensionBox
         /// <returns></returns>
         public bool Init(string resourceName)
         {
+            _ResourceName = resourceName;
+
             if (IsInistialized)
                 return true;
 
             try
             {
+                if (_Driver == null)
+                    _Driver = new AgilentU254x();
+                else
+                {
+                    Close();
+                    _Driver = new AgilentU254x();
+                }
+
                 _Driver.Initialize(resourceName, false, true, Options);
                 _Driver.DriverOperation.QueryInstrumentStatus = false;
                 _Driver.System.TimeoutMilliseconds = 5000;
@@ -93,6 +105,7 @@ namespace Agilent_ExtensionBox
             try
             {
                 _Driver.Close();
+                //_Driver.System.DirectIO.WriteString(string.Format("viClose({0})\n", _ResourceName));
                 _IsInitialized = false;
                 return true;
             }

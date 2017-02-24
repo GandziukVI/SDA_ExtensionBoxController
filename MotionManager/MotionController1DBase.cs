@@ -109,9 +109,11 @@ namespace MotionManager
 
         public void Dispose()
         {
-            Disable();
             if (driver != null)
+            {
+                //Disable();
                 driver.Dispose();
+            }
         }
     }
 }
