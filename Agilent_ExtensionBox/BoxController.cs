@@ -104,8 +104,10 @@ namespace Agilent_ExtensionBox
 
             try
             {
+                if (_AcquisitionInProgress == true)
+                    _Driver.AnalogIn.Acquisition.Stop();
+
                 _Driver.Close();
-                //_Driver.System.DirectIO.WriteString(string.Format("viClose({0})\n", _ResourceName));
                 _IsInitialized = false;
                 return true;
             }
@@ -132,7 +134,7 @@ namespace Agilent_ExtensionBox
             for (int i = 0; i < AveragingNumber; i++)
             {
                 try
-                {                    
+                {
                     _Driver.AnalogIn.Measurement.ReadMultiple("AIn1,AIn2,AIn3,AIn4", ref singleReading);
 
                     for (int j = 0; j < result.Length; j++)
@@ -192,8 +194,6 @@ namespace Agilent_ExtensionBox
 
             _Driver.AnalogIn.MultiScan.SampleRate = SampleRate;
             _Driver.AnalogIn.MultiScan.NumberOfScans = -1;
-            //_Driver.Acquisition.Start();
-            //_Driver.Acquisition.BufferSize = SampleRate;
 
             _Driver.AnalogIn.Acquisition.BufferSize = SampleRate;
             _Driver.AnalogIn.Acquisition.Start();
@@ -211,23 +211,38 @@ namespace Agilent_ExtensionBox
 
             while (_AcquisitionInProgress)
             {
-                //while (!(_Driver.Acquisition.BufferStatus == AgilentU254xBufferStatusEnum.AgilentU254xBufferStatusDataReady)) ;
-                //_Driver.Acquisition.Fetch(ref results);
-
                 while (true)
                 {
-                    var dataReady = (_Driver.AnalogIn.Acquisition.BufferStatus == AgilentU254xBufferStatusEnum.AgilentU254xBufferStatusDataReady);
-                    if (dataReady == true)
+                    if (_AcquisitionInProgress == false)
                         break;
-                    //Thread.Sleep(20);
+                    try
+                    {
+                        var dataReady = (_Driver.AnalogIn.Acquisition.BufferStatus == AgilentU254xBufferStatusEnum.AgilentU254xBufferStatusDataReady);
+                        if (dataReady == true)
+                            break;
+                    }
+                    catch { return; }
                 }
-                _Driver.AnalogIn.Acquisition.Fetch(ref results);
 
-                _router.AddDataInvoke(ref results);
+                _Driver.AnalogIn.Acquisition.Fetch(ref results);
+                if (results.Length > 0)
+                    _router.AddDataInvoke(ref results);
             }
 
-            //_Driver.Acquisition.Stop();
-            _Driver.AnalogIn.Acquisition.Stop();
+            try
+            {
+                _Driver.AnalogIn.Acquisition.Stop();
+            }
+            catch { return; }
+        }
+
+        public void StopAnalogAcquisition()
+        {
+            if (_AcquisitionInProgress == true)
+            {
+                _AcquisitionInProgress = false;
+                _Driver.AnalogIn.Acquisition.Stop();
+            }
         }
 
         public void AcquireSingleShot(int SampleRate)
@@ -236,12 +251,10 @@ namespace Agilent_ExtensionBox
 
             _Driver.AnalogIn.MultiScan.SampleRate = SampleRate;
             _Driver.AnalogIn.MultiScan.NumberOfScans = SampleRate;
-            //_Driver.Acquisition.Start();
             _Driver.AnalogIn.Acquisition.Start();
-            //while (!_Driver.Acquisition.Completed) ;
+
             while (!(_Driver.AnalogIn.Acquisition.Completed == true)) ;
 
-            //_Driver.Acquisition.Fetch(ref results);
             _Driver.AnalogIn.Acquisition.Fetch(ref results);
 
             _router.Frequency = SampleRate;

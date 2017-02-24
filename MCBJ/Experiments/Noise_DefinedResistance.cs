@@ -54,14 +54,14 @@ namespace MCBJ.Experiments
             if (!boxInit)
                 throw new Exception("Cannot connect the box.");
 
-            channelSwitch = new ChannelSwitch();
+            //channelSwitch = new ChannelSwitch();
 
-            channelSwitch.Connecting += channelSwitch_Connecting;
-            channelSwitch.ConnectionEstablished += channelSwitch_ConnectionEstablished;
-            channelSwitch.ConnectionLost += channelSwitch_ConnectionLost;
+            //channelSwitch.Connecting += channelSwitch_Connecting;
+            //channelSwitch.ConnectionEstablished += channelSwitch_ConnectionEstablished;
+            //channelSwitch.ConnectionLost += channelSwitch_ConnectionLost;
 
-            channelSwitch.Initialize();
-            while (!connectionEstablished) ;
+            //channelSwitch.Initialize();
+            //while (!connectionEstablished) ;
 
             motor = Motor;
 
@@ -158,8 +158,8 @@ namespace MCBJ.Experiments
 
         void confAIChannelsForDC_Measurement()
         {
-            if (!isDCMode)
-            {
+            //if (!isDCMode)
+            //{
                 var init_conf = setDCConf(9.99, 9.99);
                 boxController.ConfigureAI_Channels(init_conf);
                 var voltages = boxController.VoltageMeasurement_AllChannels(averagingNumberSlow);
@@ -168,38 +168,38 @@ namespace MCBJ.Experiments
 
                 isDCMode = true;
                 isACMode = false;
-            }
+            //}
         }
 
         void confAIChannelsForAC_Measurement()
         {
-            if (!isACMode)
-            {
+            //if (!isACMode)
+            //{
                 var init_conf = setACConf(4.99);
                 boxController.ConfigureAI_Channels(init_conf);
 
                 // Erasing the data queue
 
                 Point[] temp;
-                while (!boxController.AI_ChannelCollection[0].ChannelData.IsEmpty)
-                    boxController.AI_ChannelCollection[0].ChannelData.TryDequeue(out temp);
+                while (!boxController.AI_ChannelCollection[AnalogInChannelsEnum.AIn1].ChannelData.IsEmpty)
+                    boxController.AI_ChannelCollection[AnalogInChannelsEnum.AIn1].ChannelData.TryDequeue(out temp);
 
                 // Acquiring single shot with AC data
 
                 boxController.AcquireSingleShot(1000);
-                var maxAcquiredVoltage = boxController.AI_ChannelCollection[0].ChannelData.Last().Max(p => p.Y);
+                var maxAcquiredVoltage = boxController.AI_ChannelCollection[AnalogInChannelsEnum.AIn1].ChannelData.Last().Max(p => p.Y);
 
                 // Configuring the channels to measure noise
 
                 var real_conf = setACConf(maxAcquiredVoltage);
                 boxController.ConfigureAI_Channels(real_conf);
 
-                while (!boxController.AI_ChannelCollection[0].ChannelData.IsEmpty)
-                    boxController.AI_ChannelCollection[0].ChannelData.TryDequeue(out temp);
+                while (!boxController.AI_ChannelCollection[AnalogInChannelsEnum.AIn1].ChannelData.IsEmpty)
+                    boxController.AI_ChannelCollection[AnalogInChannelsEnum.AIn1].ChannelData.TryDequeue(out temp);
 
                 isACMode = true;
                 isDCMode = false;
-            }
+            //}
         }
 
         void setVoltage(double voltage, double voltageDev, short channelIdentifyer = 1)
@@ -496,7 +496,6 @@ namespace MCBJ.Experiments
 
             boxController.AcquisitionInProgress = true;
 
-
             boxController.AI_ChannelCollection[AnalogInChannelsEnum.AIn1].DataReady -= DefResistanceNoise_DataReady;
             boxController.AI_ChannelCollection[AnalogInChannelsEnum.AIn1].DataReady += DefResistanceNoise_DataReady;
 
@@ -507,14 +506,12 @@ namespace MCBJ.Experiments
             double equivalentNoiseBandwidthLowFreq, equivalentNoiseBandwidthHighFreq;
             double coherentGainLowFreq, coherentGainHighFreq;
 
+            acquisitionIsRunning = true;
+            boxController.AcquisitionInProgress = true;
+
+            var acquisitionTaskResult = new Task(new Action(() => { }));
+
             Parallel.Invoke(
-                () =>
-                {
-                    acquisitionIsRunning = true;
-                    boxController.AcquisitionInProgress = true;
-                    boxController.StartAnalogAcquisition(samplingFrequency);
-                    acquisitionIsRunning = false;
-                },
                 () =>
                 {
                     while (true)
@@ -663,7 +660,14 @@ namespace MCBJ.Experiments
                             }
                         }
                     }
+                },
+                async () =>
+                {
+                    acquisitionTaskResult = Task.Factory.StartNew(() => { boxController.StartAnalogAcquisition(samplingFrequency); });
+                    await acquisitionTaskResult;
                 });
+
+            acquisitionTaskResult.Wait();
         }
 
         void createFileWithHeader(string FileName, ref FileMode mode, ref FileAccess access, string Header = "", string Subheader = "")
@@ -820,7 +824,9 @@ namespace MCBJ.Experiments
             //    boxController.Close();
             //}
 
-            onStatusChanged(new StatusEventArgs("The measurement is done!"));
+            //onStatusChanged(new StatusEventArgs("The measurement is done!"));
+
+            Dispose();
         }
 
         private void DefResistanceNoise_DataReady(object sender, EventArgs e)
@@ -889,8 +895,14 @@ namespace MCBJ.Experiments
             await WriteData(toWrite, DataLogFileName, mode, access);
         }
 
+        public override void Stop()
+        {
+            Dispose();
+        }
         public override void Dispose()
         {
+            this.DataArrived -= Noise_DefinedResistance_DataArrived;
+
             if (IsRunning)
             {
                 if (channelSwitch != null)
@@ -908,9 +920,6 @@ namespace MCBJ.Experiments
 
                 if (boxController != null)
                 {
-                    while (boxController.AcquisitionInProgress == true)
-                        boxController.AcquisitionInProgress = false;
-
                     boxController.Close();
                 }
 

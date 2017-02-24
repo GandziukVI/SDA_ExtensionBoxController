@@ -9,7 +9,7 @@ namespace ExperimentController
 {
     public class ExperimentBase : IExperiment
     {
-        private Thread experimentThread;
+        protected Thread experimentThread;
 
         private bool isRunning = false;
         public bool IsRunning
@@ -68,17 +68,11 @@ namespace ExperimentController
             experimentThread.Start(StartInfo);
         }
 
-        public void Stop()
+        public virtual void Stop()
         {
-            IsRunning = false;
-            if (experimentThread.IsAlive)
-            {
-                Thread.Sleep(100);
-                experimentThread.Abort();
-                Thread.Sleep(500);
+            if (experimentThread != null)
                 if (experimentThread.IsAlive)
-                    experimentThread.Join();
-            }
+                    Dispose();
         }
 
         public virtual void SaveToFile(string FileName)
@@ -89,8 +83,17 @@ namespace ExperimentController
         public virtual void Dispose()
         {
             if (experimentThread != null)
+            {
+                IsRunning = false;
                 if (experimentThread.IsAlive)
-                    Stop();
+                {
+                    Thread.Sleep(100);
+                    experimentThread.Abort();
+                    Thread.Sleep(500);
+                    if (experimentThread.IsAlive)
+                        experimentThread.Join();
+                }
+            }
         }
     }
 }

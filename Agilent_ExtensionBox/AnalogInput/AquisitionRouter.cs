@@ -63,9 +63,11 @@ namespace Agilent_ExtensionBox.IO
             del.BeginInvoke(ref Data, null, null);
         }
 
+        private readonly object dataLocker = new object();
+
         public void AddData(ref short[] data)
         {
-            lock (data)
+            lock (dataLocker)
             {
                 double time = 0.0;
                 double timeQuant = 1.0 / Frequency;
