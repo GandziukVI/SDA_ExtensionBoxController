@@ -468,6 +468,8 @@ namespace MCBJ.Experiments
         private static string TTSaveFileName = "TT.dat";
         private string NoiseSpectrumFinal = string.Empty;
 
+        Point[] noisePSD = new Point[] { };
+
         private bool acquisitionIsRunning = false;
 
         private static int averagingCounter = 0;
@@ -486,8 +488,6 @@ namespace MCBJ.Experiments
 
             double[] autoPSDLowFreq;
             double[] autoPSDHighFreq;
-
-            Point[] noisePSD = new Point[] { };
 
             if (samplingFrequency % 2 != 0)
                 throw new ArgumentException("The frequency should be an even number!");
@@ -571,15 +571,17 @@ namespace MCBJ.Experiments
 
                                 // Selecting lower amount of data points to reduce the FFT noise
 
-                                var selection08Hz = PointSelector.SelectPoints(ref filteredData, 8, false);
+                                var selection80Hz = PointSelector.SelectPoints(ref filteredData, 80, false);
 
                                 var sw = ScaledWindow.CreateRectangularWindow();
 
-                                sw.Apply(selection08Hz, out equivalentNoiseBandwidthLowFreq, out coherentGainLowFreq);
+                                sw.Apply(selection80Hz, out equivalentNoiseBandwidthLowFreq, out coherentGainLowFreq);
 
-                                dtLowFreq = 8.0 * 1.0 / (double)samplingFrequency;
+                                //dtLowFreq = 1.0 / (double)samplingFrequency;
+                                dtLowFreq = 80.0 * 1.0 / (double)samplingFrequency;
 
-                                autoPSDLowFreq = Measurements.AutoPowerSpectrum(selection08Hz, dtLowFreq, out dfLowFreq);
+                                autoPSDLowFreq = Measurements.AutoPowerSpectrum(selection80Hz, dtLowFreq, out dfLowFreq);
+                                //var singlePSD_LOW_Freq = Measurements.SpectrumUnitConversion(autoPSDLowFreq, SpectrumType.Power, ScalingMode.Linear, DisplayUnits.VoltsRmsSquaredPerHZ, dfLowFreq, equivalentNoiseBandwidthLowFreq, coherentGainLowFreq, unit);
                                 var singlePSD_LOW_Freq = Measurements.SpectrumUnitConversion(autoPSDLowFreq, SpectrumType.Power, ScalingMode.Linear, DisplayUnits.VoltsPeakSquaredPerHZ, dfLowFreq, equivalentNoiseBandwidthLowFreq, coherentGainLowFreq, unit);
 
                                 var lowFreqSpectrum = (singlePSD_LOW_Freq.Select((value, index) => new Point((index + 1) * dfLowFreq, value)).Where(p => p.X <= 1600)).ToArray();
@@ -595,11 +597,12 @@ namespace MCBJ.Experiments
                                 Point[] highFreqSpectrum = new Point[] { };
                                 Point[] highSingleFreqSpectrum = new Point[] { };
 
-                                //var selection = traceData.Take(highFreqSelectionRange).ToArray(); //timeTrace.Where((value, index) => index >= i * highFreqSelectionRange && index < (i + 1) * highFreqSelectionRange).Select(p => p.X).ToArray();
-                                var selection = traceData;//traceData.Take(highFreqSelectionRange).ToArray(); //timeTrace.Where((value, index) => index >= i * highFreqSelectionRange && index < (i + 1) * highFreqSelectionRange).Select(p => p.X).ToArray();
+                                var selection = traceData.Take(highFreqSelectionRange).ToArray(); //timeTrace.Where((value, index) => index >= i * highFreqSelectionRange && index < (i + 1) * highFreqSelectionRange).Select(p => p.X).ToArray();
+                                //var selection = traceData;//traceData.Take(highFreqSelectionRange).ToArray(); //timeTrace.Where((value, index) => index >= i * highFreqSelectionRange && index < (i + 1) * highFreqSelectionRange).Select(p => p.X).ToArray();
 
                                 sw.Apply(selection, out equivalentNoiseBandwidthHighFreq, out coherentGainHighFreq);
                                 autoPSDHighFreq = Measurements.AutoPowerSpectrum(selection, dtHighFreq, out dfHighFreq);
+                                //var singlePSD_HIGH_Freq = Measurements.SpectrumUnitConversion(autoPSDHighFreq, SpectrumType.Power, ScalingMode.Linear, DisplayUnits.VoltsRmsSquaredPerHZ, dfHighFreq, equivalentNoiseBandwidthHighFreq, coherentGainHighFreq, unit);
                                 var singlePSD_HIGH_Freq = Measurements.SpectrumUnitConversion(autoPSDHighFreq, SpectrumType.Power, ScalingMode.Linear, DisplayUnits.VoltsPeakSquaredPerHZ, dfHighFreq, equivalentNoiseBandwidthHighFreq, coherentGainHighFreq, unit);
                                 highSingleFreqSpectrum = singlePSD_HIGH_Freq.Select((value, index) => new Point((index + 1) * dfHighFreq, value)).Where(p => p.X > 1600 && p.X <= 102400).ToArray();
 
@@ -628,7 +631,8 @@ namespace MCBJ.Experiments
                                 //    }
                                 //}                                                                                                                          
 
-                                noisePSD = new Point[lowFreqSpectrum.Count() + highFreqSpectrum.Length];
+                                if (noisePSD == null || noisePSD.Length == 0)
+                                    noisePSD = new Point[lowFreqSpectrum.Count() + highFreqSpectrum.Length];
 
                                 var counter = 0;
                                 foreach (var item in lowFreqSpectrum)
@@ -641,7 +645,7 @@ namespace MCBJ.Experiments
                                 foreach (var item in highFreqSpectrum)
                                 {
                                     noisePSD[counter].X = item.X;
-                                    noisePSD[counter].Y += item.Y / 64;
+                                    noisePSD[counter].Y += item.Y;
 
                                     ++counter;
                                 }
@@ -835,6 +839,10 @@ namespace MCBJ.Experiments
             Interlocked.Increment(ref averagingCounter);
         }
 
+
+
+        #region File operations
+
         private static int FileCounter;
         private string GetFileNameWithIncrement(string FileName)
         {
@@ -896,16 +904,19 @@ namespace MCBJ.Experiments
             await WriteData(toWrite, DataLogFileName, mode, access);
         }
 
+        #endregion
+
         public override void Stop()
         {
             Dispose();
         }
+
         public override void Dispose()
         {
-            this.DataArrived -= Noise_DefinedResistance_DataArrived;
-
             if (IsRunning)
             {
+                this.DataArrived -= Noise_DefinedResistance_DataArrived;
+
                 if (channelSwitch != null)
                     if (channelSwitch.Initialized == true)
                     {
