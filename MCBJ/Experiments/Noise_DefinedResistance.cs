@@ -678,6 +678,7 @@ namespace MCBJ.Experiments
         void createFileWithHeader(string FileName, ref FileMode mode, ref FileAccess access, string Header = "", string Subheader = "")
         {
             access = FileAccess.Write;
+            mode = FileMode.OpenOrCreate;
 
             var info = new FileInfo(FileName);
 
@@ -704,17 +705,23 @@ namespace MCBJ.Experiments
         {
             var settings = (Noise_DefinedResistanceInfo)Arg;
 
-            //measureNoiseSpectra(500000, 1, 30, 1, 1770.0);
+            #region Writing data to log files
 
-            //measureNoiseSpectra(500000, 1, 2, 1, 1770.0);
-            //measureNoiseSpectra(500000, 1, 3, 1, 1770.0);
-            //measureNoiseSpectra(500000, 1, 4, 1, 1770.0);
-            //measureNoiseSpectra(500000, 1, 5, 1, 1770.0);
-            //measureNoiseSpectra(500000, 1, 6, 1, 1770.0);
-            //measureNoiseSpectra(500000, 1, 7, 1, 1770.0);
-            //measureNoiseSpectra(500000, 1, 8, 1, 1770.0);
-            //measureNoiseSpectra(500000, 1, 9, 1, 1770.0);
-            //measureNoiseSpectra(500000, 1, 10, 1, 1770.0);
+            var noiseMeasLog = new NoiseMeasurementDataLog();
+
+            var logFileName = string.Join("\\", settings.FilePath, "Noise", noiseMeasLog.DataLogFileName);
+            var logFileCaptureName = string.Join("\\", settings.FilePath, "Time traces", "MeasurDataCapture.dat");
+
+            var mode = FileMode.OpenOrCreate;
+            var access = FileAccess.Write;
+
+            createFileWithHeader(logFileName, ref mode, ref access, SingleNoiseMeasurement.DataHeader, SingleNoiseMeasurement.DataSubHeader);
+            createFileWithHeader(logFileCaptureName, ref mode, ref access, SingleNoiseMeasurement.DataHeader, SingleNoiseMeasurement.DataSubHeader);
+
+            SaveDataToLog(logFileName, noiseMeasLog.ToString());
+            SaveDataToLog(logFileCaptureName, noiseMeasLog.ToString());
+
+            #endregion
 
             confAIChannelsForDC_Measurement();
 
@@ -724,17 +731,16 @@ namespace MCBJ.Experiments
                 {
                     IsRunning = true;
 
+                    #region Recording time trace FileStream settings
+
                     if (TT_StreamWriter != null)
                         TT_StreamWriter.Close();
 
                     TTSaveFileName = GetFileNameWithIncrement(string.Join("\\", settings.FilePath, "Time traces", settings.SaveFileName));
+                    createFileWithHeader(TTSaveFileName, ref mode, ref access, "Time\tVoltage\n", "s\tV\n");
+                    TT_StreamWriter = new StreamWriter(new FileStream(TTSaveFileName, FileMode.Append, FileAccess.Write));
 
-                    var mode = FileMode.OpenOrCreate;
-                    var access = FileAccess.Write;
-
-                    createFileWithHeader(TTSaveFileName, ref mode, ref access, NoiseMeasurementDataLog.DataHeader, NoiseMeasurementDataLog.DataSubHeader);
-
-                    TT_StreamWriter = new StreamWriter(new FileStream(TTSaveFileName, mode, access));
+                    #endregion
 
                     setDrainVoltage(voltage, settings.VoltageDeviation);
 
@@ -780,8 +786,6 @@ namespace MCBJ.Experiments
 
                     SaveToFile(dataFileName);
 
-                    var noiseMeasLog = new NoiseMeasurementDataLog();
-
                     noiseMeasLog.SampleVoltage = voltagesAfterNoiseMeasurement[0];
                     noiseMeasLog.SampleCurrent = (voltagesAfterNoiseMeasurement[1] - voltagesBeforeNoiseMeasurement[0]) / settings.LoadResistance;
                     noiseMeasLog.FileName = dataFileName;
@@ -799,12 +803,6 @@ namespace MCBJ.Experiments
                     noiseMeasLog.kAmpl = settings.KAmpl;
                     noiseMeasLog.NAver = settings.SpectraAveraging;
                     noiseMeasLog.Vg = voltagesAfterNoiseMeasurement[2];
-
-                    var logFileName = string.Join("\\", settings.FilePath, "Noise", noiseMeasLog.DataLogFileName);
-                    var logFileCaptureName = string.Join("\\", settings.FilePath, "Time traces", "MeasurDataCapture.dat");
-
-                    SaveDataToLog(logFileName, noiseMeasLog.ToString());
-                    SaveDataToLog(logFileCaptureName, noiseMeasLog.ToString());
                 }
             }
 
