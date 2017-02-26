@@ -609,29 +609,7 @@ namespace MCBJ.Experiments
                                 highSingleFreqSpectrum = singlePSD_HIGH_Freq.Select((value, index) => new Point((index + 1) * dfHighFreq, value)).Where(p => p.X > 1600 && p.X <= 102400).ToArray();
 
                                 highFreqSpectrum = new Point[highSingleFreqSpectrum.Length];
-                                Array.Copy(highSingleFreqSpectrum, highFreqSpectrum, highSingleFreqSpectrum.Length);
-
-                                //for (int i = 0; i < 64; i++)
-                                //{
-                                //    var selection = traceData.Where((value, index) => index >= i * highFreqSelectionRange && index < (i + 1) * highFreqSelectionRange).Select(p => p).ToArray();
-
-                                //    sw.Apply(selection, out equivalentNoiseBandwidthHighFreq, out coherentGainHighFreq);
-                                //    autoPSDHighFreq = Measurements.AutoPowerSpectrum(selection, dtHighFreq, out dfHighFreq);
-                                //    var singlePSD_HIGH_Freq = Measurements.SpectrumUnitConversion(autoPSDHighFreq, SpectrumType.Power, ScalingMode.Linear, DisplayUnits.VoltsPeakSquaredPerHZ, dfHighFreq, equivalentNoiseBandwidthHighFreq, coherentGainHighFreq, unit);
-                                //    highSingleFreqSpectrum = singlePSD_HIGH_Freq.Select((value, index) => new Point((index + 1) * dfHighFreq, value)).Where(p => p.X > 1600 && p.X <= 102400).ToArray();
-
-                                //    if (highFreqSpectrum.Length == 0)
-                                //    {
-                                //        highFreqSpectrum = new Point[highSingleFreqSpectrum.Length];
-                                //        Array.Copy(highSingleFreqSpectrum, highFreqSpectrum, highSingleFreqSpectrum.Length);
-                                //    }
-                                //    else
-                                //    {
-                                //        if (highFreqSpectrum.Length == highSingleFreqSpectrum.Length)
-                                //            for (int j = 0; j < highFreqSpectrum.Length; j++)
-                                //                highFreqSpectrum[j].Y += highSingleFreqSpectrum[j].Y;
-                                //    }
-                                //}                                                                                                                          
+                                Array.Copy(highSingleFreqSpectrum, highFreqSpectrum, highSingleFreqSpectrum.Length);                                                                                                                                         
 
                                 if (noisePSD == null || noisePSD.Length == 0)
                                     noisePSD = new Point[lowFreqSpectrum.Count() + highFreqSpectrum.Length];
