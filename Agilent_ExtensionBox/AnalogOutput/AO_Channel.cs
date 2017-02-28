@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading;
 
 namespace Agilent_ExtensionBox.IO
 {
@@ -27,7 +28,7 @@ namespace Agilent_ExtensionBox.IO
                 default:
                     throw new ArgumentException();
             }
-            
+
             _driver = Driver;
             _DigitalChannels = new DigitalChannels(_driver);
 
@@ -69,33 +70,127 @@ namespace Agilent_ExtensionBox.IO
         private void _Set_Enabled(bool Enabled)
         {
             _driver.AnalogOut.set_Enabled(_channelName, Enabled);
-            
+
             if (Enabled)
+            {
                 _Enable.Set();
+            }
             else
+            {
                 _Enable.Reset();
+            }
+        }
+
+        public void OutputON()
+        {
+            _driver.AnalogOut.Generation.Start();
+        }
+
+        public void OutputOFF()
+        {
+            _driver.AnalogOut.Generation.Stop();
         }
 
         private void _Set_ActiveChennel(BOX_AnalogOutChannelsEnum Channel)
         {
             switch (Channel)
             {
-                case BOX_AnalogOutChannelsEnum.BOX_AOut_01: { _Selector_A0.Reset(); _Selector_A1.Reset(); _Selector_A2.Reset(); } break;
-                case BOX_AnalogOutChannelsEnum.BOX_AOut_02: { _Selector_A0.Set(); _Selector_A1.Reset(); _Selector_A2.Reset(); } break;
-                case BOX_AnalogOutChannelsEnum.BOX_AOut_03: { _Selector_A0.Reset(); _Selector_A1.Set(); _Selector_A2.Reset(); } break;
-                case BOX_AnalogOutChannelsEnum.BOX_AOut_04: { _Selector_A0.Set(); _Selector_A1.Set(); _Selector_A2.Reset(); } break;
-                case BOX_AnalogOutChannelsEnum.BOX_AOut_05: { _Selector_A0.Reset(); _Selector_A1.Reset(); _Selector_A2.Set(); } break;
-                case BOX_AnalogOutChannelsEnum.BOX_AOut_06: { _Selector_A0.Set(); _Selector_A1.Reset(); _Selector_A2.Set(); } break;
-                case BOX_AnalogOutChannelsEnum.BOX_AOut_07: { _Selector_A0.Reset(); _Selector_A1.Set(); _Selector_A2.Set(); } break;
-                case BOX_AnalogOutChannelsEnum.BOX_AOut_08: { _Selector_A0.Set(); _Selector_A1.Set(); _Selector_A2.Set(); } break;
-                case BOX_AnalogOutChannelsEnum.BOX_AOut_09: { _Selector_A0.Reset(); _Selector_A1.Reset(); _Selector_A2.Reset(); } break;
-                case BOX_AnalogOutChannelsEnum.BOX_AOut_10: { _Selector_A0.Set(); _Selector_A1.Reset(); _Selector_A2.Reset(); } break;
-                case BOX_AnalogOutChannelsEnum.BOX_AOut_11: { _Selector_A0.Reset(); _Selector_A1.Set(); _Selector_A2.Reset(); } break;
-                case BOX_AnalogOutChannelsEnum.BOX_AOut_12: { _Selector_A0.Set(); _Selector_A1.Set(); _Selector_A2.Reset(); } break;
-                case BOX_AnalogOutChannelsEnum.BOX_AOut_13: { _Selector_A0.Reset(); _Selector_A1.Set(); _Selector_A2.Set(); } break;
-                case BOX_AnalogOutChannelsEnum.BOX_AOut_14: { _Selector_A0.Set(); _Selector_A1.Set(); _Selector_A2.Set(); } break;
-                case BOX_AnalogOutChannelsEnum.BOX_AOut_15: { _Selector_A0.Set(); _Selector_A1.Reset(); _Selector_A2.Set(); } break;
-                case BOX_AnalogOutChannelsEnum.BOX_AOut_16: { _Selector_A0.Reset(); _Selector_A1.Reset(); _Selector_A2.Set(); } break;
+                case BOX_AnalogOutChannelsEnum.BOX_AOut_01: 
+                    {
+                        _Selector_A0.Reset();
+                        _Selector_A1.Reset();
+                        _Selector_A2.Reset();
+                    } break;
+                case BOX_AnalogOutChannelsEnum.BOX_AOut_02: 
+                    { 
+                        _Selector_A0.Set(); 
+                        _Selector_A1.Reset();
+                        _Selector_A2.Reset();
+                    } break;
+                case BOX_AnalogOutChannelsEnum.BOX_AOut_03: 
+                    {
+                        _Selector_A0.Reset();
+                        _Selector_A1.Set();
+                        _Selector_A2.Reset();
+                    } break;
+                case BOX_AnalogOutChannelsEnum.BOX_AOut_04: 
+                    { 
+                        _Selector_A0.Set(); 
+                        _Selector_A1.Set();
+                        _Selector_A2.Reset(); 
+                    } break;
+                case BOX_AnalogOutChannelsEnum.BOX_AOut_05: 
+                    { 
+                        _Selector_A0.Reset(); 
+                        _Selector_A1.Reset(); 
+                        _Selector_A2.Set(); 
+                    } break;
+                case BOX_AnalogOutChannelsEnum.BOX_AOut_06: 
+                    { 
+                        _Selector_A0.Set();
+                        _Selector_A1.Reset(); 
+                        _Selector_A2.Set(); 
+                    } break;
+                case BOX_AnalogOutChannelsEnum.BOX_AOut_07: 
+                    {
+                        _Selector_A0.Reset();
+                        _Selector_A1.Set();
+                        _Selector_A2.Set(); 
+                    } break;
+                case BOX_AnalogOutChannelsEnum.BOX_AOut_08:
+                    { 
+                        _Selector_A0.Set();
+                        _Selector_A1.Set(); 
+                        _Selector_A2.Set(); 
+                    } break;
+                case BOX_AnalogOutChannelsEnum.BOX_AOut_09: 
+                    {
+                        _Selector_A0.Reset();
+                        _Selector_A1.Reset(); 
+                        _Selector_A2.Reset(); 
+                    } break;
+                case BOX_AnalogOutChannelsEnum.BOX_AOut_10: 
+                    {
+                        _Selector_A0.Set();
+                        _Selector_A1.Reset();
+                        _Selector_A2.Reset(); 
+                    } break;
+                case BOX_AnalogOutChannelsEnum.BOX_AOut_11: 
+                    { 
+                        _Selector_A0.Reset();
+                        _Selector_A1.Set(); 
+                        _Selector_A2.Reset(); 
+                    } break;
+                case BOX_AnalogOutChannelsEnum.BOX_AOut_12:
+                    { 
+                        _Selector_A0.Set();
+                        _Selector_A1.Set();
+                        _Selector_A2.Reset(); 
+                    } break;
+                case BOX_AnalogOutChannelsEnum.BOX_AOut_13:
+                    { 
+                        _Selector_A0.Reset(); 
+                        _Selector_A1.Set(); 
+                        _Selector_A2.Set();
+                    } break;
+                case BOX_AnalogOutChannelsEnum.BOX_AOut_14: 
+                    { 
+                        _Selector_A0.Set();
+                        _Selector_A1.Set(); 
+                        _Selector_A2.Set(); 
+                    } break;
+                case BOX_AnalogOutChannelsEnum.BOX_AOut_15: 
+                    { 
+                        _Selector_A0.Set(); 
+                        _Selector_A1.Reset();
+                        _Selector_A2.Set(); 
+                    } break;
+                case BOX_AnalogOutChannelsEnum.BOX_AOut_16: 
+                    { 
+                        _Selector_A0.Reset(); 
+                        _Selector_A1.Reset(); 
+                        _Selector_A2.Set(); 
+                    } break;
 
 
                 default:
