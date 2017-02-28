@@ -35,7 +35,7 @@ namespace MCBJ.Experiments
 
         Stopwatch stabilityStopwatch;
 
-        bool connectionEstablished = false;
+        //bool connectionEstablished = false;
 
         bool isDCMode = false;
         bool isACMode = false;
@@ -56,12 +56,12 @@ namespace MCBJ.Experiments
 
             channelSwitch = new ChannelSwitch();
 
-            channelSwitch.Connecting += channelSwitch_Connecting;
-            channelSwitch.ConnectionEstablished += channelSwitch_ConnectionEstablished;
-            channelSwitch.ConnectionLost += channelSwitch_ConnectionLost;
+            //channelSwitch.Connecting += channelSwitch_Connecting;
+            //channelSwitch.ConnectionEstablished += channelSwitch_ConnectionEstablished;
+            //channelSwitch.ConnectionLost += channelSwitch_ConnectionLost;
 
-            channelSwitch.Initialize();
-            while (!connectionEstablished) ;
+            //channelSwitch.Initialize();
+            //while (!connectionEstablished) ;
 
             motor = Motor;
 
@@ -75,27 +75,27 @@ namespace MCBJ.Experiments
             onStatusChanged(new StatusEventArgs("Connecting to the voltages controller module..."));
         }
 
-        void channelSwitch_ConnectionEstablished(object sender, EventArgs e)
-        {
-            connectionEstablished = true;
-            onStatusChanged(new StatusEventArgs("Connection to the voltages controller module is established."));
-        }
+        //void channelSwitch_ConnectionEstablished(object sender, EventArgs e)
+        //{
+        //    connectionEstablished = true;
+        //    onStatusChanged(new StatusEventArgs("Connection to the voltages controller module is established."));
+        //}
 
-        void channelSwitch_ConnectionLost(object sender, EventArgs e)
-        {
-            connectionEstablished = false;
-            onStatusChanged(new StatusEventArgs("Connection to the voltages controller module is lost. Trying to reconnect..."));
-            try
-            {
-                channelSwitch.Initialize();
-                while (!connectionEstablished) ;
-            }
-            catch
-            {
-                onStatusChanged(new StatusEventArgs("Connection to the voltages controller module is failed."));
-                throw new Exception("Couldn't reestablisch the connection with channel switch.");
-            }
-        }
+        //void channelSwitch_ConnectionLost(object sender, EventArgs e)
+        //{
+        //    connectionEstablished = false;
+        //    onStatusChanged(new StatusEventArgs("Connection to the voltages controller module is lost. Trying to reconnect..."));
+        //    try
+        //    {
+        //        channelSwitch.Initialize();
+        //        while (!connectionEstablished) ;
+        //    }
+        //    catch
+        //    {
+        //        onStatusChanged(new StatusEventArgs("Connection to the voltages controller module is failed."));
+        //        throw new Exception("Couldn't reestablisch the connection with channel switch.");
+        //    }
+        //}
 
         RangesEnum setRangeForGivenVoltage(double Voltage)
         {
@@ -217,7 +217,8 @@ namespace MCBJ.Experiments
 
             confAIChannelsForDC_Measurement();
 
-            while (!connectionEstablished) ;
+            channelSwitch.Initialize();
+            while (!(channelSwitch.Initialized == true)) ;
 
             while (true)
             {
@@ -292,6 +293,9 @@ namespace MCBJ.Experiments
             }
 
             channelSwitch.MoveMotor(channelIdentifyer, 0);
+
+            channelSwitch.Exit();
+            while(!channelSwitch.Initialized == false);
         }
 
         void setDrainVoltage(double drainVoltage, double voltageDev)
