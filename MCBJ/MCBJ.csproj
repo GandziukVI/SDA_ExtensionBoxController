@@ -188,6 +188,10 @@
       <Project>{811a09b5-6590-46af-bfa6-6a1616fe3f51}</Project>
       <Name>ExperimentController</Name>
     </ProjectReference>
+    <ProjectReference Include="..\IneltaMotorPotentiometer\IneltaMotorPotentiometer.csproj">
+      <Project>{46f0dd56-49e3-47a6-84ef-9eab44609cb0}</Project>
+      <Name>IneltaMotorPotentiometer</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Keithley26xx\Keithley26xx.csproj">
       <Project>{61c7f3be-15b1-4445-8367-90331c7f47fd}</Project>
       <Name>Keithley26xx</Name>

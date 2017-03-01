@@ -23,19 +23,19 @@ using D3Helper;
 using System.IO;
 
 using MCBJ.Experiments.DataHandling;
+using IneltaMotorPotentiometer;
 
 namespace MCBJ.Experiments
 {
     public class Noise_DefinedResistance : ExperimentBase
     {
         BoxController boxController;
-        ChannelSwitch channelSwitch;
+        BS350_MotorPotentiometer VdsMotorPotentiometer;
 
         IMotionController1D motor;
 
         Stopwatch stabilityStopwatch;
-
-        //bool connectionEstablished = false;
+        Stopwatch accuracyStopWatch;
 
         bool isDCMode = false;
         bool isACMode = false;
@@ -54,48 +54,15 @@ namespace MCBJ.Experiments
             if (!boxInit)
                 throw new Exception("Cannot connect the box.");
 
-            //channelSwitch = new ChannelSwitch();
-
-            //channelSwitch.Connecting += channelSwitch_Connecting;
-            //channelSwitch.ConnectionEstablished += channelSwitch_ConnectionEstablished;
-            //channelSwitch.ConnectionLost += channelSwitch_ConnectionLost;
-
-            //channelSwitch.Initialize();
-            //while (!connectionEstablished) ;
+            VdsMotorPotentiometer = new BS350_MotorPotentiometer(boxController, BOX_AnalogOutChannelsEnum.BOX_AOut_01);
 
             motor = Motor;
 
             stabilityStopwatch = new Stopwatch();
+            accuracyStopWatch = new Stopwatch();
 
             this.DataArrived += Noise_DefinedResistance_DataArrived;
         }
-
-        void channelSwitch_Connecting(object sender, EventArgs e)
-        {
-            onStatusChanged(new StatusEventArgs("Connecting to the voltages controller module..."));
-        }
-
-        //void channelSwitch_ConnectionEstablished(object sender, EventArgs e)
-        //{
-        //    connectionEstablished = true;
-        //    onStatusChanged(new StatusEventArgs("Connection to the voltages controller module is established."));
-        //}
-
-        //void channelSwitch_ConnectionLost(object sender, EventArgs e)
-        //{
-        //    connectionEstablished = false;
-        //    onStatusChanged(new StatusEventArgs("Connection to the voltages controller module is lost. Trying to reconnect..."));
-        //    try
-        //    {
-        //        channelSwitch.Initialize();
-        //        while (!connectionEstablished) ;
-        //    }
-        //    catch
-        //    {
-        //        onStatusChanged(new StatusEventArgs("Connection to the voltages controller module is failed."));
-        //        throw new Exception("Couldn't reestablisch the connection with channel switch.");
-        //    }
-        //}
 
         RangesEnum setRangeForGivenVoltage(double Voltage)
         {
@@ -149,12 +116,8 @@ namespace MCBJ.Experiments
         int averagingNumberFast = 2;
         int averagingNumberSlow = 100;
 
-        short stopSpeed = 0;
-        short minSpeed = 10;
-        short maxSpeed = 255;
-
-        int minStepTime = 10;
-        int maxStepTime = 500;
+        byte minSpeed = 0;
+        byte maxSpeed = 255;
 
         void confAIChannelsForDC_Measurement()
         {
@@ -202,25 +165,21 @@ namespace MCBJ.Experiments
             }
         }
 
-        void setVoltage(double voltage, double voltageDev, short channelIdentifyer = 1)
+        // For the step time estimation to increase voltage set accuracy
+        private int estimationCollectionSize = 25;
+        private LinkedList<Point> estimationList = new LinkedList<Point>();
+        void setDrainVoltage(double voltage, double voltageDev)
         {
-            if (channelIdentifyer < 0 || channelIdentifyer > 2)
-                throw new ArgumentException("Channel number has incorrect value.");
-
             voltage = Math.Abs(voltage);
             var intervalCoarse = voltage * (1.0 - 1.0 / Math.Sqrt(2.0));
-            var intervalFine = 0.0;
 
-            double drainVoltageCurr,
-                factorCoarse = 0.0,
-                factorFine = 0.0;
+            double drainVoltageCurr = 0.0,
+                drainVoltagePrev = 0.0,
+                factorCoarse = 0.0;
 
             confAIChannelsForDC_Measurement();
 
-            channelSwitch = new ChannelSwitch();
-
-            channelSwitch.Initialize();
-            while (!(channelSwitch.Initialized == true)) ;
+            accuracyStopWatch.Start();
 
             while (true)
             {
@@ -234,75 +193,70 @@ namespace MCBJ.Experiments
                 try
                 {
                     factorCoarse = (1.0 - Math.Tanh(-1.0 * Math.Abs(voltage - drainVoltageCurr) / intervalCoarse * Math.PI + Math.PI)) / 2.0;
-                    speed = (short)(minSpeed + (maxSpeed - minSpeed) * factorCoarse);
+                    speed = (byte)(minSpeed + (maxSpeed - minSpeed) * factorCoarse);
                 }
                 catch { speed = minSpeed; }
 
                 if ((drainVoltageCurr >= Math.Abs(voltage - voltageDev)) &&
                     (drainVoltageCurr <= Math.Abs(voltage + voltageDev)))
                 {
-                    channelSwitch.MoveMotor(channelIdentifyer, stopSpeed);
+                    VdsMotorPotentiometer.StopMotion();
+                    accuracyStopWatch.Stop();
                     break;
                 }
                 else
                 {
-                    intervalFine = voltage * (1.0 - 1.0 / Math.Sqrt(2.0)) * 2.0 * voltageDev;
-                    factorFine = (1.0 - Math.Tanh(-1.0 * Math.Abs(voltage - drainVoltageCurr) / intervalFine * Math.PI + Math.PI)) / 2.0;
+                    // Implementing voltage set with enchansed accuracy
+                    if (estimationList.Count > estimationCollectionSize)
+                        estimationList.RemoveFirst();
 
-                    var stepTime = (int)(minStepTime + (maxStepTime - minStepTime) * factorFine);
+                    estimationList.AddLast(new Point(accuracyStopWatch.ElapsedMilliseconds, Math.Abs(drainVoltagePrev - drainVoltageCurr)));
+
+                    var timeAVG = estimationList.Select(val => val.X).Average();
+                    var voltAVG = estimationList.Select(val => val.Y).Average();
+
+                    var voltPerMilisecond = timeAVG != 0 ? voltAVG / timeAVG : voltAVG;
+
+                    var stepTime = (int)(Math.Abs(voltage - drainVoltageCurr) / voltPerMilisecond);
 
                     if (drainVoltageCurr > voltage)
                     {
-                        if (voltageDev >= 0.006)
+                        if (voltageDev >= 0.006 || drainVoltageCurr - voltage > 2.0 * voltageDev)
                         {
                             averagingNumberFast = 2;
-                            channelSwitch.MoveMotor(channelIdentifyer, speed);
-                        }
-                        else if (drainVoltageCurr - voltage > 2.0 * voltageDev)
-                        {
-                            averagingNumberFast = 2;
-                            channelSwitch.MoveMotor(channelIdentifyer, speed);
+                            VdsMotorPotentiometer.StartMotion(speed, MotionDirection.cw);
                         }
                         else
                         {
-                            channelSwitch.MoveMotor(channelIdentifyer, speed);
-                            Thread.Sleep((int)(stepTime));
-                            channelSwitch.MoveMotor(channelIdentifyer, stopSpeed);
+                            VdsMotorPotentiometer.StartMotion(speed, MotionDirection.cw);
+                            Thread.Sleep(stepTime);
+                            VdsMotorPotentiometer.StopMotion();
                             averagingNumberFast = 25;
                         }
                     }
                     else
                     {
-                        if (voltageDev >= 0.006)
+                        if (voltageDev >= 0.006 || voltage - drainVoltageCurr > 2.0 * voltageDev)
                         {
                             averagingNumberFast = 2;
-                            channelSwitch.MoveMotor(channelIdentifyer, (short)(-1.0 * speed));
-                        }
-                        else if (voltage - drainVoltageCurr > 2.0 * voltageDev)
-                        {
-                            averagingNumberFast = 2;
-                            channelSwitch.MoveMotor(channelIdentifyer, (short)(-1.0 * speed));
+                            VdsMotorPotentiometer.StartMotion(speed, MotionDirection.ccw);
                         }
                         else
                         {
-                            channelSwitch.MoveMotor(channelIdentifyer, (short)(-1.0 * speed));
-                            Thread.Sleep((int)(stepTime));
-                            channelSwitch.MoveMotor(channelIdentifyer, stopSpeed);
+                            VdsMotorPotentiometer.StartMotion(speed, MotionDirection.ccw);
+                            Thread.Sleep(stepTime);
+                            VdsMotorPotentiometer.StopMotion();
                             averagingNumberFast = 25;
                         }
                     }
+
+                    accuracyStopWatch.Restart();
                 }
+
+                drainVoltagePrev = drainVoltageCurr;
             }
 
-            channelSwitch.MoveMotor(channelIdentifyer, 0);
-
-            channelSwitch.Exit();
-            
-        }
-
-        void setDrainVoltage(double drainVoltage, double voltageDev)
-        {
-            setVoltage(drainVoltage, voltageDev, 1);
+            VdsMotorPotentiometer.StopMotion();
         }
 
         double measureResistance(
@@ -663,11 +617,7 @@ namespace MCBJ.Experiments
 
         public override void ToDo(object Arg)
         {
-            boxController.AO_ChannelCollection.SetVoltage_to_DefCh(BOX_AnalogOutChannelsEnum.BOX_AOut_02, 2);
-            boxController.AO_ChannelCollection.SetVoltage_to_DefCh(BOX_AnalogOutChannelsEnum.BOX_AOut_02, 3);
-            boxController.AO_ChannelCollection.SetVoltage_to_DefCh(BOX_AnalogOutChannelsEnum.BOX_AOut_02, 4);
-            boxController.AO_ChannelCollection.SetVoltage_to_DefCh(BOX_AnalogOutChannelsEnum.BOX_AOut_02, 5);
-            boxController.AO_ChannelCollection.SetVoltage_to_DefCh(BOX_AnalogOutChannelsEnum.BOX_AOut_02, 0);
+            
 
             //var settings = (Noise_DefinedResistanceInfo)Arg;
 
@@ -910,16 +860,6 @@ namespace MCBJ.Experiments
             if (IsRunning)
             {
                 this.DataArrived -= Noise_DefinedResistance_DataArrived;
-
-                if (channelSwitch != null)
-                    if (channelSwitch.Initialized == true)
-                    {
-                        try
-                        {
-                            channelSwitch.Exit();
-                        }
-                        catch { }
-                    }
 
                 if (motor != null)
                     motor.Dispose();

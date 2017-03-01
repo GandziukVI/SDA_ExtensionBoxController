@@ -153,7 +153,7 @@ namespace DeviceIO
                         _COMPort.Dispose();
                 }
 
-                GC.SuppressFinalize(this);
+                GC.Collect();
             }
         }
     }
