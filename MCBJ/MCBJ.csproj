@@ -55,15 +55,6 @@
     <Prefer32Bit>true</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="ChannelSwitchLibrary">
-      <HintPath>..\Third_Part_Libraries\MeasurementSwitch\ChannelSwitchLibrary.dll</HintPath>
-    </Reference>
-    <Reference Include="CommandMessenger">
-      <HintPath>..\Third_Part_Libraries\MeasurementSwitch\CommandMessenger.dll</HintPath>
-    </Reference>
-    <Reference Include="CommandMessenger.Transport.Serial">
-      <HintPath>..\Third_Part_Libraries\MeasurementSwitch\CommandMessenger.Transport.Serial.dll</HintPath>
-    </Reference>
     <Reference Include="DynamicDataDisplay">
       <HintPath>..\Third_Part_Libraries\D3Assemblies\DynamicDataDisplay.dll</HintPath>
     </Reference>

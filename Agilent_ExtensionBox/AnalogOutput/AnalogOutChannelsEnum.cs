@@ -27,6 +27,7 @@ namespace Agilent_ExtensionBox.IO
         BOX_AOut_13,
         BOX_AOut_14,
         BOX_AOut_15,
-        BOX_AOut_16
+        BOX_AOut_16,
+        NotSet
     }
 }

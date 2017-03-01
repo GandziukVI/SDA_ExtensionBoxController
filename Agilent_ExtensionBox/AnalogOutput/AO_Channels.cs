@@ -57,7 +57,7 @@ namespace Agilent_ExtensionBox.IO
             }
         }
 
-        private BOX_AnalogOutChannelsEnum currentChannelSelection;
+        private BOX_AnalogOutChannelsEnum currentChannelSelection = BOX_AnalogOutChannelsEnum.NotSet;
         private void select_AIOutChannelForVoltageApply(BOX_AnalogOutChannelsEnum boxOut, double voltage)
         {
             currentChannelSelection = boxOut;
@@ -86,23 +86,26 @@ namespace Agilent_ExtensionBox.IO
 
         public void ApplyVoltageToChannel(BOX_AnalogOutChannelsEnum boxOutChannel, double voltage)
         {
-            if (currentChannelSelection == null || currentChannelSelection != boxOutChannel)
-                select_AIOutChannelForVoltageApply(boxOutChannel, voltage);
-            else
+            if (boxOutChannel != BOX_AnalogOutChannelsEnum.NotSet)
             {
-                var OutputNumber = (int)boxOutChannel + 1;
+                if (currentChannelSelection != boxOutChannel)
+                    select_AIOutChannelForVoltageApply(boxOutChannel, voltage);
+                else
+                {
+                    var OutputNumber = (int)boxOutChannel + 1;
 
-                if ((OutputNumber <= 8) && (OutputNumber >= 1))
-                {
-                    _channels[1].Enabled = true;
-                    _channels[1].Voltage = voltage;
-                    _channels[1].OutputOFF();
-                }
-                else if ((OutputNumber <= 16) && (OutputNumber >= 9))
-                {
-                    _channels[0].Enabled = true;
-                    _channels[0].Voltage = voltage;
-                    _channels[0].OutputOFF();
+                    if ((OutputNumber <= 8) && (OutputNumber >= 1))
+                    {
+                        _channels[1].Enabled = true;
+                        _channels[1].Voltage = voltage;
+                        _channels[1].OutputOFF();
+                    }
+                    else if ((OutputNumber <= 16) && (OutputNumber >= 9))
+                    {
+                        _channels[0].Enabled = true;
+                        _channels[0].Voltage = voltage;
+                        _channels[0].OutputOFF();
+                    }
                 }
             }
         }
@@ -113,7 +116,6 @@ namespace Agilent_ExtensionBox.IO
             {
                 ch.Voltage = 0;
                 ch.Enabled = false;
-                ch.OutputON();
             }
         }
     }

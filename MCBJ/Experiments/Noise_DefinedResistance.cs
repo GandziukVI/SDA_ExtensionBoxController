@@ -10,8 +10,6 @@ using System.Diagnostics;
 using System.Windows;
 using System.Globalization;
 
-using ChannelSwitchLibrary;
-
 using Agilent_ExtensionBox;
 using Agilent_ExtensionBox.IO;
 using Agilent_ExtensionBox.Internal;
@@ -54,7 +52,7 @@ namespace MCBJ.Experiments
             if (!boxInit)
                 throw new Exception("Cannot connect the box.");
 
-            VdsMotorPotentiometer = new BS350_MotorPotentiometer(boxController, BOX_AnalogOutChannelsEnum.BOX_AOut_01);
+            VdsMotorPotentiometer = new BS350_MotorPotentiometer(boxController, BOX_AnalogOutChannelsEnum.BOX_AOut_02);
 
             motor = Motor;
 
@@ -617,7 +615,18 @@ namespace MCBJ.Experiments
 
         public override void ToDo(object Arg)
         {
-            
+            setDrainVoltage(0.02, 0.001);
+
+            //boxController.AO_ChannelCollection.ApplyVoltageToChannel(BOX_AnalogOutChannelsEnum.BOX_AOut_01, 1);
+
+            boxController.AO_ChannelCollection.DisableAllVoltages();
+
+            //boxController.AO_ChannelCollection.ApplyVoltageToChannel(BOX_AnalogOutChannelsEnum.BOX_AOut_02, 1);
+            //boxController.AO_ChannelCollection.ApplyVoltageToChannel(BOX_AnalogOutChannelsEnum.BOX_AOut_02, 2);
+            //boxController.AO_ChannelCollection.ApplyVoltageToChannel(BOX_AnalogOutChannelsEnum.BOX_AOut_02, 3);
+            //boxController.AO_ChannelCollection.ApplyVoltageToChannel(BOX_AnalogOutChannelsEnum.BOX_AOut_02, 4);
+
+            //boxController.AO_ChannelCollection.DisableAllVoltages();
 
             //var settings = (Noise_DefinedResistanceInfo)Arg;
 
