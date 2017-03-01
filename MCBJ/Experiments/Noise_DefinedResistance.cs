@@ -679,7 +679,7 @@ namespace MCBJ.Experiments
                     foreach (var item in boxController.AI_ChannelCollection)
                         if (item.IsEnabled)
                         {
-                            item.Parameters.SetParams(FilterCutOffFrequencies.Freq_150kHz, FilterGain.gain1, PGA_GainsEnum.gain1);
+                            item.Parameters.SetParams(FilterCutOffFrequencies.Freq_150kHz, FilterGain.gain1, PGA_GainsEnum.gain10);
                             //item.Parameters.SetCutoffFrequency(FilterCutOffFrequencies.Freq_150kHz);
                             //item.Parameters.SetPGA_Gain(PGA_GainsEnum.gain1);
                             //item.Parameters.SetFilter_Gain(FilterGain.gain1);

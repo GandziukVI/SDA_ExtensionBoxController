@@ -24,7 +24,7 @@ namespace Agilent_ExtensionBox.Internal
         {
             ChannelFilter.SetCutOffFrequencyAndGain(_channelName, cutoff, filter_gain);
             CommonLatch.PulseLatchForChannel(_channelName);
-            ChannelPGA.SetAmplification(pga_gain);            
+            ChannelPGA.SetAmplification(pga_gain);
         }
 
         public void SetCutoffFrequency(FilterCutOffFrequencies cutoff)
