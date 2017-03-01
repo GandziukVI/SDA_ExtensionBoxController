@@ -615,19 +615,6 @@ namespace MCBJ.Experiments
 
         public override void ToDo(object Arg)
         {
-            setDrainVoltage(0.02, 0.001);
-
-            //boxController.AO_ChannelCollection.ApplyVoltageToChannel(BOX_AnalogOutChannelsEnum.BOX_AOut_01, 1);
-
-            boxController.AO_ChannelCollection.DisableAllVoltages();
-
-            //boxController.AO_ChannelCollection.ApplyVoltageToChannel(BOX_AnalogOutChannelsEnum.BOX_AOut_02, 1);
-            //boxController.AO_ChannelCollection.ApplyVoltageToChannel(BOX_AnalogOutChannelsEnum.BOX_AOut_02, 2);
-            //boxController.AO_ChannelCollection.ApplyVoltageToChannel(BOX_AnalogOutChannelsEnum.BOX_AOut_02, 3);
-            //boxController.AO_ChannelCollection.ApplyVoltageToChannel(BOX_AnalogOutChannelsEnum.BOX_AOut_02, 4);
-
-            //boxController.AO_ChannelCollection.DisableAllVoltages();
-
             //var settings = (Noise_DefinedResistanceInfo)Arg;
 
             //#region Writing data to log files
