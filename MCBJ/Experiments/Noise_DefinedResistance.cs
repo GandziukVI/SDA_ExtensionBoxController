@@ -529,18 +529,15 @@ namespace MCBJ.Experiments
                                 // Selecting lower amount of data points to reduce the FFT noise
 
                                 var selection64Hz = PointSelector.SelectPoints(ref filteredData, 64, false);
-                                //var selection64Hz = PointSelector.SelectPoints(ref filteredData, 64, false).Take(4096).ToArray();
 
                                 var sw = ScaledWindow.CreateRectangularWindow();
 
                                 sw.Apply(selection64Hz, out equivalentNoiseBandwidthLowFreq, out coherentGainLowFreq);
 
-                                //dtLowFreq = 1.0 / (double)samplingFrequency;
                                 dtLowFreq = 64.0 * 1.0 / (double)samplingFrequency;
 
                                 autoPSDLowFreq = Measurements.AutoPowerSpectrum(selection64Hz, dtLowFreq, out dfLowFreq);
                                 var singlePSD_LOW_Freq = Measurements.SpectrumUnitConversion(autoPSDLowFreq, SpectrumType.Power, ScalingMode.Linear, DisplayUnits.VoltsRmsSquaredPerHZ, dfLowFreq, equivalentNoiseBandwidthLowFreq, coherentGainLowFreq, unit);
-                                //var singlePSD_LOW_Freq = Measurements.SpectrumUnitConversion(autoPSDLowFreq, SpectrumType.Power, ScalingMode.DB, DisplayUnits.VoltsPeakSquaredPerHZ, dfLowFreq, equivalentNoiseBandwidthLowFreq, coherentGainLowFreq, unit);
 
                                 var lowFreqSpectrum = (singlePSD_LOW_Freq.Select((value, index) => new Point((index + 1) * dfLowFreq, value)).Where(p => p.X <= 1600)).ToArray();
 
@@ -555,19 +552,49 @@ namespace MCBJ.Experiments
                                 Point[] highFreqSpectrum = new Point[] { };
                                 Point[] highSingleFreqSpectrum = new Point[] { };
 
-                                //var selection = traceData.Take(8192).ToArray();
+                                LinkedList<double[]> selectionList = new LinkedList<double[]>();
+                                
+                                for (int i = 0; i < highFreqPeriod; i++)
+                                {
+                                    var arr = new double[highFreqSelectionRange];
+                                    Array.Copy(traceData, i * highFreqSelectionRange, arr, 0, highFreqSelectionRange);
+                                    selectionList.AddLast(arr);
+                                }
 
-                                var selection = traceData.Take(highFreqSelectionRange).ToArray(); //timeTrace.Where((value, index) => index >= i * highFreqSelectionRange && index < (i + 1) * highFreqSelectionRange).Select(p => p.X).ToArray();
-                                //var selection = traceData;//traceData.Take(highFreqSelectionRange).ToArray(); //timeTrace.Where((value, index) => index >= i * highFreqSelectionRange && index < (i + 1) * highFreqSelectionRange).Select(p => p.X).ToArray();
+                                var hfSpec = new double[] { };
 
-                                sw.Apply(selection, out equivalentNoiseBandwidthHighFreq, out coherentGainHighFreq);
-                                autoPSDHighFreq = Measurements.AutoPowerSpectrum(selection, dtHighFreq, out dfHighFreq);
-                                var singlePSD_HIGH_Freq = Measurements.SpectrumUnitConversion(autoPSDHighFreq, SpectrumType.Power, ScalingMode.Linear, DisplayUnits.VoltsRmsSquaredPerHZ, dfHighFreq, equivalentNoiseBandwidthHighFreq, coherentGainHighFreq, unit);
-                                //var singlePSD_HIGH_Freq = Measurements.SpectrumUnitConversion(autoPSDHighFreq, SpectrumType.Power, ScalingMode.DB, DisplayUnits.VoltsPeakSquaredPerHZ, dfHighFreq, equivalentNoiseBandwidthHighFreq, coherentGainHighFreq, unit);
-                                highSingleFreqSpectrum = singlePSD_HIGH_Freq.Select((value, index) => new Point((index + 1) * dfHighFreq, value)).Where(p => p.X > 1600 && p.X <= 102400).ToArray();
+                                foreach (var selection in selectionList)
+                                {
+                                    sw.Apply(selection, out equivalentNoiseBandwidthHighFreq, out coherentGainHighFreq);
+                                    autoPSDHighFreq = Measurements.AutoPowerSpectrum(selection, dtHighFreq, out dfHighFreq);
 
-                                highFreqSpectrum = new Point[highSingleFreqSpectrum.Length];
-                                Array.Copy(highSingleFreqSpectrum, highFreqSpectrum, highSingleFreqSpectrum.Length);
+                                    if (hfSpec == null || hfSpec.Length == 0)
+                                    {
+                                        hfSpec = new double[autoPSDHighFreq.Length];
+                                        for (int i = 0; i < autoPSDHighFreq.Length; i++)
+                                        {
+                                            hfSpec[i] = autoPSDHighFreq[i];
+                                        }
+                                    }
+                                    else
+                                    {
+                                        for (int i = 0; i < autoPSDHighFreq.Length; i++)
+                                        {
+                                            hfSpec[i] += autoPSDHighFreq[i];
+                                        }
+                                    }
+                                }
+
+                                var hfSpecTransformed = Measurements.SpectrumUnitConversion(hfSpec, SpectrumType.Power, ScalingMode.Linear, DisplayUnits.VoltsRmsSquaredPerHZ, dfLowFreq, equivalentNoiseBandwidthLowFreq, coherentGainLowFreq, unit);
+
+                                highFreqSpectrum = new Point[hfSpecTransformed.Length];
+
+                                for (int i = 0; i < highFreqSpectrum.Length; i++)
+                                {
+                                    highFreqSpectrum[i] = new Point((i + 1) * dfHighFreq, hfSpecTransformed[i] / selectionList.Count);
+                                }
+
+                                highFreqSpectrum = highFreqSpectrum.Where(p => p.X > 1600 && p.X <= 102400).Select(val => val).ToArray();
 
                                 if (noisePSD == null || noisePSD.Length == 0)
                                     noisePSD = new Point[lowFreqSpectrum.Count() + highFreqSpectrum.Length];
@@ -651,23 +678,23 @@ namespace MCBJ.Experiments
 
                     #endregion
 
-                    //setDrainVoltage(voltage, settings.VoltageDeviation);
+                    setDrainVoltage(voltage, settings.VoltageDeviation);
 
-                    //setJunctionResistance(
-                    //    voltage,
-                    //    settings.VoltageDeviation,
-                    //    settings.VoltageTreshold,
-                    //    conductance,
-                    //    settings.ConductanceDeviation,
-                    //    settings.StabilizationTime,
-                    //    settings.MotionMinSpeed,
-                    //    settings.MotionMaxSpeed,
-                    //    settings.MotorMinPos,
-                    //    settings.MotorMaxPos,
-                    //    settings.NAveragesFast,
-                    //    settings.LoadResistance);
+                    setJunctionResistance(
+                        voltage,
+                        settings.VoltageDeviation,
+                        settings.VoltageTreshold,
+                        conductance,
+                        settings.ConductanceDeviation,
+                        settings.StabilizationTime,
+                        settings.MotionMinSpeed,
+                        settings.MotionMaxSpeed,
+                        settings.MotorMinPos,
+                        settings.MotorMaxPos,
+                        settings.NAveragesFast,
+                        settings.LoadResistance);
 
-                    //setDrainVoltage(voltage, settings.VoltageDeviation);
+                    setDrainVoltage(voltage, settings.VoltageDeviation);
 
                     onStatusChanged(new StatusEventArgs("Measuring sample characteristics before noise spectra measurement."));
 
@@ -679,10 +706,7 @@ namespace MCBJ.Experiments
                     foreach (var item in boxController.AI_ChannelCollection)
                         if (item.IsEnabled)
                         {
-                            item.Parameters.SetParams(FilterCutOffFrequencies.Freq_150kHz, FilterGain.gain1, PGA_GainsEnum.gain10);
-                            //item.Parameters.SetCutoffFrequency(FilterCutOffFrequencies.Freq_150kHz);
-                            //item.Parameters.SetPGA_Gain(PGA_GainsEnum.gain1);
-                            //item.Parameters.SetFilter_Gain(FilterGain.gain1);
+                            item.Parameters.SetParams(FilterCutOffFrequencies.Freq_150kHz, FilterGain.gain1, PGA_GainsEnum.gain1);
                         }
 
                     onStatusChanged(new StatusEventArgs("Measuring noise spectra & time traces."));

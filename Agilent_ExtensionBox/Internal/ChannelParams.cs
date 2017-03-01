@@ -27,17 +27,17 @@ namespace Agilent_ExtensionBox.Internal
             ChannelPGA.SetAmplification(pga_gain);
         }
 
-        public void SetCutoffFrequency(FilterCutOffFrequencies cutoff)
+        private void SetCutoffFrequency(FilterCutOffFrequencies cutoff)
         {
             SetParams(cutoff, ChannelFilter.Gain, ChannelPGA.Gain);
         }
 
-        public void SetFilter_Gain(FilterGain gain)
+        private void SetFilter_Gain(FilterGain gain)
         {
             SetParams(ChannelFilter.CutoffFrequency, gain, ChannelPGA.Gain);
         }
 
-        public void SetPGA_Gain(PGA_GainsEnum gain)
+        private void SetPGA_Gain(PGA_GainsEnum gain)
         {
             SetParams(ChannelFilter.CutoffFrequency, ChannelFilter.Gain, gain);
         }
