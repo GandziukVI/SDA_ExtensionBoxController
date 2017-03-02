@@ -680,21 +680,21 @@ namespace MCBJ.Experiments
 
                     setDrainVoltage(voltage, settings.VoltageDeviation);
 
-                    setJunctionResistance(
-                        voltage,
-                        settings.VoltageDeviation,
-                        settings.VoltageTreshold,
-                        conductance,
-                        settings.ConductanceDeviation,
-                        settings.StabilizationTime,
-                        settings.MotionMinSpeed,
-                        settings.MotionMaxSpeed,
-                        settings.MotorMinPos,
-                        settings.MotorMaxPos,
-                        settings.NAveragesFast,
-                        settings.LoadResistance);
+                    //setJunctionResistance(
+                    //    voltage,
+                    //    settings.VoltageDeviation,
+                    //    settings.VoltageTreshold,
+                    //    conductance,
+                    //    settings.ConductanceDeviation,
+                    //    settings.StabilizationTime,
+                    //    settings.MotionMinSpeed,
+                    //    settings.MotionMaxSpeed,
+                    //    settings.MotorMinPos,
+                    //    settings.MotorMaxPos,
+                    //    settings.NAveragesFast,
+                    //    settings.LoadResistance);
 
-                    setDrainVoltage(voltage, settings.VoltageDeviation);
+                    //setDrainVoltage(voltage, settings.VoltageDeviation);
 
                     onStatusChanged(new StatusEventArgs("Measuring sample characteristics before noise spectra measurement."));
 
