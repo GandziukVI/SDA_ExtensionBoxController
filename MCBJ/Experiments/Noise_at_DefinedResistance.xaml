@@ -134,7 +134,7 @@
 			<TextBlock TextWrapping="Wrap" Text="Temperature E" Grid.Row="22"/>
 
 			<TextBox Text="{Binding ScanningVoltageCollection, Converter={StaticResource CollectionConverter}, Mode=TwoWay, UpdateSourceTrigger=LostFocus}" Grid.Column="1" TextWrapping="Wrap" Height="100" MaxHeight="100" VerticalContentAlignment="Top" VerticalScrollBarVisibility="Auto" MouseDoubleClick="SelectAddress" PreviewMouseRightButtonUp="SelectivelyIgnoreMouseButton" GotFocus="SelectAddress" PreviewMouseLeftButtonDown="SelectivelyIgnoreMouseButton"/>
-			<wpfTool:DoubleUpDown Grid.Row="1" Grid.Column="1" Value="{Binding VoltageDeviation, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"/>
+			<wpfTool:DoubleUpDown Grid.Row="1" Grid.Column="1" Value="{Binding VoltageDeviation, Mode=TwoWay, UpdateSourceTrigger=LostFocus}" Increment="0.0001"/>
 			<wpfTool:DoubleUpDown Grid.Row="2" Grid.Column="1" Value="{Binding VoltageTreshold, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"/>
 			<TextBox Grid.Row="3" Grid.Column="1" Text="{Binding SetConductanceCollection, Converter={StaticResource CollectionConverter}, Mode=TwoWay, UpdateSourceTrigger=LostFocus}" TextWrapping="Wrap" Height="100" MaxHeight="100" VerticalContentAlignment="Top" VerticalScrollBarVisibility="Auto" PreviewMouseLeftButtonDown="SelectivelyIgnoreMouseButton" MouseDoubleClick="SelectAddress" GotFocus="SelectAddress"/>
 			<TextBox Grid.Row="4" Grid.Column="1" Text="{Binding SetResistanceCollection, Converter={StaticResource CollectionConverter}, Mode=TwoWay, UpdateSourceTrigger=LostFocus}" TextWrapping="Wrap" Height="100" MaxHeight="100" VerticalContentAlignment="Top" VerticalScrollBarVisibility="Auto" GotFocus="SelectAddress" MouseDoubleClick="SelectAddress" PreviewMouseLeftButtonDown="SelectivelyIgnoreMouseButton"/>

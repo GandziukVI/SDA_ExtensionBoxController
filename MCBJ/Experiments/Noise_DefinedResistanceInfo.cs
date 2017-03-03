@@ -34,7 +34,7 @@ namespace MCBJ.Experiments
             }
         }
 
-        private double voltageDeviation = 0.0001;
+        private double voltageDeviation = 0.0002;
         public double VoltageDeviation
         {
             get { return voltageDeviation; }
@@ -101,7 +101,7 @@ namespace MCBJ.Experiments
             }
         }
 
-        double conductanceDeviation = 5.0;
+        double conductanceDeviation = 3.0;
         public double ConductanceDeviation
         {
             get { return conductanceDeviation; }
@@ -216,7 +216,7 @@ namespace MCBJ.Experiments
             }
         }
 
-        private int samplingFrequency = 500000;
+        private int samplingFrequency = 262144;
         public int SamplingFrequency
         {
             get { return samplingFrequency; }
@@ -260,7 +260,7 @@ namespace MCBJ.Experiments
             }
         }
 
-        private double kPreAmpl = 177.0;
+        private double kPreAmpl = 178.0;
         public double KPreAmpl
         {
             get { return kPreAmpl; }
