@@ -457,7 +457,7 @@ namespace MCBJ.Experiments
 
             foreach (var item in boxController.AI_ChannelCollection)
                 if (item.IsEnabled)
-                    item.Parameters.SetParams(FilterCutOffFrequencies.Freq_100kHz, FilterGain.gain10, PGA_GainsEnum.gain1);
+                    item.Parameters.SetParams(FilterCutOffFrequencies.Freq_100kHz, FilterGain.gain1, PGA_GainsEnum.gain1);
 
             boxController.AcquisitionInProgress = true;
 
@@ -531,8 +531,8 @@ namespace MCBJ.Experiments
                                 // Filtering data for low frequency selection
                                 // Using elliptic low-pass filter of 8-th order
 
-                                var filter = new NationalInstruments.Analysis.Dsp.Filters.EllipticLowpassFilter(8, samplingFrequency, 40000, 0.1, 100.0);
-                                var filteredData = filter.FilterData(traceData);
+                                //var filter = new NationalInstruments.Analysis.Dsp.Filters.EllipticLowpassFilter(8, samplingFrequency, 40000, 0.1, 100.0);
+                                var filteredData = traceData;//filter.FilterData(traceData);
 
                                 // Selecting lower amount of data points to reduce the FFT noise
 
