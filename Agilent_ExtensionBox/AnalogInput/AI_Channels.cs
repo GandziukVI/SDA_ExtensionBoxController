@@ -21,8 +21,16 @@ namespace Agilent_ExtensionBox.IO
 
             var _channelModeSwitch = new ChannelModeSwitch(_pulseBit, _setResetBit, _selector_A0, _selector_A1);
             var _filter = new Filter(new DigitalChannel(DigitalChannelsEnum.DIOA, Driver));
+
+            var HOLD_CS = new DigitalBit(new DigitalChannel(DigitalChannelsEnum.DIOC, Driver), 2);
+            HOLD_CS.Reset();
+
             var _gainAmplifier = new ProgrammableGainAmplifier(new DigitalChannel(DigitalChannelsEnum.DIOC, Driver));
-            var _latch = new AnalogInLatch(new DigitalBit(new DigitalChannel(DigitalChannelsEnum.DIOB, Driver), 0), new DigitalBit(new DigitalChannel(DigitalChannelsEnum.DIOB, Driver), 1), new DigitalBit(new DigitalChannel(DigitalChannelsEnum.DIOD, Driver), 2));
+            
+            var _latch = new AnalogInLatch(
+                _selector_A0,
+                _selector_A1,
+                new DigitalBit(new DigitalChannel(DigitalChannelsEnum.DIOD, Driver), 2));
 
             _channels = new AI_Channel[4]
             {

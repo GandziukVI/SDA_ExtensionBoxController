@@ -7,58 +7,133 @@ namespace Agilent_ExtensionBox.Internal
 {
     public enum FilterCutOffFrequencies : int
     {
-        Freq_0kHz = 0x00,
-        Freq_10kHz = 0x01,
-        Freq_20kHz = 0x02,
-        Freq_30kHz = 0x03,
-        Freq_40kHz = 0x04,
-        Freq_50kHz = 0x05,
-        Freq_60kHz = 0x06,
-        Freq_70kHz = 0x07,
-        Freq_80kHz = 0x08,
-        Freq_90kHz = 0x09,
-        Freq_100kHz = 0x0a,
-        Freq_110kHz = 0x0b,
-        Freq_120kHz = 0x0c,
-        Freq_130kHz = 0x0d,
-        Freq_140kHz = 0x0e,
-        Freq_150kHz = 0x0f
+        Freq_0kHz = 0,
+        Freq_10kHz = 10,
+        Freq_20kHz = 20,
+        Freq_30kHz = 30,
+        Freq_40kHz = 40,
+        Freq_50kHz = 50,
+        Freq_60kHz = 60,
+        Freq_70kHz = 70,
+        Freq_80kHz = 80,
+        Freq_90kHz = 90,
+        Freq_100kHz = 100,
+        Freq_110kHz = 110,
+        Freq_120kHz = 120,
+        Freq_130kHz = 130,
+        Freq_140kHz = 140,
+        Freq_150kHz = 150
     }
 
     public enum FilterGain : int
     {
-        gain1 = 0x00,
-        gain2 = 0x10,
-        gain3 = 0x20,
-        gain4 = 0x30,
-        gain5 = 0x40,
-        gain6 = 0x50,
-        gain7 = 0x60,
-        gain8 = 0x70,
-        gain9 = 0x80,
-        gain10 = 0x90,
-        gain11 = 0xa0,
-        gain12 = 0xb0,
-        gain13 = 0xc0,
-        gain14 = 0xd0,
-        gain15 = 0xe0,
-        gain16 = 0xf0
+        gain1 = 1,
+        gain2 = 2,
+        gain3 = 3,
+        gain4 = 4,
+        gain5 = 5,
+        gain6 = 6,
+        gain7 = 7,
+        gain8 = 8,
+        gain9 = 9,
+        gain10 = 10,
+        gain11 = 11,
+        gain12 = 12,
+        gain13 = 13,
+        gain14 = 14,
+        gain15 = 15,
+        gain16 = 16
     }
+
     public class Filter
     {
+        #region Added here (From Sergii)
+
+        private byte[] _bitmask = new byte[] { 1, 2, 4, 8 };
+        
+        private DigitalBit FilterGain_Bit0, FilterGain_Bit1, FilterGain_Bit2, FilterGain_Bit3;
+        private DigitalBit Frequency_Bit0, Frequency_Bit1, Frequency_Bit2, Frequency_Bit3;
+        private DigitalBit HOLD_CS;
+       
+        private DigitalBit[] FrequencyBits, GainBits;
+
+        int[] CutOffFrequencies = new int[] { 0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120, 130, 140, 150 };
+
+        #endregion
 
         private DigitalChannel _channel;
-        //private Latch _latch;
 
-        public Filter(DigitalChannel controlChannel)//, Latch latch)
+        public Filter(DigitalChannel controlChannel)
         {
-            if ((controlChannel == null))//||(latch == null ))
+            #region Added here (From Sergii)
+
+            FilterGain_Bit0 = new DigitalBit(controlChannel, 4);
+            FilterGain_Bit1 = new DigitalBit(controlChannel, 5);
+            FilterGain_Bit2 = new DigitalBit(controlChannel, 6);
+            FilterGain_Bit3 = new DigitalBit(controlChannel, 7);
+
+            Frequency_Bit0 = new DigitalBit(controlChannel, 0);
+            Frequency_Bit1 = new DigitalBit(controlChannel, 1);
+            Frequency_Bit2 = new DigitalBit(controlChannel, 2);
+            Frequency_Bit3 = new DigitalBit(controlChannel, 3);
+
+            FrequencyBits = new DigitalBit[] { Frequency_Bit0, Frequency_Bit1, Frequency_Bit2, Frequency_Bit3 };
+            GainBits = new DigitalBit[] { FilterGain_Bit0, FilterGain_Bit1, FilterGain_Bit2, FilterGain_Bit3 };
+
+            #endregion
+
+            if ((controlChannel == null))
                 throw new ArgumentNullException();
             if (controlChannel.Width < 8)
                 throw new ArgumentException("Too narrow channel width");
             _channel = controlChannel;
-            //_latch = latch;
         }
+
+        #region Added here from Sergii code
+
+        private FilterCutOffFrequencies freq;
+        public FilterCutOffFrequencies Freq
+        {
+            get { return freq; }
+            set
+            {
+                freq = value;
+                value = (FilterCutOffFrequencies)Array.IndexOf(CutOffFrequencies, (int)freq);
+
+                for (int i = 0; i < _bitmask.Length; i++)
+                {
+                    if ((((int)value & _bitmask[i]) == _bitmask[i]))
+                        FrequencyBits[i].Set();
+                    else
+                        FrequencyBits[i].Reset();
+                }
+            }
+        }
+
+        private FilterGain fGain;
+        public FilterGain FGain
+        {
+            get { return fGain; }
+            set 
+            {
+                fGain = value;
+
+                if (((int)value > 16) || ((int)value < 1))
+                    throw new Exception(string.Format("Wring gain passed to filter {0}", (int)value));
+
+                var localval = (int)value - 1;
+
+                for (int i = 0; i < _bitmask.Length; i++)
+                {
+                    if (((localval & _bitmask[i]) == _bitmask[i]))
+                        GainBits[i].Set();
+                    else
+                        GainBits[i].Reset();
+                }
+            }
+        }
+
+        #endregion
 
         public FilterCutOffFrequencies CutoffFrequency { get; private set; }
 
@@ -76,9 +151,6 @@ namespace Agilent_ExtensionBox.Internal
            
             CutoffFrequency = cutoff;
             Gain = gain;
-            //_latch.PulseLatchForChannel(channelName);
-
-            // use latch after calling this method
         }
     }
 }

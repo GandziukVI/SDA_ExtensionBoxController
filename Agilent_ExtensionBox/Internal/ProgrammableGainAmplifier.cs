@@ -7,9 +7,9 @@ namespace Agilent_ExtensionBox.Internal
 {
     public enum PGA_GainsEnum : int
     {
-        gain1 = 0x01,
-        gain10 = 0x02,
-        gain100 = 0x03
+        gain1 = 0x00,
+        gain10 = 0x01,
+        gain100 = 0x02
     }
 
     public class ProgrammableGainAmplifier

@@ -12,6 +12,7 @@ namespace Agilent_ExtensionBox.IO
         public int Width { get { return _bitArray.Length; } }
         private DigitalBit[] _bitArray;
         private AgilentU254x _driver;
+        public AgilentU254x Driver { get { return _driver; } }
         private string _channelName;
 
 
