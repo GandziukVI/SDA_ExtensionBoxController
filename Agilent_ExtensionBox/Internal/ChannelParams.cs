@@ -22,9 +22,7 @@ namespace Agilent_ExtensionBox.Internal
 
         public void SetParams(FilterCutOffFrequencies cutoff, FilterGain filter_gain, PGA_GainsEnum pga_gain)
         {
-            //ChannelFilter.SetCutOffFrequencyAndGain(_channelName, cutoff, filter_gain);
-            ChannelFilter.Freq = cutoff;
-            ChannelFilter.FGain = filter_gain;
+            ChannelFilter.SetCutOffFrequencyAndGain(_channelName, cutoff, filter_gain);
             ChannelPGA.SetAmplification(pga_gain);
             CommonLatch.PulseLatchForChannel(_channelName);
         }
