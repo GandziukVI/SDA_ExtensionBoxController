@@ -103,9 +103,9 @@ namespace MCBJ.Experiments
             var config = new AI_ChannelConfig[4]
             {
                 new AI_ChannelConfig(){ ChannelName = AnalogInChannelsEnum.AIn1, Enabled = true, Mode = ChannelModeEnum.AC, Polarity = PolarityEnum.Polarity_Bipolar, Range = Vs_Range},   // Vs
-                new AI_ChannelConfig(){ ChannelName = AnalogInChannelsEnum.AIn2, Enabled = false, Mode = ChannelModeEnum.DC, Polarity = PolarityEnum.Polarity_Bipolar, Range = Vs_Range},   // Vm
-                new AI_ChannelConfig(){ ChannelName = AnalogInChannelsEnum.AIn3, Enabled = false, Mode = ChannelModeEnum.DC, Polarity = PolarityEnum.Polarity_Bipolar, Range = Vs_Range},
-                new AI_ChannelConfig(){ ChannelName = AnalogInChannelsEnum.AIn4, Enabled = false, Mode = ChannelModeEnum.DC, Polarity = PolarityEnum.Polarity_Bipolar, Range = Vs_Range}
+                new AI_ChannelConfig(){ ChannelName = AnalogInChannelsEnum.AIn2, Enabled = false, Mode = ChannelModeEnum.AC, Polarity = PolarityEnum.Polarity_Bipolar, Range = Vs_Range},   // Vm
+                new AI_ChannelConfig(){ ChannelName = AnalogInChannelsEnum.AIn3, Enabled = false, Mode = ChannelModeEnum.AC, Polarity = PolarityEnum.Polarity_Bipolar, Range = Vs_Range},
+                new AI_ChannelConfig(){ ChannelName = AnalogInChannelsEnum.AIn4, Enabled = false, Mode = ChannelModeEnum.AC, Polarity = PolarityEnum.Polarity_Bipolar, Range = Vs_Range}
             };
 
             return config;
@@ -136,7 +136,7 @@ namespace MCBJ.Experiments
         {
             if (!isACMode)
             {
-                var init_conf = setACConf(4.99);
+                var init_conf = setACConf(1.0);
                 boxController.ConfigureAI_Channels(init_conf);
 
                 // Erasing the data queue
@@ -474,6 +474,10 @@ namespace MCBJ.Experiments
             acquisitionIsRunning = true;
             boxController.AcquisitionInProgress = true;
 
+            // Using elliptic low-pass filter of 8-th order
+
+            var filter = new NationalInstruments.Analysis.Dsp.Filters.EllipticLowpassFilter(8, samplingFrequency, 1600.0, 0.1, 100.0);
+
             var acquisitionTaskResult = new Task(new Action(() => { }));
 
             Parallel.Invoke(
@@ -529,10 +533,8 @@ namespace MCBJ.Experiments
                                 // Calculation of the LOW-FREQUENCY part of the spectrum
 
                                 // Filtering data for low frequency selection
-                                // Using elliptic low-pass filter of 8-th order
-
-                                //var filter = new NationalInstruments.Analysis.Dsp.Filters.EllipticLowpassFilter(8, samplingFrequency, 40000, 0.1, 100.0);
-                                var filteredData = traceData;//filter.FilterData(traceData);
+                                
+                                var filteredData = filter.FilterData(traceData);
 
                                 // Selecting lower amount of data points to reduce the FFT noise
 
@@ -545,7 +547,7 @@ namespace MCBJ.Experiments
                                 dtLowFreq = 64.0 * 1.0 / (double)samplingFrequency;
 
                                 autoPSDLowFreq = Measurements.AutoPowerSpectrum(selection64Hz, dtLowFreq, out dfLowFreq);
-                                var singlePSD_LOW_Freq = Measurements.SpectrumUnitConversion(autoPSDLowFreq, SpectrumType.Power, ScalingMode.Linear, DisplayUnits.VoltsRmsSquaredPerHZ, dfLowFreq, equivalentNoiseBandwidthLowFreq, coherentGainLowFreq, unit);
+                                var singlePSD_LOW_Freq = autoPSDLowFreq;//Measurements.SpectrumUnitConversion(autoPSDLowFreq, SpectrumType.Power, ScalingMode.Linear, DisplayUnits.VoltsRmsSquaredPerHZ, dfLowFreq, equivalentNoiseBandwidthLowFreq, coherentGainLowFreq, unit);
 
                                 var lowFreqSpectrum = (singlePSD_LOW_Freq.Select((value, index) => new Point((index + 1) * dfLowFreq, value)).Where(p => p.X <= 1600)).ToArray();
 
@@ -593,13 +595,13 @@ namespace MCBJ.Experiments
                                     }
                                 }
 
-                                var hfSpecTransformed = Measurements.SpectrumUnitConversion(hfSpec, SpectrumType.Power, ScalingMode.Linear, DisplayUnits.VoltsRmsSquaredPerHZ, dfLowFreq, equivalentNoiseBandwidthLowFreq, coherentGainLowFreq, unit);
+                                var hfSpecTransformed = hfSpec;//Measurements.SpectrumUnitConversion(hfSpec, SpectrumType.Power, ScalingMode.Linear, DisplayUnits.VoltsRmsSquaredPerHZ, dfLowFreq, equivalentNoiseBandwidthLowFreq, coherentGainLowFreq, unit);
 
                                 highFreqSpectrum = new Point[hfSpecTransformed.Length];
 
                                 for (int i = 0; i < highFreqSpectrum.Length; i++)
                                 {
-                                    highFreqSpectrum[i] = new Point((i + 1) * dfHighFreq, hfSpecTransformed[i] / selectionList.Count);
+                                    highFreqSpectrum[i] = new Point((i + 1) * dfHighFreq, hfSpecTransformed[i]);
                                 }
 
                                 highFreqSpectrum = highFreqSpectrum.Where(p => p.X > 1600 && p.X <= 102400).Select(val => val).ToArray();
@@ -618,7 +620,7 @@ namespace MCBJ.Experiments
                                 foreach (var item in highFreqSpectrum)
                                 {
                                     noisePSD[counter].X = item.X;
-                                    noisePSD[counter].Y += item.Y;
+                                    noisePSD[counter].Y += item.Y / ((double)(highFreqPeriod * highFreqPeriod));
 
                                     ++counter;
                                 }
@@ -630,7 +632,7 @@ namespace MCBJ.Experiments
                                 sb.Append("NS");
 
                                 for (int i = 0; i < noisePSD.Length; i++)
-                                    sb.AppendFormat("{0}\t{1}\r\n", (noisePSD[i].X).ToString(NumberFormatInfo.InvariantInfo), (noisePSD[i].Y / (double)(averagingCounter * nDataSamples) / (kAmpl * kAmpl)).ToString(NumberFormatInfo.InvariantInfo));
+                                    sb.AppendFormat("{0}\t{1}\r\n", (noisePSD[i].X).ToString(NumberFormatInfo.InvariantInfo), (noisePSD[i].Y / (double)(averagingCounter) / (kAmpl * kAmpl)).ToString(NumberFormatInfo.InvariantInfo));
 
                                 // Sending the calculated spectrum data
                                 onDataArrived(new ExpDataArrivedEventArgs(sb.ToString()));
@@ -667,7 +669,7 @@ namespace MCBJ.Experiments
 
             #endregion
 
-            confAIChannelsForDC_Measurement();
+            //confAIChannelsForDC_Measurement();
 
             foreach (var conductance in settings.SetConductanceCollection)
             {
@@ -686,7 +688,7 @@ namespace MCBJ.Experiments
 
                     #endregion
 
-                    setDrainVoltage(voltage, settings.VoltageDeviation);
+                    //setDrainVoltage(voltage, settings.VoltageDeviation);
 
                     //setJunctionResistance(
                     //    voltage,
@@ -708,8 +710,8 @@ namespace MCBJ.Experiments
 
                     onStatusChanged(new StatusEventArgs("Measuring sample characteristics before noise spectra measurement."));
 
-                    confAIChannelsForDC_Measurement();
-                    var voltagesBeforeNoiseMeasurement = boxController.VoltageMeasurement_AllChannels(settings.NAveragesSlow);
+                    //confAIChannelsForDC_Measurement();
+                    //var voltagesBeforeNoiseMeasurement = boxController.VoltageMeasurement_AllChannels(settings.NAveragesSlow);
 
                     confAIChannelsForAC_Measurement();
 
@@ -718,8 +720,8 @@ namespace MCBJ.Experiments
 
                     onStatusChanged(new StatusEventArgs("Measuring sample characteristics after noise spectra measurement."));
 
-                    confAIChannelsForDC_Measurement();
-                    var voltagesAfterNoiseMeasurement = boxController.VoltageMeasurement_AllChannels(settings.NAveragesSlow);
+                    //confAIChannelsForDC_Measurement();
+                    //var voltagesAfterNoiseMeasurement = boxController.VoltageMeasurement_AllChannels(settings.NAveragesSlow);
 
                     // Saving to log file all the parameters of the measurement
 
@@ -728,27 +730,27 @@ namespace MCBJ.Experiments
 
                     SaveToFile(dataFileName);
 
-                    noiseMeasLog.SampleVoltage = voltagesAfterNoiseMeasurement[0];
-                    noiseMeasLog.SampleCurrent = (voltagesAfterNoiseMeasurement[1] - voltagesBeforeNoiseMeasurement[0]) / settings.LoadResistance;
-                    noiseMeasLog.FileName = (new FileInfo(dataFileName)).Name;
-                    noiseMeasLog.Rload = settings.LoadResistance;
-                    noiseMeasLog.Uwhole = voltagesAfterNoiseMeasurement[1];
-                    noiseMeasLog.URload = voltagesAfterNoiseMeasurement[1] - voltagesBeforeNoiseMeasurement[0];
-                    noiseMeasLog.U0sample = voltagesBeforeNoiseMeasurement[0];
-                    noiseMeasLog.U0whole = voltagesBeforeNoiseMeasurement[1];
-                    noiseMeasLog.U0Rload = voltagesBeforeNoiseMeasurement[1] - voltagesBeforeNoiseMeasurement[0];
-                    noiseMeasLog.U0Gate = voltagesBeforeNoiseMeasurement[2];
-                    noiseMeasLog.R0sample = noiseMeasLog.U0sample / (noiseMeasLog.U0Rload / noiseMeasLog.Rload);
-                    noiseMeasLog.REsample = noiseMeasLog.SampleVoltage / (noiseMeasLog.URload / noiseMeasLog.Rload);
-                    noiseMeasLog.EquivalentResistance = 1.0 / (1.0 / settings.LoadResistance + 1.0 / noiseMeasLog.REsample);
-                    noiseMeasLog.Temperature0 = settings.Temperature0;
-                    noiseMeasLog.TemperatureE = settings.TemperatureE;
-                    noiseMeasLog.kAmpl = settings.KAmpl;
-                    noiseMeasLog.NAver = settings.SpectraAveraging;
-                    noiseMeasLog.Vg = voltagesAfterNoiseMeasurement[2];
+                    //noiseMeasLog.SampleVoltage = voltagesAfterNoiseMeasurement[0];
+                    //noiseMeasLog.SampleCurrent = (voltagesAfterNoiseMeasurement[1] - voltagesBeforeNoiseMeasurement[0]) / settings.LoadResistance;
+                    //noiseMeasLog.FileName = (new FileInfo(dataFileName)).Name;
+                    //noiseMeasLog.Rload = settings.LoadResistance;
+                    //noiseMeasLog.Uwhole = voltagesAfterNoiseMeasurement[1];
+                    //noiseMeasLog.URload = voltagesAfterNoiseMeasurement[1] - voltagesBeforeNoiseMeasurement[0];
+                    //noiseMeasLog.U0sample = voltagesBeforeNoiseMeasurement[0];
+                    //noiseMeasLog.U0whole = voltagesBeforeNoiseMeasurement[1];
+                    //noiseMeasLog.U0Rload = voltagesBeforeNoiseMeasurement[1] - voltagesBeforeNoiseMeasurement[0];
+                    //noiseMeasLog.U0Gate = voltagesBeforeNoiseMeasurement[2];
+                    //noiseMeasLog.R0sample = noiseMeasLog.U0sample / (noiseMeasLog.U0Rload / noiseMeasLog.Rload);
+                    //noiseMeasLog.REsample = noiseMeasLog.SampleVoltage / (noiseMeasLog.URload / noiseMeasLog.Rload);
+                    //noiseMeasLog.EquivalentResistance = 1.0 / (1.0 / settings.LoadResistance + 1.0 / noiseMeasLog.REsample);
+                    //noiseMeasLog.Temperature0 = settings.Temperature0;
+                    //noiseMeasLog.TemperatureE = settings.TemperatureE;
+                    //noiseMeasLog.kAmpl = settings.KAmpl;
+                    //noiseMeasLog.NAver = settings.SpectraAveraging;
+                    //noiseMeasLog.Vg = voltagesAfterNoiseMeasurement[2];
 
-                    SaveDataToLog(logFileName, noiseMeasLog.ToString());
-                    SaveDataToLog(logFileCaptureName, noiseMeasLog.ToString());
+                    //SaveDataToLog(logFileName, noiseMeasLog.ToString());
+                    //SaveDataToLog(logFileCaptureName, noiseMeasLog.ToString());
                 }
             }
 
