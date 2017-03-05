@@ -136,7 +136,7 @@ namespace MCBJ.Experiments
         {
             if (!isACMode)
             {
-                var init_conf = setACConf(1.0);
+                var init_conf = setACConf(5.0);
                 boxController.ConfigureAI_Channels(init_conf);
 
                 // Erasing the data queue
