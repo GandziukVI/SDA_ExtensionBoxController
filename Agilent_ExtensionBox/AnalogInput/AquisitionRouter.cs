@@ -49,6 +49,28 @@ namespace Agilent_ExtensionBox.IO
                         throw new ArgumentException();
                 }
             }
+            else
+            {
+                var index = _channels.IndexOf(observer);
+
+                _Converters.RemoveAt(index);
+
+                var _channel = observer as AI_Channel;
+                var _range = AvailableRanges.FromRangeEnum(_channel.Range);
+
+                switch (_channel.Polarity)
+                {
+                    case PolarityEnum.Polarity_Bipolar:
+                        _Converters.Insert(index, new Func<int, double>((x) => { return x * _range / 32768.0; }));
+                        break;
+                    case PolarityEnum.Polarity_Unipolar:
+                        _Converters.Insert(index, new Func<int, double>((x) => { return (x / 65536.0 + 0.5) * _range; }));
+                        break;
+                    default:
+                        throw new ArgumentException();
+                }
+            }
+
             return new Unsubscriber(_channels, observer);
         }
 
