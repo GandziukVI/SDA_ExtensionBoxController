@@ -136,7 +136,7 @@ namespace MCBJ.Experiments
         {
             if (!isACMode)
             {
-                var init_conf = setACConf(5.0);
+                var init_conf = setACConf(1.0);
                 boxController.ConfigureAI_Channels(init_conf);
 
                 // Erasing the data queue
@@ -457,7 +457,7 @@ namespace MCBJ.Experiments
 
             foreach (var item in boxController.AI_ChannelCollection)
                 if (item.IsEnabled)
-                    item.Parameters.SetParams(FilterCutOffFrequencies.Freq_100kHz, FilterGain.gain1, PGA_GainsEnum.gain1);
+                    item.Parameters.SetParams(FilterCutOffFrequencies.Freq_150kHz, FilterGain.gain1, PGA_GainsEnum.gain1);
 
             boxController.AcquisitionInProgress = true;
 
