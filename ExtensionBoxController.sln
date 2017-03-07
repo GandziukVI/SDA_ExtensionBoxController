@@ -35,6 +35,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "D3Helper", "D3Helper\D3Help
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IneltaMotorPotentiometer", "IneltaMotorPotentiometer\IneltaMotorPotentiometer.csproj", "{46F0DD56-49E3-47A6-84EF-9EAB44609CB0}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VoltageApply", "VoltageApply\VoltageApply.csproj", "{673A29D6-6180-472B-906C-47C1386D8A9C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -228,6 +230,16 @@ Global
 		{46F0DD56-49E3-47A6-84EF-9EAB44609CB0}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{46F0DD56-49E3-47A6-84EF-9EAB44609CB0}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{46F0DD56-49E3-47A6-84EF-9EAB44609CB0}.Release|x86.ActiveCfg = Release|Any CPU
+		{673A29D6-6180-472B-906C-47C1386D8A9C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{673A29D6-6180-472B-906C-47C1386D8A9C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{673A29D6-6180-472B-906C-47C1386D8A9C}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{673A29D6-6180-472B-906C-47C1386D8A9C}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{673A29D6-6180-472B-906C-47C1386D8A9C}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{673A29D6-6180-472B-906C-47C1386D8A9C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{673A29D6-6180-472B-906C-47C1386D8A9C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{673A29D6-6180-472B-906C-47C1386D8A9C}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{673A29D6-6180-472B-906C-47C1386D8A9C}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{673A29D6-6180-472B-906C-47C1386D8A9C}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
