@@ -56,6 +56,8 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="ApplyVoltageController.cs" />
+    <Compile Include="ProgressChanged_EventArgs.cs" />
     <Compile Include="VoltagesApplySettings.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>

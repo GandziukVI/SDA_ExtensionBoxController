@@ -5,9 +5,12 @@
 		xmlns:local ="clr-namespace:VoltageApply"
         Title="Voltages control" Height="200" Width="275" ResizeMode="NoResize">
 	
-	<Window.Resources>
-		<local:VoltagesApplySettings x:Key="Settings" />
 
+    <Window.DataContext>
+        <local:VoltagesApplySettings x:Name="Settings" />
+    </Window.DataContext>
+    
+	<Window.Resources>
 		<Style TargetType="TextBlock">
 			<Setter Property="Margin" Value="5, 2.5" />
 		</Style>
@@ -35,12 +38,12 @@
     	<TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" Text="Gate Voltage" VerticalAlignment="Center" Grid.Row="2"/>
     	<TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" Text="Vg Accuracy" VerticalAlignment="Center" Grid.Row="3"/>
         		
-		<wpfTool:DoubleUpDown Grid.Column="1" CultureInfo="en-US" Value="{Binding VDrainSource, Mode=TwoWay, Source={StaticResource Settings}, StringFormat=G4, UpdateSourceTrigger=PropertyChanged}"/>
-		<wpfTool:DoubleUpDown Grid.Row="1" Grid.Column="1" CultureInfo="en-US" Value="{Binding VDSAccuracy, Mode=TwoWay, Source={StaticResource Settings}, StringFormat=G4, UpdateSourceTrigger=PropertyChanged}"/>
-		<wpfTool:DoubleUpDown Grid.Row="2" Grid.Column="1" CultureInfo="en-US" Value="{Binding VGate, Mode=TwoWay, Source={StaticResource Settings}, StringFormat=G4, UpdateSourceTrigger=PropertyChanged}"/>
-		<wpfTool:DoubleUpDown Grid.Row="3" Grid.Column="1" CultureInfo="en-US" Value="{Binding VGateAccuracy, Mode=TwoWay, Source={StaticResource Settings}, StringFormat=G4, UpdateSourceTrigger=PropertyChanged}"/>
+		<wpfTool:DoubleUpDown Grid.Column="1" CultureInfo="en-US" Value="{Binding VDrainSource, Mode=TwoWay, StringFormat=G4, UpdateSourceTrigger=PropertyChanged}"/>
+		<wpfTool:DoubleUpDown Grid.Row="1" Grid.Column="1" CultureInfo="en-US" Value="{Binding VDSAccuracy, Mode=TwoWay, StringFormat=G4, UpdateSourceTrigger=PropertyChanged}"/>
+		<wpfTool:DoubleUpDown Grid.Row="2" Grid.Column="1" CultureInfo="en-US" Value="{Binding VGate, Mode=TwoWay, StringFormat=G4, UpdateSourceTrigger=PropertyChanged}"/>
+		<wpfTool:DoubleUpDown Grid.Row="3" Grid.Column="1" CultureInfo="en-US" Value="{Binding VGateAccuracy, Mode=TwoWay, StringFormat=G4, UpdateSourceTrigger=PropertyChanged}"/>
 
-		<Button Content="SET VOLTAGES" Grid.Row="4" Grid.ColumnSpan="2" Margin="2.5,5"/>
+		<Button x:Name="cmdDoJob" Content="SET VOLTAGES" Grid.Row="4" Grid.ColumnSpan="2" Margin="2.5,5" Click="on_cmdSetVoltagesClick"/>
 
 		<TextBlock TextWrapping="Wrap" Text="Progress" VerticalAlignment="Center" Grid.Row="5" HorizontalAlignment="Left"/>
 		<ProgressBar x:Name="progressBar" Grid.ColumnSpan="2" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" Margin="5,2.5" Grid.Row="5" Grid.Column="1" MinHeight="20"/>
