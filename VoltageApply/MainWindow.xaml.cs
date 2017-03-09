@@ -49,6 +49,7 @@ namespace VoltageApply
             Dispatcher.BeginInvoke(new Action(() => 
             {
                 cmdDoJob.IsEnabled = false;
+                progressBar.Value = 0;
             }));
 
             applyVoltageController.Init();
@@ -61,6 +62,7 @@ namespace VoltageApply
             Dispatcher.BeginInvoke(new Action(() =>
             {
                 cmdDoJob.IsEnabled = true;
+                progressBar.Value = 100;
             }));
         }
     }

@@ -168,7 +168,10 @@ namespace VoltageApply
 
                 drainVoltageCurr = Math.Abs(voltages[voltNum]);
 
-                onProgressChanged(this, new ProgressChanged_EventArgs((int)(1.0 - (Math.Abs(voltage - drainVoltageCurr) / voltage)) * 100));
+                var lowerVal = Math.Min(drainVoltageCurr, voltage);
+                var higherVal = Math.Max(drainVoltageCurr, voltage);
+
+                onProgressChanged(this, new ProgressChanged_EventArgs((int)(lowerVal / higherVal * 100.0)));
 
                 var speed = minSpeed;
                 try
