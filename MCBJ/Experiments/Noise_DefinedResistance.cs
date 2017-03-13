@@ -706,7 +706,7 @@ namespace MCBJ.Experiments
 
                     //setDrainVoltage(voltage, settings.VoltageDeviation);
 
-                    motor.Disable();
+                    //motor.Disable();
 
                     onStatusChanged(new StatusEventArgs("Measuring sample characteristics before noise spectra measurement."));
 
@@ -754,11 +754,11 @@ namespace MCBJ.Experiments
                 }
             }
 
-            if (motor != null)
-            {
-                motor.Disable();
-                motor.Dispose();
-            }
+            //if (motor != null)
+            //{
+            //    motor.Disable();
+            //    motor.Dispose();
+            //}
 
             if (boxController != null)
             {
@@ -885,8 +885,8 @@ namespace MCBJ.Experiments
             {
                 this.DataArrived -= Noise_DefinedResistance_DataArrived;
 
-                if (motor != null)
-                    motor.Dispose();
+                //if (motor != null)
+                //    motor.Dispose();
 
                 if (boxController != null)
                 {

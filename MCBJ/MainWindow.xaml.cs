@@ -180,8 +180,8 @@ namespace MCBJ
 
             visaBuilder.AppendFormat("USB0::{0}::{1}::TW54334510::INSTR", firstIdentifyer.ToString(NumberFormatInfo.InvariantInfo), secondIdentifyer.ToString(NumberFormatInfo.InvariantInfo));
 
-            var motorDriver = new SerialDevice("COM1", 115200, Parity.None, 8, StopBits.One);
-            var motor = new SA_2036U012V(motorDriver) as IMotionController1D;
+            //var motorDriver = new SerialDevice("COM1", 115200, Parity.None, 8, StopBits.One);
+            IMotionController1D motor = null;//new SA_2036U012V(motorDriver) as IMotionController1D;
 
             experiment = new Noise_DefinedResistance(visaBuilder.ToString(), motor);
 
