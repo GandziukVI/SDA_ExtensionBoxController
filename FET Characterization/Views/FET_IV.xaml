@@ -29,6 +29,34 @@
 			</d3:VerticalAxis>
 		</d3:ChartPlotter>
 
-		<ScrollViewer HorizontalAlignment="Left" MaxWidth="230" Width="230" Grid.Column="1" VerticalScrollBarVisibility="Auto"/>
+		<ScrollViewer HorizontalAlignment="Left" MaxWidth="230" Width="230" Grid.Column="1" VerticalScrollBarVisibility="Auto">
+			<Grid>
+				<Grid.RowDefinitions>
+					<RowDefinition/>
+					<RowDefinition/>
+					<RowDefinition/>
+					<RowDefinition/>
+					<RowDefinition/>
+					<RowDefinition/>
+					<RowDefinition/>
+					<RowDefinition/>
+					<RowDefinition/>
+					<RowDefinition/>
+				</Grid.RowDefinitions>
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition/>
+					<ColumnDefinition/>
+				</Grid.ColumnDefinitions>
+				<TextBlock TextWrapping="Wrap" Text="Vds Set"/>
+				<TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" Text="Vd deviation" VerticalAlignment="Top" Grid.Row="1"/>
+				<TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" Text="Vg Set" VerticalAlignment="Top" Grid.Row="2"/>
+				<TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" Text="Vg deviation" VerticalAlignment="Top" Grid.Row="3"/>
+				<TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" Text="n Avg. (fast)" VerticalAlignment="Top" Grid.Row="4"/>
+				<TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" Text="n Avg. (slow)" VerticalAlignment="Top" Grid.Row="5"/>
+				<TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" Text="Load resistance" VerticalAlignment="Top" Grid.Row="6"/>
+				<TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" Text="Sampling frequency" VerticalAlignment="Top" Grid.Row="7"/>
+				
+			</Grid>
+		</ScrollViewer>
 	</Grid>
 </UserControl>
