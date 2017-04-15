@@ -22,10 +22,14 @@
 		
 		<d3:ChartPlotter Margin="5">
 			<d3:HorizontalAxis>
-				<d3:HorizontalAxisTitle Content="Voltage, V" />
+				<d3:HorizontalAxisTitle>
+					<TextBlock>Drain-Source Voltage V<Run FontSize="9" BaselineAlignment="Subscript">DS</Run>, V</TextBlock>
+				</d3:HorizontalAxisTitle>
 			</d3:HorizontalAxis>
 			<d3:VerticalAxis>
-				<d3:VerticalAxisTitle Content="Current, A" />
+				<d3:VerticalAxisTitle>
+					<TextBlock>Drain current I<Run FontSize="9" BaselineAlignment="Subscript">DS</Run>, A</TextBlock>
+				</d3:VerticalAxisTitle>
 			</d3:VerticalAxis>
 		</d3:ChartPlotter>
 
@@ -42,20 +46,52 @@
 					<RowDefinition/>
 					<RowDefinition/>
 					<RowDefinition/>
+					<RowDefinition/>
+					<RowDefinition/>
+					<RowDefinition/>
+					<RowDefinition/>
 				</Grid.RowDefinitions>
 				<Grid.ColumnDefinitions>
 					<ColumnDefinition/>
 					<ColumnDefinition/>
 				</Grid.ColumnDefinitions>
-				<TextBlock TextWrapping="Wrap" Text="Vds Set"/>
-				<TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" Text="Vd deviation" VerticalAlignment="Top" Grid.Row="1"/>
-				<TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" Text="Vg Set" VerticalAlignment="Top" Grid.Row="2"/>
-				<TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" Text="Vg deviation" VerticalAlignment="Top" Grid.Row="3"/>
-				<TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" Text="n Avg. (fast)" VerticalAlignment="Top" Grid.Row="4"/>
-				<TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" Text="n Avg. (slow)" VerticalAlignment="Top" Grid.Row="5"/>
-				<TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" Text="Load resistance" VerticalAlignment="Top" Grid.Row="6"/>
-				<TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" Text="Sampling frequency" VerticalAlignment="Top" Grid.Row="7"/>
-				
+
+				<TextBlock Text="Ke2602 res. name" />
+				<TextBox Grid.Column="1"></TextBox>
+
+				<TextBlock Grid.Row="1">V<Run FontSize="9" BaselineAlignment="Subscript">DS</Run> Channel</TextBlock>
+				<ComboBox Grid.Row="1" Grid.Column="1"/>
+
+				<TextBlock Grid.Row="2">V<Run FontSize="9" BaselineAlignment="Subscript">G</Run> Channel</TextBlock>
+				<ComboBox Grid.Row="2" Grid.Column="1"/>
+
+				<TextBlock TextWrapping="Wrap" Grid.Row="3">V<Run FontSize="9" BaselineAlignment="Subscript">DS</Run> Start</TextBlock>
+				<wpfTool:DoubleUpDown Grid.Row="3" Grid.Column="1"/>
+
+				<TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" VerticalAlignment="Top" Grid.Row="4">V<Run FontSize="9" BaselineAlignment="Subscript">DS</Run> Stop</TextBlock>
+				<wpfTool:DoubleUpDown Grid.Row="4" Grid.Column="1"/>
+
+				<TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" VerticalAlignment="Top" Grid.Row="5">N (V<Run FontSize="9" BaselineAlignment="Subscript">DS</Run>) sweep points</TextBlock>
+				<wpfTool:IntegerUpDown Grid.Row="5" Grid.Column="1"/>
+
+				<TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" VerticalAlignment="Top" Grid.Row="6">I<Run FontSize="9" BaselineAlignment="Subscript">DS</Run> compliance</TextBlock>
+				<wpfTool:DoubleUpDown Grid.Row="6" Grid.Column="1"/>
+
+				<TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" VerticalAlignment="Top" Grid.Row="7">V<Run FontSize="9" BaselineAlignment="Subscript">G</Run> Start</TextBlock>
+				<wpfTool:DoubleUpDown Grid.Row="7" Grid.Column="1"/>
+
+				<TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" VerticalAlignment="Top" Grid.Row="8">V<Run FontSize="9" BaselineAlignment="Subscript">G</Run> Stop</TextBlock>
+				<wpfTool:DoubleUpDown Grid.Row="8" Grid.Column="1"/>
+
+				<TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" VerticalAlignment="Top" Grid.Row="9">N (V<Run FontSize="9" BaselineAlignment="Subscript">G</Run>) step points</TextBlock>
+				<wpfTool:IntegerUpDown Grid.Row="9" Grid.Column="1"/>
+
+				<TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" VerticalAlignment="Top" Grid.Row="10">I<Run FontSize="9" BaselineAlignment="Subscript">G</Run> complaince</TextBlock>
+				<wpfTool:DoubleUpDown Grid.Row="10" Grid.Column="1"/>
+
+				<CheckBox HorizontalAlignment="Left" Grid.Row="11" Grid.ColumnSpan="2">
+					<TextBlock>Measure leakage current</TextBlock>
+				</CheckBox>			
 			</Grid>
 		</ScrollViewer>
 	</Grid>

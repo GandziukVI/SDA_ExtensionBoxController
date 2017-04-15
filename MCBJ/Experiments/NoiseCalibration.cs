@@ -26,12 +26,12 @@ namespace MCBJ.Experiments
 
         }
 
-        protected double[] GetIntrinsicNoiseCurve()
+        public double[] GetIntrinsicNoiseCurve()
         {
             throw new NotImplementedException();
         }
 
-        protected double[] GetFrequencyResponceCurve()
+        public double[] GetFrequencyResponceCurve()
         {
             throw new NotImplementedException();
         }
