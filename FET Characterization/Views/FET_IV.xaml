@@ -220,7 +220,7 @@
 				<d3:Header Content="Transfer characteristics" />
 				<d3:HorizontalAxis>
 					<d3:HorizontalAxisTitle>
-						<TextBlock>Gate-Voltage V<Run FontSize="9" BaselineAlignment="Subscript">G</Run>, V</TextBlock>
+						<TextBlock>Gate Voltage V<Run FontSize="9" BaselineAlignment="Subscript">G</Run>, V</TextBlock>
 					</d3:HorizontalAxisTitle>
 				</d3:HorizontalAxis>
 				<d3:VerticalAxis>

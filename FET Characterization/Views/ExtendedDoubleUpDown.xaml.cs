@@ -18,9 +18,9 @@ namespace FET_Characterization
     /// </summary>
     public partial class ExtendedDoubleUpDown : UserControl
     {
-        static FrameworkPropertyMetadataOptions flags = FrameworkPropertyMetadataOptions.BindsTwoWayByDefault;
+        static FrameworkPropertyMetadataOptions flags = FrameworkPropertyMetadataOptions.BindsTwoWayByDefault | FrameworkPropertyMetadataOptions.AffectsMeasure;
 
-        static FrameworkPropertyMetadata ValuePropertyMetadata = new FrameworkPropertyMetadata(1.0, flags, new PropertyChangedCallback(onValuePropertyChanged));
+        static FrameworkPropertyMetadata ValuePropertyMetadata = new FrameworkPropertyMetadata(Double.NaN, flags, new PropertyChangedCallback(onValuePropertyChanged));
         static readonly DependencyProperty ValueProperty = DependencyProperty.Register(
             "Value",
             typeof(Double),
@@ -34,7 +34,7 @@ namespace FET_Characterization
             typeof(ExtendedDoubleUpDown),
             FormatStringMetadata);
 
-        static FrameworkPropertyMetadata UnitAliasMetadata = new FrameworkPropertyMetadata("", flags, new PropertyChangedCallback(onUnitAliasPropertyChanged));
+        static FrameworkPropertyMetadata UnitAliasMetadata = new FrameworkPropertyMetadata("", flags, new PropertyChangedCallback(onUnitAliasPropertyChanged), new CoerceValueCallback(CoerseUnitAlias));
         public static readonly DependencyProperty UnitAliasProperty = DependencyProperty.Register(
             "UnitAlias",
             typeof(String),
@@ -63,7 +63,37 @@ namespace FET_Characterization
         static void onUnitAliasPropertyChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e)
         {
             var control = sender as ExtendedDoubleUpDown;
-            control.UnitAlias = (string)e.NewValue;
+            control.CoerceValue(UnitAliasProperty);//.UnitAlias = (string)e.NewValue;
+        }
+
+        static object CoerseUnitAlias(DependencyObject coersionSender, object coersionValue)
+        {
+            var sender = (ExtendedDoubleUpDown)coersionSender;
+            var value = (String)coersionValue;
+
+            for (int i = 0; i < sender.DataMultiplier.Items.Count; i++)
+            {
+                var element = (ComboBoxItem)sender.DataMultiplier.Items[i];
+                var elementInside = (TextBlock)element.Content;
+                var elementInsideText = elementInside.Text;
+
+                if (!string.IsNullOrEmpty(elementInsideText) && i != 0)
+                    elementInsideText = elementInsideText.Substring(0, 1) + value;
+                else
+                    elementInsideText = value;
+
+                var temp = new ComboBoxItem();
+                var tempText = new TextBlock();
+                tempText.Text = elementInsideText;
+
+                temp.Content = tempText;
+
+                sender.DataMultiplier.Items[i] = temp;
+            }
+
+            sender.DataMultiplier.SelectedIndex = 0;
+
+            return value;
         }
 
         static void onMultiplierPropertyChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e)
@@ -92,34 +122,7 @@ namespace FET_Characterization
         public String UnitAlias
         {
             get { return (String)GetValue(UnitAliasProperty); }
-            set
-            {
-                for (int i = 0; i < DataMultiplier.Items.Count; i++)
-                {
-                    var element = (ComboBoxItem)DataMultiplier.Items[i];
-                    var elementInside = (TextBlock)element.Content;
-                    var elementInsideText = elementInside.Text;
-
-                    if (!string.IsNullOrEmpty(elementInsideText) && i != 0)
-                        elementInsideText = elementInsideText.Substring(0, 1) + value;
-                    else
-                        elementInsideText = value;
-
-                    var temp = new ComboBoxItem();
-                    var tempText = new TextBlock();
-                    tempText.Text = elementInsideText;
-
-                    temp.Content = tempText;
-
-                    DataMultiplier.Items[i] = temp;
-                }
-
-                DataMultiplier.SelectedIndex = 0;
-
-                if (UnitAliasProperty != null)
-                    if (!String.IsNullOrEmpty(value))
-                        SetValue(UnitAliasProperty, value);
-            }
+            set { SetValue(UnitAliasProperty, value); }
         }
 
         public double Multiplier
