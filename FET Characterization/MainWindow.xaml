@@ -27,7 +27,7 @@
         </Grid>
         <Menu x:Name="menuMain" Margin="0,0,0,-2" Height="20">
             <MenuItem x:Name="menuSelectExperimentType" Header="_Experiment type">
-                <MenuItem x:Name="expIVdefR" Header="_I-V Characterization" HorizontalAlignment="Left" />
+                <MenuItem x:Name="expIV" Header="_I-V Characterization" HorizontalAlignment="Left" Click="menuExpIV_Click" />
                 <MenuItem x:Name="expNoiseDefR" Header="_Noise Characterization" HorizontalAlignment="Left" />
             </MenuItem>
         </Menu>
