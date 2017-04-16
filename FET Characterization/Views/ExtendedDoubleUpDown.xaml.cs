@@ -18,31 +18,33 @@ namespace FET_Characterization
     /// </summary>
     public partial class ExtendedDoubleUpDown : UserControl
     {
-        static FrameworkPropertyMetadata ValuePropertyMetadata = new FrameworkPropertyMetadata(1.0, new PropertyChangedCallback(onValuePropertyChanged));
+        static FrameworkPropertyMetadataOptions flags = FrameworkPropertyMetadataOptions.BindsTwoWayByDefault;
+
+        static FrameworkPropertyMetadata ValuePropertyMetadata = new FrameworkPropertyMetadata(1.0, flags, new PropertyChangedCallback(onValuePropertyChanged));
         static readonly DependencyProperty ValueProperty = DependencyProperty.Register(
             "Value",
             typeof(Double),
             typeof(ExtendedDoubleUpDown),
             ValuePropertyMetadata);
 
-        static FrameworkPropertyMetadata FormatStringMetadata = new FrameworkPropertyMetadata("", new PropertyChangedCallback(onFormatStringPropertyChanged));
+        static FrameworkPropertyMetadata FormatStringMetadata = new FrameworkPropertyMetadata("F3", flags, new PropertyChangedCallback(onFormatStringPropertyChanged));
         public static readonly DependencyProperty FormatStringProperty = DependencyProperty.Register(
             "FormatString",
-            typeof(string),
+            typeof(String),
             typeof(ExtendedDoubleUpDown),
             FormatStringMetadata);
 
-        static FrameworkPropertyMetadata UnitAliasMetadata = new FrameworkPropertyMetadata("", new PropertyChangedCallback(onUnitAliasPropertyChanged));
+        static FrameworkPropertyMetadata UnitAliasMetadata = new FrameworkPropertyMetadata("", flags, new PropertyChangedCallback(onUnitAliasPropertyChanged));
         public static readonly DependencyProperty UnitAliasProperty = DependencyProperty.Register(
             "UnitAlias",
-            typeof(string),
+            typeof(String),
             typeof(ExtendedDoubleUpDown),
             UnitAliasMetadata);
 
-        static FrameworkPropertyMetadata MultiplierMetadata = new FrameworkPropertyMetadata(1.0, new PropertyChangedCallback(onMultiplierPropertyChanged));
+        static FrameworkPropertyMetadata MultiplierMetadata = new FrameworkPropertyMetadata(1.0, flags, new PropertyChangedCallback(onMultiplierPropertyChanged));
         public static readonly DependencyProperty MultiplierProperty = DependencyProperty.Register(
             "Multiplier",
-            typeof(double),
+            typeof(Double),
             typeof(ExtendedDoubleUpDown),
             MultiplierMetadata);
 
@@ -87,9 +89,9 @@ namespace FET_Characterization
             set { SetValue(FormatStringProperty, value); }
         }
 
-        public string UnitAlias
+        public String UnitAlias
         {
-            get { return (string)GetValue(UnitAliasProperty); }
+            get { return (String)GetValue(UnitAliasProperty); }
             set
             {
                 for (int i = 0; i < DataMultiplier.Items.Count; i++)
@@ -98,7 +100,7 @@ namespace FET_Characterization
                     var elementInside = (TextBlock)element.Content;
                     var elementInsideText = elementInside.Text;
 
-                    if (!string.IsNullOrEmpty(elementInsideText))
+                    if (!string.IsNullOrEmpty(elementInsideText) && i != 0)
                         elementInsideText = elementInsideText.Substring(0, 1) + value;
                     else
                         elementInsideText = value;
@@ -114,7 +116,9 @@ namespace FET_Characterization
 
                 DataMultiplier.SelectedIndex = 0;
 
-                SetValue(UnitAliasProperty, value);
+                if (UnitAliasProperty != null)
+                    if (!String.IsNullOrEmpty(value))
+                        SetValue(UnitAliasProperty, value);
             }
         }
 
@@ -125,8 +129,8 @@ namespace FET_Characterization
         }
 
         public double RealValue
-        { 
-            get { return Value * Multiplier; } 
+        {
+            get { return Value * Multiplier; }
         }
     }
 }
