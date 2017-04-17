@@ -63,16 +63,18 @@ namespace FET_Characterization
 
         void cmdStartIV_Click(object sender, RoutedEventArgs e)
         {
-            var settings = (sender as FET_IV).Settings;
+            var settings = expStartInfo as FET_IVModel;
 
-            var driver = new VisaDevice(settings.KeithleyRscName);
+            //var driver = new VisaDevice(settings.KeithleyRscName);
 
-            var measureDevice = new Keithley26xxB<Keithley2602B>(driver);
+            //var measureDevice = new Keithley26xxB<Keithley2602B>(driver);
 
-            var DrainSourceSMU = measureDevice[settings.VdsChannel];
-            var GateSMU = measureDevice[settings.VgChannel];
+            //var DrainSourceSMU = measureDevice[settings.VdsChannel];
+            //var GateSMU = measureDevice[settings.VgChannel];
 
-            experiment = new FET_IV_Experiment(DrainSourceSMU, GateSMU) as IExperiment;
+            //experiment = new FET_IV_Experiment(DrainSourceSMU, GateSMU) as IExperiment;
+
+            experiment = new FET_IV_Experiment(null, null) as IExperiment;
 
             experiment.DataArrived += expIV_FET_dataArrived;
             experiment.Start(expStartInfo);
@@ -86,7 +88,7 @@ namespace FET_Characterization
 
         private void expIV_FET_dataArrived(object sender, ExpDataArrivedEventArgs e)
         {
-            if (e.Data.Contains("Vg"))
+            if (e.Data.Contains("Vg") || ds == null)
             {
                 ds = new Microsoft.Research.DynamicDataDisplay.DataSources.ObservableDataSource<Point>();
                 ds.SetXYMapping(p => p);

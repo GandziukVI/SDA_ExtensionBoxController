@@ -76,14 +76,9 @@
 				<ColumnDefinition Width="Auto"/>
 			</Grid.ColumnDefinitions>
 		
-			<d3:ChartPlotter x:Name="expIV_FET_Chart" Margin="5" LegendVisibility="Collapsed">
-				<d3:Header Content="I-V chharacteristics" />
-				<d3:NewLegend>
-					<ControlTemplate>
-						<CheckBox></CheckBox>
-					</ControlTemplate>
-				</d3:NewLegend>
-				<d3:HorizontalAxis>
+			<d3:ChartPlotter x:Name="expIV_FET_Chart" Margin="5" NewLegendVisible="False">
+                <d3:Header Content="I-V chharacteristics" />
+                <d3:HorizontalAxis>
 					<d3:HorizontalAxisTitle>
 						<TextBlock>Drain-Source Voltage V<Run FontSize="9" BaselineAlignment="Subscript">DS</Run>, V</TextBlock>
 					</d3:HorizontalAxisTitle>
@@ -249,7 +244,7 @@
 				<ColumnDefinition Width="Auto"/>
 			</Grid.ColumnDefinitions>
 		
-			<d3:ChartPlotter Margin="5" LegendVisibility="Collapsed">
+			<d3:ChartPlotter Margin="5" NewLegendVisible="False">
 				<d3:Header Content="Transfer characteristics" />
 				<d3:HorizontalAxis>
 					<d3:HorizontalAxisTitle>
