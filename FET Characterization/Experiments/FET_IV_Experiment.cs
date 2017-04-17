@@ -86,24 +86,24 @@ namespace FET_Characterization.Experiments
             var currentVg = settings.VgStart;
             var current_DS_value = settings.VdsStart;
 
-            var dVg = (settings.VgStop - settings.VgStart) / settings.N_VgStep;
-            var d_DS_value = (settings.VdsStop - settings.VdsStart) / settings.N_VdsSweep;
+            var dVg = (settings.VgStop - settings.VgStart) / (settings.N_VgStep - 1);
+            var d_DS_value = (settings.VdsStop - settings.VdsStart) / (settings.N_VdsSweep - 1);
 
             measurementStopwatch.Start();
-
-            onDataArrived(new ExpDataArrivedEventArgs(string.Format("Vg = {0}", settings.VgStart)));
 
             if (settings.MeasureLeakage == true)
             {
                 for (int i = 0; i < settings.N_VgStep; i++)
                 {
+                    onDataArrived(new ExpDataArrivedEventArgs(string.Format("Vg = {0}", currentVg.ToString(NumberFormatInfo.InvariantInfo))));
+
                     if (!IsRunning)
                         break;
 
-                    for (int j = 0; j < settings.N_VdsSweep; j++)
+                    for (int j = 0; j <= settings.N_VdsSweep; j++)
                     {
                         if (!IsRunning)
-                            break;                        
+                            break;
 
                         switch (settings.SMU_SourceMode)
                         {
@@ -151,9 +151,7 @@ namespace FET_Characterization.Experiments
                     current_DS_value = settings.VdsStart;
 
                     currentVg += dVg;
-                    //smuVg.Voltage = currentVg;
-
-                    onDataArrived(new ExpDataArrivedEventArgs(string.Format("Vg = {0}", currentVg.ToString(NumberFormatInfo.InvariantInfo))));
+                    //smuVg.Voltage = currentVg;                    
                 }
             }
 
