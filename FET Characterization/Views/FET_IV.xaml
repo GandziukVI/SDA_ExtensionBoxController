@@ -66,6 +66,7 @@
 	<Grid>
 		<Grid.ColumnDefinitions>
 			<ColumnDefinition/>
+			<ColumnDefinition Width="Auto"/>
 			<ColumnDefinition/>
 		</Grid.ColumnDefinitions>
 			
@@ -136,7 +137,7 @@
 							<ColumnDefinition/>
 						</Grid.ColumnDefinitions>
 
-						<TextBlock Text="Ke2602 res. name" />
+						<TextBlock Text="Ke2602 res." />
 						<TextBox Grid.Column="1" Text="{Binding KeithleyRscName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"></TextBox>
 
 						<TextBlock Grid.Row="1">V<Run FontSize="9" BaselineAlignment="Subscript">DS</Run> Channel</TextBlock>
@@ -158,30 +159,30 @@
 						</ComboBox>
 
 						<TextBlock TextWrapping="Wrap" Grid.Row="4">V<Run FontSize="9" BaselineAlignment="Subscript">DS</Run> Start</TextBlock>
-						<local:ExtendedDoubleUpDown Grid.Row="4" Grid.Column="1" UnitAlias="{Binding SelectedIndex, ElementName=comboBox, Converter={StaticResource SrcFunctionConverter}, UpdateSourceTrigger=PropertyChanged}" Value="{Binding VdsStart, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+						<local:ExtendedDoubleUpDown Grid.Row="4" Grid.Column="1" UnitAlias="{Binding SelectedIndex, ElementName=comboBox, Converter={StaticResource SrcFunctionConverter}, UpdateSourceTrigger=PropertyChanged}" Value="0" RealValue="{Binding VdsStart, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
 
 						<TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" VerticalAlignment="Top" Grid.Row="5">V<Run FontSize="9" BaselineAlignment="Subscript">DS</Run> Stop</TextBlock>
-						<local:ExtendedDoubleUpDown Grid.Row="5" Grid.Column="1" UnitAlias="{Binding SelectedIndex, ElementName=comboBox, Converter={StaticResource SrcFunctionConverter}, UpdateSourceTrigger=PropertyChanged}" Value="{Binding VdsStop, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+						<local:ExtendedDoubleUpDown Grid.Row="5" Grid.Column="1" UnitAlias="{Binding SelectedIndex, ElementName=comboBox, Converter={StaticResource SrcFunctionConverter}, UpdateSourceTrigger=PropertyChanged}" Value="-1" RealValue="{Binding VdsStop, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
 
-						<TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" VerticalAlignment="Top" Grid.Row="6">N (V<Run FontSize="9" BaselineAlignment="Subscript">DS</Run>) sweep points</TextBlock>
+						<TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" VerticalAlignment="Top" Grid.Row="6">N (V<Run FontSize="9" BaselineAlignment="Subscript">DS</Run>) SWEEP</TextBlock>
 						<wpfTool:IntegerUpDown Grid.Row="6" Grid.Column="1" Value="{Binding N_VdsSweep, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
 
 						<TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" VerticalAlignment="Top" Grid.Row="7">I<Run FontSize="9" BaselineAlignment="Subscript">DS</Run> compliance</TextBlock>
-						<local:ExtendedDoubleUpDown Grid.Row="7" Grid.Column="1" UnitAlias="{Binding SelectedIndex, ElementName=comboBox, Converter={StaticResource ComplFunctionConverter}, UpdateSourceTrigger=PropertyChanged}" Value="{Binding DS_Complaince, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+						<local:ExtendedDoubleUpDown Grid.Row="7" Grid.Column="1" UnitAlias="{Binding SelectedIndex, ElementName=comboBox, Converter={StaticResource ComplFunctionConverter}, UpdateSourceTrigger=PropertyChanged}" Value="0.001" RealValue="{Binding DS_Complaince, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
 
 						<TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" VerticalAlignment="Top" Grid.Row="8">V<Run FontSize="9" BaselineAlignment="Subscript">G</Run> Start</TextBlock>
-						<local:ExtendedDoubleUpDown Grid.Row="8" Grid.Column="1" UnitAlias="{Binding SelectedIndex, ElementName=comboBox, Converter={StaticResource SrcFunctionConverter}, UpdateSourceTrigger=PropertyChanged}" Value="{Binding VgStart, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+						<local:ExtendedDoubleUpDown Grid.Row="8" Grid.Column="1" UnitAlias="V" Value="0" RealValue="{Binding VgStart, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
 
 						<TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" VerticalAlignment="Top" Grid.Row="9">V<Run FontSize="9" BaselineAlignment="Subscript">G</Run> Stop</TextBlock>
-						<local:ExtendedDoubleUpDown Grid.Row="9" Grid.Column="1" UnitAlias="{Binding SelectedIndex, ElementName=comboBox, Converter={StaticResource SrcFunctionConverter}, UpdateSourceTrigger=PropertyChanged}" Value="{Binding VgStop, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+						<local:ExtendedDoubleUpDown Grid.Row="9" Grid.Column="1" UnitAlias="V" Value="-5" RealValue="{Binding VgStop, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
 
-						<TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" VerticalAlignment="Top" Grid.Row="10">N (V<Run FontSize="9" BaselineAlignment="Subscript">G</Run>) step points</TextBlock>
+						<TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" VerticalAlignment="Top" Grid.Row="10">N (V<Run FontSize="9" BaselineAlignment="Subscript">G</Run>) Step</TextBlock>
 						<wpfTool:IntegerUpDown Grid.Row="10" Grid.Column="1" Value="{Binding N_VgStep, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
 
 						<TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" VerticalAlignment="Top" Grid.Row="11">I<Run FontSize="9" BaselineAlignment="Subscript">G</Run> complaince</TextBlock>
-						<local:ExtendedDoubleUpDown Grid.Row="11" Grid.Column="1" UnitAlias="{Binding SelectedIndex, ElementName=comboBox, Converter={StaticResource ComplFunctionConverter}, UpdateSourceTrigger=PropertyChanged}" Value="{Binding Gate_Complaince, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+						<local:ExtendedDoubleUpDown Grid.Row="11" Grid.Column="1" UnitAlias="A" Value="0.001" RealValue="{Binding Gate_Complaince, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
 
-						<CheckBox HorizontalAlignment="Left" Grid.Row="12" Grid.ColumnSpan="2" HorizontalContentAlignment="Center" VerticalAlignment="Center">
+						<CheckBox HorizontalAlignment="Left" Grid.Row="12" Grid.ColumnSpan="2" HorizontalContentAlignment="Center" VerticalAlignment="Center" IsChecked="{Binding MeasureLeakage, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
 							<TextBlock>Measure leakage current</TextBlock>
 						</CheckBox>			
 
@@ -201,10 +202,10 @@
 								</Grid.ColumnDefinitions>
 						
 								<TextBlock>Pulse width</TextBlock>
-								<local:ExtendedDoubleUpDown Grid.Column="1" UnitAlias="s" Value="{Binding PulseWidth, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+								<local:ExtendedDoubleUpDown Grid.Column="1" UnitAlias="s" Value="0.001" RealValue="{Binding PulseWidth, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
 
 								<TextBlock Grid.Row="1">Delay time</TextBlock>
-								<local:ExtendedDoubleUpDown Grid.Row="1" Grid.Column="1" UnitAlias="s" Value="{Binding DelayTime, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+								<local:ExtendedDoubleUpDown Grid.Row="1" Grid.Column="1" UnitAlias="s" Value="0.001" RealValue="{Binding DelayTime, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
 						</Grid>
 					</GroupBox>
 
@@ -223,7 +224,7 @@
 							<ColumnDefinition/>
 						</Grid.ColumnDefinitions>
 						
-						<Button x:Name="cmdStartIV" Content="START" Height="35" VerticalAlignment="Bottom"/>
+						<Button x:Name="cmdStartIV" Content="START" Height="35" VerticalAlignment="Bottom" Click="on_cmdStartIV_Click"/>
 						<Button x:Name="cmdStopIV" Content="STOP" Grid.Column="1" Height="35" VerticalAlignment="Bottom"/>
 					</Grid>					
 				</Grid>
@@ -231,9 +232,13 @@
 			</ScrollViewer>
 		</Grid>
 
+		<!-- Grid splitter -->
+
+		<GridSplitter Grid.Column="1" Width="5" HorizontalAlignment="Center" VerticalAlignment="Stretch"/>
+
 		<!-- Transfer curves interface -->
 
-		<Grid Grid.Column="1">
+		<Grid Grid.Column="2">
 			<Grid.ColumnDefinitions>
 				<ColumnDefinition/>
 				<ColumnDefinition Width="Auto"/>
@@ -300,7 +305,7 @@
 							<ColumnDefinition/>
 						</Grid.ColumnDefinitions>
 
-						<TextBlock Text="Ke2602 res. name" />
+						<TextBlock Text="Ke2602 res." />
 						<TextBox Grid.Column="1" Text="{Binding TransferKeithleyRscName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"></TextBox>
 
 						<TextBlock Grid.Row="1">V<Run FontSize="9" BaselineAlignment="Subscript">DS</Run> Channel</TextBlock>
@@ -322,28 +327,28 @@
 						</ComboBox>
 
 						<TextBlock TextWrapping="Wrap" Grid.Row="4">V<Run FontSize="9" BaselineAlignment="Subscript">DS</Run> Start</TextBlock>
-						<local:ExtendedDoubleUpDown Grid.Row="4" Grid.Column="1" UnitAlias="{Binding SelectedIndex, ElementName=comboBoxTransfer, Converter={StaticResource SrcFunctionConverter}, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" Value="{Binding TransferVdsStart, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+						<local:ExtendedDoubleUpDown Grid.Row="4" Grid.Column="1" UnitAlias="{Binding SelectedIndex, ElementName=comboBoxTransfer, Converter={StaticResource SrcFunctionConverter}, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" Value="0" RealValue="{Binding TransferVdsStart, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
 
 						<TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" VerticalAlignment="Top" Grid.Row="5">V<Run FontSize="9" BaselineAlignment="Subscript">DS</Run> Stop</TextBlock>
-						<local:ExtendedDoubleUpDown Grid.Row="5" Grid.Column="1" UnitAlias="{Binding SelectedIndex, ElementName=comboBoxTransfer, Converter={StaticResource SrcFunctionConverter}, UpdateSourceTrigger=PropertyChanged, Mode= TwoWay}" Value="{Binding TransferVdsStop, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+						<local:ExtendedDoubleUpDown Grid.Row="5" Grid.Column="1" UnitAlias="{Binding SelectedIndex, ElementName=comboBoxTransfer, Converter={StaticResource SrcFunctionConverter}, UpdateSourceTrigger=PropertyChanged, Mode= TwoWay}" Value="0.1" RealValue="{Binding TransferVdsStop, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
 
-						<TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" VerticalAlignment="Top" Grid.Row="6">N (V<Run FontSize="9" BaselineAlignment="Subscript">DS</Run>) step points</TextBlock>
+						<TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" VerticalAlignment="Top" Grid.Row="6">N (V<Run FontSize="9" BaselineAlignment="Subscript">DS</Run>) STEP</TextBlock>
 						<wpfTool:IntegerUpDown Grid.Row="6" Grid.Column="1" Value="{Binding TransferN_VdsStep, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
 
 						<TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" VerticalAlignment="Top" Grid.Row="7">I<Run FontSize="9" BaselineAlignment="Subscript">DS</Run> compliance</TextBlock>
-						<local:ExtendedDoubleUpDown Grid.Row="7" Grid.Column="1" UnitAlias="{Binding SelectedIndex, ElementName=comboBoxTransfer, Converter={StaticResource ComplFunctionConverter}, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" Value="{Binding TransferDS_Complaince, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+						<local:ExtendedDoubleUpDown Grid.Row="7" Grid.Column="1" UnitAlias="{Binding SelectedIndex, ElementName=comboBoxTransfer, Converter={StaticResource ComplFunctionConverter}, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" Value="0.001" RealValue="{Binding TransferDS_Complaince, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
 
 						<TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" VerticalAlignment="Top" Grid.Row="8">V<Run FontSize="9" BaselineAlignment="Subscript">G</Run> Start</TextBlock>
-						<local:ExtendedDoubleUpDown Grid.Row="8" Grid.Column="1" UnitAlias="{Binding SelectedIndex, ElementName=comboBoxTransfer, Converter={StaticResource SrcFunctionConverter}, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" Value="{Binding TransferVgStart, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+						<local:ExtendedDoubleUpDown Grid.Row="8" Grid.Column="1" UnitAlias="V" Value="0" RealValue="{Binding TransferVgStart, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
 
 						<TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" VerticalAlignment="Top" Grid.Row="9">V<Run FontSize="9" BaselineAlignment="Subscript">G</Run> Stop</TextBlock>
-						<local:ExtendedDoubleUpDown Grid.Row="9" Grid.Column="1" UnitAlias="{Binding SelectedIndex, ElementName=comboBoxTransfer, Converter={StaticResource SrcFunctionConverter}, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" Value="{Binding TransferVgStop, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+						<local:ExtendedDoubleUpDown Grid.Row="9" Grid.Column="1" Value="-5" RealValue="{Binding TransferVgStop, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" UnitAlias="V"/>
 
-						<TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" VerticalAlignment="Top" Grid.Row="10">N (V<Run FontSize="9" BaselineAlignment="Subscript">G</Run>) sweep points</TextBlock>
+						<TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" VerticalAlignment="Top" Grid.Row="10">N (V<Run FontSize="9" BaselineAlignment="Subscript">G</Run>) SWEEP</TextBlock>
 						<wpfTool:IntegerUpDown Grid.Row="10" Grid.Column="1" Value="{Binding TransferN_VgSweep, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
 
 						<TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" VerticalAlignment="Top" Grid.Row="11">I<Run FontSize="9" BaselineAlignment="Subscript">G</Run> complaince</TextBlock>
-						<local:ExtendedDoubleUpDown Grid.Row="11" Grid.Column="1" UnitAlias="{Binding SelectedIndex, ElementName=comboBoxTransfer, Converter={StaticResource ComplFunctionConverter}, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" Value="{Binding TransferGate_Complaince, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+						<local:ExtendedDoubleUpDown Grid.Row="11" Grid.Column="1" Value="0.001" RealValue="{Binding TransferGate_Complaince, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" UnitAlias="A"/>
 
 						<CheckBox HorizontalAlignment="Left" Grid.Row="12" Grid.ColumnSpan="2" HorizontalContentAlignment="Center" VerticalAlignment="Center">
 							<TextBlock>Measure leakage current</TextBlock>
@@ -365,10 +370,10 @@
 								</Grid.ColumnDefinitions>
 						
 								<TextBlock>Pulse width</TextBlock>
-								<local:ExtendedDoubleUpDown Grid.Column="1" UnitAlias="s" Value="{Binding TransferPulseWidth, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+								<local:ExtendedDoubleUpDown Grid.Column="1" UnitAlias="s" Value="0.001" RealValue="{Binding TransferPulseWidth, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
 
 								<TextBlock Grid.Row="1">Delay time</TextBlock>
-								<local:ExtendedDoubleUpDown Grid.Row="1" Grid.Column="1" UnitAlias="s" Value="{Binding TransferDelayTime, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+								<local:ExtendedDoubleUpDown Grid.Row="1" Grid.Column="1" UnitAlias="s" Value="0.001" RealValue="{Binding TransferDelayTime, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
 							</Grid>
 						</GroupBox>
 

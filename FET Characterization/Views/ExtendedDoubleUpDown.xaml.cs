@@ -1,4 +1,5 @@
-﻿using System;
+﻿using FET_Characterization.Experiments;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Text;
@@ -20,7 +21,7 @@ namespace FET_Characterization
     {
         static FrameworkPropertyMetadataOptions flags = FrameworkPropertyMetadataOptions.BindsTwoWayByDefault | FrameworkPropertyMetadataOptions.AffectsMeasure;
 
-        static FrameworkPropertyMetadata ValuePropertyMetadata = new FrameworkPropertyMetadata(Double.NaN, flags, new PropertyChangedCallback(onValuePropertyChanged));
+        static FrameworkPropertyMetadata ValuePropertyMetadata = new FrameworkPropertyMetadata(Double.NaN, flags, new PropertyChangedCallback(onValuePropertyChanged), new CoerceValueCallback(CoerseValue));
         static readonly DependencyProperty ValueProperty = DependencyProperty.Register(
             "Value",
             typeof(Double),
@@ -48,10 +49,23 @@ namespace FET_Characterization
             typeof(ExtendedDoubleUpDown),
             MultiplierMetadata);
 
+        static FrameworkPropertyMetadata RealValueMetadata = new FrameworkPropertyMetadata(double.NaN, flags, new PropertyChangedCallback(onRealValuePropertyChanged), new CoerceValueCallback(CoerseRealValue));
+        public static readonly DependencyProperty RealValueProperty = DependencyProperty.Register(
+            "RealValue",
+            typeof(Double),
+            typeof(ExtendedDoubleUpDown),
+            RealValueMetadata);
+
         static void onValuePropertyChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e)
         {
             var control = sender as ExtendedDoubleUpDown;
-            control.Value = (double)e.NewValue;
+            control.Value = (Double)e.NewValue;
+            onRealValuePropertyChanged(sender, e);
+        }
+
+        static object CoerseValue(DependencyObject sender, object value)
+        {
+            return value;
         }
 
         static void onFormatStringPropertyChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e)
@@ -63,24 +77,24 @@ namespace FET_Characterization
         static void onUnitAliasPropertyChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e)
         {
             var control = sender as ExtendedDoubleUpDown;
-            control.CoerceValue(UnitAliasProperty);//.UnitAlias = (string)e.NewValue;
+            control.CoerceValue(UnitAliasProperty);
         }
 
-        static object CoerseUnitAlias(DependencyObject coersionSender, object coersionValue)
+        static object CoerseUnitAlias(DependencyObject sender, object value)
         {
-            var sender = (ExtendedDoubleUpDown)coersionSender;
-            var value = (String)coersionValue;
+            var control = (ExtendedDoubleUpDown)sender;
+            var result = (String)value;
 
-            for (int i = 0; i < sender.DataMultiplier.Items.Count; i++)
+            for (int i = 0; i < control.DataMultiplier.Items.Count; i++)
             {
-                var element = (ComboBoxItem)sender.DataMultiplier.Items[i];
+                var element = (ComboBoxItem)control.DataMultiplier.Items[i];
                 var elementInside = (TextBlock)element.Content;
                 var elementInsideText = elementInside.Text;
 
                 if (!string.IsNullOrEmpty(elementInsideText) && i != 0)
-                    elementInsideText = elementInsideText.Substring(0, 1) + value;
+                    elementInsideText = elementInsideText.Substring(0, 1) + result;
                 else
-                    elementInsideText = value;
+                    elementInsideText = result;
 
                 var temp = new ComboBoxItem();
                 var tempText = new TextBlock();
@@ -88,18 +102,30 @@ namespace FET_Characterization
 
                 temp.Content = tempText;
 
-                sender.DataMultiplier.Items[i] = temp;
+                control.DataMultiplier.Items[i] = temp;
             }
 
-            sender.DataMultiplier.SelectedIndex = 0;
+            control.DataMultiplier.SelectedIndex = 0;
 
-            return value;
+            return result;
         }
 
         static void onMultiplierPropertyChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e)
         {
             var control = sender as ExtendedDoubleUpDown;
             control.Multiplier = (double)e.NewValue;
+            onRealValuePropertyChanged(sender, e);
+        }
+
+        static void onRealValuePropertyChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e)
+        {
+            var control = sender as ExtendedDoubleUpDown;
+            control.RealValue = control.Value * control.Multiplier;
+        }
+
+        static object CoerseRealValue(DependencyObject sender, object value)
+        {
+            return value;
         }
 
         public ExtendedDoubleUpDown()
@@ -133,7 +159,8 @@ namespace FET_Characterization
 
         public double RealValue
         {
-            get { return Value * Multiplier; }
+            get { return (Double)GetValue(RealValueProperty); }
+            set { SetValue(RealValueProperty, value); }
         }
     }
 }

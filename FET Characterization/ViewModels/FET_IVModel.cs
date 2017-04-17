@@ -420,5 +420,17 @@ namespace FET_Characterization
                 NotifyPropertyChanged("Transfer_FileName");
             }
         }
+
+        private bool measureLeakage = true;
+        public bool MeasureLeakage
+        {
+            get { return measureLeakage; }
+            set 
+            {
+                measureLeakage = value;
+                NotifyPropertyChanged("MeasureLeakage");
+            }
+        }
+
 	}
 }
