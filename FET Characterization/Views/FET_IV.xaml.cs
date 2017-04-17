@@ -23,9 +23,5 @@ namespace FET_Characterization
 			
 			// Insert code required on object creation below this point.
 		}
-
-		private void on_cmdStartIV_Click(object sender, System.Windows.RoutedEventArgs e)
-		{
-		}
 	}
 }
