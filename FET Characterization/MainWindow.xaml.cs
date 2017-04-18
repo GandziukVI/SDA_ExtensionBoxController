@@ -35,6 +35,9 @@ namespace FET_Characterization
 
         Microsoft.Research.DynamicDataDisplay.DataSources.ObservableDataSource<Point> ds;
 
+        IDeviceIO driver;
+        Keithley26xxB<Keithley2602B> measureDevice;
+
         public MainWindow()
         {
             InitializeComponent();
@@ -58,25 +61,35 @@ namespace FET_Characterization
             control.cmdStartIV.Click += cmdStartIV_Click;
             control.cmdStopIV.Click += cmdStopIV_Click;
 
+            control.cmdStartTransfer.Click += cmdStartTransfer_Click;
+            control.cmdStopTransfer.Click += cmdStopTransfer_Click;
+
             expStartInfo = control.Settings;
-        }     
+        }
+
+        #region Interface and logic for FET I-V measurement
 
         void cmdStartIV_Click(object sender, RoutedEventArgs e)
         {
             var settings = expStartInfo as FET_IVModel;
 
-            //var driver = new VisaDevice(settings.KeithleyRscName);
+            if (driver != null)
+                driver.Dispose();
+            if (measureDevice != null)
+                measureDevice.Dispose();
 
-            //var measureDevice = new Keithley26xxB<Keithley2602B>(driver);
+            driver = new VisaDevice(settings.KeithleyRscName);
+            measureDevice = new Keithley26xxB<Keithley2602B>(driver);
 
-            //var DrainSourceSMU = measureDevice[settings.VdsChannel];
-            //var GateSMU = measureDevice[settings.VgChannel];
+            var DrainSourceSMU = measureDevice[settings.VdsChannel];
+            var GateSMU = measureDevice[settings.VgChannel];
 
-            //experiment = new FET_IV_Experiment(DrainSourceSMU, GateSMU) as IExperiment;
-
-            experiment = new FET_IV_Experiment(null, null) as IExperiment;
+            experiment = new FET_IV_Experiment(DrainSourceSMU, GateSMU) as IExperiment;
 
             experiment.DataArrived += expIV_FET_dataArrived;
+            experiment.Progress += experiment_Progress;
+            experiment.Status += experimentStatus;
+
             experiment.Start(expStartInfo);
         }
 
@@ -84,25 +97,124 @@ namespace FET_Characterization
         {
             if (experiment != null)
                 experiment.Stop();
+
+            experiment.DataArrived -= expIV_FET_dataArrived;
+            experiment.Progress -= experiment_Progress;
+            experiment.Status -= experimentStatus;
         }
 
         private void expIV_FET_dataArrived(object sender, ExpDataArrivedEventArgs e)
         {
+            var settings = expStartInfo as FET_IVModel;
+
             if (e.Data.Contains("Vg") || ds == null)
             {
                 ds = new Microsoft.Research.DynamicDataDisplay.DataSources.ObservableDataSource<Point>();
                 ds.SetXYMapping(p => p);
 
-                Dispatcher.BeginInvoke(new Action(() => 
+                Dispatcher.BeginInvoke(new Action(() =>
                 {
                     (measurementInterface as FET_IV).expIV_FET_Chart.AddLineGraph(ds, 1.0, e.Data);
-                }));                
+                }));
             }
             else
             {
                 var dataPoint = Array.ConvertAll(e.Data.Split(delim, StringSplitOptions.RemoveEmptyEntries), s => double.Parse(s, NumberFormatInfo.InvariantInfo));
-                ds.AppendAsync(Dispatcher, new Point(dataPoint[0], dataPoint[1]));
+                if (settings.MeasureLeakage == true)
+                    ds.AppendAsync(Dispatcher, new Point(dataPoint[0], dataPoint[1]));
+                else
+                {
+                    var iv_query = from ivPoint in e.Data.FromString()
+                                   select new Point(ivPoint.Voltage, ivPoint.Current);
+
+                    ds.AppendMany(iv_query);
+                }
             }
+        }
+
+        #endregion
+
+        #region Interface and logic for FET Transfer characteristics measurement
+
+        void cmdStartTransfer_Click(object sender, RoutedEventArgs e)
+        {
+            var settings = expStartInfo as FET_IVModel;
+
+            if (driver != null)
+                driver.Dispose();
+            if (measureDevice != null)
+                measureDevice.Dispose();
+
+            driver = new VisaDevice(settings.KeithleyRscName);
+            measureDevice = new Keithley26xxB<Keithley2602B>(driver);
+
+            var DrainSourceSMU = measureDevice[settings.TransferVdsChannel];
+            var GateSMU = measureDevice[settings.TransferVgChannel];
+
+            experiment = new FET_Transfer_Experiment(DrainSourceSMU, GateSMU) as IExperiment;
+
+            experiment.DataArrived += expTransfer_FET_dataArrived;
+            experiment.Progress += experiment_Progress;
+            experiment.Status += experimentStatus;
+
+            experiment.Start(expStartInfo);
+        }
+
+        void cmdStopTransfer_Click(object sender, RoutedEventArgs e)
+        {
+            if (experiment != null)
+                experiment.Stop();
+
+            experiment.DataArrived -= expTransfer_FET_dataArrived;
+            experiment.Progress -= experiment_Progress;
+            experiment.Status -= experimentStatus;
+        }
+
+        private void expTransfer_FET_dataArrived(object sender, ExpDataArrivedEventArgs e)
+        {
+            var settings = expStartInfo as FET_IVModel;
+
+            if (e.Data.Contains("Vds") || ds == null)
+            {
+                ds = new Microsoft.Research.DynamicDataDisplay.DataSources.ObservableDataSource<Point>();
+                ds.SetXYMapping(p => p);
+
+                Dispatcher.BeginInvoke(new Action(() =>
+                {
+                    (measurementInterface as FET_IV).expTransfer_FET_Chart.AddLineGraph(ds, 1.0, e.Data);
+                }));
+            }
+            else
+            {
+                var dataPoint = Array.ConvertAll(e.Data.Split(delim, StringSplitOptions.RemoveEmptyEntries), s => double.Parse(s, NumberFormatInfo.InvariantInfo));
+                if (settings.MeasureLeakage == true)
+                    ds.AppendAsync(Dispatcher, new Point(dataPoint[0], dataPoint[1]));
+                else
+                {
+                    var iv_query = from ivPoint in e.Data.FromString()
+                                   select new Point(ivPoint.Voltage, ivPoint.Current);
+
+                    ds.AppendMany(iv_query);
+                }
+            }
+        }
+
+        #endregion
+
+        private void experimentStatus(object sender, StatusEventArgs e)
+        {
+            Dispatcher.InvokeAsync(new Action(() =>
+            {
+                expStatus.Text = e.StatusMessage;
+            }));
+        }
+
+        void experiment_Progress(object sender, ProgressEventArgs e)
+        {
+            Dispatcher.InvokeAsync(new Action(() =>
+            {
+                expProgress.Value = e.Progress;
+            }));
         }
     }
 }

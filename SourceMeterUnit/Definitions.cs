@@ -103,14 +103,6 @@ namespace SourceMeterUnit
         {
             return string.Join("\t", Voltage.ToString(NumberFormatInfo.InvariantInfo), Current.ToString(NumberFormatInfo.InvariantInfo));
         }
-
-        public static IV_Data[] FromString(string DataString)
-        {
-            var query = (from item in DataString.Split(_delimeters, StringSplitOptions.RemoveEmptyEntries)
-                        select new IV_Data(item)).ToArray();                        
-
-            return query;
-        }
     }
 
     public class TraceData

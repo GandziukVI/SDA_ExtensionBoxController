@@ -244,7 +244,7 @@
 				<ColumnDefinition Width="Auto"/>
 			</Grid.ColumnDefinitions>
 		
-			<d3:ChartPlotter Margin="5" NewLegendVisible="False">
+			<d3:ChartPlotter x:Name="expTransfer_FET_Chart" Margin="5" NewLegendVisible="False">
 				<d3:Header Content="Transfer characteristics" />
 				<d3:HorizontalAxis>
 					<d3:HorizontalAxisTitle>
@@ -283,7 +283,6 @@
 					
 					<Grid>
 						<Grid.RowDefinitions>
-							<RowDefinition Height="Auto"/>
 							<RowDefinition Height="Auto"/>
 							<RowDefinition Height="Auto"/>
 							<RowDefinition Height="Auto"/>
@@ -350,11 +349,7 @@
 						<TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" VerticalAlignment="Top" Grid.Row="11">I<Run FontSize="9" BaselineAlignment="Subscript">G</Run> complaince</TextBlock>
 						<local:ExtendedDoubleUpDown Grid.Row="11" Grid.Column="1" Value="0.001" RealValue="{Binding TransferGate_Complaince, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" UnitAlias="A"/>
 
-						<CheckBox HorizontalAlignment="Left" Grid.Row="12" Grid.ColumnSpan="2" HorizontalContentAlignment="Center" VerticalAlignment="Center">
-							<TextBlock>Measure leakage current</TextBlock>
-						</CheckBox>			
-
-						<GroupBox Grid.Row="13" Grid.ColumnSpan="2">
+						<GroupBox Grid.Row="12" Grid.ColumnSpan="2">
 							<GroupBox.Header>
 								<CheckBox x:Name="chkPulseEnabledTransfer">Pulse measurements</CheckBox>
 							</GroupBox.Header>
@@ -377,7 +372,7 @@
 							</Grid>
 						</GroupBox>
 
-						<Grid Grid.Row="14" Grid.ColumnSpan="2">
+						<Grid Grid.Row="13" Grid.ColumnSpan="2">
 							<Grid.ColumnDefinitions>
 								<ColumnDefinition Width="Auto"/>
 								<ColumnDefinition />
@@ -386,7 +381,7 @@
 							<TextBox TextWrapping="Wrap" Grid.Column="1" Margin="10,2.5,2.5,2" VerticalContentAlignment="Center" Height="35" Text="{Binding Transfer_FileName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>				
 						</Grid>
 
-						<Grid Grid.Row="15" Grid.ColumnSpan="2">
+						<Grid Grid.Row="14" Grid.ColumnSpan="2">
 							<Grid.ColumnDefinitions>
 								<ColumnDefinition/>
 								<ColumnDefinition/>

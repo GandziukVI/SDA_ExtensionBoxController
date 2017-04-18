@@ -60,6 +60,7 @@
     <Compile Include="Definitions.cs" />
     <Compile Include="ISourceMeterUnit.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SourceMeterUnitExtensions.cs" />
     <Compile Include="TraceDataArrived_EventArgs.cs" />
   </ItemGroup>
   <ItemGroup>
