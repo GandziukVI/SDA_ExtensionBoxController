@@ -27,7 +27,7 @@ namespace FET_Characterization
 		}
 		#endregion
 
-        private string keithleyRscName = "GPIB::0::26";
+        private string keithleyRscName = "GPIB0::26::INSTR";
         public string KeithleyRscName
         {
             get { return keithleyRscName; }
@@ -225,7 +225,7 @@ namespace FET_Characterization
 
         // Transfer implementation
 
-        private string transferKeithleyRscName = "GPIB::0::26";
+        private string transferKeithleyRscName = "GPIB0::26::INSTR";
         public string TransferKeithleyRscName
         {
             get { return transferKeithleyRscName; }
