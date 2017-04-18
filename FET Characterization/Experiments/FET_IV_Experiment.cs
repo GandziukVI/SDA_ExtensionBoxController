@@ -31,7 +31,7 @@ namespace FET_Characterization.Experiments
             smuVg.SourceMode = SMUSourceMode.Voltage;
 
             smuVg.Compliance = settings.Gate_Complaince;
-            smuVg.Averaging = 10;
+            smuVg.Averaging = 1;
             smuVg.NPLC = 1.0;
 
             smuVg.Voltage = settings.VgStart;
@@ -45,7 +45,7 @@ namespace FET_Characterization.Experiments
             smuVds.SourceMode = settings.SMU_SourceMode;
 
             smuVds.Compliance = settings.DS_Complaince;
-            smuVds.Averaging = 10;
+            smuVds.Averaging = 1;
             smuVds.NPLC = 1.0;
 
             switch (settings.SMU_SourceMode)
@@ -195,6 +195,13 @@ namespace FET_Characterization.Experiments
 
             smuVg.SwitchOFF();
             smuVds.SwitchOFF();
+        }
+
+        public override void Stop()
+        {
+            IsRunning = false;
+
+            //base.Stop();
         }
     }
 }

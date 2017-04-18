@@ -30,7 +30,7 @@ namespace FET_Characterization.Experiments
             smuVg.SourceMode = SMUSourceMode.Voltage;
 
             smuVg.Compliance = settings.TransferGate_Complaince;
-            smuVg.Averaging = 10;
+            smuVg.Averaging = 1;
             smuVg.NPLC = 1.0;
 
             smuVg.Voltage = settings.TransferVgStart;
@@ -44,7 +44,7 @@ namespace FET_Characterization.Experiments
             smuVds.SourceMode = settings.TransferSMU_SourceMode;
 
             smuVds.Compliance = settings.TransferDS_Complaince;
-            smuVds.Averaging = 10;
+            smuVds.Averaging = 1;
             smuVds.NPLC = 1.0;
 
             switch (settings.TransferSMU_SourceMode)

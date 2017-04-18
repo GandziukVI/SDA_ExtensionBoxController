@@ -7,7 +7,9 @@ using SourceMeterUnit;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.IO;
 using System.Linq;
+using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -71,6 +73,9 @@ namespace FET_Characterization
 
         void cmdStartIV_Click(object sender, RoutedEventArgs e)
         {
+            (measurementInterface as FET_IV).expIV_FET_Chart.Children.RemoveAll(typeof(LineGraph));
+            (measurementInterface as FET_IV).expIV_FET_Chart.Legend.Visibility = System.Windows.Visibility.Visible;
+
             var settings = expStartInfo as FET_IVModel;
 
             if (driver != null)
@@ -96,7 +101,9 @@ namespace FET_Characterization
         void cmdStopIV_Click(object sender, RoutedEventArgs e)
         {
             if (experiment != null)
+            {
                 experiment.Stop();
+            }
 
             experiment.DataArrived -= expIV_FET_dataArrived;
             experiment.Progress -= experiment_Progress;
@@ -127,7 +134,10 @@ namespace FET_Characterization
                     var iv_query = from ivPoint in e.Data.FromString()
                                    select new Point(ivPoint.Voltage, ivPoint.Current);
 
-                    ds.AppendMany(iv_query);
+                    Dispatcher.BeginInvoke(new Action(() =>
+                    {
+                        ds.AppendMany(iv_query);
+                    }));
                 }
             }
         }
@@ -138,6 +148,9 @@ namespace FET_Characterization
 
         void cmdStartTransfer_Click(object sender, RoutedEventArgs e)
         {
+            (measurementInterface as FET_IV).expIV_FET_Chart.Children.RemoveAll(typeof(LineGraph));
+            (measurementInterface as FET_IV).expIV_FET_Chart.Legend.Visibility = System.Windows.Visibility.Visible;
+
             var settings = expStartInfo as FET_IVModel;
 
             if (driver != null)
@@ -194,7 +207,10 @@ namespace FET_Characterization
                     var iv_query = from ivPoint in e.Data.FromString()
                                    select new Point(ivPoint.Voltage, ivPoint.Current);
 
-                    ds.AppendMany(iv_query);
+                    Dispatcher.BeginInvoke(new Action(() =>
+                    {
+                        ds.AppendMany(iv_query);
+                    }));
                 }
             }
         }
