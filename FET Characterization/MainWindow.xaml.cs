@@ -148,8 +148,8 @@ namespace FET_Characterization
 
         void cmdStartTransfer_Click(object sender, RoutedEventArgs e)
         {
-            (measurementInterface as FET_IV).expIV_FET_Chart.Children.RemoveAll(typeof(LineGraph));
-            (measurementInterface as FET_IV).expIV_FET_Chart.Legend.Visibility = System.Windows.Visibility.Visible;
+            (measurementInterface as FET_IV).expTransfer_FET_Chart.Children.RemoveAll(typeof(LineGraph));
+            (measurementInterface as FET_IV).expTransfer_FET_Chart.Legend.Visibility = System.Windows.Visibility.Visible;
 
             var settings = expStartInfo as FET_IVModel;
 

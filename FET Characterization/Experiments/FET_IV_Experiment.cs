@@ -80,7 +80,7 @@ namespace FET_Characterization.Experiments
             {
                 for (int i = 0; i < settings.N_VgStep; i++)
                 {
-                    onStatusChanged(new StatusEventArgs(string.Format("Measuring I-V Curve # {0} out of {1}", (i+1).ToString(NumberFormatInfo.InvariantInfo), settings.N_VgStep)));
+                    onStatusChanged(new StatusEventArgs(string.Format("Measuring I-V Curve # {0} out of {1}", (i + 1).ToString(NumberFormatInfo.InvariantInfo), settings.N_VgStep)));
                     onDataArrived(new ExpDataArrivedEventArgs(string.Format("Vg = {0}", currentVg.ToString(NumberFormatInfo.InvariantInfo))));
 
                     if (!IsRunning)
@@ -127,7 +127,12 @@ namespace FET_Characterization.Experiments
                                 throw new ArgumentException();
                         }
 
-                        onProgressChanged(new ProgressEventArgs(100.0 * (1.0 - (settings.N_VgStep - (i + 1)) / settings.N_VgStep + (1.0 - (settings.N_VdsSweep - (j + 1))) / 10.0)));
+                        var gateProgress = 1.0 - (settings.N_VgStep - (double)i) / settings.N_VgStep;
+                        var dsProgress = (1.0 - (settings.N_VdsSweep - (double)j) / settings.N_VdsSweep) / settings.N_VgStep;
+
+                        var totalProgress = (gateProgress + dsProgress) * 100.0;
+
+                        onProgressChanged(new ProgressEventArgs(totalProgress));
 
                         current_DS_value += d_DS_value;
                     }
@@ -187,21 +192,22 @@ namespace FET_Characterization.Experiments
 
                     currentVg += dVg;
                     smuVg.Voltage = currentVg;
+                    
+                    var gateProgress = 1.0 - (settings.N_VgStep - (double)(i + 1)) / settings.N_VgStep;
 
-                    onProgressChanged(new ProgressEventArgs(100.0 * (1.0 - (settings.N_VgStep - i) / settings.N_VgStep)));
+                    onProgressChanged(new ProgressEventArgs(gateProgress * 100));
                 }
             }
 
-
             smuVg.SwitchOFF();
             smuVds.SwitchOFF();
+
+            onStatusChanged(new StatusEventArgs("Measurement completed!"));
         }
 
         public override void Stop()
         {
             IsRunning = false;
-
-            //base.Stop();
         }
     }
 }

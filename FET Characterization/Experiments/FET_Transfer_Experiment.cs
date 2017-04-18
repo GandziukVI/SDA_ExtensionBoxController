@@ -102,7 +102,12 @@ namespace FET_Characterization.Experiments
 
                     currentVg += dVg;
 
-                    onProgressChanged(new ProgressEventArgs(100.0 * (1.0 - (settings.TransferN_VdsStep - (i + 1)) / settings.TransferN_VdsStep + (1.0 - (settings.TransferN_VgSweep - (j + 1))) / 10.0)));
+                    var gateProgress = (1.0 - (settings.TransferN_VgSweep - (double)j) / settings.TransferN_VgSweep) / settings.TransferN_VdsStep;
+                    var dsProgress = 1.0 - (settings.TransferN_VdsStep - (double)i) / settings.TransferN_VdsStep;
+
+                    var totalProgress = (gateProgress + dsProgress) * 100.0;
+
+                    onProgressChanged(new ProgressEventArgs(totalProgress));
                 }
 
                 currentVg = settings.TransferVgStart;
@@ -127,6 +132,13 @@ namespace FET_Characterization.Experiments
 
             smuVg.SwitchOFF();
             smuVds.SwitchOFF();
+
+            onStatusChanged(new StatusEventArgs("Measurement completed!"));
+        }
+
+        public override void Stop()
+        {
+            IsRunning = false;
         }
     }
 }
