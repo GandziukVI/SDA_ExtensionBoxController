@@ -274,8 +274,7 @@ function MeasureConductance_smub(devAvg, devNPLC, devDelay)
 end
 			
 function DCSweepVLinear_smub(start, stop, numPoints, limitI, nplc)
-	reset()
-	
+		
 	smub.reset()
 	
 	display.smub.measure.func = display.MEASURE_DCAMPS
@@ -310,8 +309,7 @@ function DCSweepVLinear_smub(start, stop, numPoints, limitI, nplc)
 end
 
 function DCSweepILinear_smub(start, stop, numPoints, limitV, nplc)
-	reset()
-	
+		
 	smub.reset()
 	
 	display.smub.measure.func = display.MEASURE_DCVOLTS
@@ -346,8 +344,7 @@ function DCSweepILinear_smub(start, stop, numPoints, limitV, nplc)
 end
 
 function DCSweepVLog_smub(start, stop, numPoints, limitI, nplc)
-	reset()
-	
+		
 	smub.reset()
 	
 	display.smub.measure.func = display.MEASURE_DCAMPS
@@ -383,8 +380,7 @@ function DCSweepVLog_smub(start, stop, numPoints, limitI, nplc)
 end
 
 function DCSweepILog_smub(start, stop, numPoints, limitV, nplc)
-	reset()
-	
+		
 	smub.reset()
 	
 	display.smub.measure.func = display.MEASURE_DCVOLTS
@@ -422,9 +418,7 @@ function DCSweepVList_smub(sweepList, numPoints, limitI, nplc)
 	if sweepList == nil or type(sweepList) ~= "table" then
 		sweepList = {1, 5, 2, 6, 3, 7, 4, 8, 5, 9, 6, 10}
 	end
-	
-	reset()
-	
+			
 	smub.reset()
 	
 	display.smub.measure.func = display.MEASURE_DCAMPS
@@ -463,9 +457,7 @@ function DCSweepIList_smub(sweepList, numPoints, limitV, nplc)
 	if sweepList == nil or type(sweepList) ~= "table" then
 		sweepList = {1e-3, 5e-3, 2e-3, 6e-3, 3e-3, 7e-3, 4e-3, 8e-3, 5e-3, 9e-3, 6e-3, 10e-3}
 	end
-	
-	reset()
-	
+			
 	smub.reset()
 	
 	display.smub.measure.func = display.MEASURE_DCVOLTS
@@ -541,7 +533,7 @@ end
 		PulsedSweepVSingle(0, 10, 11, 1e-3, 5e-3, 0.1, 0.001, false)
 --]]
 function PulsedSweepVSingle_smub(start, stop, numPoints, pulseWidth, pulsePeriod, limitI, nplc, remoteSense)
-	reset()
+	
 	smub.reset()
 	smub.source.func					= smub.OUTPUT_DCVOLTS
 	if remoteSense == true then
@@ -655,7 +647,7 @@ end
 		PulsedSweepISingle(0, 10e-3, 11, 1e-3, 5e-3, 10, 0.001, false)
 --]]
 function PulsedSweepISingle_smub(start, stop, numPoints, pulseWidth, pulsePeriod, limitV, nplc, remoteSense)
-	reset()
+	
 	smub.reset()
 	smub.source.func					= smub.OUTPUT_DCAMPS
 	if remoteSense == true then
