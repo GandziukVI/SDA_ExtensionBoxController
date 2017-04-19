@@ -153,8 +153,11 @@ namespace FET_Characterization.Experiments
                             throw new ArgumentException();
                     }
 
-                    currentVg += dVg;
-                    smuVg.Voltage = currentVg;
+                    if (i != settings.N_VgStep - 1)
+                    {
+                        currentVg += dVg;
+                        smuVg.Voltage = currentVg;
+                    }
                 }
             }
             else
@@ -190,9 +193,12 @@ namespace FET_Characterization.Experiments
 
                     current_DS_value = settings.VdsStart;
 
-                    currentVg += dVg;
-                    smuVg.Voltage = currentVg;
-                    
+                    if (i != settings.N_VgStep - 1)
+                    {
+                        currentVg += dVg;
+                        smuVg.Voltage = currentVg;
+                    }
+
                     var gateProgress = 1.0 - (settings.N_VgStep - (double)(i + 1)) / settings.N_VgStep;
 
                     onProgressChanged(new ProgressEventArgs(gateProgress * 100));
@@ -201,6 +207,22 @@ namespace FET_Characterization.Experiments
 
             smuVg.SwitchOFF();
             smuVds.SwitchOFF();
+
+            smuVg.Voltage = 0.0;
+
+            switch (settings.SMU_SourceMode)
+            {
+                case SMUSourceMode.Voltage:
+                    smuVds.Voltage = 0.0;
+                    break;
+                case SMUSourceMode.Current:
+                    smuVds.Current = 0.0;
+                    break;
+                case SMUSourceMode.ModeNotSet:
+                    throw new ArgumentException();
+                default:
+                    throw new ArgumentException();
+            }
 
             onStatusChanged(new StatusEventArgs("Measurement completed!"));
         }

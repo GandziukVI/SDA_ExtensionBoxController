@@ -113,25 +113,44 @@ namespace FET_Characterization.Experiments
                 currentVg = settings.TransferVgStart;
                 smuVg.Voltage = currentVg;
 
-                current_DS_value += d_DS_value;
-
-                switch (settings.TransferSMU_SourceMode)
+                if (i != settings.TransferN_VdsStep - 1)
                 {
-                    case SMUSourceMode.Voltage:
-                        smuVds.Voltage = current_DS_value;
-                        break;
-                    case SMUSourceMode.Current:
-                        smuVds.Current = current_DS_value;
-                        break;
-                    case SMUSourceMode.ModeNotSet:
-                        throw new ArgumentException();
-                    default:
-                        throw new ArgumentException();
+                    current_DS_value += d_DS_value;
+
+                    switch (settings.TransferSMU_SourceMode)
+                    {
+                        case SMUSourceMode.Voltage:
+                            smuVds.Voltage = current_DS_value;
+                            break;
+                        case SMUSourceMode.Current:
+                            smuVds.Current = current_DS_value;
+                            break;
+                        case SMUSourceMode.ModeNotSet:
+                            throw new ArgumentException();
+                        default:
+                            throw new ArgumentException();
+                    }
                 }
             }
 
             smuVg.SwitchOFF();
             smuVds.SwitchOFF();
+
+            smuVg.Voltage = 0.0;
+
+            switch (settings.SMU_SourceMode)
+            {
+                case SMUSourceMode.Voltage:
+                    smuVds.Voltage = 0.0;
+                    break;
+                case SMUSourceMode.Current:
+                    smuVds.Current = 0.0;
+                    break;
+                case SMUSourceMode.ModeNotSet:
+                    throw new ArgumentException();
+                default:
+                    throw new ArgumentException();
+            }
 
             onStatusChanged(new StatusEventArgs("Measurement completed!"));
         }
