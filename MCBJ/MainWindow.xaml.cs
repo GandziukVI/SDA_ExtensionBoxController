@@ -125,7 +125,7 @@ namespace MCBJ
         {
             dList.Clear();
 
-            var data = ((string)IVDataString).FromString();
+            var data = ((string)IVDataString).FromStringExtension();
 
             var points = from dataPoint in data
                          select new Point(dataPoint.Voltage, dataPoint.Current);

@@ -131,7 +131,7 @@ namespace FET_Characterization
                     ds.AppendAsync(Dispatcher, new Point(dataPoint[0], dataPoint[1]));
                 else
                 {
-                    var iv_query = from ivPoint in e.Data.FromString()
+                    var iv_query = from ivPoint in e.Data.FromStringExtension()
                                    select new Point(ivPoint.Voltage, ivPoint.Current);
 
                     Dispatcher.BeginInvoke(new Action(() =>
@@ -204,7 +204,7 @@ namespace FET_Characterization
                     ds.AppendAsync(Dispatcher, new Point(dataPoint[0], dataPoint[1]));
                 else
                 {
-                    var iv_query = from ivPoint in e.Data.FromString()
+                    var iv_query = from ivPoint in e.Data.FromStringExtension()
                                    select new Point(ivPoint.Voltage, ivPoint.Current);
 
                     Dispatcher.BeginInvoke(new Action(() =>

@@ -250,17 +250,17 @@ namespace MCBJ.Experiments
 
         public override void SaveToFile(string FileName)
         {
-            var formatBiulder = new StringBuilder();
+            var formatBuilder = new StringBuilder();
             var dataBuilder = new StringBuilder();
 
             var counter = 0;
             for (int i = 0; i < IVData.Count; i++)
             {
-                formatBiulder.AppendFormat("{{0}}\t{{1}}\t", counter.ToString(NumberFormatInfo.InvariantInfo), (counter + 1).ToString(NumberFormatInfo.InvariantInfo));
+                formatBuilder.AppendFormat("{{0}}\t{{1}}\t", counter.ToString(NumberFormatInfo.InvariantInfo), (counter + 1).ToString(NumberFormatInfo.InvariantInfo));
                 counter += 2;
             }
 
-            var stringFormat = formatBiulder.ToString().TrimEnd('\t') + "\r\n";
+            var stringFormat = formatBuilder.ToString().TrimEnd('\t') + "\r\n";
 
             var minLen = IVData.First.Value.Length;
 

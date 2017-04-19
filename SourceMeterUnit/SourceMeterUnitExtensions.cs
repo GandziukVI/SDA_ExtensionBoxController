@@ -11,7 +11,7 @@ namespace SourceMeterUnit
         static char[] _delimeters = { '\r', '\n' };
         static char[] _separators = { ' ', '\t', ',' };
 
-        public static IV_Data[] FromString(this string DataString)
+        public static IV_Data[] FromStringExtension(this string DataString)
         {
             var query = (from item in DataString.Split(_delimeters, StringSplitOptions.RemoveEmptyEntries)
                          select new IV_Data(item)).ToArray();
@@ -19,7 +19,7 @@ namespace SourceMeterUnit
             return query;
         }
 
-        public static string ToString(this IV_Data[] ivData)
+        public static string ToStringExtension(this IV_Data[] ivData)
         {
             var sb = new StringBuilder();
 

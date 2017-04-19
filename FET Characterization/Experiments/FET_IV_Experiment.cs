@@ -176,13 +176,13 @@ namespace FET_Characterization.Experiments
                             {
                                 var ivData = smuVds.LinearVoltageSweep(settings.VdsStart, settings.VdsStop, settings.N_VdsSweep);
 
-                                onDataArrived(new ExpDataArrivedEventArgs(SourceMeterUnitExtensions.ToString(ivData)));
+                                onDataArrived(new ExpDataArrivedEventArgs(SourceMeterUnitExtensions.ToStringExtension(ivData)));
                             } break;
                         case SMUSourceMode.Current:
                             {
                                 var ivData = smuVds.LinearCurrentSweep(settings.VdsStart, settings.VdsStop, settings.N_VdsSweep);
 
-                                onDataArrived(new ExpDataArrivedEventArgs(SourceMeterUnitExtensions.ToString(ivData)));
+                                onDataArrived(new ExpDataArrivedEventArgs(SourceMeterUnitExtensions.ToStringExtension(ivData)));
                             } break;
                         case SMUSourceMode.ModeNotSet:
                             throw new ArgumentException();
@@ -230,6 +230,11 @@ namespace FET_Characterization.Experiments
         public override void Stop()
         {
             IsRunning = false;
+        }
+
+        public override void SaveToFile(string FileName)
+        {
+            
         }
     }
 }

@@ -3,16 +3,57 @@ using SourceMeterUnit;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace FET_Characterization.Experiments
 {
+    class TransferData
+    {
+        public double GateVoltage { get; set; }
+        public double DrainCurrent { get; set; }
+        public double GateCurrent { get; set; }
+
+        public TransferData(double gateVoltage, double drainCurrent, double gateCurrent)
+        {
+            GateVoltage = GateVoltage;
+            DrainCurrent = drainCurrent;
+            GateCurrent = gateCurrent;
+        }
+
+        public override string ToString()
+        {
+            return string.Join("\t", GateVoltage, DrainCurrent, GateCurrent);
+        }
+    }
+
+    class TransferDataContainer
+    {
+        public double DrainSourceVoltage { get; set; }
+        public LinkedList<TransferData> TransferCurveData { get; set; }
+
+        public TransferDataContainer(double drainSourceVoltage)
+        {
+            DrainSourceVoltage = drainSourceVoltage;
+            TransferCurveData = new LinkedList<TransferData>();
+        }
+
+        public TransferDataContainer(double drainSourceVoltage, LinkedList<TransferData> data)
+        {
+            DrainSourceVoltage = drainSourceVoltage;
+            TransferCurveData = data;
+        }
+    }
+
     public class FET_Transfer_Experiment : ExperimentBase
     {
         private ISourceMeterUnit smuVds;
         private ISourceMeterUnit smuVg;
+
+        private LinkedList<TransferData> singleTransferCurveData;
+        private LinkedList<TransferDataContainer> transferCurveDataSet;
 
         public FET_Transfer_Experiment(ISourceMeterUnit SMU_Vds, ISourceMeterUnit SMU_Vg)
             : base()
@@ -23,6 +64,8 @@ namespace FET_Characterization.Experiments
 
         public override void ToDo(object Arg)
         {
+            transferCurveDataSet = new LinkedList<TransferDataContainer>();
+
             var settings = (FET_IVModel)Arg;
 
             #region Gate SMU settings
@@ -83,6 +126,8 @@ namespace FET_Characterization.Experiments
                 if (!IsRunning)
                     break;
 
+                singleTransferCurveData = new LinkedList<TransferData>();
+
                 for (int j = 0; j <= settings.TransferN_VgSweep; j++)
                 {
                     if (!IsRunning)
@@ -109,6 +154,10 @@ namespace FET_Characterization.Experiments
 
                     onProgressChanged(new ProgressEventArgs(totalProgress));
                 }
+
+                var trData = new TransferDataContainer(current_DS_value, singleTransferCurveData);
+
+                transferCurveDataSet.AddLast(trData);
 
                 currentVg = settings.TransferVgStart;
                 smuVg.Voltage = currentVg;
@@ -152,12 +201,74 @@ namespace FET_Characterization.Experiments
                     throw new ArgumentException();
             }
 
+            SaveToFile(settings.Transfer_FileName);
+
             onStatusChanged(new StatusEventArgs("Measurement completed!"));
         }
 
         public override void Stop()
         {
             IsRunning = false;
+        }
+
+        public override void SaveToFile(string FileName)
+        {
+            var formatBuilder = new StringBuilder();
+            var dataBuilder = new StringBuilder();
+
+            var headerBuilder = new StringBuilder();
+            var subHeaderBuilder = new StringBuilder();
+            var commentBuilder = new StringBuilder();
+
+            var counter = 0;
+            for (int i = 0; i < transferCurveDataSet.Count; i++)
+            {
+                headerBuilder.AppendFormat("{{0}}\t{{1}}\t{{2}}\t", "V\\-(G)", "I\\-(DS)", "I\\-(G)");
+                subHeaderBuilder.AppendFormat("{{0}}\t{{1}}\t{{2}}\t", "V", "A", "A");
+
+                commentBuilder.AppendFormat(
+                    "{{0}}\t{{1}}\t{{2}}\t", 
+                    string.Format("V\\-(DS) = {0}", transferCurveDataSet.ElementAt(i).DrainSourceVoltage.ToString(NumberFormatInfo.InvariantInfo)),
+                    string.Format("V\\-(DS) = {0}", transferCurveDataSet.ElementAt(i).DrainSourceVoltage.ToString(NumberFormatInfo.InvariantInfo)),
+                    string.Format("V\\-(DS) = {0}", transferCurveDataSet.ElementAt(i).DrainSourceVoltage.ToString(NumberFormatInfo.InvariantInfo)));
+
+                formatBuilder.AppendFormat("{{0}}\t{{1}}\t{{2}}\t", counter.ToString(NumberFormatInfo.InvariantInfo), (counter + 1).ToString(NumberFormatInfo.InvariantInfo), (counter + 2).ToString(NumberFormatInfo.InvariantInfo));
+                counter += 3;
+            }
+
+            var formatString = string.Join("", formatBuilder.ToString().TrimEnd('\t'), "\r\n");
+
+            var header = string.Join("", headerBuilder.ToString().TrimEnd('\t'), "\r\n");
+            var subHeader = string.Join("", subHeaderBuilder.ToString().TrimEnd('\t'), "\r\n");
+            var comment = string.Join("", commentBuilder.ToString().TrimEnd('\t'), "\r\n");
+
+            var minLen = transferCurveDataSet.First.Value.TransferCurveData.Count;
+
+            foreach (var item in transferCurveDataSet)
+                if (item.TransferCurveData.Count < minLen)
+                    minLen = item.TransferCurveData.Count;
+
+            for (int i = 0; i < minLen; i++)
+            {
+                counter = 0;
+                var arr = new string[transferCurveDataSet.Count * 3];
+                for (int j = 0; j < transferCurveDataSet.Count; j++)
+                {
+                    arr[counter] = transferCurveDataSet.ElementAt(j).TransferCurveData.ElementAt(i).GateVoltage.ToString(NumberFormatInfo.InvariantInfo);
+                    arr[counter + 1] = transferCurveDataSet.ElementAt(j).TransferCurveData.ElementAt(i).DrainCurrent.ToString(NumberFormatInfo.InvariantInfo);
+                    arr[counter + 3] = transferCurveDataSet.ElementAt(j).TransferCurveData.ElementAt(i).DrainCurrent.ToString(NumberFormatInfo.InvariantInfo);
+
+                    counter += 3;
+                }
+
+                dataBuilder.AppendFormat(formatString, arr);
+            }
+
+            using (var writer = new StreamWriter(new FileStream(FileName, FileMode.Create, FileAccess.Write)))
+            {
+                var toWrite = string.Join("", header, subHeader, dataBuilder.ToString());
+                writer.Write(toWrite);
+            }
         }
     }
 }
