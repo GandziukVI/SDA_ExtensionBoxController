@@ -224,10 +224,10 @@ namespace FET_Characterization.Experiments
             for (int i = 0; i < transferCurveDataSet.Count; i++)
             {
                 headerBuilder.AppendFormat("{0}\t{1}\t{2}\t", "V\\-(G)", "I\\-(DS)", "I\\-(G)");
-                subHeaderBuilder.AppendFormat("{{0}}\t{{1}}\t{{2}}\t", "V", "A", "A");
+                subHeaderBuilder.AppendFormat("{0}\t{1}\t{2}\t", "V", "A", "A");
 
                 commentBuilder.AppendFormat(
-                    "{{0}}\t{{1}}\t{{2}}\t", 
+                    "{0}\t{1}\t{2}\t", 
                     string.Format("V\\-(DS) = {0}", transferCurveDataSet.ElementAt(i).DrainSourceVoltage.ToString(NumberFormatInfo.InvariantInfo)),
                     string.Format("V\\-(DS) = {0}", transferCurveDataSet.ElementAt(i).DrainSourceVoltage.ToString(NumberFormatInfo.InvariantInfo)),
                     string.Format("V\\-(DS) = {0}", transferCurveDataSet.ElementAt(i).DrainSourceVoltage.ToString(NumberFormatInfo.InvariantInfo)));
