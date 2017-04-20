@@ -223,7 +223,7 @@ namespace FET_Characterization.Experiments
             var counter = 0;
             for (int i = 0; i < transferCurveDataSet.Count; i++)
             {
-                headerBuilder.AppendFormat("{{0}}\t{{1}}\t{{2}}\t", "V\\-(G)", "I\\-(DS)", "I\\-(G)");
+                headerBuilder.AppendFormat("{0}\t{1}\t{2}\t", "V\\-(G)", "I\\-(DS)", "I\\-(G)");
                 subHeaderBuilder.AppendFormat("{{0}}\t{{1}}\t{{2}}\t", "V", "A", "A");
 
                 commentBuilder.AppendFormat(
