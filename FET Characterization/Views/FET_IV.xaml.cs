@@ -17,11 +17,27 @@ namespace FET_Characterization
 	/// </summary>
 	public partial class FET_IV : UserControl
 	{
+        System.Windows.Forms.FolderBrowserDialog dialogIVMeasurement;
+        System.Windows.Forms.FolderBrowserDialog dialogTransferMeasurement;
+
 		public FET_IV()
 		{
-			this.InitializeComponent();
-			
-			// Insert code required on object creation below this point.
+            dialogIVMeasurement = new System.Windows.Forms.FolderBrowserDialog();
+            dialogTransferMeasurement = new System.Windows.Forms.FolderBrowserDialog();
+
+			this.InitializeComponent();		
 		}
+
+        private void on_cmdOpenFolderIV_Click(object sender, RoutedEventArgs e)
+        {
+            dialogIVMeasurement.ShowDialog();
+            Settings.IV_FET_DataFilePath = dialogIVMeasurement.SelectedPath;
+        }
+
+        private void on_cmdOpenFolderTransfer(object sender, RoutedEventArgs e)
+        {
+            dialogTransferMeasurement.ShowDialog();
+            Settings.TransferDataFilePath = dialogTransferMeasurement.SelectedPath;
+        }
 	}
 }

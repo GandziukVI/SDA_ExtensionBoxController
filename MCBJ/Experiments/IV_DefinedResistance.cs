@@ -256,7 +256,7 @@ namespace MCBJ.Experiments
             var counter = 0;
             for (int i = 0; i < IVData.Count; i++)
             {
-                formatBuilder.AppendFormat("{{0}}\t{{1}}\t", counter.ToString(NumberFormatInfo.InvariantInfo), (counter + 1).ToString(NumberFormatInfo.InvariantInfo));
+                formatBuilder.AppendFormat("{{{0}}}\t{{{1}}}\t", counter.ToString(NumberFormatInfo.InvariantInfo), (counter + 1).ToString(NumberFormatInfo.InvariantInfo));
                 counter += 2;
             }
 

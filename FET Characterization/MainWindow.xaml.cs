@@ -65,14 +65,14 @@ namespace FET_Characterization
 
             control.cmdStartTransfer.Click += cmdStartTransfer_Click;
             control.cmdStopTransfer.Click += cmdStopTransfer_Click;
-
-            expStartInfo = control.Settings;
-        }
+        }        
 
         #region Interface and logic for FET I-V measurement
 
         void cmdStartIV_Click(object sender, RoutedEventArgs e)
         {
+            expStartInfo = (measurementInterface as FET_IV).Settings;
+
             (measurementInterface as FET_IV).expIV_FET_Chart.Children.RemoveAll(typeof(LineGraph));
             (measurementInterface as FET_IV).expIV_FET_Chart.Legend.Visibility = System.Windows.Visibility.Visible;
 
@@ -148,6 +148,8 @@ namespace FET_Characterization
 
         void cmdStartTransfer_Click(object sender, RoutedEventArgs e)
         {
+            expStartInfo = (measurementInterface as FET_IV).Settings;
+
             (measurementInterface as FET_IV).expTransfer_FET_Chart.Children.RemoveAll(typeof(LineGraph));
             (measurementInterface as FET_IV).expTransfer_FET_Chart.Legend.Visibility = System.Windows.Visibility.Visible;
 

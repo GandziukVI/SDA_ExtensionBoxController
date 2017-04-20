@@ -5,6 +5,7 @@ using System.Windows.Data;
 using System.ComponentModel;
 using SourceMeterUnit;
 using Keithley26xx;
+using System.IO;
 
 namespace FET_Characterization
 {
@@ -209,6 +210,18 @@ namespace FET_Characterization
             }
         }
 
+        private string ivFET_FilePath = Directory.GetCurrentDirectory();
+        public string IV_FET_DataFilePath
+        {
+            get { return ivFET_FilePath; }
+            set 
+            {
+                ivFET_FilePath = value;
+                NotifyPropertyChanged("IV_FET_DataFilePath");
+            }
+        }
+
+
         private string ivFileName = "T (1, 1)_IV_FG.dat";
         public string IV_FileName
         {
@@ -404,6 +417,17 @@ namespace FET_Characterization
             {
                 transfer_delayTime = value;
                 NotifyPropertyChanged("TransferDelayTime");
+            }
+        }
+
+        private string transferFilePath = Directory.GetCurrentDirectory();
+        public string TransferDataFilePath
+        {
+            get { return transferFilePath; }
+            set
+            {
+                transferFilePath = value;
+                NotifyPropertyChanged("TransferDataFilePath");
             }
         }
 

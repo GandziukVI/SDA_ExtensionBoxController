@@ -214,7 +214,7 @@
 							<ColumnDefinition Width="Auto"/>
 							<ColumnDefinition />
 						</Grid.ColumnDefinitions>
-						<Button x:Name="cmdOpenFolderIV" Content="..." HorizontalAlignment="Left" VerticalAlignment="Top" Width="35" Height="35"/>
+						<Button x:Name="cmdOpenFolderIV" Content="..." HorizontalAlignment="Left" VerticalAlignment="Top" Width="35" Height="35" Click="on_cmdOpenFolderIV_Click"/>
 						<TextBox TextWrapping="Wrap" Grid.Column="1" Margin="10,2.5,2.5,2" VerticalContentAlignment="Center" Height="35" Text="{Binding IV_FileName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>				
 					</Grid>
 
@@ -377,7 +377,7 @@
 								<ColumnDefinition Width="Auto"/>
 								<ColumnDefinition />
 							</Grid.ColumnDefinitions>
-							<Button x:Name="cmdOpenFolderTransfer" Content="..." HorizontalAlignment="Left" VerticalAlignment="Top" Width="35" Height="35"/>
+							<Button x:Name="cmdOpenFolderTransfer" Content="..." HorizontalAlignment="Left" VerticalAlignment="Top" Width="35" Height="35" Click="on_cmdOpenFolderTransfer"/>
 							<TextBox TextWrapping="Wrap" Grid.Column="1" Margin="10,2.5,2.5,2" VerticalContentAlignment="Center" Height="35" Text="{Binding Transfer_FileName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>				
 						</Grid>
 

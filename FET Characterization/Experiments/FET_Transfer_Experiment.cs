@@ -18,7 +18,7 @@ namespace FET_Characterization.Experiments
 
         public TransferData(double gateVoltage, double drainCurrent, double gateCurrent)
         {
-            GateVoltage = GateVoltage;
+            GateVoltage = gateVoltage;
             DrainCurrent = drainCurrent;
             GateCurrent = gateCurrent;
         }
@@ -145,6 +145,8 @@ namespace FET_Characterization.Experiments
                         drainCurrent.ToString(NumberFormatInfo.InvariantInfo),
                         leakageCurrent.ToString(NumberFormatInfo.InvariantInfo))));
 
+                    singleTransferCurveData.AddLast(new TransferData(gateVoltage, drainCurrent, leakageCurrent));
+
                     currentVg += dVg;
 
                     var gateProgress = (1.0 - (settings.TransferN_VgSweep - (double)j) / settings.TransferN_VgSweep) / settings.TransferN_VdsStep;
@@ -201,7 +203,7 @@ namespace FET_Characterization.Experiments
                     throw new ArgumentException();
             }
 
-            SaveToFile(string.Format("{0}\\{1}", "C:\\Users\\v.handziuk\\Desktop\\", settings.Transfer_FileName));
+            SaveToFile(string.Format("{0}\\{1}", settings.TransferDataFilePath, settings.Transfer_FileName));
 
             onStatusChanged(new StatusEventArgs("Measurement completed!"));
         }
@@ -223,7 +225,7 @@ namespace FET_Characterization.Experiments
             var counter = 0;
             for (int i = 0; i < transferCurveDataSet.Count; i++)
             {
-                headerBuilder.AppendFormat("{0}\t{1}\t{2}\t", "V\\-(G)", "I\\-(DS)", "I\\-(G)");
+                headerBuilder.AppendFormat("{0}\t{1}\t{2}\t", "V\\-(G)", "I\\-(D)", "I\\-(G)");
                 subHeaderBuilder.AppendFormat("{0}\t{1}\t{2}\t", "V", "A", "A");
 
                 commentBuilder.AppendFormat(
@@ -232,7 +234,7 @@ namespace FET_Characterization.Experiments
                     string.Format("V\\-(DS) = {0}", transferCurveDataSet.ElementAt(i).DrainSourceVoltage.ToString(NumberFormatInfo.InvariantInfo)),
                     string.Format("V\\-(DS) = {0}", transferCurveDataSet.ElementAt(i).DrainSourceVoltage.ToString(NumberFormatInfo.InvariantInfo)));
 
-                formatBuilder.AppendFormat("{{0}}\t{{1}}\t{{2}}\t", counter.ToString(NumberFormatInfo.InvariantInfo), (counter + 1).ToString(NumberFormatInfo.InvariantInfo), (counter + 2).ToString(NumberFormatInfo.InvariantInfo));
+                formatBuilder.AppendFormat("{{{0}}}\t{{{1}}}\t{{{2}}}\t", counter.ToString(NumberFormatInfo.InvariantInfo), (counter + 1).ToString(NumberFormatInfo.InvariantInfo), (counter + 2).ToString(NumberFormatInfo.InvariantInfo));
                 counter += 3;
             }
 
@@ -256,7 +258,7 @@ namespace FET_Characterization.Experiments
                 {
                     arr[counter] = transferCurveDataSet.ElementAt(j).TransferCurveData.ElementAt(i).GateVoltage.ToString(NumberFormatInfo.InvariantInfo);
                     arr[counter + 1] = transferCurveDataSet.ElementAt(j).TransferCurveData.ElementAt(i).DrainCurrent.ToString(NumberFormatInfo.InvariantInfo);
-                    arr[counter + 3] = transferCurveDataSet.ElementAt(j).TransferCurveData.ElementAt(i).DrainCurrent.ToString(NumberFormatInfo.InvariantInfo);
+                    arr[counter + 2] = transferCurveDataSet.ElementAt(j).TransferCurveData.ElementAt(i).GateCurrent.ToString(NumberFormatInfo.InvariantInfo);
 
                     counter += 3;
                 }
@@ -266,7 +268,7 @@ namespace FET_Characterization.Experiments
 
             using (var writer = new StreamWriter(new FileStream(FileName, FileMode.Create, FileAccess.Write)))
             {
-                var toWrite = string.Join("", header, subHeader, dataBuilder.ToString());
+                var toWrite = string.Join("", header, subHeader, comment, dataBuilder.ToString());
                 writer.Write(toWrite);
             }
         }
