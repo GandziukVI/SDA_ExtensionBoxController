@@ -176,13 +176,13 @@ namespace FET_Characterization.Experiments
                             {
                                 var ivData = smuVds.LinearVoltageSweep(settings.VdsStart, settings.VdsStop, settings.N_VdsSweep);
 
-                                onDataArrived(new ExpDataArrivedEventArgs(SourceMeterUnitExtensions.ToStringExtension(ivData)));
+                                onDataArrived(new ExpDataArrivedEventArgs(ivData.ToStringExtension()));
                             } break;
                         case SMUSourceMode.Current:
                             {
                                 var ivData = smuVds.LinearCurrentSweep(settings.VdsStart, settings.VdsStop, settings.N_VdsSweep);
 
-                                onDataArrived(new ExpDataArrivedEventArgs(SourceMeterUnitExtensions.ToStringExtension(ivData)));
+                                onDataArrived(new ExpDataArrivedEventArgs(ivData.ToStringExtension()));
                             } break;
                         case SMUSourceMode.ModeNotSet:
                             throw new ArgumentException();

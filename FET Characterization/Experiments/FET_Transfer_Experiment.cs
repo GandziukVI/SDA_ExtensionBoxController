@@ -201,7 +201,7 @@ namespace FET_Characterization.Experiments
                     throw new ArgumentException();
             }
 
-            SaveToFile(settings.Transfer_FileName);
+            SaveToFile(string.Format("{0}\\{1}", "C:\\Users\\v.handziuk\\Desktop\\", settings.Transfer_FileName));
 
             onStatusChanged(new StatusEventArgs("Measurement completed!"));
         }
