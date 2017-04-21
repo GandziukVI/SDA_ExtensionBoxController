@@ -65,7 +65,7 @@ namespace FET_Characterization
 
             control.cmdStartTransfer.Click += cmdStartTransfer_Click;
             control.cmdStopTransfer.Click += cmdStopTransfer_Click;
-        }        
+        }
 
         #region Interface and logic for FET I-V measurement
 
@@ -202,18 +202,7 @@ namespace FET_Characterization
             else
             {
                 var dataPoint = Array.ConvertAll(e.Data.Split(delim, StringSplitOptions.RemoveEmptyEntries), s => double.Parse(s, NumberFormatInfo.InvariantInfo));
-                if (settings.MeasureLeakage == true)
-                    ds.AppendAsync(Dispatcher, new Point(dataPoint[0], dataPoint[1]));
-                else
-                {
-                    var iv_query = from ivPoint in e.Data.FromStringExtension()
-                                   select new Point(ivPoint.Voltage, ivPoint.Current);
-
-                    Dispatcher.BeginInvoke(new Action(() =>
-                    {
-                        ds.AppendMany(iv_query);
-                    }));
-                }
+                ds.AppendAsync(Dispatcher, new Point(dataPoint[0], dataPoint[1]));
             }
         }
 

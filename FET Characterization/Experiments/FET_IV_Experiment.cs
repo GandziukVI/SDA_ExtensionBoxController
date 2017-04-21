@@ -218,8 +218,8 @@ namespace FET_Characterization.Experiments
                 {
                     onStatusChanged(new StatusEventArgs(string.Format("Measuring I-V curve # {0} out of {1}", (i + 1).ToString(NumberFormatInfo.InvariantInfo), settings.N_VgStep)));
                     onDataArrived(new ExpDataArrivedEventArgs(string.Format("Vg = {0}", currentVg.ToString(NumberFormatInfo.InvariantInfo))));
-                    
-                    var singleIV_FET_Curve = new LinkedList<IV_FET_Data>();
+
+                    singleIV_FET_CurveData = new LinkedList<IV_FET_Data>();
 
                     if (!IsRunning)
                         break;
