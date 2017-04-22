@@ -35,7 +35,8 @@ namespace FET_Characterization
 
         char[] delim = "\t\r\n".ToCharArray();
 
-        Microsoft.Research.DynamicDataDisplay.DataSources.ObservableDataSource<Point> ds;
+        Microsoft.Research.DynamicDataDisplay.DataSources.ObservableDataSource<Point> dsMeasurement;
+        Microsoft.Research.DynamicDataDisplay.DataSources.ObservableDataSource<Point> dsLeakage;
 
         IDeviceIO driver;
         Keithley26xxB<Keithley2602B> measureDevice;
@@ -114,21 +115,40 @@ namespace FET_Characterization
         {
             var settings = expStartInfo as FET_IVModel;
 
-            if (e.Data.Contains("Vg") || ds == null)
+            if (e.Data.Contains("Vg") || dsMeasurement == null)
             {
-                ds = new Microsoft.Research.DynamicDataDisplay.DataSources.ObservableDataSource<Point>();
-                ds.SetXYMapping(p => p);
+                var CurrentLinePen = new Pen();
+
+                dsMeasurement = new Microsoft.Research.DynamicDataDisplay.DataSources.ObservableDataSource<Point>();
+                dsMeasurement.SetXYMapping(p => p);
 
                 Dispatcher.BeginInvoke(new Action(() =>
                 {
-                    (measurementInterface as FET_IV).expIV_FET_Chart.AddLineGraph(ds, 1.0, e.Data);
+                    CurrentLinePen = (measurementInterface as FET_IV).inner_expIV_FET_Chart.AddLineGraph(dsMeasurement, 2.0, e.Data).LinePen;
+                    CurrentLinePen = new Pen(CurrentLinePen.Brush, 1.0);
                 }));
+
+                if (dsLeakage == null)
+                {
+                    dsLeakage = new Microsoft.Research.DynamicDataDisplay.DataSources.ObservableDataSource<Point>();
+                    dsLeakage.SetXYMapping(p => p);
+
+                    Dispatcher.BeginInvoke(new Action(() => 
+                    {
+                        var leakageLineGraph = new LineGraph(dsLeakage);
+                        leakageLineGraph.LinePen = CurrentLinePen;
+                        leakageLineGraph.AddToPlotter((measurementInterface as FET_IV).inner_expIV_FET_Chart);
+                    }));
+                }
             }
             else
             {
                 var dataPoint = Array.ConvertAll(e.Data.Split(delim, StringSplitOptions.RemoveEmptyEntries), s => double.Parse(s, NumberFormatInfo.InvariantInfo));
                 if (settings.MeasureLeakage == true)
-                    ds.AppendAsync(Dispatcher, new Point(dataPoint[0], dataPoint[1]));
+                {
+                    dsMeasurement.AppendAsync(Dispatcher, new Point(dataPoint[0], dataPoint[1]));
+                    dsLeakage.AppendAsync(Dispatcher, new Point(dataPoint[0], dataPoint[2]));
+                }
                 else
                 {
                     var iv_query = from ivPoint in e.Data.FromStringExtension()
@@ -136,7 +156,7 @@ namespace FET_Characterization
 
                     Dispatcher.BeginInvoke(new Action(() =>
                     {
-                        ds.AppendMany(iv_query);
+                        dsMeasurement.AppendMany(iv_query);
                     }));
                 }
             }
@@ -189,20 +209,20 @@ namespace FET_Characterization
         {
             var settings = expStartInfo as FET_IVModel;
 
-            if (e.Data.Contains("Vds") || ds == null)
+            if (e.Data.Contains("Vds") || dsMeasurement == null)
             {
-                ds = new Microsoft.Research.DynamicDataDisplay.DataSources.ObservableDataSource<Point>();
-                ds.SetXYMapping(p => p);
+                dsMeasurement = new Microsoft.Research.DynamicDataDisplay.DataSources.ObservableDataSource<Point>();
+                dsMeasurement.SetXYMapping(p => p);
 
                 Dispatcher.BeginInvoke(new Action(() =>
                 {
-                    (measurementInterface as FET_IV).expTransfer_FET_Chart.AddLineGraph(ds, 1.0, e.Data);
+                    (measurementInterface as FET_IV).expTransfer_FET_Chart.AddLineGraph(dsMeasurement, 1.0, e.Data);
                 }));
             }
             else
             {
                 var dataPoint = Array.ConvertAll(e.Data.Split(delim, StringSplitOptions.RemoveEmptyEntries), s => double.Parse(s, NumberFormatInfo.InvariantInfo));
-                ds.AppendAsync(Dispatcher, new Point(dataPoint[0], dataPoint[1]));
+                dsMeasurement.AppendAsync(Dispatcher, new Point(dataPoint[0], dataPoint[1]));
             }
         }
 
