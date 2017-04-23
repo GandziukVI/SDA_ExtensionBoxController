@@ -57,6 +57,7 @@ namespace FET_Characterization
         private void on_IV_FET_SameAsForTransfer_Click(object sender, System.Windows.RoutedEventArgs e)
         {
             dialogIVMeasurement.SelectedPath = dialogTransferMeasurement.SelectedPath;
+            Settings.IV_FET_DataFilePath = dialogIVMeasurement.SelectedPath;
         }
 
         private void on_Transfer_OpenDataFolder_Click(object sender, System.Windows.RoutedEventArgs e)
@@ -74,6 +75,7 @@ namespace FET_Characterization
         private void on_Transfer_SameAsForIV_FET_Click(object sender, System.Windows.RoutedEventArgs e)
         {
             dialogTransferMeasurement.SelectedPath = dialogIVMeasurement.SelectedPath;
+            Settings.TransferDataFilePath = dialogTransferMeasurement.SelectedPath;
         }
     }
 }

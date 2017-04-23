@@ -7,6 +7,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace FET_Characterization.Experiments
@@ -74,8 +75,8 @@ namespace FET_Characterization.Experiments
             smuVg.SourceMode = SMUSourceMode.Voltage;
 
             smuVg.Compliance = settings.Gate_Complaince;
-            smuVg.Averaging = 1;
-            smuVg.NPLC = 1.0;
+            smuVg.Averaging = settings.Ke_IV_FET_Averaging;
+            smuVg.NPLC = settings.Ke_IV_FET_NPLC;
 
             smuVg.Voltage = settings.VgStart;
 
@@ -88,8 +89,8 @@ namespace FET_Characterization.Experiments
             smuVds.SourceMode = settings.SMU_SourceMode;
 
             smuVds.Compliance = settings.DS_Complaince;
-            smuVds.Averaging = 1;
-            smuVds.NPLC = 1.0;
+            smuVds.Averaging = settings.Ke_IV_FET_Averaging;
+            smuVds.NPLC = settings.Ke_IV_FET_NPLC;
 
             switch (settings.SMU_SourceMode)
             {
@@ -122,8 +123,7 @@ namespace FET_Characterization.Experiments
             if (settings.MeasureLeakage == true)
             {
                 for (int i = 0; i < settings.N_VgStep; i++)
-                {
-                    onStatusChanged(new StatusEventArgs(string.Format("Measuring I-V Curve # {0} out of {1}", (i + 1).ToString(NumberFormatInfo.InvariantInfo), settings.N_VgStep)));
+                {                    
                     onDataArrived(new ExpDataArrivedEventArgs(string.Format("Vg = {0}", currentVg.ToString(NumberFormatInfo.InvariantInfo))));
 
                     singleIV_FET_CurveData = new LinkedList<IV_FET_Data>();
@@ -153,6 +153,8 @@ namespace FET_Characterization.Experiments
                                         leakageCurrent.ToString(NumberFormatInfo.InvariantInfo))));
 
                                     singleIV_FET_CurveData.AddLast(new IV_FET_Data(drainVoltage, drainCurrent, leakageCurrent));
+
+                                    onStatusChanged(new StatusEventArgs(string.Format("Measuring I-V Curve # {0} out of {1}. Leakage current I = {2}", (i + 1).ToString(NumberFormatInfo.InvariantInfo), settings.N_VgStep, leakageCurrent.ToString("G4", NumberFormatInfo.InvariantInfo))));
                                 } break;
                             case SMUSourceMode.Current:
                                 {
@@ -169,6 +171,8 @@ namespace FET_Characterization.Experiments
                                         leakageCurrent.ToString(NumberFormatInfo.InvariantInfo))));
 
                                     singleIV_FET_CurveData.AddLast(new IV_FET_Data(drainVoltage, drainCurrent, leakageCurrent));
+
+                                    onStatusChanged(new StatusEventArgs(string.Format("Measuring I-V Curve # {0} out of {1}. Leakage current I = {2}", (i + 1).ToString(NumberFormatInfo.InvariantInfo), settings.N_VgStep, leakageCurrent.ToString("G4", NumberFormatInfo.InvariantInfo))));
                                 } break;
                             case SMUSourceMode.ModeNotSet:
                                 throw new ArgumentException();
@@ -210,6 +214,8 @@ namespace FET_Characterization.Experiments
                         currentVg += dVg;
                         smuVg.Voltage = currentVg;
                     }
+
+                    Thread.Sleep((int)(settings.IV_FET_GateDelay * 1000));
                 }
             }
             else
@@ -264,6 +270,8 @@ namespace FET_Characterization.Experiments
                         currentVg += dVg;
                         smuVg.Voltage = currentVg;
                     }
+
+                    Thread.Sleep((int)(settings.IV_FET_GateDelay * 1000));
 
                     var gateProgress = 1.0 - (settings.N_VgStep - (double)(i + 1)) / settings.N_VgStep;
 

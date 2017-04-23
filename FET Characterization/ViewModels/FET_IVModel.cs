@@ -221,8 +221,7 @@ namespace FET_Characterization
             }
         }
 
-
-        private string ivFileName = "T (1, 1)_IV_FG.dat";
+        private string ivFileName = "Ch (1, 1) T #01 IV FG.dat";
         public string IV_FileName
         {
             get { return ivFileName; }
@@ -233,6 +232,44 @@ namespace FET_Characterization
 
                 ivFileName = value;
                 NotifyPropertyChanged("IV_FileName");
+            }
+        }
+
+        private int ke_IV_FET_Averaging = 1;
+        public int Ke_IV_FET_Averaging
+        {
+            get { return ke_IV_FET_Averaging; }
+            set
+            { 
+                ke_IV_FET_Averaging = value;
+                NotifyPropertyChanged("Ke_IV_FET_Averaging");
+            }
+        }
+
+        private double ke_IV_FET_NPLC = 1.0;
+        public double Ke_IV_FET_NPLC
+        {
+            get { return ke_IV_FET_NPLC; }
+            set
+            {
+                if (value < 0.01)
+                    value = 0.01;
+                else if (value > 25)
+                    value = 25;
+
+                ke_IV_FET_NPLC = value;
+                NotifyPropertyChanged("Ke_IV_FET_NPLC");
+            }
+        }
+
+        private double iv_FET_GateDelay;
+        public double IV_FET_GateDelay
+        {
+            get { return iv_FET_GateDelay; }
+            set 
+            {
+                iv_FET_GateDelay = value;
+                NotifyPropertyChanged("IV_FET_GateDelay");
             }
         }
 
@@ -431,7 +468,7 @@ namespace FET_Characterization
             }
         }
 
-        private string transferFileName = "T (1, 1)_IV_Vg.dat";
+        private string transferFileName = "Ch (1, 1) T #01 Transfer.dat";
         public string Transfer_FileName
         {
             get { return transferFileName; }
@@ -445,6 +482,44 @@ namespace FET_Characterization
             }
         }
 
+        private int ke_Transfer_Averaging = 1;
+        public int Ke_Transfer_Averaging
+        {
+            get { return ke_Transfer_Averaging; }
+            set
+            {
+                ke_Transfer_Averaging = value;
+                NotifyPropertyChanged("Ke_Transfer_Averaging");
+            }
+        }
+
+        private double ke_Transfer_NPLC = 1.0;
+        public double Ke_Transfer_NPLC
+        {
+            get { return ke_Transfer_NPLC; }
+            set
+            {
+                if (value < 0.01)
+                    value = 0.01;
+                else if (value > 25)
+                    value = 25;
+
+                ke_Transfer_NPLC = value;
+                NotifyPropertyChanged("Ke_Transfer_NPLC");
+            }
+        }
+
+        private double transfer_VdsDelay;
+        public double Transfer_VdsDelay
+        {
+            get { return transfer_VdsDelay; }
+            set
+            {
+                transfer_VdsDelay = value;
+                NotifyPropertyChanged("Transfer_VdsDelay");
+            }
+        }
+
         private bool measureLeakage = true;
         public bool MeasureLeakage
         {
@@ -455,6 +530,5 @@ namespace FET_Characterization
                 NotifyPropertyChanged("MeasureLeakage");
             }
         }
-
 	}
 }

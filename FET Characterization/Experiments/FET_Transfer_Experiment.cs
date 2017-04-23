@@ -6,6 +6,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace FET_Characterization.Experiments
@@ -73,8 +74,8 @@ namespace FET_Characterization.Experiments
             smuVg.SourceMode = SMUSourceMode.Voltage;
 
             smuVg.Compliance = settings.TransferGate_Complaince;
-            smuVg.Averaging = 1;
-            smuVg.NPLC = 1.0;
+            smuVg.Averaging = settings.Ke_Transfer_Averaging;
+            smuVg.NPLC = settings.Ke_Transfer_NPLC;
 
             smuVg.Voltage = settings.TransferVgStart;
 
@@ -87,8 +88,8 @@ namespace FET_Characterization.Experiments
             smuVds.SourceMode = settings.TransferSMU_SourceMode;
 
             smuVds.Compliance = settings.TransferDS_Complaince;
-            smuVds.Averaging = 1;
-            smuVds.NPLC = 1.0;
+            smuVds.Averaging = settings.Ke_Transfer_Averaging;
+            smuVds.NPLC = settings.Ke_Transfer_NPLC;
 
             switch (settings.TransferSMU_SourceMode)
             {
@@ -119,8 +120,7 @@ namespace FET_Characterization.Experiments
             #endregion
 
             for (int i = 0; i < settings.TransferN_VdsStep; i++)
-            {
-                onStatusChanged(new StatusEventArgs(string.Format("Measuring Transfer Curve # {0} out of {1}", (i + 1).ToString(NumberFormatInfo.InvariantInfo), settings.TransferN_VdsStep)));
+            {              
                 onDataArrived(new ExpDataArrivedEventArgs(string.Format("Vds = {0}", current_DS_value.ToString(NumberFormatInfo.InvariantInfo))));
 
                 if (!IsRunning)
@@ -146,6 +146,8 @@ namespace FET_Characterization.Experiments
                         leakageCurrent.ToString(NumberFormatInfo.InvariantInfo))));
 
                     singleTransferCurveData.AddLast(new TransferData(gateVoltage, drainCurrent, leakageCurrent));
+
+                    onStatusChanged(new StatusEventArgs(string.Format("Measuring Transfer Curve # {0} out of {1}. Leakage current I = {2}", (i + 1).ToString(NumberFormatInfo.InvariantInfo), settings.TransferN_VdsStep, leakageCurrent.ToString("G4", NumberFormatInfo.InvariantInfo))));
 
                     currentVg += dVg;
 
@@ -182,6 +184,8 @@ namespace FET_Characterization.Experiments
                             throw new ArgumentException();
                     }
                 }
+
+                Thread.Sleep((int)(settings.Transfer_VdsDelay * 1000));
             }
 
             smuVg.SwitchOFF();
