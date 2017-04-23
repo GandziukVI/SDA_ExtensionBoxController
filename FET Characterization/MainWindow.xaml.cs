@@ -36,7 +36,7 @@ namespace FET_Characterization
         char[] delim = "\t\r\n".ToCharArray();
 
         Microsoft.Research.DynamicDataDisplay.DataSources.ObservableDataSource<Point> dsMeasurement;
-        Microsoft.Research.DynamicDataDisplay.DataSources.ObservableDataSource<Point> dsLeakage;
+        //Microsoft.Research.DynamicDataDisplay.DataSources.ObservableDataSource<Point> dsLeakage;
 
         IDeviceIO driver;
         Keithley26xxB<Keithley2602B> measureDevice;
@@ -124,22 +124,9 @@ namespace FET_Characterization
 
                 Dispatcher.BeginInvoke(new Action(() =>
                 {
-                    CurrentLinePen = (measurementInterface as FET_IV).inner_expIV_FET_Chart.AddLineGraph(dsMeasurement, 2.0, e.Data).LinePen;
+                    CurrentLinePen = (measurementInterface as FET_IV).expIV_FET_Chart.AddLineGraph(dsMeasurement, 1.5, e.Data).LinePen;
                     CurrentLinePen = new Pen(CurrentLinePen.Brush, 1.0);
-                }));
-
-                if (dsLeakage == null)
-                {
-                    dsLeakage = new Microsoft.Research.DynamicDataDisplay.DataSources.ObservableDataSource<Point>();
-                    dsLeakage.SetXYMapping(p => p);
-
-                    Dispatcher.BeginInvoke(new Action(() => 
-                    {
-                        var leakageLineGraph = new LineGraph(dsLeakage);
-                        leakageLineGraph.LinePen = CurrentLinePen;
-                        leakageLineGraph.AddToPlotter((measurementInterface as FET_IV).inner_expIV_FET_Chart);
-                    }));
-                }
+                }));               
             }
             else
             {
@@ -147,7 +134,7 @@ namespace FET_Characterization
                 if (settings.MeasureLeakage == true)
                 {
                     dsMeasurement.AppendAsync(Dispatcher, new Point(dataPoint[0], dataPoint[1]));
-                    dsLeakage.AppendAsync(Dispatcher, new Point(dataPoint[0], dataPoint[2]));
+                    //dsLeakage.AppendAsync(Dispatcher, new Point(dataPoint[0], dataPoint[2]));
                 }
                 else
                 {
@@ -216,7 +203,7 @@ namespace FET_Characterization
 
                 Dispatcher.BeginInvoke(new Action(() =>
                 {
-                    (measurementInterface as FET_IV).expTransfer_FET_Chart.AddLineGraph(dsMeasurement, 1.0, e.Data);
+                    (measurementInterface as FET_IV).expTransfer_FET_Chart.AddLineGraph(dsMeasurement, 1.5, e.Data);
                 }));
             }
             else

@@ -77,21 +77,12 @@
 			</Grid.ColumnDefinitions>
 		
 			<d3:ChartPlotter x:Name="expIV_FET_Chart" Margin="5" NewLegendVisible="False">
-                <d3:InjectedPlotter x:Name="inner_expIV_FET_Chart">
-                    <d3:VerticalAxis Placement="Left">
-                        <d3:VerticalAxisTitle>
-                            <TextBlock>Drain current I<Run FontSize="9" BaselineAlignment="Subscript">DS</Run>, A</TextBlock>
-                        </d3:VerticalAxisTitle>
-                    </d3:VerticalAxis>
-                    <d3:VerticalAxis Placement="Right">
-                        <d3:VerticalAxisTitle>
-                            <TextBlock>Leakage current I<Run FontSize="9" BaselineAlignment="Subscript">G</Run>, A</TextBlock>
-                        </d3:VerticalAxisTitle>
-                    </d3:VerticalAxis>
-                </d3:InjectedPlotter>
-                
                 <d3:Header Content="I-V chharacteristics" />
-                
+                <d3:VerticalAxis>
+                    <d3:VerticalAxisTitle>
+                        <TextBlock>Drain current I<Run FontSize="9" BaselineAlignment="Subscript">DS</Run>, A</TextBlock>
+                    </d3:VerticalAxisTitle>
+                </d3:VerticalAxis>                                
                 <d3:HorizontalAxis>
 					<d3:HorizontalAxisTitle>
 						<TextBlock>Drain-Source Voltage V<Run FontSize="9" BaselineAlignment="Subscript">DS</Run>, V</TextBlock>
