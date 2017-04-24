@@ -172,7 +172,7 @@ namespace FET_Characterization.Experiments
 
                                     singleIV_FET_CurveData.AddLast(new IV_FET_Data(drainVoltage, drainCurrent, leakageCurrent));
 
-                                    onStatusChanged(new StatusEventArgs(string.Format("Measuring I-V Curve # {0} out of {1}. Leakage current I = {2}", (i + 1).ToString(NumberFormatInfo.InvariantInfo), settings.N_VgStep, leakageCurrent.ToString("G4", NumberFormatInfo.InvariantInfo))));
+                                    onStatusChanged(new StatusEventArgs(string.Format("Measuring I-V Curve # {0} out of {1}. Leakage current I = {2}", (i + 1).ToString(NumberFormatInfo.InvariantInfo), settings.N_VgStep, leakageCurrent.ToString("E4", NumberFormatInfo.InvariantInfo))));
                                 } break;
                             case SMUSourceMode.ModeNotSet:
                                 throw new ArgumentException();

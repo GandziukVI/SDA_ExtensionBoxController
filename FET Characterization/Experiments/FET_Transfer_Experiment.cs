@@ -147,7 +147,7 @@ namespace FET_Characterization.Experiments
 
                     singleTransferCurveData.AddLast(new TransferData(gateVoltage, drainCurrent, leakageCurrent));
 
-                    onStatusChanged(new StatusEventArgs(string.Format("Measuring Transfer Curve # {0} out of {1}. Leakage current I = {2}", (i + 1).ToString(NumberFormatInfo.InvariantInfo), settings.TransferN_VdsStep, leakageCurrent.ToString("G4", NumberFormatInfo.InvariantInfo))));
+                    onStatusChanged(new StatusEventArgs(string.Format("Measuring Transfer Curve # {0} out of {1}. Leakage current I = {2}", (i + 1).ToString(NumberFormatInfo.InvariantInfo), settings.TransferN_VdsStep, leakageCurrent.ToString("E4", NumberFormatInfo.InvariantInfo))));
 
                     currentVg += dVg;
 
