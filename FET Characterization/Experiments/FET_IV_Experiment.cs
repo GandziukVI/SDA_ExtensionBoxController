@@ -27,7 +27,7 @@ namespace FET_Characterization.Experiments
 
         public override string ToString()
         {
-            return string.Join("\t", DrainVoltage, DrainCurrent, GateCurrent);
+            return string.Join("\t", DrainVoltage.ToString(NumberFormatInfo.InvariantInfo), DrainCurrent.ToString(NumberFormatInfo.InvariantInfo), GateCurrent.ToString(NumberFormatInfo.InvariantInfo));
         }
     }
 
@@ -46,6 +46,20 @@ namespace FET_Characterization.Experiments
         {
             GateVoltage = gateVoltage;
             IV_FET_CurveData = data;
+        }
+
+        public override string ToString()
+        {
+            var header = "V\\-(DS)\tI\\-(D)\tI\\-(G)";
+            var subHeader = "V\tA\tA";
+            var comment = string.Format("V\\-(G) = {0}\tV\\-(G) = {0}\tV\\-(G) = {0}", GateVoltage.ToString(NumberFormatInfo.InvariantInfo));
+
+            var dataBuilder = new StringBuilder();
+
+            foreach (var dataPoint in IV_FET_CurveData)
+                dataBuilder.AppendFormat("{0}\r\n", dataPoint.ToString());
+
+            return string.Join("\r\n", header, subHeader, comment, dataBuilder.ToString());
         }
     }
 
@@ -310,6 +324,8 @@ namespace FET_Characterization.Experiments
 
         public override void SaveToFile(string FileName)
         {
+            #region Saving all the data into a single file
+
             var formatBuilder = new StringBuilder();
             var dataBuilder = new StringBuilder();
 
@@ -366,6 +382,33 @@ namespace FET_Characterization.Experiments
                 var toWrite = string.Join("", header, subHeader, comment, dataBuilder.ToString());
                 writer.Write(toWrite);
             }
+
+            #endregion
+
+            #region Saving the data into separate files
+
+            var singleCurveDirName = Path.GetFileNameWithoutExtension(FileName);
+            var singleCurveDirInfo = new DirectoryInfo(singleCurveDirName);
+
+            if (!singleCurveDirInfo.Exists)
+                singleCurveDirInfo.Create();
+
+            foreach (var item in iv_FET_CurveDataSet)
+            {
+                var singleCurveDataFileName = string.Format(
+                    "{0} {1}{2}",
+                    string.Join("\\", singleCurveDirName, singleCurveDirInfo.Name),
+                    string.Format("V\\-(G) = {0} V", Math.Round(item.GateVoltage, 3).ToString("G3", NumberFormatInfo.InvariantInfo)),
+                    Path.GetExtension(FileName)
+                    );
+
+                using (var sw = new StreamWriter(new FileStream(singleCurveDataFileName, FileMode.Create, FileAccess.Write)))
+                {
+                    sw.Write(item.ToString());
+                }
+            }
+
+            #endregion
         }
     }
 }

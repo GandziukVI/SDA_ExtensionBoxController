@@ -26,7 +26,7 @@ namespace FET_Characterization.Experiments
 
         public override string ToString()
         {
-            return string.Join("\t", GateVoltage, DrainCurrent, GateCurrent);
+            return string.Join("\t", GateVoltage.ToString(NumberFormatInfo.InvariantInfo), DrainCurrent.ToString(NumberFormatInfo.InvariantInfo), GateCurrent.ToString(NumberFormatInfo.InvariantInfo));
         }
     }
 
@@ -45,6 +45,20 @@ namespace FET_Characterization.Experiments
         {
             DrainSourceVoltage = drainSourceVoltage;
             TransferCurveData = data;
+        }
+
+        public override string ToString()
+        {
+            var header = "V\\-(G)\tI\\-(D)\tI\\-(G)";
+            var subHeader = "V\tA\tA";
+            var comment = string.Format("V\\-(DS) = {0}\tV\\-(DS) = {0}\tV\\-(DS) = {0}", DrainSourceVoltage.ToString(NumberFormatInfo.InvariantInfo));
+
+            var dataBuilder = new StringBuilder();
+
+            foreach (var dataPoint in TransferCurveData)
+                dataBuilder.AppendFormat("{0}\r\n", dataPoint.ToString());
+
+            return string.Join("\r\n", header, subHeader, comment, dataBuilder.ToString());
         }
     }
 
@@ -120,7 +134,7 @@ namespace FET_Characterization.Experiments
             #endregion
 
             for (int i = 0; i < settings.TransferN_VdsStep; i++)
-            {              
+            {
                 onDataArrived(new ExpDataArrivedEventArgs(string.Format("Vds = {0}", current_DS_value.ToString(NumberFormatInfo.InvariantInfo))));
 
                 if (!IsRunning)
@@ -219,6 +233,8 @@ namespace FET_Characterization.Experiments
 
         public override void SaveToFile(string FileName)
         {
+            #region Saving all the data into a single file
+
             var formatBuilder = new StringBuilder();
             var dataBuilder = new StringBuilder();
 
@@ -233,7 +249,7 @@ namespace FET_Characterization.Experiments
                 subHeaderBuilder.AppendFormat("{0}\t{1}\t{2}\t", "V", "A", "A");
 
                 commentBuilder.AppendFormat(
-                    "{0}\t{1}\t{2}\t", 
+                    "{0}\t{1}\t{2}\t",
                     string.Format("V\\-(DS) = {0}", transferCurveDataSet.ElementAt(i).DrainSourceVoltage.ToString(NumberFormatInfo.InvariantInfo)),
                     string.Format("V\\-(DS) = {0}", transferCurveDataSet.ElementAt(i).DrainSourceVoltage.ToString(NumberFormatInfo.InvariantInfo)),
                     string.Format("V\\-(DS) = {0}", transferCurveDataSet.ElementAt(i).DrainSourceVoltage.ToString(NumberFormatInfo.InvariantInfo)));
@@ -275,6 +291,33 @@ namespace FET_Characterization.Experiments
                 var toWrite = string.Join("", header, subHeader, comment, dataBuilder.ToString());
                 writer.Write(toWrite);
             }
+
+            #endregion
+
+            #region Saving the data into separate files
+
+            var singleCurveDirName = Path.GetFileNameWithoutExtension(FileName);
+            var singleCurveDirInfo = new DirectoryInfo(singleCurveDirName);
+
+            if (!singleCurveDirInfo.Exists)
+                singleCurveDirInfo.Create();
+
+            foreach (var item in transferCurveDataSet)
+            {
+                var singleCurveDataFileName = string.Format(
+                    "{0} {1}{2}",
+                    string.Join("\\", singleCurveDirName, singleCurveDirInfo.Name),
+                    string.Format("V\\-(DS) = {0} V", Math.Round(item.DrainSourceVoltage, 3).ToString("G3", NumberFormatInfo.InvariantInfo)),
+                    Path.GetExtension(FileName)
+                    );
+
+                using (var sw = new StreamWriter(new FileStream(singleCurveDataFileName, FileMode.Create, FileAccess.Write)))
+                {
+                    sw.Write(item.ToString());
+                }
+            }
+
+            #endregion
         }
     }
 }
