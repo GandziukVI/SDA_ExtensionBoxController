@@ -235,7 +235,7 @@
 								</ContextMenu>
 							</Button.ContextMenu>
 						</Button>
-						<TextBox TextWrapping="Wrap" Grid.Column="1" Margin="10,2.5,2.5,2" VerticalContentAlignment="Center" Height="35" Text="{Binding IV_FileName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>				
+						<TextBox TextWrapping="Wrap" Grid.Column="1" Margin="10,2.5,2.5,2" VerticalContentAlignment="Center" Height="35" Text="{Binding IV_FileName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" MaxWidth="162"/>				
 					</Grid>
 
 					<Grid Grid.Row="18" Grid.ColumnSpan="2" Margin="0,50,0,0">
@@ -417,7 +417,7 @@
 									</ContextMenu>
 								</Button.ContextMenu>
 							</Button>
-							<TextBox TextWrapping="Wrap" Grid.Column="1" Margin="10,2.5,2.5,2" VerticalContentAlignment="Center" Height="35" Text="{Binding Transfer_FileName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>				
+							<TextBox TextWrapping="Wrap" Grid.Column="1" Margin="10,2.5,2.5,2" VerticalContentAlignment="Center" Height="35" Text="{Binding Transfer_FileName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" MaxWidth="162"/>				
 						</Grid>
 
 						<Grid Grid.Row="17" Grid.ColumnSpan="2" Margin="0,50,0,0">
