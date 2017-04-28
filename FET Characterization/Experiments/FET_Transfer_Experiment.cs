@@ -297,7 +297,7 @@ namespace FET_Characterization.Experiments
             #region Saving the data into separate files
 
             var singleCurveDirName = Path.GetFileNameWithoutExtension(FileName);
-            var singleCurveDirInfo = new DirectoryInfo(singleCurveDirName);
+            var singleCurveDirInfo = new DirectoryInfo(string.Join("\\", Path.GetDirectoryName(FileName), singleCurveDirName));
 
             if (!singleCurveDirInfo.Exists)
                 singleCurveDirInfo.Create();
@@ -306,8 +306,8 @@ namespace FET_Characterization.Experiments
             {
                 var singleCurveDataFileName = string.Format(
                     "{0} {1}{2}",
-                    string.Join("\\", singleCurveDirName, singleCurveDirInfo.Name),
-                    string.Format("V\\-(DS) = {0} V", Math.Round(item.DrainSourceVoltage, 3).ToString("G3", NumberFormatInfo.InvariantInfo)),
+                    string.Join("\\", singleCurveDirInfo.FullName, singleCurveDirInfo.Name),
+                    string.Format("Vds = {0} V", Math.Round(item.DrainSourceVoltage, 3).ToString("G3", NumberFormatInfo.InvariantInfo)),
                     Path.GetExtension(FileName)
                     );
 
