@@ -176,8 +176,13 @@ namespace VoltageApply
                 var speed = minSpeed;
                 try
                 {
-                    factorCoarse = (1.0 - Math.Tanh(-1.0 * Math.Abs(voltage - drainVoltageCurr) / intervalCoarse * Math.PI + Math.PI)) / 2.0;
-                    speed = (byte)(minSpeed + (maxSpeed - minSpeed) * factorCoarse);
+                    if (Math.Abs(voltage - drainVoltageCurr) >= 0.05)
+                    {
+                        factorCoarse = (1.0 - Math.Tanh(-1.0 * Math.Abs(voltage - drainVoltageCurr) / intervalCoarse * Math.PI + Math.PI)) / 2.0;
+                        speed = (byte)(minSpeed + (maxSpeed - minSpeed) * factorCoarse);
+                    }
+                    else
+                        speed = maxSpeed;
                 }
                 catch { speed = minSpeed; }
 

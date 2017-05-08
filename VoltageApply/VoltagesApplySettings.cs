@@ -33,7 +33,7 @@ namespace VoltageApply
             }
         }
 
-        private double vDSAccuracy = 0.002;
+        private double vDSAccuracy = 0.0001;
         public double VDSAccuracy
         {
             get { return vDSAccuracy; }
@@ -44,7 +44,7 @@ namespace VoltageApply
             }
         }
 
-        private double vGate = 0.0;
+        private double vGate = 0.001;
         public double VGate
         {
             get { return vGate; }
@@ -55,7 +55,7 @@ namespace VoltageApply
             }
         }
 
-        private double vGateAccuracy = 0.005;
+        private double vGateAccuracy = 0.0001;
         public double VGateAccuracy
         {
             get { return vGateAccuracy; }
