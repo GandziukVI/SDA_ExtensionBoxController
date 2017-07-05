@@ -220,7 +220,7 @@ namespace MCBJ.Experiments
         public int SamplingFrequency
         {
             get { return samplingFrequency; }
-            set 
+            set
             {
                 samplingFrequency = value;
                 onPropertyChanged("SamplingFrequency");
@@ -242,7 +242,7 @@ namespace MCBJ.Experiments
         public int SpectraAveraging
         {
             get { return spectraAveraging; }
-            set 
+            set
             {
                 spectraAveraging = value;
                 onPropertyChanged("SpectraAveraging");
@@ -253,7 +253,7 @@ namespace MCBJ.Experiments
         public int UpdateNumber
         {
             get { return updateNumber; }
-            set 
+            set
             {
                 updateNumber = value;
                 onPropertyChanged("UpdateNumber");
@@ -264,7 +264,7 @@ namespace MCBJ.Experiments
         public double KPreAmpl
         {
             get { return kPreAmpl; }
-            set 
+            set
             {
                 kPreAmpl = value;
                 onPropertyChanged("KPreAmpl");
@@ -303,7 +303,46 @@ namespace MCBJ.Experiments
                 onPropertyChanged("TemperatureE");
             }
         }
-        
+
+        private bool recordTimeTraces = false;
+        public bool RecordTimeTraces
+        {
+            get { return recordTimeTraces; }
+            set
+            {
+                recordTimeTraces = value;
+                onPropertyChanged("RecordTimeTraces");
+            }
+        }
+
+        int[] powersOfTwo = { 2, 4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048, 4096, 8192, 16384, 32768, 65536, 131072, 262144 };
+        private int getClosestValueInArray(int value, int[] arr)
+        {
+            var query = (from val in arr
+                         select new
+                             {
+                                 diff = Math.Abs(val - value),
+                                 arrElem = val
+                             }).OrderBy(c => c.diff).First();
+
+            return query.arrElem;            
+        }
+
+        private int recordingFrequency = 262144;
+        public int RecordingFrequency
+        {
+            get { return recordingFrequency; }
+            set 
+            {
+                value = getClosestValueInArray(value, powersOfTwo);
+
+                recordingFrequency = value;
+                onPropertyChanged("RecordingFrequency");
+            }
+        }
+
+
+
         private string filePath = Directory.GetCurrentDirectory();
         public string FilePath
         {
