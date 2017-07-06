@@ -4,7 +4,7 @@
         xmlns:wpfTool="clr-namespace:Xceed.Wpf.Toolkit;assembly=Xceed.Wpf.Toolkit"
         xmlns:d3="http://research.microsoft.com/DynamicDataDisplay/1.0" xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:MCBJ ="clr-namespace:MCBJ"
-        Title="MainWindow" Height="650" Width="750" Closing="onMainWindowClosing">
+        Title="MCBJ Characterization" Height="650" Width="750" Closing="onMainWindowClosing">
     
 	<Grid x:Name="expParentGrid">
         <Grid.RowDefinitions>

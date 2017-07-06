@@ -77,7 +77,7 @@
 			</Grid.ColumnDefinitions>
 		
 			<d3:ChartPlotter x:Name="expIV_FET_Chart" Margin="5" NewLegendVisible="False">
-                <d3:Header Content="I-V chharacteristics" />
+                <d3:Header Content="Output chharacteristics" />
                 <d3:VerticalAxis>
                     <d3:VerticalAxisTitle>
                         <TextBlock>Drain current I<Run FontSize="9" BaselineAlignment="Subscript">DS</Run>, A</TextBlock>

@@ -23,6 +23,18 @@ namespace MCBJ.Experiments
 
         #endregion
 
+        private string agilentU2542Ares = "USB0::2391::5912::TW54334510::INSTR";
+        public string AgilentU2542AResName
+        {
+            get { return agilentU2542Ares; }
+            set
+            {
+                agilentU2542Ares = value;
+                onPropertyChanged("AgilentU2542AResName");
+            }
+        }
+
+
         double[] scanningVoltageCollection = new double[] { 0.02 };
         public double[] ScanningVoltageCollection
         {
