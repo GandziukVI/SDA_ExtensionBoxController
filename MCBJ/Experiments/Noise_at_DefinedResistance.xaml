@@ -182,7 +182,13 @@
 					<ColumnDefinition Width="Auto" />
 					<ColumnDefinition />
 				</Grid.ColumnDefinitions>
-				<Button x:Name="cmdOpenFolder" Content="..." HorizontalAlignment="Center" VerticalAlignment="Center" Width="35" Click="on_cmdOpenFolderClick"/>
+				<Button x:Name="cmdOpenFolder" Content="..." HorizontalAlignment="Center" VerticalAlignment="Center" Width="35" Click="on_cmdOpenFolderClick">
+					<Button.ContextMenu>
+						<ContextMenu>
+							<MenuItem Header="Open data folder" Click="on_MCBJ_OpenDataFolder_Click" />
+						</ContextMenu>
+					</Button.ContextMenu>
+				</Button>
 				<TextBox Grid.Column="1" Margin="10,2.5,2.5,2" HorizontalAlignment="Stretch" VerticalContentAlignment="Center" HorizontalContentAlignment="Left" Height="35" Text="{Binding SaveFileName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Width="Auto" MaxWidth="173" Padding="5,0,0,0"/>
 			</Grid>		
 		</Grid>

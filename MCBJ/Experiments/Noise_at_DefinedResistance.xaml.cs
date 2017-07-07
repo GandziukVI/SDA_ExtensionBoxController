@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
@@ -31,6 +33,18 @@ namespace MCBJ
             dialog.ShowDialog();
             Settings.FilePath = dialog.SelectedPath;
         }
+		
+		private void on_MCBJ_OpenDataFolder_Click(object sender, System.Windows.RoutedEventArgs e)
+        {
+        	var startInfo = new ProcessStartInfo() { UseShellExecute = true, Verb = "open" };
+
+            if (dialog.SelectedPath != string.Empty)
+                startInfo.FileName = dialog.SelectedPath;
+            else
+                startInfo.FileName = Directory.GetCurrentDirectory();
+
+            Process.Start(startInfo);
+        }
 
         private void SelectAddress(object sender, System.Windows.RoutedEventArgs e)
         {
@@ -56,6 +70,6 @@ namespace MCBJ
                     tb.Focus();
                 }
             }
-        }
+        }        
     }
 }

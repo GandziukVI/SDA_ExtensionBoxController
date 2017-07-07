@@ -695,11 +695,11 @@ namespace MCBJ.Experiments
 
                     #endregion
 
-                    onStatusChanged(new StatusEventArgs(string.Format("Setting sample voltage V-> {0} V", voltage.ToString("0.0000", NumberFormatInfo.InvariantInfo))));
+                    onStatusChanged(new StatusEventArgs(string.Format("Setting sample voltage V -> {0} V", voltage.ToString("0.0000", NumberFormatInfo.InvariantInfo))));
 
                     setDrainVoltage(voltage, experimentSettings.VoltageDeviation);
 
-                    onStatusChanged(new StatusEventArgs(string.Format("Reaching resistance value R-> {0}", (1.0 / conductance).ToString("0.0000", NumberFormatInfo.InvariantInfo))));
+                    onStatusChanged(new StatusEventArgs(string.Format("Reaching resistance value R -> {0}", (1.0 / conductance).ToString("0.0000", NumberFormatInfo.InvariantInfo))));
 
                     setJunctionResistance(
                         voltage,
