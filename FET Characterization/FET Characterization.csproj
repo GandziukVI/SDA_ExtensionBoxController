@@ -75,11 +75,15 @@
     <Compile Include="Experiments\FET_Transfer_Experiment.cs" />
     <Compile Include="Experiments\ParameterConverters.cs" />
     <Compile Include="ViewModels\FET_IVModel.cs" />
+    <Compile Include="ViewModels\FET_NoiseModel.cs" />
     <Compile Include="Views\ExtendedDoubleUpDown.xaml.cs">
       <DependentUpon>ExtendedDoubleUpDown.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\FET_IV.xaml.cs">
       <DependentUpon>FET_IV.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\FET_Noise.xaml.cs">
+      <DependentUpon>FET_Noise.xaml</DependentUpon>
     </Compile>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -98,6 +102,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\FET_IV.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\FET_Noise.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
