@@ -455,8 +455,6 @@ namespace MCBJ.Experiments
             if (samplingFrequency % 2 != 0)
                 throw new ArgumentException("The frequency should be an even number!");
 
-            confAIChannelsForAC_Measurement();
-
             foreach (var item in boxController.AI_ChannelCollection)
                 if (item.IsEnabled)
                     item.Parameters.SetParams(FilterCutOffFrequencies.Freq_150kHz, FilterGain.gain1, PGA_GainsEnum.gain1);
@@ -695,44 +693,50 @@ namespace MCBJ.Experiments
 
                     #endregion
 
-                    onStatusChanged(new StatusEventArgs(string.Format("Setting sample voltage V -> {0} V", voltage.ToString("0.0000", NumberFormatInfo.InvariantInfo))));
+                    //onStatusChanged(new StatusEventArgs(string.Format("Setting sample voltage V -> {0} V", voltage.ToString("0.0000", NumberFormatInfo.InvariantInfo))));
 
-                    setDrainVoltage(voltage, experimentSettings.VoltageDeviation);
+                    //setDrainVoltage(voltage, experimentSettings.VoltageDeviation);
 
-                    onStatusChanged(new StatusEventArgs(string.Format("Reaching resistance value R -> {0}", (1.0 / conductance).ToString("0.0000", NumberFormatInfo.InvariantInfo))));
+                    //onStatusChanged(new StatusEventArgs(string.Format("Reaching resistance value R -> {0}", (1.0 / conductance).ToString("0.0000", NumberFormatInfo.InvariantInfo))));
 
-                    setJunctionResistance(
-                        voltage,
-                        experimentSettings.VoltageDeviation,
-                        experimentSettings.VoltageTreshold,
-                        conductance,
-                        experimentSettings.ConductanceDeviation,
-                        experimentSettings.StabilizationTime,
-                        experimentSettings.MotionMinSpeed,
-                        experimentSettings.MotionMaxSpeed,
-                        experimentSettings.MotorMinPos,
-                        experimentSettings.MotorMaxPos,
-                        experimentSettings.NAveragesFast,
-                        experimentSettings.LoadResistance);
+                    //setJunctionResistance(
+                    //    voltage,
+                    //    experimentSettings.VoltageDeviation,
+                    //    experimentSettings.VoltageTreshold,
+                    //    conductance,
+                    //    experimentSettings.ConductanceDeviation,
+                    //    experimentSettings.StabilizationTime,
+                    //    experimentSettings.MotionMinSpeed,
+                    //    experimentSettings.MotionMaxSpeed,
+                    //    experimentSettings.MotorMinPos,
+                    //    experimentSettings.MotorMaxPos,
+                    //    experimentSettings.NAveragesFast,
+                    //    experimentSettings.LoadResistance);
 
-                    setDrainVoltage(voltage, experimentSettings.VoltageDeviation);
+                    //setDrainVoltage(voltage, experimentSettings.VoltageDeviation);
 
-                    motor.Disable();
+                    //motor.Disable();
 
-                    onStatusChanged(new StatusEventArgs("Measuring sample characteristics before noise spectra measurement."));
+                    //onStatusChanged(new StatusEventArgs("Measuring sample characteristics before noise spectra measurement."));
 
-                    confAIChannelsForDC_Measurement();
-                    var voltagesBeforeNoiseMeasurement = boxController.VoltageMeasurement_AllChannels(experimentSettings.NAveragesSlow);
+                    var voltagesBeforeNoiseMeasurement = new double[] { 0.1, 0.2, 0.3, 0.4 };
+                    var voltagesAfterNoiseMeasurement = new double[] { 0.1, 0.2, 0.3, 0.4 };
+
+                    //confAIChannelsForDC_Measurement();
+                    //var voltagesBeforeNoiseMeasurement = boxController.VoltageMeasurement_AllChannels(experimentSettings.NAveragesSlow);
 
                     onStatusChanged(new StatusEventArgs("Measuring noise spectra & time traces."));
 
                     confAIChannelsForAC_Measurement();
+
+                    Thread.Sleep(15000);
+
                     measureNoiseSpectra(experimentSettings.SamplingFrequency, experimentSettings.NSubSamples, experimentSettings.SpectraAveraging, experimentSettings.UpdateNumber, experimentSettings.KPreAmpl * experimentSettings.KAmpl);
 
                     onStatusChanged(new StatusEventArgs("Measuring sample characteristics after noise spectra measurement."));
 
-                    confAIChannelsForDC_Measurement();
-                    var voltagesAfterNoiseMeasurement = boxController.VoltageMeasurement_AllChannels(experimentSettings.NAveragesSlow);
+                    //confAIChannelsForDC_Measurement();
+                    //var voltagesAfterNoiseMeasurement = boxController.VoltageMeasurement_AllChannels(experimentSettings.NAveragesSlow);
 
                     // Saving to log file all the parameters of the measurement
 
