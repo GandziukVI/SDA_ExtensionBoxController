@@ -5,11 +5,109 @@
 	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 	mc:Ignorable="d"
 	xmlns:local="clr-namespace:FET_Characterization"
+	xmlns:Experiments="clr-namespace:FET_Characterization.Experiments"
+	xmlns:wpfTool="clr-namespace:Xceed.Wpf.Toolkit;assembly=Xceed.Wpf.Toolkit"
+	xmlns:d3="http://research.microsoft.com/DynamicDataDisplay/1.0"
 	x:Class="FET_Characterization.FET_Noise"
 	d:DesignWidth="640" d:DesignHeight="480">
-	<UserControl.Resources>
-		<local:FET_NoiseModel x:Key="FET_NoiseModelDataSource" />
+	
+	<UserControl.DataContext>
+		<local:FET_NoiseModel x:Name="FET_NoiseModelDataSource" />
+	</UserControl.DataContext>
+
+	<UserControl.Resources>		
+		<Experiments:ValueCollectionConverter x:Key="CollectionConverter" />
+		<d3:Log10Transform x:Key="SpectraDataTransform" />
+		<d3:LogarithmNumericTicksProvider x:Key="Log10TicksProvider" />
+
+		<Style TargetType="TextBlock">
+			<Setter Property="Margin" Value="2.5" />
+			<Setter Property="HorizontalAlignment" Value="Stretch" />
+			<Setter Property="VerticalAlignment" Value="Stretch" />
+		</Style>
+		<Style TargetType="CheckBox">
+			<Setter Property="Margin" Value="2.5" />
+			<Setter Property="HorizontalAlignment" Value="Stretch" />
+			<Setter Property="VerticalAlignment" Value="Stretch" />
+			<Setter Property="VerticalContentAlignment" Value="Center" />
+		</Style>
+		<Style TargetType="wpfTool:DoubleUpDown">
+			<Setter Property="Margin" Value="2.5" />
+			<Setter Property="Width" Value="110" />
+			<Setter Property="MaxWidth" Value="110" />			
+			<Setter Property="HorizontalAlignment" Value="Stretch" />
+			<Setter Property="VerticalAlignment" Value="Stretch" />
+			<Setter Property="CultureInfo" Value="en-Us"/>
+			<Setter Property="FormatString" Value="G4" />
+		</Style>
+		<Style TargetType="wpfTool:IntegerUpDown">
+			<Setter Property="Margin" Value="2.5" />
+			<Setter Property="Width" Value="110" />
+			<Setter Property="MaxWidth" Value="110" />	
+			<Setter Property="HorizontalAlignment" Value="Stretch" />
+			<Setter Property="VerticalAlignment" Value="Stretch" />
+		</Style>
+		<Style TargetType="Button">
+			<Setter Property="Margin" Value="2.5" />
+			<Setter Property="Height" Value="35" />
+			<Setter Property="HorizontalAlignment" Value="Stretch" />
+			<Setter Property="VerticalAlignment" Value="Bottom" />
+		</Style>
+		<Style TargetType="ComboBox">
+			<Setter Property="Margin" Value="2.5" />
+		</Style>
+		<Style TargetType="TextBox">
+			<Setter Property="Margin" Value="2.5" />
+			<Setter Property="Width" Value="110" />
+			<Setter Property="MaxWidth" Value="110" />
+			<Setter Property="HorizontalContentAlignment" Value="Stretch" />
+			<Setter Property="VerticalAlignment" Value="Stretch" />
+			<Setter Property="HorizontalContentAlignment" Value="Right" />
+			<Setter Property="VerticalContentAlignment" Value="Center" />
+			<Setter Property="TextWrapping" Value="NoWrap" />
+		</Style>
 	</UserControl.Resources>
 
-	<Grid x:Name="LayoutRoot" DataContext="{Binding Source={StaticResource FET_NoiseModelDataSource}}"/>
+	<Grid x:Name="LayoutRoot" >
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition />
+			<ColumnDefinition Width="Auto" />
+		</Grid.ColumnDefinitions>
+		<Grid.RowDefinitions>
+			<RowDefinition />
+			<RowDefinition Height="Auto"/>
+		</Grid.RowDefinitions>
+
+		<Grid Grid.RowSpan="2">
+			<Grid.RowDefinitions>
+				<RowDefinition Height="150" />
+				<RowDefinition Height="Auto" />
+				<RowDefinition />
+			</Grid.RowDefinitions>
+
+			<d3:ChartPlotter x:Name="chartFETOscilloscope" Margin="5" LegendVisibility="Collapsed" NewLegendVisible="False" DataTransform="{StaticResource SpectraDataTransform}">
+				<d3:HorizontalAxisTitle Content="Time (s)" />
+				<d3:VerticalAxisTitle Content="Amplitude (V)" />
+			</d3:ChartPlotter>
+
+			<GridSplitter Grid.Row="1" Width="5" HorizontalAlignment="Stretch" VerticalAlignment="Center" />
+
+			<d3:ChartPlotter x:Name="chartFETNoise" Margin="5" LegendVisibility="Collapsed" NewLegendVisible="False" DataTransform="{StaticResource SpectraDataTransform}" Grid.Row="2">
+			<d3:HorizontalAxis TicksProvider="{StaticResource Log10TicksProvider}">
+				<d3:HorizontalAxisTitle Content="Frequency (Hz)" />
+			</d3:HorizontalAxis>
+			<d3:VerticalAxis TicksProvider="{StaticResource Log10TicksProvider}">
+				<d3:VerticalAxisTitle>
+					<TextBlock>S<Run FontSize="9" BaselineAlignment="Subscript">V</Run> (V<Run FontSize="9" BaselineAlignment="Superscript">2</Run> / Hz)</TextBlock>
+				</d3:VerticalAxisTitle>
+			</d3:VerticalAxis>
+		</d3:ChartPlotter>
+		</Grid>
+
+		<ScrollViewer Grid.Column="1" VerticalScrollBarVisibility="Auto">
+			<Grid>
+				
+			</Grid>
+		</ScrollViewer>
+	</Grid>
 </UserControl>

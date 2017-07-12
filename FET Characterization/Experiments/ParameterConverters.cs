@@ -7,6 +7,7 @@ using System.Windows.Data;
 
 using SourceMeterUnit;
 using Keithley26xx;
+using System.Globalization;
 
 namespace FET_Characterization.Experiments
 {
@@ -248,6 +249,37 @@ namespace FET_Characterization.Experiments
                 return 1e-9;
             else
                 return double.NaN;
+        }
+    }
+
+    [ValueConversion(typeof(string), typeof(double[]))]
+    public class ValueCollectionConverter : IValueConverter
+    {
+        char[] separators = "[], ".ToCharArray();
+
+        public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        {
+            var values = (double[])value;
+
+            var sb = new StringBuilder();
+            sb.Append("[ ");
+
+            foreach (var item in values)
+                sb.AppendFormat("{0}, ", item.ToString("0.000", NumberFormatInfo.InvariantInfo));
+
+            sb.Append("]");
+
+            return sb.ToString();
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        {
+            var arrayString = (string)value;
+
+            var query = from item in arrayString.Split(separators, StringSplitOptions.RemoveEmptyEntries)
+                        select double.Parse(item, NumberFormatInfo.InvariantInfo);
+
+            return query.ToArray();
         }
     }
 }
