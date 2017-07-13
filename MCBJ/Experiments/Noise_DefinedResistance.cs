@@ -503,10 +503,16 @@ namespace MCBJ.Experiments
 
                         if (dataReadingSuccess)
                         {
-                            sb = new StringBuilder();
+                            sb.Clear();
                             sb.Append("TT");
-                            foreach (var item in timeTrace)
-                                sb.AppendFormat("{0}\t{1}\r\n", item.X.ToString(NumberFormatInfo.InvariantInfo), (item.Y / kAmpl).ToString(NumberFormatInfo.InvariantInfo));
+
+                            var query = (from item in timeTrace
+                                        select new string[] { item.X.ToString(NumberFormatInfo.InvariantInfo), (item.Y / kAmpl).ToString(NumberFormatInfo.InvariantInfo) }).ToArray();
+
+                            sb.AppendFormat("{0}\t{1}\r\n", query);
+
+                            //foreach (var item in timeTrace)
+                            //    sb.AppendFormat("{0}\t{1}\r\n", item.X.ToString(NumberFormatInfo.InvariantInfo), (item.Y / kAmpl).ToString(NumberFormatInfo.InvariantInfo));
 
                             // First sending the time trace data before FFT
                             onDataArrived(new ExpDataArrivedEventArgs(sb.ToString()));
