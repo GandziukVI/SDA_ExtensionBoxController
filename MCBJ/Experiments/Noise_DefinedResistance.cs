@@ -553,9 +553,9 @@ namespace MCBJ.Experiments
                                 dtLowFreq = 64.0 * 1.0 / (double)samplingFrequency;
 
                                 autoPSDLowFreq = Measurements.AutoPowerSpectrum(selection64Hz, dtLowFreq, out dfLowFreq);
-                                var singlePSD_LOW_Freq = autoPSDLowFreq;//Measurements.SpectrumUnitConversion(autoPSDLowFreq, SpectrumType.Power, ScalingMode.Linear, DisplayUnits.VoltsRmsSquaredPerHZ, dfLowFreq, equivalentNoiseBandwidthLowFreq, coherentGainLowFreq, unit);
+                                var singlePSD_LOW_Freq = autoPSDLowFreq;
 
-                                var lowFreqSpectrum = (singlePSD_LOW_Freq.Select((value, index) => new Point((index + 1) * dfLowFreq, value)).Where(p => p.X <= 1600)).ToArray();
+                                var lowFreqSpectrum = (singlePSD_LOW_Freq.Select((value, index) => new Point(index * dfLowFreq, value)).Where(p => p.X >= 1 && p.X <= 1600)).ToArray();
 
                                 // Calculation of the HIGH-FREQUENCY part of the spectrum
 
@@ -601,7 +601,7 @@ namespace MCBJ.Experiments
                                     }
                                 }
 
-                                var hfSpecTransformed = hfSpec;//Measurements.SpectrumUnitConversion(hfSpec, SpectrumType.Power, ScalingMode.Linear, DisplayUnits.VoltsRmsSquaredPerHZ, dfLowFreq, equivalentNoiseBandwidthLowFreq, coherentGainLowFreq, unit);
+                                var hfSpecTransformed = hfSpec;
 
                                 highFreqSpectrum = new Point[hfSpecTransformed.Length];
 
