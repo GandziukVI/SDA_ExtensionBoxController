@@ -607,7 +607,7 @@ namespace MCBJ.Experiments
 
                                 for (int i = 0; i < highFreqSpectrum.Length; i++)
                                 {
-                                    highFreqSpectrum[i] = new Point((i + 1) * dfHighFreq, hfSpecTransformed[i]);
+                                    highFreqSpectrum[i] = new Point(i * dfHighFreq, hfSpecTransformed[i]);
                                 }
 
                                 highFreqSpectrum = highFreqSpectrum.Where(p => p.X > 1600 && p.X <= 102400).Select(val => val).ToArray();
