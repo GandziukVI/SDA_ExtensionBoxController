@@ -44,7 +44,12 @@ namespace MCBJ.Experiments
 
         private Noise_DefinedResistanceInfo experimentSettings;
 
-        public Noise_DefinedResistance(string SDA_ConnectionString, IMotionController1D Motor)
+        private Point[] amplifierNoise;
+        private Point[] frequencyResponce;
+
+        private SpectralAnalysis.TwoPartsFFT twoPartsFFT;
+
+        public Noise_DefinedResistance(string SDA_ConnectionString, IMotionController1D Motor, Point[] AmplifierNoise, Point[] FrequencyResponce)
             : base()
         {
             boxController = new BoxController();
@@ -57,6 +62,10 @@ namespace MCBJ.Experiments
             VdsMotorPotentiometer = new BS350_MotorPotentiometer(boxController, BOX_AnalogOutChannelsEnum.BOX_AOut_02);
 
             motor = Motor;
+
+            amplifierNoise = AmplifierNoise;
+            frequencyResponce = FrequencyResponce;
+            twoPartsFFT = new SpectralAnalysis.TwoPartsFFT();
 
             stabilityStopwatch = new Stopwatch();
             accuracyStopWatch = new Stopwatch();
@@ -464,8 +473,6 @@ namespace MCBJ.Experiments
             boxController.AI_ChannelCollection[AnalogInChannelsEnum.AIn1].DataReady -= DefResistanceNoise_DataReady;
             boxController.AI_ChannelCollection[AnalogInChannelsEnum.AIn1].DataReady += DefResistanceNoise_DataReady;
 
-            var sb = new StringBuilder();
-
             double dtLowFreq = 0.0, dtHighFreq = 0.0;
             double dfLowFreq = 1.0, dfHighFreq = 0.0;
             double equivalentNoiseBandwidthLowFreq, equivalentNoiseBandwidthHighFreq;
@@ -503,19 +510,11 @@ namespace MCBJ.Experiments
 
                         if (dataReadingSuccess)
                         {
-                            sb.Clear();
-                            sb.Append("TT");
-
-                            var query = (from item in timeTrace
-                                        select new string[] { item.X.ToString(NumberFormatInfo.InvariantInfo), (item.Y / kAmpl).ToString(NumberFormatInfo.InvariantInfo) }).ToArray();
-
-                            sb.AppendFormat("{0}\t{1}\r\n", query);
-
-                            //foreach (var item in timeTrace)
-                            //    sb.AppendFormat("{0}\t{1}\r\n", item.X.ToString(NumberFormatInfo.InvariantInfo), (item.Y / kAmpl).ToString(NumberFormatInfo.InvariantInfo));
+                            var query = from item in timeTrace
+                                        select string.Format("{0}\t{1}", item.X.ToString(NumberFormatInfo.InvariantInfo), (item.Y / kAmpl).ToString(NumberFormatInfo.InvariantInfo));
 
                             // First sending the time trace data before FFT
-                            onDataArrived(new ExpDataArrivedEventArgs(sb.ToString()));
+                            onDataArrived(new ExpDataArrivedEventArgs(string.Format("TT{0}", string.Join("\r\n", query))));
 
                             // Subsetting samples from the entire trace
                             var timeTraceSelectionList = new LinkedList<Point[]>();
@@ -634,14 +633,17 @@ namespace MCBJ.Experiments
 
                             if (averagingCounter % updateNumber == 0)
                             {
-                                sb = new StringBuilder();
-                                sb.Append("NS");
+                                var dividedSpec = (from item in noisePSD
+                                                   select new Point(item.X, item.Y / (double)(averagingCounter) / (kAmpl * kAmpl))).ToArray();
 
-                                for (int i = 0; i < noisePSD.Length; i++)
-                                    sb.AppendFormat("{0}\t{1}\r\n", (noisePSD[i].X).ToString(NumberFormatInfo.InvariantInfo), (noisePSD[i].Y / (double)(averagingCounter) / (kAmpl * kAmpl)).ToString(NumberFormatInfo.InvariantInfo));
+                                var calibratedSpectrum = twoPartsFFT.GetCalibratedSpecteum(ref dividedSpec, ref amplifierNoise, ref frequencyResponce);
+
+                                var finalSpectrum = from divSpecItem in dividedSpec
+                                                    join calSpecItem in calibratedSpectrum on divSpecItem.X equals calSpecItem.X
+                                                    select string.Format("{0}\t{1}\t{2}", divSpecItem.X.ToString(NumberFormatInfo.InvariantInfo), calSpecItem.Y.ToString(NumberFormatInfo.InvariantInfo), divSpecItem.Y.ToString(NumberFormatInfo.InvariantInfo));
 
                                 // Sending the calculated spectrum data
-                                onDataArrived(new ExpDataArrivedEventArgs(sb.ToString()));
+                                onDataArrived(new ExpDataArrivedEventArgs(string.Format("NS{0}", string.Join("\r\n", finalSpectrum))));
                                 onProgressChanged(new ProgressEventArgs((double)averagingCounter / (double)nAverages * 100.0));
                             }
                         }
@@ -898,11 +900,11 @@ namespace MCBJ.Experiments
                             dataBuilder.Clear();
 
                         var n = experimentSettings.SamplingFrequency / experimentSettings.RecordingFrequency;
-                        var selectedData = dataBuilder.AppendFormat
+                        var selectedData = string.Join
                             (
-                                "{0}\r\n",
+                                "\r\n",
                                 e.Data.Substring(2).Split("\r\n".ToCharArray(), StringSplitOptions.RemoveEmptyEntries).Where((value, index) => index % n == 0)
-                            ).ToString();
+                            );
 
                         TT_StreamWriter.Write(selectedData);
                     }

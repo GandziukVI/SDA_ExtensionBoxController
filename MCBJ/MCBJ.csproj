@@ -200,6 +200,10 @@
       <Project>{ce69e0ee-2e6c-4f3d-b29a-a9a82fb13d00}</Project>
       <Name>SourceMeterUnit</Name>
     </ProjectReference>
+    <ProjectReference Include="..\SpectralAnalysis\SpectralAnalysis.csproj">
+      <Project>{1fcbc722-6805-4cab-b58b-1ad1fc8f3b55}</Project>
+      <Name>SpectralAnalysis</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

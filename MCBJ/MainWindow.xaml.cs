@@ -44,7 +44,7 @@ namespace MCBJ
         LinkedList<Point> dList;
 
         public MainWindow()
-        {     
+        {
             dList = new LinkedList<Point>();
             ds = new EnumerableDataSource<Point>(dList);
             ds.SetXYMapping(p => p);
@@ -104,7 +104,7 @@ namespace MCBJ
             experiment.Progress += experimentProgress;
 
             if (expStartInfo != null)
-                experiment.Start(expStartInfo);            
+                experiment.Start(expStartInfo);
         }
 
         void cmdStopIV_at_defR_Click(object sender, RoutedEventArgs e)
@@ -137,7 +137,7 @@ namespace MCBJ
             {
                 ds.RaiseDataChanged();
             }));
-        }     
+        }
 
         #endregion
 
@@ -169,22 +169,41 @@ namespace MCBJ
             expStartInfo = control.Settings;
         }
 
+        Point[] ReadCalibrationFile(string fileName)
+        {
+            var delim = "\r\n".ToCharArray();
+            var sep = "\t".ToCharArray();
+
+            var res = new Point[] { };
+
+            using (var sr = new StreamReader(new FileStream(fileName, FileMode.Open, FileAccess.Read)))
+            {
+                res = sr.ReadToEnd().Split(delim, StringSplitOptions.RemoveEmptyEntries)
+                    .Select(v => v.Split(sep, StringSplitOptions.RemoveEmptyEntries))
+                    .Select(v => new Point(double.Parse(v[0], NumberFormatInfo.InvariantInfo), double.Parse(v[1], NumberFormatInfo.InvariantInfo))).ToArray();
+            }
+
+            return res;
+        }
+
         void on_cmd_startNoiseDefR(object sender, RoutedEventArgs e)
         {
             if (experiment != null)
                 experiment.Dispose();
 
-            //var firstIdentifyer = 0x0957;
-            //var secondIdentifyer = 0x1718;
-            //var visaBuilder = new StringBuilder();
+            var calPath = string.Format("{0}\\{1}", AppDomain.CurrentDomain.BaseDirectory, "NoiseCalibration\\");
+            var amplifierNoiseFilePath = string.Format("{0}\\{1}", calPath, "AmplifierNoise.dat");
+            var frequencyResponceFilePath = string.Format("{0}\\{1}", calPath, "FrequencyResponce.dat");
 
-            //visaBuilder.AppendFormat("USB0::{0}::{1}::TW54334510::INSTR", firstIdentifyer.ToString(NumberFormatInfo.InvariantInfo), secondIdentifyer.ToString(NumberFormatInfo.InvariantInfo));
+            var amplifierNoise = ReadCalibrationFile(amplifierNoiseFilePath);
+            var frequencyResponce = ReadCalibrationFile(frequencyResponceFilePath);
+
 
             //var motorDriver = new SerialDevice("COM1", 115200, Parity.None, 8, StopBits.One);
             //IMotionController1D motor = new SA_2036U012V(motorDriver) as IMotionController1D;
 
             //experiment = new Noise_DefinedResistance((expStartInfo as Noise_DefinedResistanceInfo).AgilentU2542AResName, motor);
-            experiment = new Noise_DefinedResistance((expStartInfo as Noise_DefinedResistanceInfo).AgilentU2542AResName, null);
+            experiment = new Noise_DefinedResistance((expStartInfo as Noise_DefinedResistanceInfo).AgilentU2542AResName, null, amplifierNoise, frequencyResponce);
 
             experiment.DataArrived += Noise_at_der_R_DataArrived;
 
@@ -201,6 +220,9 @@ namespace MCBJ
                 experiment.Stop();
         }
 
+        char[] delim = "\r\n".ToCharArray();
+        char[] sep = "\t".ToCharArray();
+
         void AddNoiseDataToPlot(object NoiseDataString)
         {
             dList.Clear();
@@ -209,13 +231,21 @@ namespace MCBJ
 
             if (noiseDataString.StartsWith("NS"))
             {
-                var data = from item in noiseDataString.Substring(2).Split("\r\n".ToCharArray(), StringSplitOptions.RemoveEmptyEntries)
-                           select Array.ConvertAll(item.Split("\t".ToCharArray(), StringSplitOptions.RemoveEmptyEntries), x => double.Parse(x, NumberFormatInfo.InvariantInfo));
+                var dataPoints = noiseDataString.Substring(2)
+                    .Split(delim, StringSplitOptions.RemoveEmptyEntries)
+                    .Select(v => v.Split(sep, StringSplitOptions.RemoveEmptyEntries))
+                    .Select(v => Array.ConvertAll(v, x => double.Parse(x, NumberFormatInfo.InvariantInfo)))
+                    .Select(v => new Point(v[0], v[1])).ToArray();
 
-                var points = (from dataPoint in data
-                             select new Point(dataPoint[0], dataPoint[1])).ToArray();
+                //var data = from item in noiseDataString.Substring(2).Split("\r\n".ToCharArray(), StringSplitOptions.RemoveEmptyEntries)
+                //           select Array.ConvertAll(item.Split("\t".ToCharArray(), StringSplitOptions.RemoveEmptyEntries), x => double.Parse(x, NumberFormatInfo.InvariantInfo));
 
-                var toPlot = D3Helper.PointSelector.SelectNPointsPerDecade(ref points, 100);
+                //var points = (from dataPoint in data
+                //              select new Point(dataPoint[0], dataPoint[1])).ToArray();
+
+                //var toPlot = D3Helper.PointSelector.SelectNPointsPerDecade(ref points, 100);
+
+                var toPlot = D3Helper.PointSelector.SelectNPointsPerDecade(ref dataPoints, 100);
 
                 foreach (var item in toPlot)
                     dList.AddLast(item);
