@@ -458,9 +458,6 @@ namespace MCBJ.Experiments
         {
             Interlocked.Exchange(ref averagingCounter, 0);
 
-            double[] autoPSDLowFreq;
-            double[] autoPSDHighFreq;
-
             if (samplingFrequency % 2 != 0)
                 throw new ArgumentException("The frequency should be an even number!");
 
@@ -473,17 +470,8 @@ namespace MCBJ.Experiments
             boxController.AI_ChannelCollection[AnalogInChannelsEnum.AIn1].DataReady -= DefResistanceNoise_DataReady;
             boxController.AI_ChannelCollection[AnalogInChannelsEnum.AIn1].DataReady += DefResistanceNoise_DataReady;
 
-            double dtLowFreq = 0.0, dtHighFreq = 0.0;
-            double dfLowFreq = 1.0, dfHighFreq = 0.0;
-            double equivalentNoiseBandwidthLowFreq, equivalentNoiseBandwidthHighFreq;
-            double coherentGainLowFreq, coherentGainHighFreq;
-
             acquisitionIsRunning = true;
             boxController.AcquisitionInProgress = true;
-
-            // Using elliptic low-pass filter of 8-th order
-
-            var filter = new NationalInstruments.Analysis.Dsp.Filters.EllipticLowpassFilter(8, samplingFrequency, 1600.0, 0.1, 100.0);
 
             var acquisitionTaskResult = new Task(new Action(() => { }));
 
@@ -516,129 +504,16 @@ namespace MCBJ.Experiments
                             // First sending the time trace data before FFT
                             onDataArrived(new ExpDataArrivedEventArgs(string.Format("TT{0}", string.Join("\r\n", query))));
 
-                            // Subsetting samples from the entire trace
-                            var timeTraceSelectionList = new LinkedList<Point[]>();
+                            var TTVoltageValues = (from item in timeTrace
+                                                       select item.Y).ToArray();
 
-                            var range = (int)((timeTrace.Length) / nDataSamples);
-
-                            for (int i = 0; i < nDataSamples; i++)
-                            {
-                                var selection = timeTrace.Where((value, index) => index >= i * range && index < (i + 1) * range).Select(val => val);
-                                timeTraceSelectionList.AddLast(selection.ToArray());
-                            }
-
-                            // Calculating FFT in each sample
-                            foreach (var trace in timeTraceSelectionList)
-                            {
-                                var traceData = (from val in trace
-                                                 select val.Y).ToArray();
-
-                                var unit = new System.Text.StringBuilder("V", 256);
-
-                                // Calculation of the LOW-FREQUENCY part of the spectrum
-
-                                // Filtering data for low frequency selection
-
-                                var filteredData = filter.FilterData(traceData);
-
-                                // Selecting lower amount of data points to reduce the FFT noise
-
-                                var selection64Hz = PointSelector.SelectPoints(ref filteredData, 64, false);
-
-                                var sw = ScaledWindow.CreateRectangularWindow();
-
-                                sw.Apply(selection64Hz, out equivalentNoiseBandwidthLowFreq, out coherentGainLowFreq);
-
-                                dtLowFreq = 64.0 * 1.0 / (double)samplingFrequency;
-
-                                autoPSDLowFreq = Measurements.AutoPowerSpectrum(selection64Hz, dtLowFreq, out dfLowFreq);
-                                var singlePSD_LOW_Freq = autoPSDLowFreq;
-
-                                var lowFreqSpectrum = (singlePSD_LOW_Freq.Select((value, index) => new Point(index * dfLowFreq, value)).Where(p => p.X >= 1 && p.X <= 1600)).ToArray();
-
-                                // Calculation of the HIGH-FREQUENCY part of the spectrum
-
-                                dtHighFreq = 1.0 / (double)samplingFrequency;
-
-                                var highFreqPeriod = 64;
-
-                                var highFreqSelectionRange = (int)((traceData.Length) / highFreqPeriod);
-
-                                Point[] highFreqSpectrum = new Point[] { };
-                                Point[] highSingleFreqSpectrum = new Point[] { };
-
-                                LinkedList<double[]> selectionList = new LinkedList<double[]>();
-
-                                for (int i = 0; i < highFreqPeriod; i++)
-                                {
-                                    var arr = new double[highFreqSelectionRange];
-                                    Array.Copy(traceData, i * highFreqSelectionRange, arr, 0, highFreqSelectionRange);
-                                    selectionList.AddLast(arr);
-                                }
-
-                                var hfSpec = new double[] { };
-
-                                foreach (var selection in selectionList)
-                                {
-                                    sw.Apply(selection, out equivalentNoiseBandwidthHighFreq, out coherentGainHighFreq);
-                                    autoPSDHighFreq = Measurements.AutoPowerSpectrum(selection, dtHighFreq, out dfHighFreq);
-
-                                    if (hfSpec == null || hfSpec.Length == 0)
-                                    {
-                                        hfSpec = new double[autoPSDHighFreq.Length];
-                                        for (int i = 0; i < autoPSDHighFreq.Length; i++)
-                                        {
-                                            hfSpec[i] = autoPSDHighFreq[i];
-                                        }
-                                    }
-                                    else
-                                    {
-                                        for (int i = 0; i < autoPSDHighFreq.Length; i++)
-                                        {
-                                            hfSpec[i] += autoPSDHighFreq[i];
-                                        }
-                                    }
-                                }
-
-                                var hfSpecTransformed = hfSpec;
-
-                                highFreqSpectrum = new Point[hfSpecTransformed.Length];
-
-                                for (int i = 0; i < highFreqSpectrum.Length; i++)
-                                {
-                                    highFreqSpectrum[i] = new Point(i * dfHighFreq, hfSpecTransformed[i]);
-                                }
-
-                                highFreqSpectrum = highFreqSpectrum.Where(p => p.X > 1600 && p.X <= 102400).Select(val => val).ToArray();
-
-                                if (noisePSD == null || noisePSD.Length == 0)
-                                    noisePSD = new Point[lowFreqSpectrum.Count() + highFreqSpectrum.Length];
-
-                                var counter = 0;
-                                foreach (var item in lowFreqSpectrum)
-                                {
-                                    noisePSD[counter].X = item.X;
-                                    noisePSD[counter].Y += item.Y;
-
-                                    ++counter;
-                                }
-                                foreach (var item in highFreqSpectrum)
-                                {
-                                    noisePSD[counter].X = item.X;
-                                    noisePSD[counter].Y += item.Y / ((double)(highFreqPeriod * highFreqPeriod));
-
-                                    ++counter;
-                                }
-                            }
+                            noisePSD = twoPartsFFT.GetTwoPartsFFT(TTVoltageValues, samplingFrequency = experimentSettings.SamplingFrequency, experimentSettings.NSubSamples, experimentSettings.KAmpl);
 
                             if (averagingCounter % updateNumber == 0)
                             {
-                                var dividedSpec = (from item in noisePSD
-                                                   select new Point(item.X, item.Y / (double)(averagingCounter) / (kAmpl * kAmpl))).ToArray();
+                                var calibratedSpectrum = twoPartsFFT.GetCalibratedSpecteum(ref noisePSD, ref amplifierNoise, ref frequencyResponce);
 
-                                var calibratedSpectrum = twoPartsFFT.GetCalibratedSpecteum(ref dividedSpec, ref amplifierNoise, ref frequencyResponce);
-
-                                var finalSpectrum = from divSpecItem in dividedSpec
+                                var finalSpectrum = from divSpecItem in noisePSD
                                                     join calSpecItem in calibratedSpectrum on divSpecItem.X equals calSpecItem.X
                                                     select string.Format("{0}\t{1}\t{2}", divSpecItem.X.ToString(NumberFormatInfo.InvariantInfo), calSpecItem.Y.ToString(NumberFormatInfo.InvariantInfo), divSpecItem.Y.ToString(NumberFormatInfo.InvariantInfo));
 
