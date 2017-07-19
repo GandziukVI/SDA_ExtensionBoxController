@@ -590,7 +590,7 @@ namespace MCBJ.Experiments
                     if (experimentSettings.RecordTimeTraces == true)
                     {
                         TTSaveFileName = GetFileNameWithIncrement(string.Join("\\", experimentSettings.FilePath, "Time traces", experimentSettings.SaveFileName));
-                        createFileWithHeader(TTSaveFileName, ref mode, ref access, "Time\tVoltage\n", "s\tV\n");
+                        createFileWithHeader(TTSaveFileName, ref mode, ref access, "", "");// "Time\tVoltage\n", "s\tV\n");
                         TT_StreamWriter = new StreamWriter(new FileStream(TTSaveFileName, FileMode.Append, FileAccess.Write));
                     }
 
@@ -762,7 +762,8 @@ namespace MCBJ.Experiments
             var mode = FileMode.OpenOrCreate;
             var access = FileAccess.Write;
 
-            createFileWithHeader(FileName, ref mode, ref access, SingleNoiseMeasurement.DataHeader, SingleNoiseMeasurement.DataSubHeader);
+            //createFileWithHeader(FileName, ref mode, ref access, SingleNoiseMeasurement.DataHeader, SingleNoiseMeasurement.DataSubHeader);
+            createFileWithHeader(FileName, ref mode, ref access, "", "");
 
             var toWrite = Encoding.ASCII.GetBytes(NoiseSpectrumFinal);
             await WriteData(toWrite, FileName, mode, access);
