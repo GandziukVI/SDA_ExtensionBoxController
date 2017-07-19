@@ -180,7 +180,9 @@ namespace MCBJ
             {
                 res = sr.ReadToEnd().Split(delim, StringSplitOptions.RemoveEmptyEntries)
                     .Select(v => v.Split(sep, StringSplitOptions.RemoveEmptyEntries))
-                    .Select(v => new Point(double.Parse(v[0], NumberFormatInfo.InvariantInfo), double.Parse(v[1], NumberFormatInfo.InvariantInfo))).ToArray();
+                    .Select(v => Array.ConvertAll(v, x => double.Parse(x, NumberFormatInfo.InvariantInfo)))
+                    .Select(v => new Point(v[0], v[1])).ToArray();
+                    
             }
 
             return res;
@@ -191,7 +193,7 @@ namespace MCBJ
             if (experiment != null)
                 experiment.Dispose();
 
-            var calPath = string.Format("{0}\\{1}", AppDomain.CurrentDomain.BaseDirectory, "NoiseCalibration\\");
+            var calPath = string.Format("{0}\\{1}", AppDomain.CurrentDomain.BaseDirectory, "NoiseCalibration");
             var amplifierNoiseFilePath = string.Format("{0}\\{1}", calPath, "AmplifierNoise.dat");
             var frequencyResponceFilePath = string.Format("{0}\\{1}", calPath, "FrequencyResponce.dat");
 
@@ -237,15 +239,9 @@ namespace MCBJ
                     .Select(v => Array.ConvertAll(v, x => double.Parse(x, NumberFormatInfo.InvariantInfo)))
                     .Select(v => new Point(v[0], v[1])).ToArray();
 
-                //var data = from item in noiseDataString.Substring(2).Split("\r\n".ToCharArray(), StringSplitOptions.RemoveEmptyEntries)
-                //           select Array.ConvertAll(item.Split("\t".ToCharArray(), StringSplitOptions.RemoveEmptyEntries), x => double.Parse(x, NumberFormatInfo.InvariantInfo));
-
-                //var points = (from dataPoint in data
-                //              select new Point(dataPoint[0], dataPoint[1])).ToArray();
-
-                //var toPlot = D3Helper.PointSelector.SelectNPointsPerDecade(ref points, 100);
-
-                var toPlot = D3Helper.PointSelector.SelectNPointsPerDecade(ref dataPoints, 100);
+                var toPlot = (from item in D3Helper.PointSelector.SelectNPointsPerDecade(ref dataPoints, 100)
+                              where item.Y > 0
+                              select item).ToArray();
 
                 foreach (var item in toPlot)
                     dList.AddLast(item);

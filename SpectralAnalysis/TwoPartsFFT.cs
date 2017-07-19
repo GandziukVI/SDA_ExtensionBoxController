@@ -17,7 +17,7 @@ namespace SpectralAnalysis
 {
     public class TwoPartsFFT
     {
-        public Point[] GetTwoPartsFFT(double[] timeTrace, int samplingFrequency = 262144, int nDataSamples = 1, double kAmpl = 1.0, double lowFreqStartFreq = 1.0, double cutOffLowFreq = 1600, int cutOffHighFreq = 102400, int filterOrder = 8, double filterFrequency = -1)
+        public Point[] GetTwoPartsFFT(double[] timeTrace, int samplingFrequency = 262144, int nDataSamples = 1, double kAmpl = 1.0, double lowFreqStartFreq = 1.0, double cutOffLowFreq = 1600, double cutOffHighFreq = 102400, int filterOrder = 8, double filterFrequency = -1)
         {
             double[] autoPSDLowFreq;
             double[] autoPSDHighFreq;
@@ -32,7 +32,7 @@ namespace SpectralAnalysis
             double equivalentNoiseBandwidthLowFreq, equivalentNoiseBandwidthHighFreq;
             double coherentGainLowFreq, coherentGainHighFreq;
 
-            var filter = new NationalInstruments.Analysis.Dsp.Filters.EllipticLowpassFilter(filterOrder, samplingFrequency, cutOffHighFreq, 0.1, 100.0);
+            var filter = new NationalInstruments.Analysis.Dsp.Filters.EllipticLowpassFilter(filterOrder, samplingFrequency, cutOffLowFreq, 0.1, 100.0);
 
             // Subsetting samples from the entire trace
             var timeTraceSelectionList = new LinkedList<double[]>();

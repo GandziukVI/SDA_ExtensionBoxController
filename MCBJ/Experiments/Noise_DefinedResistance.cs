@@ -98,10 +98,10 @@ namespace MCBJ.Experiments
 
             var config = new AI_ChannelConfig[4]
             {
-                new AI_ChannelConfig(){ ChannelName = AnalogInChannelsEnum.AIn1, Enabled = true, Mode = ChannelModeEnum.DC, Polarity = PolarityEnum.Polarity_Bipolar, Range = Vs_Range},   // Vs
+                new AI_ChannelConfig(){ ChannelName = AnalogInChannelsEnum.AIn1, Enabled = false, Mode = ChannelModeEnum.DC, Polarity = PolarityEnum.Polarity_Bipolar, Range = Vs_Range},  
                 new AI_ChannelConfig(){ ChannelName = AnalogInChannelsEnum.AIn2, Enabled = true, Mode = ChannelModeEnum.DC, Polarity = PolarityEnum.Polarity_Bipolar, Range = Vm_Range},   // Vm
                 new AI_ChannelConfig(){ ChannelName = AnalogInChannelsEnum.AIn3, Enabled = false, Mode = ChannelModeEnum.DC, Polarity = PolarityEnum.Polarity_Bipolar, Range = Vs_Range},
-                new AI_ChannelConfig(){ ChannelName = AnalogInChannelsEnum.AIn4, Enabled = false, Mode = ChannelModeEnum.DC, Polarity = PolarityEnum.Polarity_Bipolar, Range = Vs_Range}
+                new AI_ChannelConfig(){ ChannelName = AnalogInChannelsEnum.AIn4, Enabled = true, Mode = ChannelModeEnum.DC, Polarity = PolarityEnum.Polarity_Bipolar, Range = Vs_Range}    // Vs
             };
 
             return config;
@@ -113,10 +113,10 @@ namespace MCBJ.Experiments
 
             var config = new AI_ChannelConfig[4]
             {
-                new AI_ChannelConfig(){ ChannelName = AnalogInChannelsEnum.AIn1, Enabled = true, Mode = ChannelModeEnum.AC, Polarity = PolarityEnum.Polarity_Bipolar, Range = Vs_Range},   // Vs
-                new AI_ChannelConfig(){ ChannelName = AnalogInChannelsEnum.AIn2, Enabled = false, Mode = ChannelModeEnum.AC, Polarity = PolarityEnum.Polarity_Bipolar, Range = Vs_Range},   // Vm
-                new AI_ChannelConfig(){ ChannelName = AnalogInChannelsEnum.AIn3, Enabled = false, Mode = ChannelModeEnum.AC, Polarity = PolarityEnum.Polarity_Bipolar, Range = Vs_Range},
-                new AI_ChannelConfig(){ ChannelName = AnalogInChannelsEnum.AIn4, Enabled = false, Mode = ChannelModeEnum.AC, Polarity = PolarityEnum.Polarity_Bipolar, Range = Vs_Range}
+                new AI_ChannelConfig(){ ChannelName = AnalogInChannelsEnum.AIn1, Enabled = true, Mode = ChannelModeEnum.AC, Polarity = PolarityEnum.Polarity_Bipolar, Range = Vs_Range},    // Vs
+                new AI_ChannelConfig(){ ChannelName = AnalogInChannelsEnum.AIn2, Enabled = false, Mode = ChannelModeEnum.DC, Polarity = PolarityEnum.Polarity_Bipolar, Range = Vs_Range},   // Vm
+                new AI_ChannelConfig(){ ChannelName = AnalogInChannelsEnum.AIn3, Enabled = false, Mode = ChannelModeEnum.DC, Polarity = PolarityEnum.Polarity_Bipolar, Range = Vs_Range},
+                new AI_ChannelConfig(){ ChannelName = AnalogInChannelsEnum.AIn4, Enabled = false, Mode = ChannelModeEnum.DC, Polarity = PolarityEnum.Polarity_Bipolar, Range = Vs_Range}
             };
 
             return config;
@@ -135,7 +135,7 @@ namespace MCBJ.Experiments
                 var init_conf = setDCConf(9.99, 9.99);
                 boxController.ConfigureAI_Channels(init_conf);
                 var voltages = boxController.VoltageMeasurement_AllChannels(averagingNumberSlow);
-                var real_conf = setDCConf(voltages[0], voltages[1]);
+                var real_conf = setDCConf(voltages[3], voltages[1]);
                 boxController.ConfigureAI_Channels(real_conf);
 
                 isDCMode = true;
@@ -194,9 +194,9 @@ namespace MCBJ.Experiments
             {
                 var voltages = boxController.VoltageMeasurement_AllChannels(averagingNumberFast);
 
-                onStatusChanged(new StatusEventArgs(string.Format("Vs = {0} (=> {1} V), Vm = {2}", voltages[0].ToString("0.0000", NumberFormatInfo.InvariantInfo), voltage.ToString("0.0000", NumberFormatInfo.InvariantInfo), voltages[1].ToString("0.0000", NumberFormatInfo.InvariantInfo))));
+                onStatusChanged(new StatusEventArgs(string.Format("Vs = {0} (=> {1} V), Vm = {2}", voltages[3].ToString("0.0000", NumberFormatInfo.InvariantInfo), voltage.ToString("0.0000", NumberFormatInfo.InvariantInfo), voltages[1].ToString("0.0000", NumberFormatInfo.InvariantInfo))));
 
-                drainVoltageCurr = Math.Abs(voltages[0]);
+                drainVoltageCurr = Math.Abs(voltages[3]);
 
                 var speed = minSpeed;
                 try
@@ -282,7 +282,7 @@ namespace MCBJ.Experiments
 
             var voltages = boxController.VoltageMeasurement_AllChannels(nAveraging);
 
-            if (voltages[0] > VoltageTreshold)
+            if (voltages[3] > VoltageTreshold)
             {
                 onStatusChanged(new StatusEventArgs("Treshold voltage value is reached. Going down to set voltage value."));
 
@@ -294,7 +294,7 @@ namespace MCBJ.Experiments
                 voltages = boxController.VoltageMeasurement_AllChannels(nAveraging);
             }
 
-            var Vs = voltages[0];
+            var Vs = voltages[3];
             var Vm = voltages[1];
 
             var Is = (Vm - Vs) / LoadResistance;
@@ -505,17 +505,34 @@ namespace MCBJ.Experiments
                             onDataArrived(new ExpDataArrivedEventArgs(string.Format("TT{0}", string.Join("\r\n", query))));
 
                             var TTVoltageValues = (from item in timeTrace
-                                                       select item.Y).ToArray();
+                                                   select item.Y).ToArray();
 
-                            noisePSD = twoPartsFFT.GetTwoPartsFFT(TTVoltageValues, samplingFrequency = experimentSettings.SamplingFrequency, experimentSettings.NSubSamples, experimentSettings.KAmpl);
+                            var singleNoiseSpectrum = twoPartsFFT.GetTwoPartsFFT(TTVoltageValues, samplingFrequency = experimentSettings.SamplingFrequency, experimentSettings.NSubSamples);
+
+                            if (noisePSD == null || noisePSD.Length == 0)
+                            {
+                                noisePSD = new Point[singleNoiseSpectrum.Length];
+                                for (int i = 0; i < singleNoiseSpectrum.Length; i++)
+                                    noisePSD[i] = new Point(singleNoiseSpectrum[i].X, 0.0);
+                            }
+
+                            //noisePSD = (from singleNoisePoint in singleNoiseSpectrum
+                            //            join integralNoisePoint in noisePSD on singleNoisePoint.X equals integralNoisePoint.X
+                            //            select new Point(singleNoisePoint.X, integralNoisePoint.Y + singleNoisePoint.Y)).ToArray();
+
+                            for (int i = 0; i < noisePSD.Length; i++)
+                                noisePSD[i].Y += singleNoiseSpectrum[i].Y;
 
                             if (averagingCounter % updateNumber == 0)
                             {
-                                var calibratedSpectrum = twoPartsFFT.GetCalibratedSpecteum(ref noisePSD, ref amplifierNoise, ref frequencyResponce);
+                                var dividedSpectrum = (from item in noisePSD
+                                                       select new Point(item.X, item.Y / averagingCounter)).ToArray();
 
-                                var finalSpectrum = from divSpecItem in noisePSD
+                                var calibratedSpectrum = twoPartsFFT.GetCalibratedSpecteum(ref dividedSpectrum, ref amplifierNoise, ref frequencyResponce);
+
+                                var finalSpectrum = from divSpecItem in dividedSpectrum
                                                     join calSpecItem in calibratedSpectrum on divSpecItem.X equals calSpecItem.X
-                                                    select string.Format("{0}\t{1}\t{2}", divSpecItem.X.ToString(NumberFormatInfo.InvariantInfo), calSpecItem.Y.ToString(NumberFormatInfo.InvariantInfo), divSpecItem.Y.ToString(NumberFormatInfo.InvariantInfo));
+                                                    select string.Format("{0}\t{1}\t{2}", divSpecItem.X.ToString(NumberFormatInfo.InvariantInfo), (calSpecItem.Y / (kAmpl * kAmpl)).ToString(NumberFormatInfo.InvariantInfo), divSpecItem.Y.ToString(NumberFormatInfo.InvariantInfo));
 
                                 // Sending the calculated spectrum data
                                 onDataArrived(new ExpDataArrivedEventArgs(string.Format("NS{0}", string.Join("\r\n", finalSpectrum))));
@@ -535,6 +552,9 @@ namespace MCBJ.Experiments
 
         public override void ToDo(object Arg)
         {
+            onStatusChanged(new StatusEventArgs("Measurement started."));
+            onProgressChanged(new ProgressEventArgs(0.0));
+
             experimentSettings = (Noise_DefinedResistanceInfo)Arg;
 
             #region Writing data to log files
@@ -612,7 +632,7 @@ namespace MCBJ.Experiments
 
                     confAIChannelsForAC_Measurement();
 
-                    Thread.Sleep(15000);
+                    Thread.Sleep(5000);
 
                     measureNoiseSpectra(experimentSettings.SamplingFrequency, experimentSettings.NSubSamples, experimentSettings.SpectraAveraging, experimentSettings.UpdateNumber, experimentSettings.KPreAmpl * experimentSettings.KAmpl);
 
@@ -795,6 +815,8 @@ namespace MCBJ.Experiments
 
         public override void Stop()
         {
+            onStatusChanged(new StatusEventArgs("Measurement is aborted."));
+            onProgressChanged(new ProgressEventArgs(0.0));
             Dispose();
         }
 
