@@ -57,22 +57,31 @@ namespace SpectralAnalysis
                 // Filtering data for low frequency selection
 
                 var filteredData = filter.FilterData(timeTrace);
+                var sw = ScaledWindow.CreateRectangularWindow();
 
                 // Selecting lower amount of data points to reduce the FFT noise
 
-                var selection64Hz = filteredData.Where((value, index) => index % 64 == 0).ToArray();
+                double[] cumulativePSD_LOW_Freq = new double[]{};
+                Point[] lowFreqSpectrum = new Point[] { };
 
-                var sw = ScaledWindow.CreateRectangularWindow();
+                for (int i = 0; i < 64; i++)
+                {
+                    var selection64Hz = filteredData.Where((value, index) => (index + i) % 64 == 0).ToArray();
 
-                sw.Apply(selection64Hz, out equivalentNoiseBandwidthLowFreq, out coherentGainLowFreq);
+                    sw.Apply(selection64Hz, out equivalentNoiseBandwidthLowFreq, out coherentGainLowFreq);
 
-                dtLowFreq = 64.0 * 1.0 / (double)samplingFrequency;
+                    dtLowFreq = 64.0 * 1.0 / (double)samplingFrequency;
 
-                autoPSDLowFreq = Measurements.AutoPowerSpectrum(selection64Hz, dtLowFreq, out dfLowFreq);
-                var singlePSD_LOW_Freq = autoPSDLowFreq;
+                    var singlePSD_LOW_Freq = Measurements.AutoPowerSpectrum(selection64Hz, dtLowFreq, out dfLowFreq);
+                    if (cumulativePSD_LOW_Freq.Length == 0)
+                        cumulativePSD_LOW_Freq = Enumerable.Repeat(0.0, singlePSD_LOW_Freq.Length).ToArray();
 
-                var lowFreqSpectrum = (singlePSD_LOW_Freq.Select((value, index) => new Point(index * dfLowFreq, value)).Where(p => p.X >= 1 && p.X <= cutOffLowFreq)).ToArray();
+                    for (int j = 0; j < singlePSD_LOW_Freq.Length; j++)
+                        cumulativePSD_LOW_Freq[i] += singlePSD_LOW_Freq[i];
+                }
 
+                lowFreqSpectrum = (cumulativePSD_LOW_Freq.Select((value, index) => new Point(index * dfLowFreq, value / 64.0)).Where(p => p.X >= 1 && p.X <= cutOffLowFreq)).ToArray();
+                
                 // Calculation of the HIGH-FREQUENCY part of the spectrum
 
                 dtHighFreq = 1.0 / (double)samplingFrequency;
