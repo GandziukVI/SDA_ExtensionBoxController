@@ -201,11 +201,11 @@ namespace MCBJ
             var frequencyResponce = ReadCalibrationFile(frequencyResponceFilePath);
 
 
-            //var motorDriver = new SerialDevice("COM1", 115200, Parity.None, 8, StopBits.One);
-            //IMotionController1D motor = new SA_2036U012V(motorDriver) as IMotionController1D;
+            var motorDriver = new SerialDevice("COM1", 115200, Parity.None, 8, StopBits.One);
+            IMotionController1D motor = new SA_2036U012V(motorDriver) as IMotionController1D;
 
-            //experiment = new Noise_DefinedResistance((expStartInfo as Noise_DefinedResistanceInfo).AgilentU2542AResName, motor);
-            experiment = new Noise_DefinedResistance((expStartInfo as Noise_DefinedResistanceInfo).AgilentU2542AResName, null, amplifierNoise, frequencyResponce);
+            experiment = new Noise_DefinedResistance((expStartInfo as Noise_DefinedResistanceInfo).AgilentU2542AResName, motor, amplifierNoise, frequencyResponce);
+            //experiment = new Noise_DefinedResistance((expStartInfo as Noise_DefinedResistanceInfo).AgilentU2542AResName, null, amplifierNoise, frequencyResponce);
 
             experiment.DataArrived += Noise_at_der_R_DataArrived;
 

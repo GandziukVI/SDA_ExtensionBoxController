@@ -54,7 +54,7 @@ namespace VoltageApply
 
             applyVoltageController.Init();
 
-            applyVoltageController.SetGateVoltage(Settings.VGate, Settings.VGateAccuracy);
+            //applyVoltageController.SetGateVoltage(Settings.VGate, Settings.VGateAccuracy);
             applyVoltageController.SetDrainSourceVoltage(Settings.VDrainSource, Settings.VDSAccuracy);
 
             applyVoltageController.Close();

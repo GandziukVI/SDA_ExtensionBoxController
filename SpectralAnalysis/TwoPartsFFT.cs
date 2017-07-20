@@ -19,8 +19,8 @@ namespace SpectralAnalysis
     {
         public Point[] GetTwoPartsFFT(double[] timeTrace, int samplingFrequency = 262144, int nDataSamples = 1, double kAmpl = 1.0, double lowFreqStartFreq = 1.0, double cutOffLowFreq = 1600, double cutOffHighFreq = 102400, int filterOrder = 8, double filterFrequency = -1)
         {
-            double[] autoPSDLowFreq;
-            double[] autoPSDHighFreq;
+            Point[] autoPSDLowFreq = new Point[] { };
+            Point[] autoPSDHighFreq = new Point[] { };
 
             if (filterFrequency == -1)
                 filterFrequency = cutOffLowFreq;
@@ -57,21 +57,29 @@ namespace SpectralAnalysis
                 // Filtering data for low frequency selection
 
                 var filteredData = filter.FilterData(timeTrace);
+                var sw = ScaledWindow.CreateRectangularWindow();
 
                 // Selecting lower amount of data points to reduce the FFT noise
 
-                var selection64Hz = filteredData.Where((value, index) => index % 64 == 0).ToArray();
+                var cumulativePSD_LOW_Freq = new double[] { };
 
-                var sw = ScaledWindow.CreateRectangularWindow();
+                for (int i = 0; i < 64; i++)
+                {
+                    var selection64Hz = filteredData.Where((value, index) => (index + i) % 64 == 0).ToArray();
 
-                sw.Apply(selection64Hz, out equivalentNoiseBandwidthLowFreq, out coherentGainLowFreq);
+                    sw.Apply(selection64Hz, out equivalentNoiseBandwidthLowFreq, out coherentGainLowFreq);
 
-                dtLowFreq = 64.0 * 1.0 / (double)samplingFrequency;
+                    dtLowFreq = 64.0 * 1.0 / (double)samplingFrequency;
 
-                autoPSDLowFreq = Measurements.AutoPowerSpectrum(selection64Hz, dtLowFreq, out dfLowFreq);
-                var singlePSD_LOW_Freq = autoPSDLowFreq;
+                    var singlePSD_LOW_Freq = Measurements.AutoPowerSpectrum(selection64Hz, dtLowFreq, out dfLowFreq);
+                    if (cumulativePSD_LOW_Freq.Length == 0)
+                        cumulativePSD_LOW_Freq = Enumerable.Repeat(0.0, singlePSD_LOW_Freq.Length).ToArray();
 
-                var lowFreqSpectrum = (singlePSD_LOW_Freq.Select((value, index) => new Point(index * dfLowFreq, value)).Where(p => p.X >= 1 && p.X <= cutOffLowFreq)).ToArray();
+                    for (int j = 0; j < singlePSD_LOW_Freq.Length; j++)
+                        cumulativePSD_LOW_Freq[i] += singlePSD_LOW_Freq[i];
+                }
+
+                autoPSDLowFreq = (cumulativePSD_LOW_Freq.Select((value, index) => new Point(index * dfLowFreq, value / 64.0)).Where(p => p.X >= 1 && p.X <= cutOffLowFreq)).ToArray();
 
                 // Calculation of the HIGH-FREQUENCY part of the spectrum
 
@@ -80,9 +88,6 @@ namespace SpectralAnalysis
                 var highFreqPeriod = 64;
 
                 var highFreqSelectionRange = (int)((timeTrace.Length) / highFreqPeriod);
-
-                Point[] highFreqSpectrum = new Point[] { };
-                Point[] highSingleFreqSpectrum = new Point[] { };
 
                 LinkedList<double[]> selectionList = new LinkedList<double[]>();
 
@@ -93,43 +98,36 @@ namespace SpectralAnalysis
                     selectionList.AddLast(arr);
                 }
 
-                var hfSpec = new double[] { };
+                var cumulativePSD_HIGH_Freq = new double[] { };
 
                 foreach (var selection in selectionList)
                 {
                     sw.Apply(selection, out equivalentNoiseBandwidthHighFreq, out coherentGainHighFreq);
-                    var single_SPD_HIGH_Freq = Measurements.AutoPowerSpectrum(selection, dtHighFreq, out dfHighFreq);
+                    var singlePSD_HIGH_Freq = Measurements.AutoPowerSpectrum(selection, dtHighFreq, out dfHighFreq);
 
-                    if (autoPSDHighFreq.Length == 0)                    
-                        autoPSDHighFreq = Enumerable.Repeat(0.0, single_SPD_HIGH_Freq.Length).ToArray();
-                        for (int i = 0; i < autoPSDHighFreq.Length; i++)                        
-                            hfSpec[i] += single_SPD_HIGH_Freq[i];                        
-                    }
+                    if (cumulativePSD_HIGH_Freq.Length == 0)
+                        cumulativePSD_HIGH_Freq = Enumerable.Repeat(0.0, singlePSD_HIGH_Freq.Length).ToArray();
+
+                    for (int i = 0; i < singlePSD_HIGH_Freq.Length; i++)
+                        cumulativePSD_HIGH_Freq[i] += singlePSD_HIGH_Freq[i];
                 }
 
-                var hfSpecTransformed = autoPSDHighFreq;
-
-                highFreqSpectrum = new Point[hfSpecTransformed.Length];
-
-                for (int i = 0; i < highFreqSpectrum.Length; i++)
-                {
-                    highFreqSpectrum[i] = new Point(i * dfHighFreq, hfSpecTransformed[i]);
-                }
-
-                highFreqSpectrum = highFreqSpectrum.Where(p => p.X > cutOffLowFreq && p.X <= cutOffHighFreq).Select(val => val).ToArray();
+                autoPSDHighFreq = (cumulativePSD_HIGH_Freq
+                    .Select((value, index) => new Point(index * dfHighFreq, value)))
+                    .Where(p => p.X > cutOffLowFreq && p.X <= cutOffHighFreq).ToArray();
 
                 if (noisePSD == null || noisePSD.Length == 0)
-                    noisePSD = new Point[lowFreqSpectrum.Count() + highFreqSpectrum.Length];
+                    noisePSD = new Point[autoPSDLowFreq.Length + autoPSDHighFreq.Length];
 
                 var counter = 0;
-                foreach (var item in lowFreqSpectrum)
+                foreach (var item in autoPSDLowFreq)
                 {
                     noisePSD[counter].X = item.X;
                     noisePSD[counter].Y += item.Y;
 
                     ++counter;
                 }
-                foreach (var item in highFreqSpectrum)
+                foreach (var item in autoPSDHighFreq)
                 {
                     noisePSD[counter].X = item.X;
                     noisePSD[counter].Y += item.Y / ((double)(highFreqPeriod * highFreqPeriod));
@@ -160,14 +158,14 @@ namespace SpectralAnalysis
             else
             {
                 var xValuesAmpNoise = from item in amplifierNoise
-                              select item.X;
+                                      select item.X;
                 var yValuesAmpNoise = from item in amplifierNoise
-                              select item.Y;
+                                      select item.Y;
 
                 var xValuesFrequencyResponce = from item in frequencyResponce
-                                      select item.X;
+                                               select item.X;
                 var yValuesFrequencyResponce = from item in frequencyResponce
-                                      select item.Y;
+                                               select item.Y;
 
 
                 var interpolationSplineAmpNoise = MathNet.Numerics.Interpolation.CubicSpline.InterpolateAkima(xValuesAmpNoise, yValuesAmpNoise);

@@ -37,6 +37,7 @@ namespace MCBJ.Experiments
 
         bool isDCMode = false;
         bool isACMode = false;
+        bool isDCOscilloscopeMode = false;
 
         private readonly double ConductanceQuantum = 0.0000774809173;
 
@@ -122,10 +123,25 @@ namespace MCBJ.Experiments
             return config;
         }
 
+        AI_ChannelConfig[] setDCOscilloscopeConf(double Vs)
+        {
+            var Vs_Range = setRangeForGivenVoltage(Vs);
+
+            var config = new AI_ChannelConfig[4]
+            {
+                new AI_ChannelConfig(){ ChannelName = AnalogInChannelsEnum.AIn1, Enabled = false, Mode = ChannelModeEnum.AC, Polarity = PolarityEnum.Polarity_Bipolar, Range = Vs_Range},  
+                new AI_ChannelConfig(){ ChannelName = AnalogInChannelsEnum.AIn2, Enabled = false, Mode = ChannelModeEnum.AC, Polarity = PolarityEnum.Polarity_Bipolar, Range = Vs_Range},   // Vm
+                new AI_ChannelConfig(){ ChannelName = AnalogInChannelsEnum.AIn3, Enabled = false, Mode = ChannelModeEnum.AC, Polarity = PolarityEnum.Polarity_Bipolar, Range = Vs_Range},
+                new AI_ChannelConfig(){ ChannelName = AnalogInChannelsEnum.AIn4, Enabled = true, Mode = ChannelModeEnum.DC, Polarity = PolarityEnum.Polarity_Bipolar, Range = Vs_Range}    // Vs
+            };
+
+            return config;
+        }
+
         int averagingNumberFast = 2;
         int averagingNumberSlow = 100;
 
-        byte minSpeed = 0;
+        byte minSpeed = 10;
         byte maxSpeed = 255;
 
         void confAIChannelsForDC_Measurement()
@@ -140,6 +156,7 @@ namespace MCBJ.Experiments
 
                 isDCMode = true;
                 isACMode = false;
+                isDCOscilloscopeMode = false;
             }
         }
 
@@ -147,7 +164,7 @@ namespace MCBJ.Experiments
         {
             if (!isACMode)
             {
-                var init_conf = setACConf(1.0);
+                var init_conf = setACConf(9.99);
                 boxController.ConfigureAI_Channels(init_conf);
 
                 // Erasing the data queue
@@ -171,7 +188,62 @@ namespace MCBJ.Experiments
 
                 isACMode = true;
                 isDCMode = false;
+                isDCOscilloscopeMode = false;
             }
+        }
+
+        void confAiChannelsForDCStabilization()
+        {
+            if(!isDCOscilloscopeMode)
+            {
+                var init_conf = setDCOscilloscopeConf(9.99);
+                boxController.ConfigureAI_Channels(init_conf);
+
+                // Erasing the data queue
+
+                Point[] temp;
+                while (!boxController.AI_ChannelCollection[AnalogInChannelsEnum.AIn4].ChannelData.IsEmpty)
+                    boxController.AI_ChannelCollection[AnalogInChannelsEnum.AIn4].ChannelData.TryDequeue(out temp);
+
+                // Acquiring single shot with AC data
+
+                boxController.AcquireSingleShot(1000);
+                var averagedVoltage = boxController.AI_ChannelCollection[AnalogInChannelsEnum.AIn4].ChannelData.Last().Average(p => p.Y);
+
+                // Configuring the channels to measure dc shift
+
+                var real_conf = setDCOscilloscopeConf(averagedVoltage);
+                boxController.ConfigureAI_Channels(real_conf);
+
+                while (!boxController.AI_ChannelCollection[AnalogInChannelsEnum.AIn4].ChannelData.IsEmpty)
+                    boxController.AI_ChannelCollection[AnalogInChannelsEnum.AIn4].ChannelData.TryDequeue(out temp);
+
+                isDCOscilloscopeMode = true;
+                isACMode = false;
+                isDCMode = false;
+            }
+        }
+
+        void PerformDCStabilization()
+        {
+            confAiChannelsForDCStabilization();
+
+            double averagedVoltage = double.MaxValue;
+            Point[] temp;
+
+            while (!boxController.AI_ChannelCollection[AnalogInChannelsEnum.AIn4].ChannelData.IsEmpty)
+                boxController.AI_ChannelCollection[AnalogInChannelsEnum.AIn4].ChannelData.TryDequeue(out temp);
+
+            while (!(averagedVoltage <= 0.1))
+            {
+                // Acquiring single shot with AC data
+
+                boxController.AcquireSingleShot(1000);
+                averagedVoltage = boxController.AI_ChannelCollection[AnalogInChannelsEnum.AIn4].ChannelData.Last().Average(p => p.Y);
+            }
+
+            while (!boxController.AI_ChannelCollection[AnalogInChannelsEnum.AIn4].ChannelData.IsEmpty)
+                boxController.AI_ChannelCollection[AnalogInChannelsEnum.AIn4].ChannelData.TryDequeue(out temp);
         }
 
         // For the step time estimation to increase voltage set accuracy
@@ -437,6 +509,8 @@ namespace MCBJ.Experiments
             motor.Disable();
         }
 
+
+
         private static string TTSaveFileName = "TT.dat";
         private string NoiseSpectrumFinal = string.Empty;
 
@@ -516,10 +590,6 @@ namespace MCBJ.Experiments
                                     noisePSD[i] = new Point(singleNoiseSpectrum[i].X, 0.0);
                             }
 
-                            //noisePSD = (from singleNoisePoint in singleNoiseSpectrum
-                            //            join integralNoisePoint in noisePSD on singleNoisePoint.X equals integralNoisePoint.X
-                            //            select new Point(singleNoisePoint.X, integralNoisePoint.Y + singleNoisePoint.Y)).ToArray();
-
                             for (int i = 0; i < noisePSD.Length; i++)
                                 noisePSD[i].Y += singleNoiseSpectrum[i].Y;
 
@@ -596,50 +666,51 @@ namespace MCBJ.Experiments
 
                     #endregion
 
-                    //onStatusChanged(new StatusEventArgs(string.Format("Setting sample voltage V -> {0} V", voltage.ToString("0.0000", NumberFormatInfo.InvariantInfo))));
+                    onStatusChanged(new StatusEventArgs(string.Format("Setting sample voltage V -> {0} V", voltage.ToString("0.0000", NumberFormatInfo.InvariantInfo))));
 
-                    //setDrainVoltage(voltage, experimentSettings.VoltageDeviation);
+                    setDrainVoltage(voltage, experimentSettings.VoltageDeviation);
 
-                    //onStatusChanged(new StatusEventArgs(string.Format("Reaching resistance value R -> {0}", (1.0 / conductance).ToString("0.0000", NumberFormatInfo.InvariantInfo))));
+                    onStatusChanged(new StatusEventArgs(string.Format("Reaching resistance value R -> {0}", (1.0 / conductance).ToString("0.0000", NumberFormatInfo.InvariantInfo))));
 
-                    //setJunctionResistance(
-                    //    voltage,
-                    //    experimentSettings.VoltageDeviation,
-                    //    experimentSettings.VoltageTreshold,
-                    //    conductance,
-                    //    experimentSettings.ConductanceDeviation,
-                    //    experimentSettings.StabilizationTime,
-                    //    experimentSettings.MotionMinSpeed,
-                    //    experimentSettings.MotionMaxSpeed,
-                    //    experimentSettings.MotorMinPos,
-                    //    experimentSettings.MotorMaxPos,
-                    //    experimentSettings.NAveragesFast,
-                    //    experimentSettings.LoadResistance);
+                    setJunctionResistance(
+                        voltage,
+                        experimentSettings.VoltageDeviation,
+                        experimentSettings.VoltageTreshold,
+                        conductance,
+                        experimentSettings.ConductanceDeviation,
+                        experimentSettings.StabilizationTime,
+                        experimentSettings.MotionMinSpeed,
+                        experimentSettings.MotionMaxSpeed,
+                        experimentSettings.MotorMinPos,
+                        experimentSettings.MotorMaxPos,
+                        experimentSettings.NAveragesFast,
+                        experimentSettings.LoadResistance);
 
-                    //setDrainVoltage(voltage, experimentSettings.VoltageDeviation);
+                    setDrainVoltage(voltage, experimentSettings.VoltageDeviation);
 
-                    //motor.Disable();
+                    motor.Disable();
 
-                    //onStatusChanged(new StatusEventArgs("Measuring sample characteristics before noise spectra measurement."));
+                    onStatusChanged(new StatusEventArgs("Measuring sample characteristics before noise spectra measurement."));
 
-                    var voltagesBeforeNoiseMeasurement = new double[] { 0.1, 0.2, 0.3, 0.4 };
-                    var voltagesAfterNoiseMeasurement = new double[] { 0.1, 0.2, 0.3, 0.4 };
+                    //var voltagesBeforeNoiseMeasurement = new double[] { 0.1, 0.2, 0.3, 0.4 };
+                    //var voltagesAfterNoiseMeasurement = new double[] { 0.1, 0.2, 0.3, 0.4 };
 
-                    //confAIChannelsForDC_Measurement();
-                    //var voltagesBeforeNoiseMeasurement = boxController.VoltageMeasurement_AllChannels(experimentSettings.NAveragesSlow);
+                    confAIChannelsForDC_Measurement();
+                    var voltagesBeforeNoiseMeasurement = boxController.VoltageMeasurement_AllChannels(experimentSettings.NAveragesSlow);
 
                     onStatusChanged(new StatusEventArgs("Measuring noise spectra & time traces."));
 
-                    confAIChannelsForAC_Measurement();
+                    //PerformDCStabilization();
 
-                    Thread.Sleep(5000);
+                    confAIChannelsForAC_Measurement();
+                    Thread.Sleep(30000);
 
                     measureNoiseSpectra(experimentSettings.SamplingFrequency, experimentSettings.NSubSamples, experimentSettings.SpectraAveraging, experimentSettings.UpdateNumber, experimentSettings.KPreAmpl * experimentSettings.KAmpl);
 
                     onStatusChanged(new StatusEventArgs("Measuring sample characteristics after noise spectra measurement."));
 
-                    //confAIChannelsForDC_Measurement();
-                    //var voltagesAfterNoiseMeasurement = boxController.VoltageMeasurement_AllChannels(experimentSettings.NAveragesSlow);
+                    confAIChannelsForDC_Measurement();
+                    var voltagesAfterNoiseMeasurement = boxController.VoltageMeasurement_AllChannels(experimentSettings.NAveragesSlow);
 
                     // Saving to log file all the parameters of the measurement
 
@@ -648,15 +719,15 @@ namespace MCBJ.Experiments
 
                     SaveToFile(dataFileName);
 
-                    noiseMeasLog.SampleVoltage = voltagesAfterNoiseMeasurement[0];
-                    noiseMeasLog.SampleCurrent = (voltagesAfterNoiseMeasurement[1] - voltagesBeforeNoiseMeasurement[0]) / experimentSettings.LoadResistance;
+                    noiseMeasLog.SampleVoltage = voltagesAfterNoiseMeasurement[3];
+                    noiseMeasLog.SampleCurrent = (voltagesAfterNoiseMeasurement[1] - voltagesBeforeNoiseMeasurement[3]) / experimentSettings.LoadResistance;
                     noiseMeasLog.FileName = (new FileInfo(dataFileName)).Name;
                     noiseMeasLog.Rload = experimentSettings.LoadResistance;
                     noiseMeasLog.Uwhole = voltagesAfterNoiseMeasurement[1];
-                    noiseMeasLog.URload = voltagesAfterNoiseMeasurement[1] - voltagesBeforeNoiseMeasurement[0];
-                    noiseMeasLog.U0sample = voltagesBeforeNoiseMeasurement[0];
+                    noiseMeasLog.URload = voltagesAfterNoiseMeasurement[1] - voltagesBeforeNoiseMeasurement[3];
+                    noiseMeasLog.U0sample = voltagesBeforeNoiseMeasurement[3];
                     noiseMeasLog.U0whole = voltagesBeforeNoiseMeasurement[1];
-                    noiseMeasLog.U0Rload = voltagesBeforeNoiseMeasurement[1] - voltagesBeforeNoiseMeasurement[0];
+                    noiseMeasLog.U0Rload = voltagesBeforeNoiseMeasurement[1] - voltagesBeforeNoiseMeasurement[3];
                     noiseMeasLog.U0Gate = voltagesBeforeNoiseMeasurement[2];
                     noiseMeasLog.R0sample = noiseMeasLog.U0sample / (noiseMeasLog.U0Rload / noiseMeasLog.Rload);
                     noiseMeasLog.REsample = noiseMeasLog.SampleVoltage / (noiseMeasLog.URload / noiseMeasLog.Rload);
