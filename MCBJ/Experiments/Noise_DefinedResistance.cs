@@ -590,10 +590,6 @@ namespace MCBJ.Experiments
                                     noisePSD[i] = new Point(singleNoiseSpectrum[i].X, 0.0);
                             }
 
-                            //noisePSD = (from singleNoisePoint in singleNoiseSpectrum
-                            //            join integralNoisePoint in noisePSD on singleNoisePoint.X equals integralNoisePoint.X
-                            //            select new Point(singleNoisePoint.X, integralNoisePoint.Y + singleNoisePoint.Y)).ToArray();
-
                             for (int i = 0; i < noisePSD.Length; i++)
                                 noisePSD[i].Y += singleNoiseSpectrum[i].Y;
 

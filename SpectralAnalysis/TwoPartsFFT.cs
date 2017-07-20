@@ -19,8 +19,8 @@ namespace SpectralAnalysis
     {
         public Point[] GetTwoPartsFFT(double[] timeTrace, int samplingFrequency = 262144, int nDataSamples = 1, double kAmpl = 1.0, double lowFreqStartFreq = 1.0, double cutOffLowFreq = 1600, double cutOffHighFreq = 102400, int filterOrder = 8, double filterFrequency = -1)
         {
-            double[] autoPSDLowFreq;
-            double[] autoPSDHighFreq;
+            Point[] autoPSDLowFreq = new Point[] { };
+            //double[] autoPSDHighFreq;
 
             if (filterFrequency == -1)
                 filterFrequency = cutOffLowFreq;
@@ -61,8 +61,7 @@ namespace SpectralAnalysis
 
                 // Selecting lower amount of data points to reduce the FFT noise
 
-                double[] cumulativePSD_LOW_Freq = new double[]{};
-                Point[] lowFreqSpectrum = new Point[] { };
+                var cumulativePSD_LOW_Freq = new double[]{};
 
                 for (int i = 0; i < 64; i++)
                 {
@@ -80,7 +79,7 @@ namespace SpectralAnalysis
                         cumulativePSD_LOW_Freq[i] += singlePSD_LOW_Freq[i];
                 }
 
-                lowFreqSpectrum = (cumulativePSD_LOW_Freq.Select((value, index) => new Point(index * dfLowFreq, value / 64.0)).Where(p => p.X >= 1 && p.X <= cutOffLowFreq)).ToArray();
+                autoPSDLowFreq = (cumulativePSD_LOW_Freq.Select((value, index) => new Point(index * dfLowFreq, value / 64.0)).Where(p => p.X >= 1 && p.X <= cutOffLowFreq)).ToArray();
                 
                 // Calculation of the HIGH-FREQUENCY part of the spectrum
 
@@ -102,31 +101,31 @@ namespace SpectralAnalysis
                     selectionList.AddLast(arr);
                 }
 
-                var hfSpec = new double[] { };
+                var cumulativePSD_HIGH_Freq = new double[] { };
 
                 foreach (var selection in selectionList)
                 {
                     sw.Apply(selection, out equivalentNoiseBandwidthHighFreq, out coherentGainHighFreq);
-                    autoPSDHighFreq = Measurements.AutoPowerSpectrum(selection, dtHighFreq, out dfHighFreq);
+                    var singlePSD_HIGH_Freq = Measurements.AutoPowerSpectrum(selection, dtHighFreq, out dfHighFreq);
 
-                    if (hfSpec == null || hfSpec.Length == 0)
+                    if (cumulativePSD_HIGH_Freq == null || cumulativePSD_HIGH_Freq.Length == 0)
                     {
-                        hfSpec = new double[autoPSDHighFreq.Length];
-                        for (int i = 0; i < autoPSDHighFreq.Length; i++)
+                        cumulativePSD_HIGH_Freq = new double[singlePSD_HIGH_Freq.Length];
+                        for (int i = 0; i < singlePSD_HIGH_Freq.Length; i++)
                         {
-                            hfSpec[i] = autoPSDHighFreq[i];
+                            cumulativePSD_HIGH_Freq[i] = singlePSD_HIGH_Freq[i];
                         }
                     }
                     else
                     {
-                        for (int i = 0; i < autoPSDHighFreq.Length; i++)
+                        for (int i = 0; i < singlePSD_HIGH_Freq.Length; i++)
                         {
-                            hfSpec[i] += autoPSDHighFreq[i];
+                            cumulativePSD_HIGH_Freq[i] += singlePSD_HIGH_Freq[i];
                         }
                     }
                 }
 
-                var hfSpecTransformed = hfSpec;
+                var hfSpecTransformed = cumulativePSD_HIGH_Freq;
 
                 highFreqSpectrum = new Point[hfSpecTransformed.Length];
 
@@ -138,10 +137,10 @@ namespace SpectralAnalysis
                 highFreqSpectrum = highFreqSpectrum.Where(p => p.X > cutOffLowFreq && p.X <= cutOffHighFreq).Select(val => val).ToArray();
 
                 if (noisePSD == null || noisePSD.Length == 0)
-                    noisePSD = new Point[lowFreqSpectrum.Count() + highFreqSpectrum.Length];
+                    noisePSD = new Point[autoPSDLowFreq.Count() + highFreqSpectrum.Length];
 
                 var counter = 0;
-                foreach (var item in lowFreqSpectrum)
+                foreach (var item in autoPSDLowFreq)
                 {
                     noisePSD[counter].X = item.X;
                     noisePSD[counter].Y += item.Y;
