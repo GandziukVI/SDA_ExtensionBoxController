@@ -98,26 +98,16 @@ namespace SpectralAnalysis
                 foreach (var selection in selectionList)
                 {
                     sw.Apply(selection, out equivalentNoiseBandwidthHighFreq, out coherentGainHighFreq);
-                    autoPSDHighFreq = Measurements.AutoPowerSpectrum(selection, dtHighFreq, out dfHighFreq);
+                    var single_SPD_HIGH_Freq = Measurements.AutoPowerSpectrum(selection, dtHighFreq, out dfHighFreq);
 
-                    if (hfSpec == null || hfSpec.Length == 0)
-                    {
-                        hfSpec = new double[autoPSDHighFreq.Length];
-                        for (int i = 0; i < autoPSDHighFreq.Length; i++)
-                        {
-                            hfSpec[i] = autoPSDHighFreq[i];
-                        }
-                    }
-                    else
-                    {
-                        for (int i = 0; i < autoPSDHighFreq.Length; i++)
-                        {
-                            hfSpec[i] += autoPSDHighFreq[i];
-                        }
+                    if (autoPSDHighFreq.Length == 0)                    
+                        autoPSDHighFreq = Enumerable.Repeat(0.0, single_SPD_HIGH_Freq.Length).ToArray();
+                        for (int i = 0; i < autoPSDHighFreq.Length; i++)                        
+                            hfSpec[i] += single_SPD_HIGH_Freq[i];                        
                     }
                 }
 
-                var hfSpecTransformed = hfSpec;
+                var hfSpecTransformed = autoPSDHighFreq;
 
                 highFreqSpectrum = new Point[hfSpecTransformed.Length];
 
