@@ -446,6 +446,8 @@ namespace MCBJ.Experiments
 
         private static int averagingCounter = 0;
 
+        StringBuilder sb = new StringBuilder();
+
         void measureNoiseSpectra(
 
             int samplingFrequency,
@@ -501,8 +503,15 @@ namespace MCBJ.Experiments
                             var query = from item in timeTrace
                                         select string.Format("{0}\t{1}", item.X.ToString(NumberFormatInfo.InvariantInfo), (item.Y / kAmpl).ToString(NumberFormatInfo.InvariantInfo));
 
+                            if (sb.Length > 0)
+                                sb.Clear();
+
                             // First sending the time trace data before FFT
-                            onDataArrived(new ExpDataArrivedEventArgs(string.Format("TT{0}", string.Join("\r\n", query))));
+                            //onDataArrived(new ExpDataArrivedEventArgs(string.Format("TT{0}", string.Join("\r\n", query))));
+
+                            sb.Append("TT");
+                            sb.AppendFormat("{0}\r\n", query);
+                            onDataArrived(new ExpDataArrivedEventArgs(sb.ToString()));
 
                             var TTVoltageValues = (from item in timeTrace
                                                    select item.Y).ToArray();
