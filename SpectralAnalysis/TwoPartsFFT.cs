@@ -61,25 +61,37 @@ namespace SpectralAnalysis
 
                 // Selecting lower amount of data points to reduce the FFT noise
 
-                var cumulativePSD_LOW_Freq = new double[] { };
+                //var cumulativePSD_LOW_Freq = new double[] { };
 
-                for (int i = 0; i < 64; i++)
-                {
-                    var selection64Hz = filteredData.Where((value, index) => (index + i) % 64 == 0).ToArray();
+                //for (int i = 0; i < 63; i++)
+                //{
+                //    var selection64Hz = filteredData.Where((value, index) => (index + i) % 64 == 0).ToArray();
 
-                    sw.Apply(selection64Hz, out equivalentNoiseBandwidthLowFreq, out coherentGainLowFreq);
+                //    sw.Apply(selection64Hz, out equivalentNoiseBandwidthLowFreq, out coherentGainLowFreq);
 
-                    dtLowFreq = 64.0 * 1.0 / (double)samplingFrequency;
+                //    dtLowFreq = 64.0 * 1.0 / (double)samplingFrequency;
 
-                    var singlePSD_LOW_Freq = Measurements.AutoPowerSpectrum(selection64Hz, dtLowFreq, out dfLowFreq);
-                    if (cumulativePSD_LOW_Freq.Length == 0)
-                        cumulativePSD_LOW_Freq = Enumerable.Repeat(0.0, singlePSD_LOW_Freq.Length).ToArray();
+                //    var singlePSD_LOW_Freq = Measurements.AutoPowerSpectrum(selection64Hz, dtLowFreq, out dfLowFreq);
+                //    if (cumulativePSD_LOW_Freq.Length == 0)
+                //        cumulativePSD_LOW_Freq = Enumerable.Repeat(0.0, singlePSD_LOW_Freq.Length).ToArray();
 
-                    for (int j = 0; j < singlePSD_LOW_Freq.Length; j++)
-                        cumulativePSD_LOW_Freq[i] += singlePSD_LOW_Freq[i];
-                }
+                //    for (int j = 0; j < singlePSD_LOW_Freq.Length; j++)
+                //        cumulativePSD_LOW_Freq[i] += singlePSD_LOW_Freq[i];
+                //}
 
-                autoPSDLowFreq = (cumulativePSD_LOW_Freq.Select((value, index) => new Point(index * dfLowFreq, value / 64.0)).Where(p => p.X >= 1 && p.X <= cutOffLowFreq)).ToArray();
+                //autoPSDLowFreq = (cumulativePSD_LOW_Freq.Select((value, index) => new Point(index * dfLowFreq, value / 63.0)).Where(p => p.X >= 1 && p.X <= cutOffLowFreq)).ToArray();
+
+                var selection64Hz = filteredData.Where((value, index) => (index) % 64 == 0).ToArray();
+
+                sw.Apply(selection64Hz, out equivalentNoiseBandwidthLowFreq, out coherentGainLowFreq);
+
+                dtLowFreq = 64.0 * 1.0 / (double)samplingFrequency;
+
+                var singlePSD_LOW_Freq = Measurements.AutoPowerSpectrum(selection64Hz, dtLowFreq, out dfLowFreq);
+
+
+                autoPSDLowFreq = (singlePSD_LOW_Freq.Select((value, index) => new Point(index * dfLowFreq, value)).Where(p => p.X >= 1 && p.X <= cutOffLowFreq)).ToArray();
+
 
                 // Calculation of the HIGH-FREQUENCY part of the spectrum
 
