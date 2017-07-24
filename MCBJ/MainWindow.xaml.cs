@@ -182,7 +182,6 @@ namespace MCBJ
                     .Select(v => v.Split(sep, StringSplitOptions.RemoveEmptyEntries))
                     .Select(v => Array.ConvertAll(v, x => double.Parse(x, NumberFormatInfo.InvariantInfo)))
                     .Select(v => new Point(v[0], v[1])).ToArray();
-                    
             }
 
             return res;

@@ -632,15 +632,17 @@ namespace MCBJ.Experiments
             var noiseMeasLog = new NoiseMeasurementDataLog();
 
             var logFileName = string.Join("\\", experimentSettings.FilePath, "Noise", noiseMeasLog.DataLogFileName);
+            var logFileNameNewFormat = string.Join("\\", experimentSettings.FilePath, "Noise", noiseMeasLog.DataLogFileNameNewFormat);
             var logFileCaptureName = string.Join("\\", experimentSettings.FilePath, "Time traces", "MeasurDataCapture.dat");
 
             var mode = FileMode.OpenOrCreate;
             var access = FileAccess.Write;
 
             createFileWithHeader(logFileName, ref mode, ref access, NoiseMeasurementDataLog.DataHeader, NoiseMeasurementDataLog.DataSubHeader);
+            createFileWithHeader(logFileNameNewFormat, ref mode, ref access, NoiseMeasurementDataLog.DataHeaderNewFormat, NoiseMeasurementDataLog.DataSubHeaderNewFormat);
 
             if (experimentSettings.RecordTimeTraces == true)
-                createFileWithHeader(logFileCaptureName, ref mode, ref access, NoiseMeasurementDataLog.DataHeader, NoiseMeasurementDataLog.DataSubHeader);
+                createFileWithHeader(logFileCaptureName, ref mode, ref access, NoiseMeasurementDataLog.DataCaptureHeader, NoiseMeasurementDataLog.DataCaptureSubHeader);
 
             #endregion
 
@@ -739,15 +741,17 @@ namespace MCBJ.Experiments
                     noiseMeasLog.Vg = voltagesAfterNoiseMeasurement[2];
 
                     SaveDataToLog(logFileName, noiseMeasLog.ToString());
+                    SaveDataToLog(logFileNameNewFormat, noiseMeasLog.ToStringNewFormat());
 
                     if (experimentSettings.RecordTimeTraces == true)
-                        SaveDataToLog(logFileCaptureName, noiseMeasLog.ToString());
+                        SaveDataToLog(logFileCaptureName, noiseMeasLog.ToStringDataCapture());
                 }
             }
 
             if (motor != null)
             {
                 motor.Disable();
+                Thread.Sleep(100);
                 motor.Dispose();
             }
 
