@@ -34,9 +34,9 @@ namespace MCS_Faulhaber
                 // Conversion of the position in mm to motor units
                 var motorPosition = (int)(Gear * StepsPerRevolution * Position / MilimetersPerRevolution);
                 // Loading the position to the controller and starting the motion
-                driver.SendCommandRequest(string.Format("la{0}", Convert.ToString(motorPosition, NumberFormatInfo.InvariantInfo)));
-                driver.SendCommandRequest("np");
-                driver.SendCommandRequest("m");
+                driver.RequestQuery(string.Format("la{0}", Convert.ToString(motorPosition, NumberFormatInfo.InvariantInfo)));
+                driver.RequestQuery("np");
+                driver.RequestQuery("m");
                 while (!driver.ReceiveDeviceAnswer().Contains('p')) ;
             }
             else
@@ -50,9 +50,9 @@ namespace MCS_Faulhaber
                 // Conversion of the position in mm to motor units<wpfTool:DoubleUpDown Grid.Row="14" Grid.Column="1" Value="{Binding MotorMaxPos, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>velocdcdc
                 var motorPosition = (int)(Gear * StepsPerRevolution * Position / MilimetersPerRevolution);
                 // Loading the position to the controller and starting the motion
-                driver.SendCommandRequest(string.Format("la{0}", Convert.ToString(motorPosition, NumberFormatInfo.InvariantInfo)));
-                driver.SendCommandRequest("np");
-                driver.SendCommandRequest("m");
+                driver.RequestQuery(string.Format("la{0}", Convert.ToString(motorPosition, NumberFormatInfo.InvariantInfo)));
+                driver.RequestQuery("np");
+                driver.RequestQuery("m");
             }
             else
                 throw new Exception("The connection failed! Check the device IO driver.");
@@ -60,7 +60,8 @@ namespace MCS_Faulhaber
 
         public override double GetPosition()
         {
-            var controllerResponce = driver.RequestQuery("pos");
+            var controllerResponce = driver.RequestQuery("pos").TrimEnd("\r\r".ToCharArray());
+
             int motorPosition;
             var conversionSuccess = int.TryParse(controllerResponce, out motorPosition);
             if (conversionSuccess)
@@ -81,7 +82,7 @@ namespace MCS_Faulhaber
 
             currentVelosity = speedRPM;
 
-            driver.SendCommandRequest(string.Format("SP{0}", speedRPM));
+            driver.RequestQuery(string.Format("SP{0}", speedRPM));
         }
 
         public override double GetVelosity()
@@ -95,14 +96,14 @@ namespace MCS_Faulhaber
         public override bool Enable()
         {
             var enableBase = base.Enable();
-            driver.SendCommandRequest("en");
+            driver.RequestQuery("en");
             return enableBase;
         }
 
         public override bool Disable()
         {
             var disableBase = base.Disable();
-            driver.SendCommandRequest("di");
+            driver.RequestQuery("di");
             return disableBase;
         }
     }

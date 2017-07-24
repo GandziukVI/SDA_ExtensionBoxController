@@ -54,7 +54,7 @@ namespace DeviceIO
             if (!_COMPort.IsOpen)
                 throw new Exception("Can't connect to the COM port!");
 
-            _serialThread = new Thread(new ThreadStart(GetSerialDataContinious));
+            _serialThread = new Thread(new ThreadStart(getSerialDataContinious));
             _serialThread.Priority = ThreadPriority.Normal;
             _serialThread.Name = string.Format("SerialHandle{0}", _serialThread.ManagedThreadId);
 
@@ -76,7 +76,7 @@ namespace DeviceIO
             return readBytes;
         }
 
-        private void GetSerialDataContinious()
+        private void getSerialDataContinious()
         {
             while (_communicatyionIsActive)
             {
@@ -131,6 +131,10 @@ namespace DeviceIO
 
         public string RequestQuery(string query)
         {
+            string temp;
+            while (_dataQueue.Count > 0)
+                _dataQueue.TryDequeue(out temp);
+
             SendCommandRequest(query);
             return ReceiveDeviceAnswer();
         }
