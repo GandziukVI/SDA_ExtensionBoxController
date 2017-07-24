@@ -230,34 +230,34 @@ namespace MCBJ
 
             var noiseDataString = (string)NoiseDataString;
 
-            if (noiseDataString.StartsWith("NS"))
+            var dataPoints = noiseDataString.Substring(2)
+                .Split(delim, StringSplitOptions.RemoveEmptyEntries)
+                .Select(v => v.Split(sep, StringSplitOptions.RemoveEmptyEntries))
+                .Select(v => Array.ConvertAll(v, x => double.Parse(x, NumberFormatInfo.InvariantInfo)))
+                .Select(v => new Point(v[0], v[1])).ToArray();
+
+            var toPlot = (from item in D3Helper.PointSelector.SelectNPointsPerDecade(ref dataPoints, 100)
+                          where item.Y > 0
+                          select item).ToArray();
+
+            foreach (var item in toPlot)
+                dList.AddLast(item);
+
+            Dispatcher.InvokeAsync(new Action(() =>
             {
-                var dataPoints = noiseDataString.Substring(2)
-                    .Split(delim, StringSplitOptions.RemoveEmptyEntries)
-                    .Select(v => v.Split(sep, StringSplitOptions.RemoveEmptyEntries))
-                    .Select(v => Array.ConvertAll(v, x => double.Parse(x, NumberFormatInfo.InvariantInfo)))
-                    .Select(v => new Point(v[0], v[1])).ToArray();
-
-                var toPlot = (from item in D3Helper.PointSelector.SelectNPointsPerDecade(ref dataPoints, 100)
-                              where item.Y > 0
-                              select item).ToArray();
-
-                foreach (var item in toPlot)
-                    dList.AddLast(item);
-
-                Dispatcher.InvokeAsync(new Action(() =>
-                {
-                    ds.RaiseDataChanged();
-                }));
-            }
+                ds.RaiseDataChanged();
+            }));
         }
 
         void Noise_at_der_R_DataArrived(object sender, ExpDataArrivedEventArgs e)
         {
-            var ts = new ParameterizedThreadStart(AddNoiseDataToPlot);
-            var th = new Thread(ts);
+            if (e.Data.StartsWith("NS"))
+            {
+                var ts = new ParameterizedThreadStart(AddNoiseDataToPlot);
+                var th = new Thread(ts);
 
-            th.Start(e.Data);
+                th.Start(e.Data);
+            }
         }
 
         #endregion

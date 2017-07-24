@@ -474,11 +474,12 @@ namespace MCBJ.Experiments
                     if (stabilityStopwatch.IsRunning == true)
                         ++outsiderCounter;
 
-                    onStatusChanged(new StatusEventArgs(string.Format("Reaching: G = {0} G0 ( => {1} G0), R = {2} Ohm ( => {3} Ohm)",
+                    onStatusChanged(new StatusEventArgs(string.Format("Reaching: G = {0} G0 ( => {1} G0), R = {2} Ohm ( => {3} Ohm). Current motor pos. is {4} [mm]",
                             scaledConductance.ToString("0.0000", NumberFormatInfo.InvariantInfo),
                             setCond.ToString("0.0000", NumberFormatInfo.InvariantInfo),
                             currResistance.ToString("0.0000", NumberFormatInfo.InvariantInfo),
-                            setResistance.ToString("0.0000", NumberFormatInfo.InvariantInfo)
+                            setResistance.ToString("0.0000", NumberFormatInfo.InvariantInfo),
+                            motor.Position.ToString("0.0000", NumberFormatInfo.InvariantInfo)
                         )));
                 }
 
@@ -891,6 +892,11 @@ namespace MCBJ.Experiments
 
         public override void Stop()
         {
+            if (TT_StreamWriter != null)
+                TT_StreamWriter.Close();
+
+            File.Delete(TTSaveFileName);
+
             onStatusChanged(new StatusEventArgs("Measurement is aborted."));
             onProgressChanged(new ProgressEventArgs(0.0));
             Dispose();
@@ -900,17 +906,15 @@ namespace MCBJ.Experiments
         {
             if (IsRunning)
             {
+                IsRunning = false;
+
                 this.DataArrived -= Noise_DefinedResistance_DataArrived;
 
                 if (motor != null)
                     motor.Dispose();
 
                 if (boxController != null)
-                {
                     boxController.Close();
-                }
-
-                IsRunning = false;
             }
 
             base.Dispose();

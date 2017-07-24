@@ -94,6 +94,8 @@ namespace ExperimentController
                         experimentThread.Join();
                 }
             }
+
+            GC.Collect();
         }
     }
 }
