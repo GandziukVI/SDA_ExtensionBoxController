@@ -645,7 +645,7 @@ namespace MCBJ.Experiments
             createFileWithHeader(logFileNameNewFormat, ref mode, ref access, NoiseMeasurementDataLog.DataHeaderNewFormat, NoiseMeasurementDataLog.DataSubHeaderNewFormat);
 
             if (experimentSettings.RecordTimeTraces == true)
-                createFileWithHeader(logFileCaptureName, ref mode, ref access, NoiseMeasurementDataLog.DataCaptureHeader, NoiseMeasurementDataLog.DataCaptureSubHeader);
+                createFileWithHeader(logFileCaptureName, ref mode, ref access, NoiseMeasurementDataLog.DataHeader, NoiseMeasurementDataLog.DataSubHeader);
 
             #endregion
 
@@ -747,7 +747,7 @@ namespace MCBJ.Experiments
                     SaveDataToLog(logFileNameNewFormat, noiseMeasLog.ToStringNewFormat());
 
                     if (experimentSettings.RecordTimeTraces == true)
-                        SaveDataToLog(logFileCaptureName, noiseMeasLog.ToStringDataCapture());
+                        SaveDataToLog(logFileCaptureName, noiseMeasLog.ToString());
                 }
             }
 
