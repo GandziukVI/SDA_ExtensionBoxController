@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace MCS_Faulhaber
@@ -16,6 +17,8 @@ namespace MCS_Faulhaber
         {
             Initialize(Driver);
         }
+
+        Regex rgx = new Regex(@"[+\-]?(?:0|[1-9]\d*)(?:\.\d*)?(?:[eE][+\-]?\d+)?");
 
         private double gear = 1526.0;
         public double Gear
@@ -58,20 +61,27 @@ namespace MCS_Faulhaber
                 throw new Exception("The connection failed! Check the device IO driver.");
         }
 
+        private double prevPos = 0.0;
         public override double GetPosition()
         {
-            try
-            {
-                var controllerResponce = driver.RequestQuery("pos").TrimEnd("\r\r".ToCharArray());
+            var controllerResponce = driver.RequestQuery("pos").TrimEnd("\r\r".ToCharArray());
 
-                int motorPosition;
-                var conversionSuccess = int.TryParse(controllerResponce, out motorPosition);
-                if (conversionSuccess)
-                    return (double)motorPosition / Gear / StepsPerRevolution * MilimetersPerRevolution;
-                else
-                    throw new Exception("Error while reading the motor position!");
-            }
-            catch { return 0.0; }
+            var match = rgx.Match(controllerResponce);
+
+            if (match.Success == true)
+            {
+                double motorPosition;
+                var conversionSuccess = double.TryParse(controllerResponce, out motorPosition);
+            if (conversionSuccess)
+                {
+                    prevPos = motorPosition / Gear / StepsPerRevolution * MilimetersPerRevolution;
+                    return prevPos;
+                }
+            else
+                throw new Exception("Error while reading the motor position!");
+        }
+            else
+                return prevPos;
         }
 
         private double currentVelosity;

@@ -192,7 +192,7 @@ namespace MCBJ.Experiments
             }
         }
 
-        void confAiChannelsForDCStabilization()
+        void confAIChannelsForDCStabilization()
         {
             if(!isDCOscilloscopeMode)
             {
@@ -226,7 +226,7 @@ namespace MCBJ.Experiments
 
         void PerformDCStabilization()
         {
-            confAiChannelsForDCStabilization();
+            confAIChannelsForDCStabilization();
 
             double averagedVoltage = double.MaxValue;
             Point[] temp;
@@ -253,6 +253,8 @@ namespace MCBJ.Experiments
         {
             voltage = Math.Abs(voltage);
             var intervalCoarse = voltage * (1.0 - 1.0 / Math.Sqrt(2.0));
+
+            averagingNumberFast = experimentSettings.NAveragesFast;
 
             double drainVoltageCurr = 0.0,
                 drainVoltagePrev = 0.0,
