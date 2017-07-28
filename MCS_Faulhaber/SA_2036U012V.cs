@@ -60,14 +60,18 @@ namespace MCS_Faulhaber
 
         public override double GetPosition()
         {
-            var controllerResponce = driver.RequestQuery("pos").TrimEnd("\r\r".ToCharArray());
+            try
+            {
+                var controllerResponce = driver.RequestQuery("pos").TrimEnd("\r\r".ToCharArray());
 
-            int motorPosition;
-            var conversionSuccess = int.TryParse(controllerResponce, out motorPosition);
-            if (conversionSuccess)
-                return (double)motorPosition / Gear / StepsPerRevolution * MilimetersPerRevolution;
-            else
-                throw new Exception("Error while reading the motor position!");
+                int motorPosition;
+                var conversionSuccess = int.TryParse(controllerResponce, out motorPosition);
+                if (conversionSuccess)
+                    return (double)motorPosition / Gear / StepsPerRevolution * MilimetersPerRevolution;
+                else
+                    throw new Exception("Error while reading the motor position!");
+            }
+            catch { return 0.0; }
         }
 
         private double currentVelosity;
