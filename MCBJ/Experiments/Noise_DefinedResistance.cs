@@ -194,7 +194,7 @@ namespace MCBJ.Experiments
 
         void confAIChannelsForDCStabilization()
         {
-            if(!isDCOscilloscopeMode)
+            if (!isDCOscilloscopeMode)
             {
                 var init_conf = setDCOscilloscopeConf(9.99);
                 boxController.ConfigureAI_Channels(init_conf);
@@ -357,7 +357,7 @@ namespace MCBJ.Experiments
 
             var voltages = boxController.VoltageMeasurement_AllChannels(nAveraging);
 
-            if (voltages[3] > VoltageTreshold)
+            if (Math.Abs(voltages[3]) > VoltageTreshold)
             {
                 onStatusChanged(new StatusEventArgs("Treshold voltage value is reached. Setting drain voltage..."));
 
@@ -373,7 +373,7 @@ namespace MCBJ.Experiments
 
                 voltages = boxController.VoltageMeasurement_AllChannels(nAveraging);
             }
-            else if(voltages[3] < MinVoltageTreshold)
+            else if (Math.Abs(voltages[3]) < MinVoltageTreshold)
             {
                 onStatusChanged(new StatusEventArgs("Minimum voltage treshold value is reached. Setting drain voltage..."));
 
@@ -404,6 +404,7 @@ namespace MCBJ.Experiments
 
             double ScanningVoltage,
             double VoltageDeviation,
+            double MinVoltageTreshold,
             double VoltageTreshold,
             double SetConductance,
             double ConductanceDeviation,
@@ -433,6 +434,7 @@ namespace MCBJ.Experiments
 
             var nAverages = NAverages;
             var loadResistance = LoadResistance;
+            var minVoltageTreshold = MinVoltageTreshold;
             var voltageTreshold = VoltageTreshold;
 
             var inRangeCounter = 0;
@@ -454,7 +456,7 @@ namespace MCBJ.Experiments
                 if (!IsRunning)
                     break;
 
-                var currResistance = measureResistance(loadResistance, nAverages, setVolt, voltDev, voltageTreshold);
+                var currResistance = measureResistance(loadResistance, nAverages, setVolt, voltDev, minVoltageTreshold, voltageTreshold);
                 var scaledConductance = (1.0 / currResistance) / ConductanceQuantum;
 
                 var speed = minSpeed;
@@ -702,6 +704,7 @@ namespace MCBJ.Experiments
                     setJunctionResistance(
                         voltage,
                         experimentSettings.VoltageDeviation,
+                        experimentSettings.MinVoltageTreshold,
                         experimentSettings.VoltageTreshold,
                         conductance,
                         experimentSettings.ConductanceDeviation,
