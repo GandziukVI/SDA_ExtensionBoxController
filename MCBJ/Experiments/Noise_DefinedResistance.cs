@@ -400,7 +400,7 @@ namespace MCBJ.Experiments
             return Math.Abs(res);
         }
 
-        void setJunctionResistance(
+        bool setJunctionResistance(
 
             double ScanningVoltage,
             double VoltageDeviation,
@@ -418,8 +418,6 @@ namespace MCBJ.Experiments
 
             )
         {
-            motor.Enable();
-
             var setVolt = ScanningVoltage;
             var voltDev = VoltageDeviation;
             var setCond = SetConductance;
@@ -454,7 +452,10 @@ namespace MCBJ.Experiments
             while (true)
             {
                 if (!IsRunning)
-                    break;
+                {
+                    motor.Enabled = true;
+                    return false;
+                }
 
                 var currResistance = measureResistance(loadResistance, nAverages, setVolt, voltDev, minVoltageTreshold, voltageTreshold);
                 var scaledConductance = (1.0 / currResistance) / ConductanceQuantum;
@@ -500,13 +501,32 @@ namespace MCBJ.Experiments
                     if (stabilityStopwatch.IsRunning == true)
                         ++outsiderCounter;
 
+                    var motorPosition = motor.Position;
+
                     onStatusChanged(new StatusEventArgs(string.Format("Reaching: G = {0} G0 ( => {1} G0), R = {2} Ohm ( => {3} Ohm). Current motor pos. is {4} [mm]",
                             scaledConductance.ToString("0.0000", NumberFormatInfo.InvariantInfo),
                             setCond.ToString("0.0000", NumberFormatInfo.InvariantInfo),
                             currResistance.ToString("0.0000", NumberFormatInfo.InvariantInfo),
                             setResistance.ToString("0.0000", NumberFormatInfo.InvariantInfo),
-                            motor.Position.ToString("0.0000", NumberFormatInfo.InvariantInfo)
+                            motorPosition.ToString("0.0000", NumberFormatInfo.InvariantInfo)
                         )));
+
+                    if (scaledConductance < setCond && motorPosition == minPos)
+                    {
+                        onStatusChanged(new StatusEventArgs("The sample is broken."));
+
+                        motor.Position = minPos;
+                        motor.Enabled = false;
+                        return false;
+                    }
+                    else if(scaledConductance > setCond && motorPosition == maxPos)
+                    {
+                        onStatusChanged(new StatusEventArgs("Unable to reach desired conductance."));
+
+                        motor.Position = minPos;
+                        motor.Enabled = false;
+                        return false;
+                    }
                 }
 
                 if (stabilityStopwatch.IsRunning)
@@ -520,7 +540,8 @@ namespace MCBJ.Experiments
                         if (Math.Log10((double)inRangeCounter / divider) >= 1.0)
                         {
                             stabilityStopwatch.Stop();
-                            break;
+                            motor.Disable();
+                            return true;
                         }
                         else
                         {
@@ -532,8 +553,6 @@ namespace MCBJ.Experiments
                     }
                 }
             }
-
-            motor.Disable();
         }
 
 
@@ -675,11 +694,16 @@ namespace MCBJ.Experiments
 
             confAIChannelsForDC_Measurement();
 
+            var resistanceStabilizationState = false;
+
             foreach (var conductance in experimentSettings.SetConductanceCollection)
             {
+                if (!IsRunning)
+                    break;
                 foreach (var voltage in experimentSettings.ScanningVoltageCollection)
                 {
-                    IsRunning = true;
+                    if (!IsRunning)
+                        break;
 
                     #region Recording time trace FileStream settings
 
@@ -701,7 +725,7 @@ namespace MCBJ.Experiments
 
                     onStatusChanged(new StatusEventArgs(string.Format("Reaching resistance value R -> {0}", (1.0 / conductance).ToString("0.0000", NumberFormatInfo.InvariantInfo))));
 
-                    setJunctionResistance(
+                    resistanceStabilizationState = setJunctionResistance(
                         voltage,
                         experimentSettings.VoltageDeviation,
                         experimentSettings.MinVoltageTreshold,
@@ -715,6 +739,12 @@ namespace MCBJ.Experiments
                         experimentSettings.MotorMaxPos,
                         experimentSettings.NAveragesFast,
                         experimentSettings.LoadResistance);
+
+                    if (resistanceStabilizationState == false)
+                    {
+                        IsRunning = false;
+                        break;
+                    }
 
                     setDrainVoltage(voltage, experimentSettings.VoltageDeviation);
 
@@ -775,6 +805,8 @@ namespace MCBJ.Experiments
                         SaveDataToLog(logFileCaptureName, noiseMeasLog.ToString());
                 }
             }
+
+            motor.Position = experimentSettings.MotorMinPos;
 
             if (motor != null)
             {
