@@ -57,6 +57,17 @@ namespace MCBJ.Experiments
             }
         }
 
+        private double minVoltageTreshold = 0.0025;
+        public double MinVoltageTreshold
+        {
+            get { return minVoltageTreshold; }
+            set
+            {
+                minVoltageTreshold = value;
+                onPropertyChanged("MinVoltageTreshold");
+            }
+        }
+
         private double voltageTreshold = 0.15;
         public double VoltageTreshold
         {

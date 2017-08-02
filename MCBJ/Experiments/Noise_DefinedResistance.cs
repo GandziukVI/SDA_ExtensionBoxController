@@ -348,6 +348,7 @@ namespace MCBJ.Experiments
            int nAveraging = 100,
            double SetVoltage = 0.02,
            double VoltageDeviation = 0.001,
+           double MinVoltageTreshold = 0.025,
            double VoltageTreshold = 0.05
 
            )
@@ -358,12 +359,33 @@ namespace MCBJ.Experiments
 
             if (voltages[3] > VoltageTreshold)
             {
-                onStatusChanged(new StatusEventArgs("Treshold voltage value is reached. Going down to set voltage value."));
+                onStatusChanged(new StatusEventArgs("Treshold voltage value is reached. Setting drain voltage..."));
 
-                if (motor.IsEnabled == true)
+                var motorWasEnabled = motor.IsEnabled;
+
+                if (motorWasEnabled == true)
                     motor.Enabled = false;
 
                 setDrainVoltage(SetVoltage, VoltageDeviation);
+
+                if (motorWasEnabled == true)
+                    motor.Enabled = true;
+
+                voltages = boxController.VoltageMeasurement_AllChannels(nAveraging);
+            }
+            else if(voltages[3] < MinVoltageTreshold)
+            {
+                onStatusChanged(new StatusEventArgs("Minimum voltage treshold value is reached. Setting drain voltage..."));
+
+                var motorWasEnabled = motor.IsEnabled;
+
+                if (motorWasEnabled == true)
+                    motor.Enabled = false;
+
+                setDrainVoltage(SetVoltage, VoltageDeviation);
+
+                if (motorWasEnabled == true)
+                    motor.Enabled = true;
 
                 voltages = boxController.VoltageMeasurement_AllChannels(nAveraging);
             }
