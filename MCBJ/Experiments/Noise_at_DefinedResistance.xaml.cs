@@ -52,9 +52,7 @@ namespace MCBJ
 
             if (tb != null)
             {
-
                 tb.SelectAll();
-
             }
         }
 
