@@ -34,8 +34,7 @@
 		</Style>
 		<Style TargetType="wpfTool:DoubleUpDown">
 			<Setter Property="Margin" Value="2.5" />
-			<Setter Property="Width" Value="110" />
-			<Setter Property="MaxWidth" Value="110" />			
+			<Setter Property="MaxWidth" Value="130" />			
 			<Setter Property="HorizontalAlignment" Value="Stretch" />
 			<Setter Property="VerticalAlignment" Value="Stretch" />
 			<Setter Property="CultureInfo" Value="en-Us"/>
@@ -43,14 +42,14 @@
 		</Style>
 		<Style TargetType="wpfTool:IntegerUpDown">
 			<Setter Property="Margin" Value="2.5" />
-			<Setter Property="Width" Value="110" />
-			<Setter Property="MaxWidth" Value="110" />	
+			<Setter Property="Width" Value="130" />
+			<Setter Property="MaxWidth" Value="130" />	
 			<Setter Property="HorizontalAlignment" Value="Stretch" />
 			<Setter Property="VerticalAlignment" Value="Stretch" />
 		</Style>
 		<Style TargetType="local:ExtendedDoubleUpDown">
-			<Setter Property="Width" Value="110" />
-			<Setter Property="MaxWidth" Value="110" />
+			<Setter Property="Width" Value="130" />
+			<Setter Property="MaxWidth" Value="130" />
 			<Setter Property="Margin" Value="2.5" />
 		</Style>
 		<Style TargetType="Button">
@@ -64,8 +63,8 @@
 		</Style>
 		<Style TargetType="TextBox">
 			<Setter Property="Margin" Value="2.5" />
-			<Setter Property="Width" Value="110" />
-			<Setter Property="MaxWidth" Value="110" />
+			<Setter Property="Width" Value="130" />
+			<Setter Property="MaxWidth" Value="130" />
 			<Setter Property="HorizontalContentAlignment" Value="Stretch" />
 			<Setter Property="VerticalAlignment" Value="Stretch" />
 			<Setter Property="HorizontalContentAlignment" Value="Right" />
@@ -74,44 +73,55 @@
 		</Style>
 	</UserControl.Resources>
 
-	<Grid x:Name="LayoutRoot" >
+	<Grid x:Name="LayoutRoot">
 		<Grid.ColumnDefinitions>
 			<ColumnDefinition />
 			<ColumnDefinition Width="Auto" />
 		</Grid.ColumnDefinitions>
 		<Grid.RowDefinitions>
-			<RowDefinition Height = "150" />
-			<RowDefinition Height="Auto"/>
 			<RowDefinition />
-			<RowDefinition Height="Auto" />
+			<RowDefinition Height="Auto"/>
 		</Grid.RowDefinitions>
 
-		<d3:ChartPlotter x:Name="chartFETOscilloscope" Margin="5" LegendVisibility="Collapsed" NewLegendVisible="False" >
-			<d3:HorizontalAxisTitle Content="Time (s)" />
-			<d3:VerticalAxisTitle Content="Amplitude (V)" />
-		</d3:ChartPlotter>
+		<Grid Grid.RowSpan="2">
+			<Grid.RowDefinitions>
+				<RowDefinition Height="225" />
+				<RowDefinition Height="Auto" />
+				<RowDefinition />
+			</Grid.RowDefinitions>
 
-		<GridSplitter Grid.Row="1" Width="5" HorizontalAlignment="Stretch" VerticalAlignment="Center" />
+			<d3:ChartPlotter x:Name="chartFETOscilloscope" Margin="5" LegendVisibility="Collapsed" NewLegendVisible="False" >
+				<d3:HorizontalAxisTitle Content="Time (s)" />
+				<d3:VerticalAxisTitle Content="Amplitude (V)" />
+			</d3:ChartPlotter>
 
-		<d3:ChartPlotter x:Name="chartFETNoise" Margin="5" LegendVisibility="Collapsed" NewLegendVisible="False" DataTransform="{StaticResource SpectraDataTransform}" Grid.Row="2" Grid.RowSpan="2">
-			<d3:HorizontalAxis TicksProvider="{StaticResource Log10XTicksProvider}">
-				<d3:HorizontalAxisTitle Content="Frequency (Hz)" />
-			</d3:HorizontalAxis>
-			<d3:VerticalAxis TicksProvider="{StaticResource Log10YTicksProvider}">
-				<d3:VerticalAxisTitle>
-					<TextBlock>S<Run FontSize="9" BaselineAlignment="Subscript">V</Run> (V<Run FontSize="9" BaselineAlignment="Superscript">2</Run> / Hz)</TextBlock>
-				</d3:VerticalAxisTitle>
-			</d3:VerticalAxis>
-		</d3:ChartPlotter>
+			<GridSplitter Grid.Row="1" Height="5" HorizontalAlignment="Stretch" VerticalAlignment="Center" />
 
-		<ScrollViewer Grid.Column="1" Grid.RowSpan="3" VerticalScrollBarVisibility="Auto">
-			<Grid>
+			<d3:ChartPlotter x:Name="chartFETNoise" Margin="5" LegendVisibility="Collapsed" NewLegendVisible="False" DataTransform="{StaticResource SpectraDataTransform}" Grid.Row="2" >
+				<d3:HorizontalAxis TicksProvider="{StaticResource Log10XTicksProvider}">
+					<d3:HorizontalAxisTitle Content="Frequency (Hz)" />
+				</d3:HorizontalAxis>
+				<d3:VerticalAxis TicksProvider="{StaticResource Log10YTicksProvider}">
+					<d3:VerticalAxisTitle>
+						<TextBlock>S<Run FontSize="9" BaselineAlignment="Subscript">V</Run> (V<Run FontSize="9" BaselineAlignment="Superscript">2</Run> / Hz)</TextBlock>
+					</d3:VerticalAxisTitle>
+				</d3:VerticalAxis>
+			</d3:ChartPlotter>
+		</Grid>
+
+		<ScrollViewer Grid.Column="1"  HorizontalAlignment="Left" VerticalScrollBarVisibility="Auto" >
+			<Grid ScrollViewer.CanContentScroll="True">
 				<Grid.ColumnDefinitions>
 					<ColumnDefinition Width="Auto"/>
 					<ColumnDefinition />
 				</Grid.ColumnDefinitions>
 				<Grid.RowDefinitions>
 					<RowDefinition Height="Auto" />
+					<RowDefinition Height="Auto"/>
+					<RowDefinition Height="Auto"/>
+					<RowDefinition Height="Auto"/>
+					<RowDefinition Height="Auto"/>
+					<RowDefinition Height="Auto"/>
 					<RowDefinition Height="Auto"/>
 					<RowDefinition Height="Auto" />
 					<RowDefinition Height="Auto" />
@@ -132,74 +142,87 @@
 					<RowDefinition Height="Auto" />
 					<RowDefinition Height="Auto" />
 					<RowDefinition Height="Auto" />
-					<RowDefinition Height="Auto" />
+					<RowDefinition Height="*"/>
 				</Grid.RowDefinitions>
 
-				<TextBlock TextWrapping="Wrap" Text="Agilent U2542A res." />
+				<TextBlock TextWrapping="Wrap" Text="Agilent U2542A res." Padding="0,20,0,0" />
 				<TextBox Height="100" MaxHeight="100" VerticalContentAlignment="Top" HorizontalContentAlignment="Left" VerticalScrollBarVisibility="Auto" MouseDoubleClick="SelectAddress" PreviewMouseRightButtonUp="SelectivelyIgnoreMouseButton" GotFocus="SelectAddress" PreviewMouseLeftButtonDown="SelectivelyIgnoreMouseButton" Grid.Column="1" Text="{Binding AgilentU2542AResName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" AcceptsReturn="True" TextWrapping="Wrap" />
 
-				<GroupBox Grid.Row="1" Grid.ColumnSpan="2">
+				<TextBlock Grid.Row="1" Grid.ColumnSpan="2" HorizontalAlignment="Center" Margin="5,30,5,15"><Run FontSize="18">Oscilloscope Settings</Run></TextBlock>
+				
+				<TextBlock Grid.Row="2" Text="Voltage Range" />
+				<local:ExtendedDoubleUpDown Grid.Row="2" Grid.Column="1" UnitAlias="V" Value="0.2" RealValue="{Binding OscilloscopeVoltageRange, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+				<TextBlock Grid.Row="3" Text="Time Range" />
+				<local:ExtendedDoubleUpDown Grid.Row="3" Grid.Column="1" UnitAlias="s" Value="1.0" RealValue="{Binding OscilloscopeTimeRange, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+				<TextBlock Grid.Row="4" Text="Points per graph" />
+				<wpfTool:IntegerUpDown Grid.Row="4" Grid.Column="1" Value="{Binding OscilloscopePointsPerGraph, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+				<TextBlock Grid.Row="5" Grid.ColumnSpan="2" HorizontalAlignment="Center" Margin="5,30,5,15"><Run FontSize="18">Measurement Settings</Run></TextBlock>
+
+				<GroupBox Grid.Row="6" Grid.ColumnSpan="2" Margin="5">
 					<GroupBox.Header>
 						<TextBlock>Measurement mode</TextBlock>
 					</GroupBox.Header>
 
-					<StackPanel Orientation="Vertical">
+					<StackPanel Orientation="Vertical" Margin="0,5">
 						<RadioButton IsChecked="{Binding IsTransferCurveMode, Mode=TwoWay}">Transfer curve</RadioButton>
 						<RadioButton IsChecked="{Binding IsOutputCurveMode, Mode=TwoWay}">Output curve</RadioButton>
 					</StackPanel>
 				</GroupBox>
 
-				<TextBlock TextWrapping="Wrap" Grid.Row="2">Gate Voltages V<Run FontSize="9" BaselineAlignment="Subscript">G</Run> (V)</TextBlock>
-				<TextBox Text="{Binding GateVoltageCollection, Converter={StaticResource CollectionConverter}, Mode=TwoWay, UpdateSourceTrigger=LostFocus}" Grid.Column="1" TextWrapping="Wrap" Height="100" MaxHeight="100" VerticalContentAlignment="Top" VerticalScrollBarVisibility="Auto" MouseDoubleClick="SelectAddress" PreviewMouseRightButtonUp="SelectivelyIgnoreMouseButton" GotFocus="SelectAddress" PreviewMouseLeftButtonDown="SelectivelyIgnoreMouseButton" Grid.Row="2" />
+				<TextBlock TextWrapping="Wrap" Grid.Row="7" Padding="0,20,0,0">Gate Voltages V<Run FontSize="9" BaselineAlignment="Subscript">G</Run> (V)</TextBlock>
+				<TextBox Text="{Binding GateVoltageCollection, Converter={StaticResource CollectionConverter}, Mode=TwoWay, UpdateSourceTrigger=LostFocus}" Grid.Column="1" TextWrapping="Wrap" Height="100" MaxHeight="100" VerticalContentAlignment="Top" VerticalScrollBarVisibility="Auto" MouseDoubleClick="SelectAddress" PreviewMouseRightButtonUp="SelectivelyIgnoreMouseButton" GotFocus="SelectAddress" PreviewMouseLeftButtonDown="SelectivelyIgnoreMouseButton" Grid.Row="7" />
 
-				<TextBlock TextWrapping="Wrap" Grid.Row="3">D-S Voltages V<Run FontSize="9" BaselineAlignment="Subscript">DS</Run> (V)</TextBlock>
-				<TextBox Text="{Binding DSVoltageCollection, Converter={StaticResource CollectionConverter}, Mode=TwoWay, UpdateSourceTrigger=LostFocus}" Grid.Column="1" TextWrapping="Wrap" Height="100" MaxHeight="100" VerticalContentAlignment="Top" VerticalScrollBarVisibility="Auto" MouseDoubleClick="SelectAddress" PreviewMouseRightButtonUp="SelectivelyIgnoreMouseButton" GotFocus="SelectAddress" PreviewMouseLeftButtonDown="SelectivelyIgnoreMouseButton" Grid.Row="3" />
+				<TextBlock TextWrapping="Wrap" Grid.Row="8" Padding="0,20,0,0">D-S Voltages V<Run FontSize="9" BaselineAlignment="Subscript">DS</Run> (V)</TextBlock>
+				<TextBox Text="{Binding DSVoltageCollection, Converter={StaticResource CollectionConverter}, Mode=TwoWay, UpdateSourceTrigger=LostFocus}" Grid.Column="1" TextWrapping="Wrap" Height="100" MaxHeight="100" VerticalContentAlignment="Top" VerticalScrollBarVisibility="Auto" MouseDoubleClick="SelectAddress" PreviewMouseRightButtonUp="SelectivelyIgnoreMouseButton" GotFocus="SelectAddress" PreviewMouseLeftButtonDown="SelectivelyIgnoreMouseButton" Grid.Row="8" />
 
-				<TextBlock TextWrapping="Wrap" Text="Voltage deviation" Grid.Row="4" />
-				<local:ExtendedDoubleUpDown Grid.Row="4" Grid.Column="1" Value="0.2" RealValue="{Binding VoltageDeviation, Mode=TwoWay, UpdateSourceTrigger=LostFocus}" UnitAlias="V" Margin="2.5,2.5,2.499,2.5" />
+				<TextBlock TextWrapping="Wrap" Text="Voltage deviation" Grid.Row="9" />
+				<local:ExtendedDoubleUpDown Grid.Row="9" Grid.Column="1" UnitAlias="V" Value="0.2" RealValue="{Binding VoltageDeviation, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"  />
 
-				<TextBlock TextWrapping="Wrap" Text="n Avg. (fast)" Grid.Row="5"/>
-				<wpfTool:IntegerUpDown Grid.Row="5" Grid.Column="1" Value="{Binding NAveragesFast, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="2.5,2.5,2.499,2.5"/>
+				<TextBlock TextWrapping="Wrap" Text="n Avg. (fast)" Grid.Row="10"/>
+				<wpfTool:IntegerUpDown Grid.Row="10" Grid.Column="1" Value="{Binding NAveragesFast, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
-				<TextBlock TextWrapping="Wrap" Text="n Avg. (slow)" Grid.Row="6"/>
-				<wpfTool:IntegerUpDown Grid.Row="6" Grid.Column="1" Value="{Binding NAveragesSlow, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="2.5,2.5,2.499,2.5"/>
+				<TextBlock TextWrapping="Wrap" Text="n Avg. (slow)" Grid.Row="11"/>
+				<wpfTool:IntegerUpDown Grid.Row="11" Grid.Column="1" Value="{Binding NAveragesSlow, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
-				<TextBlock TextWrapping="Wrap" Text="Stabilization time" Grid.Row="7"/>
-				<wpfTool:DoubleUpDown Grid.Row="7" Grid.Column="1" Value="{Binding StabilizationTime, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="2.5,2.5,2.499,2.5"/>
+				<TextBlock TextWrapping="Wrap" Text="Stabilization time" Grid.Row="12"/>
+				<wpfTool:DoubleUpDown Grid.Row="12" Grid.Column="1" Value="{Binding StabilizationTime, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
-				<TextBlock TextWrapping="Wrap" Text="Load resistance" Grid.Row="9"/>			
-				<wpfTool:DoubleUpDown Grid.Row="9" Grid.Column="1" Value="{Binding LoadResistance, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="2.5,2.5,2.499,2.5"/>			
+				<TextBlock TextWrapping="Wrap" Text="Load resistance" Grid.Row="14"/>			
+				<wpfTool:DoubleUpDown Grid.Row="14" Grid.Column="1" Value="{Binding LoadResistance, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />			
 
-				<TextBlock TextWrapping="Wrap" Text="Sampling frequency" Grid.Row="10"/>
-				<wpfTool:IntegerUpDown Grid.Row="10" Grid.Column="1" Value="{Binding SamplingFrequency, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" IsEnabled="False" Margin="2.5,2.5,2.499,2.5"/>
+				<TextBlock TextWrapping="Wrap" Text="Sampling frequency" Grid.Row="15"/>
+				<wpfTool:IntegerUpDown Grid.Row="15" Grid.Column="1" Value="{Binding SamplingFrequency, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" IsEnabled="False" />
 
-				<TextBlock TextWrapping="Wrap" Text="N Sub-samples" Grid.Row="11"/>
-				<wpfTool:IntegerUpDown Grid.Row="11" Grid.Column="1" Value="{Binding NSubSamples, Mode=TwoWay, UpdateSourceTrigger=LostFocus}" Margin="2.5,2.5,2.499,2.5"/>
+				<TextBlock TextWrapping="Wrap" Text="N Sub-samples" Grid.Row="16"/>
+				<wpfTool:IntegerUpDown Grid.Row="16" Grid.Column="1" Value="{Binding NSubSamples, Mode=TwoWay, UpdateSourceTrigger=LostFocus}" />
 
-				<TextBlock TextWrapping="Wrap" Text="n Spectra avg." Grid.Row="12"/>
-				<wpfTool:IntegerUpDown Grid.Row="12" Grid.Column="1" Value="{Binding SpectraAveraging, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="2.5,2.5,2.499,2.5"/>
+				<TextBlock TextWrapping="Wrap" Text="n Spectra avg." Grid.Row="17"/>
+				<wpfTool:IntegerUpDown Grid.Row="17" Grid.Column="1" Value="{Binding SpectraAveraging, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
-				<TextBlock TextWrapping="Wrap" Text="Update freq." Grid.Row="13"/>
-				<wpfTool:IntegerUpDown Grid.Row="13" Grid.Column="1" Value="{Binding UpdateNumber, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="2.5,2.5,2.499,2.5"/>
+				<TextBlock TextWrapping="Wrap" Text="Update freq." Grid.Row="18"/>
+				<wpfTool:IntegerUpDown Grid.Row="18" Grid.Column="1" Value="{Binding UpdateNumber, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
-				<TextBlock TextWrapping="Wrap" Text="k pre-Amp" Grid.Row="14"/>
-				<wpfTool:DoubleUpDown Grid.Row="14" Grid.Column="1" Value="{Binding KPreAmpl, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="2.5,2.5,2.499,2.5"/>
+				<TextBlock TextWrapping="Wrap" Text="k pre-Amp" Grid.Row="19"/>
+				<wpfTool:DoubleUpDown Grid.Row="19" Grid.Column="1" Value="{Binding KPreAmpl, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
-				<TextBlock TextWrapping="Wrap" Text="k Amp" Grid.Row="15"/>
-				<wpfTool:DoubleUpDown Grid.Row="15" Grid.Column="1" Value="{Binding KAmpl, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="2.5,2.5,2.499,2.5"/>
+				<TextBlock TextWrapping="Wrap" Text="k Amp" Grid.Row="20"/>
+				<wpfTool:DoubleUpDown Grid.Row="20" Grid.Column="1" Value="{Binding KAmpl, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
-				<TextBlock TextWrapping="Wrap" Text="Temperature 0" Grid.Row="16"/>
-				<wpfTool:DoubleUpDown Grid.Row="16" Grid.Column="1" Value="{Binding Temperature0, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="2.5,2.5,2.499,2.5"/>
+				<TextBlock TextWrapping="Wrap" Text="Temperature 0" Grid.Row="21"/>
+				<wpfTool:DoubleUpDown Grid.Row="21" Grid.Column="1" Value="{Binding Temperature0, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
-				<TextBlock TextWrapping="Wrap" Text="Temperature E" Grid.Row="17"/>
-				<wpfTool:DoubleUpDown Grid.Row="17" Grid.Column="1" Value="{Binding TemperatureE, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="2.5,2.5,2.499,2.5"/>
+				<TextBlock TextWrapping="Wrap" Text="Temperature E" Grid.Row="22"/>
+				<wpfTool:DoubleUpDown Grid.Row="22" Grid.Column="1" Value="{Binding TemperatureE, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
-				<CheckBox x:Name="checkBox" Grid.Row="18" Grid.ColumnSpan="2" Content="Record time trace" IsChecked="{Binding RecordTimeTraces, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"></CheckBox>
+				<CheckBox x:Name="checkBox" Grid.Row="23" Grid.ColumnSpan="2" Content="Record time trace" IsChecked="{Binding RecordTimeTraces, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"></CheckBox>
 				
-				<wpfTool:IntegerUpDown Grid.Row="19" Grid.Column="1" IsEnabled="{Binding IsChecked, ElementName=checkBox, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Value="{Binding RecordingFrequency, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="2.5,2.5,2.499,2.5"/>
+				<wpfTool:IntegerUpDown Grid.Row="24" Grid.Column="1" IsEnabled="{Binding IsChecked, ElementName=checkBox, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Value="{Binding RecordingFrequency, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
-				<Separator BorderThickness="1,2" Height="1" Grid.Row="20" Grid.ColumnSpan="2" Margin="2.5,5,2.5,20" Background="Black" BorderBrush="#FFAAAAAA" />
-				<Grid Grid.Row="21" Grid.ColumnSpan="2">
+				<Separator BorderThickness="1,2" Height="1" Grid.Row="25" Grid.ColumnSpan="2" Margin="2.5,5,2.5,20" Background="Black" BorderBrush="#FFAAAAAA" />
+				<Grid Grid.Row="26" Grid.ColumnSpan="2">
 					<Grid.ColumnDefinitions>
 						<ColumnDefinition Width="Auto" />
 						<ColumnDefinition />

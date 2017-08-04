@@ -21,7 +21,7 @@ namespace FET_Characterization
 		#region INotifyPropertyChanged
 		public event PropertyChangedEventHandler PropertyChanged;
 
-        private void onPropertyChanged(String info)
+        private void NotifyPropertyChanged(String info)
 		{
 			if (PropertyChanged != null)
 			{
@@ -37,7 +37,40 @@ namespace FET_Characterization
             set
             {
                 agilentU2542Ares = value;
-                onPropertyChanged("AgilentU2542AResName");
+                NotifyPropertyChanged("AgilentU2542AResName");
+            }
+        }
+
+        private double oscilloscopeVoltageRange = 0.2;
+        public double OscilloscopeVoltageRange
+        {
+            get { return oscilloscopeVoltageRange; }
+            set 
+            {
+                oscilloscopeVoltageRange = value;
+                NotifyPropertyChanged("OscilloscopeVoltageRange");
+            }
+        }
+
+        private double oscilloscopeTimeRange = 1.0;
+        public double OscilloscopeTimeRange
+        {
+            get { return oscilloscopeTimeRange; }
+            set 
+            {
+                oscilloscopeTimeRange = value;
+                NotifyPropertyChanged("OscilloscopeTimeRange");
+            }
+        }
+
+        private int oscilloscopePointsPerGraph;
+        public int OscilloscopePointsPerGraph
+        {
+            get { return oscilloscopePointsPerGraph; }
+            set 
+            {
+                oscilloscopePointsPerGraph = value;
+                NotifyPropertyChanged("OscilloscopePointsPerGraph");
             }
         }
 
@@ -48,7 +81,7 @@ namespace FET_Characterization
             set 
             {
                 isTransferCurveMode = value;
-                onPropertyChanged("IsTransferCurveMode");
+                NotifyPropertyChanged("IsTransferCurveMode");
             }
         }
 
@@ -59,7 +92,7 @@ namespace FET_Characterization
             set
             {
                 isOutputCurveMode = value;
-                onPropertyChanged("IsOutputCurveMode");
+                NotifyPropertyChanged("IsOutputCurveMode");
             }
         }
 
@@ -70,7 +103,7 @@ namespace FET_Characterization
             set
             {
                 gateVoltageCollection = value;
-                onPropertyChanged("GateVoltageCollection");
+                NotifyPropertyChanged("GateVoltageCollection");
             }
         }
 
@@ -81,7 +114,7 @@ namespace FET_Characterization
             set
             {
                 dsVoltageCollection = value;
-                onPropertyChanged("DSVoltageCollection");
+                NotifyPropertyChanged("DSVoltageCollection");
             }
         }
 
@@ -92,7 +125,7 @@ namespace FET_Characterization
             set
             {
                 voltageDeviation = value;
-                onPropertyChanged("VoltageDeviation");
+                NotifyPropertyChanged("VoltageDeviation");
             }
         }
 
@@ -103,7 +136,7 @@ namespace FET_Characterization
             set
             {
                 nAveragesFast = value;
-                onPropertyChanged("NAveragesFast");
+                NotifyPropertyChanged("NAveragesFast");
             }
         }
 
@@ -114,7 +147,7 @@ namespace FET_Characterization
             set
             {
                 nAveragesSlow = value;
-                onPropertyChanged("NAveragesSlow");
+                NotifyPropertyChanged("NAveragesSlow");
             }
         }
 
@@ -129,7 +162,7 @@ namespace FET_Characterization
                 else
                     throw new ArgumentException("The stabilization time should have positive value.");
 
-                onPropertyChanged("StabilizationTime");
+                NotifyPropertyChanged("StabilizationTime");
             }
         }
 
@@ -140,7 +173,7 @@ namespace FET_Characterization
             set
             {
                 loadResistance = value;
-                onPropertyChanged("LoadResistance");
+                NotifyPropertyChanged("LoadResistance");
             }
         }
 
@@ -151,7 +184,7 @@ namespace FET_Characterization
             set
             {
                 samplingFrequency = value;
-                onPropertyChanged("SamplingFrequency");
+                NotifyPropertyChanged("SamplingFrequency");
             }
         }
 
@@ -162,7 +195,7 @@ namespace FET_Characterization
             set
             {
                 nSubSamples = value;
-                onPropertyChanged("NSubSamples");
+                NotifyPropertyChanged("NSubSamples");
             }
         }
 
@@ -173,7 +206,7 @@ namespace FET_Characterization
             set
             {
                 spectraAveraging = value;
-                onPropertyChanged("SpectraAveraging");
+                NotifyPropertyChanged("SpectraAveraging");
             }
         }
 
@@ -184,7 +217,7 @@ namespace FET_Characterization
             set
             {
                 updateNumber = value;
-                onPropertyChanged("UpdateNumber");
+                NotifyPropertyChanged("UpdateNumber");
             }
         }
 
@@ -195,7 +228,7 @@ namespace FET_Characterization
             set
             {
                 kPreAmpl = value;
-                onPropertyChanged("KPreAmpl");
+                NotifyPropertyChanged("KPreAmpl");
             }
         }
 
@@ -206,7 +239,7 @@ namespace FET_Characterization
             set
             {
                 kAmpl = value;
-                onPropertyChanged("KAmpl");
+                NotifyPropertyChanged("KAmpl");
             }
         }
 
@@ -217,7 +250,7 @@ namespace FET_Characterization
             set
             {
                 temperature0 = value;
-                onPropertyChanged("Temperature0");
+                NotifyPropertyChanged("Temperature0");
             }
         }
 
@@ -228,7 +261,7 @@ namespace FET_Characterization
             set
             {
                 temperatureE = value;
-                onPropertyChanged("TemperatureE");
+                NotifyPropertyChanged("TemperatureE");
             }
         }
 
@@ -239,7 +272,7 @@ namespace FET_Characterization
             set
             {
                 recordTimeTraces = value;
-                onPropertyChanged("RecordTimeTraces");
+                NotifyPropertyChanged("RecordTimeTraces");
             }
         }
 
@@ -265,7 +298,7 @@ namespace FET_Characterization
                 value = getClosestValueInArray(value, powersOfTwo);
 
                 recordingFrequency = value;
-                onPropertyChanged("RecordingFrequency");
+                NotifyPropertyChanged("RecordingFrequency");
             }
         }
 
@@ -278,7 +311,7 @@ namespace FET_Characterization
             set
             {
                 filePath = value;
-                onPropertyChanged("FilePath");
+                NotifyPropertyChanged("FilePath");
             }
         }
 
@@ -292,7 +325,7 @@ namespace FET_Characterization
                     value += ".dat";
 
                 saveFileName = value;
-                onPropertyChanged("SaveFileName");
+                NotifyPropertyChanged("SaveFileName");
             }
         }
     }
