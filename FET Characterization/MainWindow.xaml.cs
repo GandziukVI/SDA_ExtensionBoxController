@@ -7,6 +7,7 @@ using Microsoft.Research.DynamicDataDisplay.DataSources;
 using SourceMeterUnit;
 using System;
 using System.Collections.Generic;
+using System.Collections.Concurrent;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -32,7 +33,7 @@ namespace FET_Characterization
     public partial class MainWindow : Window
     {
         UIElement measurementInterface;
-        
+
         IExperiment experiment;
         object expStartInfo;
 
@@ -45,11 +46,23 @@ namespace FET_Characterization
         EnumerableDataSource<Point> FETNoiseDataSource;
         LinkedList<Point> FETNoiseDataList;
 
+        EnumerableDataSource<Point> FETTimeTraceDataSource;
+        LinkedList<Point> FETTimeTraceDataList;
+
         IDeviceIO driver;
         Keithley26xxB<Keithley2602B> measureDevice;
 
         public MainWindow()
         {
+            FETNoiseDataList = new LinkedList<Point>();
+            FETTimeTraceDataList = new LinkedList<Point>();
+
+            FETNoiseDataSource = new EnumerableDataSource<Point>(FETNoiseDataList);
+            FETNoiseDataSource.SetXYMapping(p => p);
+
+            FETTimeTraceDataSource = new EnumerableDataSource<Point>(FETTimeTraceDataList);
+            FETTimeTraceDataSource.SetXYMapping(p => p);
+
             InitializeComponent();
         }
 
@@ -152,7 +165,7 @@ namespace FET_Characterization
                 {
                     CurrentLinePen = (measurementInterface as FET_IV).expIV_FET_Chart.AddLineGraph(dsMeasurement, 1.5, e.Data).LinePen;
                     CurrentLinePen = new Pen(CurrentLinePen.Brush, 1.0);
-                }));               
+                }));
             }
             else
             {
@@ -311,6 +324,106 @@ namespace FET_Characterization
             }));
         }
 
+        LinkedList<string> pointsRest = new LinkedList<string>();
+        void AddTimeTraceDataToPlot(object TimeTraceDataString)
+        {
+            FETTimeTraceDataList.Clear();
+
+            var timeTraceDataString = (string)TimeTraceDataString;
+
+            // Selection of the points to plot
+
+            var settings = expStartInfo as FET_NoiseModel;
+
+            var splitPointsData = timeTraceDataString.Split(delim, StringSplitOptions.RemoveEmptyEntries);
+
+            var nPointsToConsider = (int)(settings.SamplingFrequency * settings.OscilloscopeTimeRange - pointsRest.Count);
+            var nPointsRest = (int)(settings.SamplingFrequency - nPointsToConsider);
+
+            if (nPointsToConsider <= settings.OscilloscopePointsPerGraph)
+            {
+                var toPlot = splitPointsData
+                    .Select(v => v.Split(sep, StringSplitOptions.RemoveEmptyEntries))
+                    .Select(v => Array.ConvertAll(v, x => double.Parse(x, NumberFormatInfo.InvariantInfo)))
+                    .Select(v => new Point(v[0], v[1])).ToArray();
+
+                foreach (var item in toPlot)
+                    FETTimeTraceDataList.AddLast(item);
+            }
+            else
+            {
+                var N = (int)(settings.SamplingFrequency / settings.OscilloscopePointsPerGraph);
+                var toPlot = splitPointsData.Where((value, index) => index % N == 0)
+                    .Select(v => v.Split(sep, StringSplitOptions.RemoveEmptyEntries))
+                    .Select(v => Array.ConvertAll(v, x => double.Parse(x, NumberFormatInfo.InvariantInfo)))
+                    .Select(v => new Point(v[0], v[1])).ToArray();
+
+                foreach (var item in toPlot)
+                    FETTimeTraceDataList.AddLast(item);
+            }
+
+            Dispatcher.InvokeAsync(new Action(() =>
+            {
+                FETTimeTraceDataSource.RaiseDataChanged();
+            }));
+        }
+
+        ConcurrentQueue<string[]> timeTraceDataQueue = new ConcurrentQueue<string[]>();
+
+        void AddTimeTraceDataToPlotContiniously()
+        {
+            var settings = expStartInfo as FET_NoiseModel;
+            var exp = experiment as FET_Noise_Experiment;
+
+            while (exp.IsRunning)
+            {
+                string[] data;
+
+                if (timeTraceDataQueue != null && timeTraceDataQueue.Count > 0)
+                {
+                    var dataDequeuingSuccess = timeTraceDataQueue.TryDequeue(out data);
+
+                    if (dataDequeuingSuccess == true)
+                    {
+                        var nPointsToConsider = (int)(settings.SamplingFrequency * settings.OscilloscopeTimeRange);
+                        var nPointsRest = (int)(settings.SamplingFrequency - nPointsToConsider);
+
+                        var N = (int)(nPointsToConsider / settings.OscilloscopePointsPerGraph);
+
+                        if (nPointsToConsider <= settings.OscilloscopePointsPerGraph)
+                        {
+                            var toPlot = data
+                                .Select(v => v.Split(sep, StringSplitOptions.RemoveEmptyEntries))
+                                .Select(v => Array.ConvertAll(v, x => double.Parse(x, NumberFormatInfo.InvariantInfo)))
+                                .Select(v => new Point(v[0], v[1]));
+
+                            foreach (var item in toPlot)
+                                FETTimeTraceDataList.AddLast(item);
+                        }
+                        else
+                        {
+                            var toPlot = data
+                                .Select(v => v.Split(sep, StringSplitOptions.RemoveEmptyEntries))
+                                .Take(nPointsToConsider)
+                                .Where((value, index) => index % N == 0)
+                                .Select(v => Array.ConvertAll(v, x => double.Parse(x, NumberFormatInfo.InvariantInfo)))
+                                .Select(v => new Point(v[0], v[1]));
+
+                            foreach (var item in toPlot)
+                                FETTimeTraceDataList.AddLast(item);
+
+                            var restData = new string[settings.SamplingFrequency - nPointsToConsider];
+                        }
+
+                        Dispatcher.InvokeAsync(new Action(() =>
+                        {
+                            FETTimeTraceDataSource.RaiseDataChanged();
+                        }));
+                    }
+                }
+            }
+        }
+
         private void expFET_Noise_DataArrived(object sender, ExpDataArrivedEventArgs e)
         {
             if (e.Data.StartsWith("NS"))
@@ -319,6 +432,11 @@ namespace FET_Characterization
                 var th = new Thread(ts);
 
                 th.Start(e.Data);
+            }
+            else if (e.Data.StartsWith("TT"))
+            {
+                var splitPointsData = e.Data.Substring(2).Split(delim, StringSplitOptions.RemoveEmptyEntries);
+                timeTraceDataQueue.Enqueue(splitPointsData);
             }
         }
 
