@@ -7,6 +7,7 @@ using Microsoft.Research.DynamicDataDisplay.DataSources;
 using SourceMeterUnit;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Collections.Concurrent;
 using System.Globalization;
 using System.IO;
@@ -105,6 +106,27 @@ namespace FET_Characterization
 
             control.cmdStart.Click += cmdStartNoise_Click;
             control.cmdStop.Click += cmdStopNoise_Click;
+
+            control.Settings.PropertyChanged += FET_Exp_Property_Changed;
+        }
+
+        private void FET_Exp_Property_Changed(object sender, PropertyChangedEventArgs e)
+        {
+            var exp = (measurementInterface as FET_Noise);
+            var settings = exp.Settings;
+
+            switch(e.PropertyName)
+            {
+                case "OscilloscopeVoltageRange":
+                    {
+                        if (settings.OscilloscopeVoltageRange != 0.0)
+                        {
+                            var restr = new D3Helper.ViewportAxesRangeRestriction();
+                            restr.YRange = new D3Helper.DisplayRange(-1.0 * Math.Abs(settings.OscilloscopeVoltageRange), Math.Abs(settings.OscilloscopeVoltageRange));
+                            exp.chartFETOscilloscope.Restrictions.Add(restr);
+                        }
+                    } break;
+            }
         }
 
         #region Interface and logic for FET I-V measurement
@@ -256,7 +278,7 @@ namespace FET_Characterization
 
         #region Interface and logic for FET Noise measurement
 
-        private void cmdStartNoise_Click(object sender, RoutedEventArgs e)
+        void cmdStartNoise_Click(object sender, RoutedEventArgs e)
         {
             expStartInfo = (measurementInterface as FET_Noise).Settings;
 
@@ -324,50 +346,6 @@ namespace FET_Characterization
             }));
         }
 
-        LinkedList<string> pointsRest = new LinkedList<string>();
-        void AddTimeTraceDataToPlot(object TimeTraceDataString)
-        {
-            FETTimeTraceDataList.Clear();
-
-            var timeTraceDataString = (string)TimeTraceDataString;
-
-            // Selection of the points to plot
-
-            var settings = expStartInfo as FET_NoiseModel;
-
-            var splitPointsData = timeTraceDataString.Split(delim, StringSplitOptions.RemoveEmptyEntries);
-
-            var nPointsToConsider = (int)(settings.SamplingFrequency * settings.OscilloscopeTimeRange - pointsRest.Count);
-            var nPointsRest = (int)(settings.SamplingFrequency - nPointsToConsider);
-
-            if (nPointsToConsider <= settings.OscilloscopePointsPerGraph)
-            {
-                var toPlot = splitPointsData
-                    .Select(v => v.Split(sep, StringSplitOptions.RemoveEmptyEntries))
-                    .Select(v => Array.ConvertAll(v, x => double.Parse(x, NumberFormatInfo.InvariantInfo)))
-                    .Select(v => new Point(v[0], v[1])).ToArray();
-
-                foreach (var item in toPlot)
-                    FETTimeTraceDataList.AddLast(item);
-            }
-            else
-            {
-                var N = (int)(settings.SamplingFrequency / settings.OscilloscopePointsPerGraph);
-                var toPlot = splitPointsData.Where((value, index) => index % N == 0)
-                    .Select(v => v.Split(sep, StringSplitOptions.RemoveEmptyEntries))
-                    .Select(v => Array.ConvertAll(v, x => double.Parse(x, NumberFormatInfo.InvariantInfo)))
-                    .Select(v => new Point(v[0], v[1])).ToArray();
-
-                foreach (var item in toPlot)
-                    FETTimeTraceDataList.AddLast(item);
-            }
-
-            Dispatcher.InvokeAsync(new Action(() =>
-            {
-                FETTimeTraceDataSource.RaiseDataChanged();
-            }));
-        }
-
         ConcurrentQueue<string[]> timeTraceDataQueue = new ConcurrentQueue<string[]>();
 
         void AddTimeTraceDataToPlotContiniously()
@@ -377,13 +355,23 @@ namespace FET_Characterization
 
             while (exp.IsRunning)
             {
-                string[] data;
+                string[] temp = new string[] { };
+                string[] data = new string[] { };
 
                 if (timeTraceDataQueue != null && timeTraceDataQueue.Count > 0)
                 {
-                    var dataDequeuingSuccess = timeTraceDataQueue.TryDequeue(out data);
+                    var dataDequeuingSuccess = new bool[timeTraceDataQueue.Count];
 
-                    if (dataDequeuingSuccess == true)
+                    for (int i = 0; i < timeTraceDataQueue.Count; i++)
+                    {
+                        dataDequeuingSuccess[i] = timeTraceDataQueue.TryDequeue(out temp);
+
+                        var dataInitialLength = data.Length;
+                        Array.Resize<string>(ref data, dataInitialLength + temp.Length);
+                        Array.Copy(temp, 0, data, dataInitialLength, temp.Length);
+                    }
+
+                    if (dataDequeuingSuccess.All(x => x))
                     {
                         var nPointsToConsider = (int)(settings.SamplingFrequency * settings.OscilloscopeTimeRange);
                         var nPointsRest = (int)(settings.SamplingFrequency - nPointsToConsider);
@@ -412,7 +400,10 @@ namespace FET_Characterization
                             foreach (var item in toPlot)
                                 FETTimeTraceDataList.AddLast(item);
 
-                            var restData = new string[settings.SamplingFrequency - nPointsToConsider];
+                            var restData = new string[nPointsRest];
+                            Array.Copy(data, nPointsToConsider, restData, 0, nPointsRest);
+
+                            timeTraceDataQueue.Enqueue(restData);
                         }
 
                         Dispatcher.InvokeAsync(new Action(() =>
@@ -437,6 +428,11 @@ namespace FET_Characterization
             {
                 var splitPointsData = e.Data.Substring(2).Split(delim, StringSplitOptions.RemoveEmptyEntries);
                 timeTraceDataQueue.Enqueue(splitPointsData);
+
+                var ts = new ThreadStart(AddTimeTraceDataToPlotContiniously);
+                var th = new Thread(ts);
+
+                th.Start();
             }
         }
 
@@ -460,7 +456,7 @@ namespace FET_Characterization
 
         #endregion
 
-        private void experimentStatus(object sender, StatusEventArgs e)
+        void experimentStatus(object sender, StatusEventArgs e)
         {
             Dispatcher.InvokeAsync(new Action(() =>
             {
