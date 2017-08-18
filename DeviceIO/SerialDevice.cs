@@ -67,97 +67,121 @@ namespace DeviceIO
             Dispose();
         }
 
+        private static object _getDataLock = new object();
         private int _getData(ref byte[] bytes, int offset, int count)
         {
-            int readBytes = 0;
-            if (count > 0)
-                readBytes = _COMPort.Read(bytes, offset, count);
-
-            return readBytes;
-        }
-
-        private void getSerialDataContinious()
-        {
-            while (_communicatyionIsActive)
+            lock (_getDataLock)
             {
-                _timeCounter.Restart();
+                int readBytes = 0;
+                if (count > 0)
+                    readBytes = _COMPort.Read(bytes, offset, count);
 
-                _dataCount = _COMPort.BytesToRead;
-                var buffer = new byte[_dataCount];
-                var readBytes = _getData(ref buffer, 0, _dataCount);
-
-                if (readBytes > 0)
-                {
-                    _dataReading += Encoding.ASCII.GetString(buffer);
-                    if (_dataReading.Contains(_COMPort.NewLine))
-                    {
-                        _dataQueue.Enqueue(_dataReading.TrimEnd("\r\n".ToCharArray()));
-                        _dataReading = string.Empty;
-                    }
-                }
-
-                _PacketsRate = ((_PacketsRate + readBytes) / 2);
-
-                var toSleep = (int)_timeCounter.ElapsedMilliseconds;
-                if ((double)(readBytes + _COMPort.BytesToRead) / 2.0 <= _PacketsRate)
-                    if (toSleep > 0)
-                        Thread.Sleep(toSleep > _freqCriticalLimit ? _freqCriticalLimit : toSleep);
+                return readBytes;
             }
         }
 
+        private static object getSerialDataContiniousLock = new object();
+        private void getSerialDataContinious()
+        {
+            lock (getSerialDataContiniousLock)
+            {
+                while (_communicatyionIsActive)
+                {
+                    _timeCounter.Restart();
+
+                    _dataCount = _COMPort.BytesToRead;
+                    var buffer = new byte[_dataCount];
+                    var readBytes = _getData(ref buffer, 0, _dataCount);
+
+                    if (readBytes > 0)
+                    {
+                        _dataReading += Encoding.ASCII.GetString(buffer);
+                        if (_dataReading.Contains(_COMPort.NewLine))
+                        {
+                            _dataQueue.Enqueue(_dataReading.TrimEnd("\r\n".ToCharArray()));
+                            _dataReading = string.Empty;
+                        }
+                    }
+
+                    _PacketsRate = ((_PacketsRate + readBytes) / 2);
+
+                    var toSleep = (int)_timeCounter.ElapsedMilliseconds;
+                    if ((double)(readBytes + _COMPort.BytesToRead) / 2.0 <= _PacketsRate)
+                        if (toSleep > 0)
+                            Thread.Sleep(toSleep > _freqCriticalLimit ? _freqCriticalLimit : toSleep);
+                }
+            }
+        }
+
+        private static object sendCommandRequestLock = new object();
         public void SendCommandRequest(string request)
         {
-            var temp = string.Empty;
-            while (!_dataQueue.IsEmpty)
-                _dataQueue.TryDequeue(out temp);
+            lock (sendCommandRequestLock)
+            {
+                var temp = string.Empty;
+                while (!_dataQueue.IsEmpty)
+                    _dataQueue.TryDequeue(out temp);
 
-            request = request.EndsWith("\n") ? request : request + "\n";
+                request = request.EndsWith("\n") ? request : request + "\n";
 
-            var strBytes = Encoding.ASCII.GetBytes(request);
-            _COMPort.Write(strBytes, 0, strBytes.Length);
+                var strBytes = Encoding.ASCII.GetBytes(request);
+                _COMPort.Write(strBytes, 0, strBytes.Length);
+            }
         }
 
+        private static object receiveDeviceAnswerLock = new object();
         public string ReceiveDeviceAnswer()
         {
-            while (_dataQueue.Count == 0) ;
+            lock (receiveDeviceAnswerLock)
+            {
+                while (_dataQueue.Count == 0) ;
 
-            string result;
-            bool success = _dataQueue.TryDequeue(out result);
-            if (success)
-                return result;
-            else
-                throw new Exception("Unsuccessfull data reading!");
+                string result;
+                bool success = _dataQueue.TryDequeue(out result);
+                if (success)
+                    return result;
+                else
+                    throw new Exception("Unsuccessfull data reading!");
+            }
         }
 
+        private static object requestQueryLock = new object();
         public string RequestQuery(string query)
         {
-            string temp;
-            while (_dataQueue.Count > 0)
-                _dataQueue.TryDequeue(out temp);
+            lock (requestQueryLock)
+            {
+                string temp;
+                while (_dataQueue.Count > 0)
+                    _dataQueue.TryDequeue(out temp);
 
-            SendCommandRequest(query);
-            return ReceiveDeviceAnswer();
+                SendCommandRequest(query);
+                return ReceiveDeviceAnswer();
+            }
         }
 
+        private static object disposeLock = new object();
         public void Dispose()
         {
-            if (_serialThread != null)
+            lock (disposeLock)
             {
-                _communicatyionIsActive = false;
-                while (_serialThread.IsAlive) ;
-
-                if (_COMPort != null)
+                if (_serialThread != null)
                 {
-                    if (_COMPort.IsOpen)
-                    {
-                        _COMPort.Close();
-                        _COMPort.Dispose();
-                    }
-                    else
-                        _COMPort.Dispose();
-                }
+                    _communicatyionIsActive = false;
+                    while (_serialThread.IsAlive) ;
 
-                GC.Collect();
+                    if (_COMPort != null)
+                    {
+                        if (_COMPort.IsOpen)
+                        {
+                            _COMPort.Close();
+                            _COMPort.Dispose();
+                        }
+                        else
+                            _COMPort.Dispose();
+                    }
+
+                    GC.Collect();
+                }
             }
         }
     }
