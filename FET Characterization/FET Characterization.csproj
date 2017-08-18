@@ -71,7 +71,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Experiments\DataHandling\NoiseMeasurementDataLog.cs" />
+    <Compile Include="Experiments\DataHandling\SingleNoiseMeasurement.cs" />
     <Compile Include="Experiments\FET_IV_Experiment.cs" />
+    <Compile Include="Experiments\FET_Noise_Experiment.cs" />
     <Compile Include="Experiments\FET_Transfer_Experiment.cs" />
     <Compile Include="Experiments\ParameterConverters.cs" />
     <Compile Include="ViewModels\FET_IVModel.cs" />
@@ -173,6 +176,10 @@
     <ProjectReference Include="..\SourceMeterUnit\SourceMeterUnit.csproj">
       <Project>{ce69e0ee-2e6c-4f3d-b29a-a9a82fb13d00}</Project>
       <Name>SourceMeterUnit</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\SpectralAnalysis\SpectralAnalysis.csproj">
+      <Project>{1fcbc722-6805-4cab-b58b-1ad1fc8f3b55}</Project>
+      <Name>SpectralAnalysis</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup />

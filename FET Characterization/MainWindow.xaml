@@ -25,10 +25,10 @@
     		<TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" Text="Progress:" VerticalAlignment="Center" Grid.Row="1" Margin="0,0,20,0"/>
             <TextBlock x:Name="expStatus" HorizontalAlignment="Left" TextWrapping="Wrap" Text="Ready to the action." VerticalAlignment="Center" Grid.Column="1" Margin="2.5"/>
         </Grid>
-        <Menu x:Name="menuMain" Margin="0,0,0,-2" Height="20">
+        <Menu x:Name="menuMain" Height="20">
             <MenuItem x:Name="menuSelectExperimentType" Header="_Experiment type">
                 <MenuItem x:Name="expIV" Header="_I-V Characterization" HorizontalAlignment="Left" Click="menuExpIV_Click" />
-                <MenuItem x:Name="expNoiseDefR" Header="_Noise Characterization" HorizontalAlignment="Left" />
+                <MenuItem x:Name="expNoiseDefR" Header="_Noise Characterization" HorizontalAlignment="Left" Click="menuExpNoise_Click" />
             </MenuItem>
         </Menu>
     </Grid>

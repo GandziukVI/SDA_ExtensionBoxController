@@ -49,7 +49,14 @@ namespace FET_Characterization
             typeof(ExtendedDoubleUpDown),
             MultiplierMetadata);
 
-        static FrameworkPropertyMetadata RealValueMetadata = new FrameworkPropertyMetadata(double.NaN, flags, new PropertyChangedCallback(onRealValuePropertyChanged), new CoerceValueCallback(CoerseRealValue));
+        //static FrameworkPropertyMetadata MultiplierIndexMetadata = new FrameworkPropertyMetadata(1, flags, new PropertyChangedCallback(onMultiplierIndexPropertyChanged), new CoerceValueCallback(CoerceMultiplierIndex));
+        //public static readonly DependencyProperty MultiplierIndexProperty = DependencyProperty.Register(
+        //    "MultiplierIndex",
+        //    typeof(Int32),
+        //    typeof(ExtendedDoubleUpDown),
+        //    MultiplierIndexMetadata);
+
+        static FrameworkPropertyMetadata RealValueMetadata = new FrameworkPropertyMetadata(double.NaN, flags, new PropertyChangedCallback(onRealValuePropertyChanged), new CoerceValueCallback(CoerceRealValue));
         public static readonly DependencyProperty RealValueProperty = DependencyProperty.Register(
             "RealValue",
             typeof(Double),
@@ -116,6 +123,19 @@ namespace FET_Characterization
             control.Multiplier = (double)e.NewValue;
             onRealValuePropertyChanged(sender, e);
         }
+        
+        //static void onMultiplierIndexPropertyChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e)
+        //{
+        //    var control = sender as ExtendedDoubleUpDown;
+        //    control.MultiplierIndex = (Int32)e.NewValue;
+        //    control.DataMultiplier.SelectedIndex = (Int32)e.NewValue;
+        //    onMultiplierPropertyChanged(sender, e);
+        //}
+
+        static object CoerceMultiplierIndex(DependencyObject sender, object value)
+        {
+            return value;
+        }
 
         static void onRealValuePropertyChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e)
         {
@@ -123,7 +143,7 @@ namespace FET_Characterization
             control.RealValue = control.Value * control.Multiplier;
         }
 
-        static object CoerseRealValue(DependencyObject sender, object value)
+        static object CoerceRealValue(DependencyObject sender, object value)
         {
             return value;
         }
@@ -156,6 +176,12 @@ namespace FET_Characterization
             get { return (double)GetValue(MultiplierProperty); }
             set { SetValue(MultiplierProperty, value); }
         }
+
+        //public Int32 MultiplierIndex
+        //{
+        //    get { return Convert.ToInt32(GetValue(MultiplierIndexProperty)); }
+        //    set { SetValue(MultiplierIndexProperty, value); }
+        //}
 
         public double RealValue
         {
