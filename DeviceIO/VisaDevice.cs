@@ -21,33 +21,49 @@ namespace DeviceIO
             mbSession.Timeout = int.MaxValue;
         }
 
+        private static object sendCommandRequestLocker = new object();
         public void SendCommandRequest(string request)
         {
-            var _Request = request.EndsWith("\n") ?
-                    Encoding.ASCII.GetBytes(request) :
-                    Encoding.ASCII.GetBytes(request + "\n");
+            lock (sendCommandRequestLocker)
+            {
+                var _Request = request.EndsWith("\n") ?
+                        Encoding.ASCII.GetBytes(request) :
+                        Encoding.ASCII.GetBytes(request + "\n");
 
-            mbSession.Write(_Request);
+                mbSession.Write(_Request);
+            }
         }
 
+        private static object receiveDeviceAnswerLocker = new object();
         public string ReceiveDeviceAnswer()
         {
-            return mbSession.ReadString().TrimEnd("\r\n".ToCharArray());
+            lock (receiveDeviceAnswerLocker)
+            {
+                return mbSession.ReadString().TrimEnd("\r\n".ToCharArray());
+            }
         }
 
+        private static object requestQueryLocker = new object();
         public string RequestQuery(string query)
         {
-            var _Query = query.EndsWith("\n") ? Encoding.ASCII.GetBytes(query) : Encoding.ASCII.GetBytes(query + "\n");
+            lock (requestQueryLocker)
+            {
+                var _Query = query.EndsWith("\n") ? Encoding.ASCII.GetBytes(query) : Encoding.ASCII.GetBytes(query + "\n");
 
-            return Encoding.ASCII.GetString(mbSession.Query(_Query)).TrimEnd("\r\n".ToCharArray());
+                return Encoding.ASCII.GetString(mbSession.Query(_Query)).TrimEnd("\r\n".ToCharArray());
+            }
         }
 
+        private static object disposeLocker = new object();
         public void Dispose()
         {
-            if (mbSession != null)
-                mbSession.Dispose();
+            lock (disposeLocker)
+            {
+                if (mbSession != null)
+                    mbSession.Dispose();
 
-            GC.SuppressFinalize(this);
+                GC.Collect();
+            }
         }
     }
 }
