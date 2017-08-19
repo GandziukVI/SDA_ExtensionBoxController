@@ -463,7 +463,7 @@ namespace FET_Characterization.Experiments
                     break;
                 for (int j = 0; j < innerLoopCollection.Length;j++)
                 {
-                    var innerLoopVoltage = innerLoopCollection[i];
+                    var innerLoopVoltage = innerLoopCollection[j];
                     if (!IsRunning)
                         break;
 
