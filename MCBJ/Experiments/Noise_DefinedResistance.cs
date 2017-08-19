@@ -703,7 +703,7 @@ namespace MCBJ.Experiments
                     break;
                 for (int j = 0; j < experimentSettings.ScanningVoltageCollection.Length; j++)
                 {
-                    var voltage = experimentSettings.ScanningVoltageCollection[i];
+                    var voltage = experimentSettings.ScanningVoltageCollection[j];
                     if (!IsRunning)
                         break;
 
