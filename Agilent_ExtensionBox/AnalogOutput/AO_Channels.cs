@@ -109,10 +109,10 @@ namespace Agilent_ExtensionBox.IO
 
         public void DisableAllVoltages()
         {
-            foreach (var ch in _channels)
+            for (int i = 0; i < _channels.Length; i++)
             {
-                ch.Voltage = 0;
-                ch.Enabled = false;
+                _channels[i].Voltage = 0;
+                _channels[i].Enabled = false;
             }
         }
     }

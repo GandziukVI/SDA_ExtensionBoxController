@@ -236,9 +236,9 @@ namespace MCBJ
                 .Select(v => Array.ConvertAll(v, x => double.Parse(x, NumberFormatInfo.InvariantInfo)))
                 .Select(v => new Point(v[0], v[1])).ToArray();
 
-            var toPlot = (from item in D3Helper.PointSelector.SelectNPointsPerDecade(ref dataPoints, 100)
-                          where item.Y > 0
-                          select item).ToArray();
+            var toPlot = from item in D3Helper.PointSelector.SelectNPointsPerDecade(ref dataPoints, 100)
+                         where item.Y > 0
+                         select item;
 
             foreach (var item in toPlot)
                 dList.AddLast(item);

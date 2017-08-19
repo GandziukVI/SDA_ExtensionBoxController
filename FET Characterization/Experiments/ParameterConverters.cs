@@ -264,8 +264,8 @@ namespace FET_Characterization.Experiments
             var sb = new StringBuilder();
             sb.Append("[ ");
 
-            foreach (var item in values)
-                sb.AppendFormat("{0}, ", item.ToString("0.000", NumberFormatInfo.InvariantInfo));
+            for (int i = 0; i < values.Length; i++ )
+                sb.AppendFormat("{0}, ", values[i].ToString("0.000", NumberFormatInfo.InvariantInfo));
 
             sb.Append("]");
 
@@ -306,8 +306,10 @@ namespace FET_Characterization.Experiments
             var numbers = new List<double>();
             double tmp;
 
-            foreach (string s in mathEquation.Split(_allOperators))
+            var eqnSplit = mathEquation.Split(_allOperators);
+            for (int i = 0; i < eqnSplit.Length; i++)
             {
+                var s = eqnSplit[i];
                 if (s != string.Empty)
                 {
                     if (double.TryParse(s, out tmp))

@@ -23,8 +23,11 @@ namespace SourceMeterUnit
         {
             var sb = new StringBuilder();
 
-            foreach (var ivPoint in ivData)
+            for (int i = 0; i < ivData.Length; i++)
+            {
+                var ivPoint = ivData[i];
                 sb.AppendFormat("{0}\t{1}\t{2}\r\n", ivPoint.Time, ivPoint.Voltage, ivPoint.Current);
+            }
 
             return sb.ToString();
         }

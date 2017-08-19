@@ -456,12 +456,14 @@ namespace FET_Characterization.Experiments
                 innerLoopCollection = new double[] { 0.0 };
             }
 
-            foreach (var outerLoopVoltage in outerLoopCollection)
+            for (int i = 0; i < outerLoopCollection.Length; i++)
             {
+                var outerLoopVoltage = outerLoopCollection[i];
                 if (!IsRunning)
                     break;
-                foreach (var innerLoopVoltage in innerLoopCollection)
+                for (int j = 0; j < innerLoopCollection.Length;j++)
                 {
+                    var innerLoopVoltage = innerLoopCollection[i];
                     if (!IsRunning)
                         break;
 

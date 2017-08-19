@@ -83,10 +83,10 @@ namespace NoiseMeasurement
             dList.Clear();
 
             var data = (string)DataString;
-            var query = (from dataPoint in data.Split("\r\n".ToCharArray(), StringSplitOptions.RemoveEmptyEntries)
-                         select Array.ConvertAll(dataPoint.Split(new char[] { '\t' }, StringSplitOptions.RemoveEmptyEntries), element => double.Parse(element, NumberFormatInfo.InvariantInfo))).ToArray();
+            var query = from dataPoint in data.Split("\r\n".ToCharArray(), StringSplitOptions.RemoveEmptyEntries)
+                        select Array.ConvertAll(dataPoint.Split(new char[] { '\t' }, StringSplitOptions.RemoveEmptyEntries), element => double.Parse(element, NumberFormatInfo.InvariantInfo));
 
-            var points = new Point[query.Length];
+            var points = new Point[query.Count()];
 
             var counter = 0;
             foreach (var item in query)
@@ -96,8 +96,8 @@ namespace NoiseMeasurement
             }
 
             var toPlot = D3Helper.PointSelector.SelectNPointsPerDecade(ref points, 100);
-            foreach (var item in toPlot)
-                dList.AddLast(item);
+            for (int i = 0; i < toPlot.Length; i++)
+                dList.AddLast(toPlot[i]);
 
 
             Dispatcher.InvokeAsync(new Action(() =>

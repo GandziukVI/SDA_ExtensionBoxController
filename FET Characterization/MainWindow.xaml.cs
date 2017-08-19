@@ -115,7 +115,7 @@ namespace FET_Characterization
             var exp = (measurementInterface as FET_Noise);
             var settings = exp.Settings;
 
-            switch(e.PropertyName)
+            switch (e.PropertyName)
             {
                 case "OscilloscopeVoltageRange":
                     {
@@ -333,9 +333,9 @@ namespace FET_Characterization
                 .Select(v => Array.ConvertAll(v, x => double.Parse(x, NumberFormatInfo.InvariantInfo)))
                 .Select(v => new Point(v[0], v[1])).ToArray();
 
-            var toPlot = (from item in D3Helper.PointSelector.SelectNPointsPerDecade(ref dataPoints, 100)
-                          where item.Y > 0
-                          select item).ToArray();
+            var toPlot = from item in D3Helper.PointSelector.SelectNPointsPerDecade(ref dataPoints, 100)
+                         where item.Y > 0
+                         select item;
 
             foreach (var item in toPlot)
                 FETNoiseDataList.AddLast(item);

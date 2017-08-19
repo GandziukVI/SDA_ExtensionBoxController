@@ -132,15 +132,17 @@ namespace SpectralAnalysis
                     noisePSD = new Point[autoPSDLowFreq.Length + autoPSDHighFreq.Length];
 
                 var counter = 0;
-                foreach (var item in autoPSDLowFreq)
+                for (int i = 0; i < autoPSDLowFreq.Length; i++)
                 {
+                    var item = autoPSDLowFreq[i];
                     noisePSD[counter].X = item.X;
                     noisePSD[counter].Y += item.Y;
 
                     ++counter;
                 }
-                foreach (var item in autoPSDHighFreq)
+                for (int i = counter; i < autoPSDHighFreq.Length; i++ )
                 {
+                    var item = autoPSDHighFreq[i];
                     noisePSD[counter].X = item.X;
                     noisePSD[counter].Y += item.Y / ((double)(highFreqPeriod * highFreqPeriod));
 

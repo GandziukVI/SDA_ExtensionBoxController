@@ -45,6 +45,8 @@ namespace Agilent_ExtensionBox
 
         #region Agilent device initialization and closure
 
+        private static object initLock = new object();
+
         /// <summary>
         /// Initializes the Agilent instrument
         /// </summary>
@@ -52,46 +54,51 @@ namespace Agilent_ExtensionBox
         /// <returns></returns>
         public bool Init(string resourceName)
         {
-            _ResourceName = resourceName;
-
-            if (IsInistialized)
-                return true;
-
-            try
+            lock (initLock)
             {
-                if (_Driver == null)
-                    _Driver = new AgilentU254x();
-                else
+                _ResourceName = resourceName;
+
+                if (IsInistialized)
+                    return true;
+
+                try
                 {
-                    Close();
-                    _Driver = new AgilentU254x();
-                }
+                    if (_Driver == null)
+                        _Driver = new AgilentU254x();
+                    else
+                    {
+                        Close();
+                        _Driver = new AgilentU254x();
+                    }
 
-                _Driver.Initialize(resourceName, false, true, Options);
-                _Driver.DriverOperation.QueryInstrumentStatus = false;
-                _Driver.System.TimeoutMilliseconds = 5000;
+                    _Driver.Initialize(resourceName, false, true, Options);
+                    _Driver.DriverOperation.QueryInstrumentStatus = false;
+                    _Driver.System.TimeoutMilliseconds = 5000;
 
-                var _ChannelArray = new AgilentU254xDigitalChannel[] {
+                    var _ChannelArray = new AgilentU254xDigitalChannel[] {
                     _Driver.Digital.Channels.get_Item("DIOA"),
                     _Driver.Digital.Channels.get_Item("DIOB"),
                     _Driver.Digital.Channels.get_Item("DIOC"),
                     _Driver.Digital.Channels.get_Item("DIOD") };
 
-                foreach (var ch in _ChannelArray)
-                    if (ch.Direction != AgilentU254xDigitalChannelDirectionEnum.AgilentU254xDigitalChannelDirectionOut)
-                        ch.Direction = AgilentU254xDigitalChannelDirectionEnum.AgilentU254xDigitalChannelDirectionOut;
+                    for (int i = 0; i < _ChannelArray.Length; i++)
+                        if (_ChannelArray[i].Direction != AgilentU254xDigitalChannelDirectionEnum.AgilentU254xDigitalChannelDirectionOut)
+                            _ChannelArray[i].Direction = AgilentU254xDigitalChannelDirectionEnum.AgilentU254xDigitalChannelDirectionOut;
 
-                Reset_Digital();
+                    Reset_Digital();
 
-                _AI_ChannelCollection = new AI_Channels(_Driver);
-                _AO_ChannelCollection = new AO_Channels(_Driver);
+                    _AI_ChannelCollection = new AI_Channels(_Driver);
+                    _AO_ChannelCollection = new AO_Channels(_Driver);
 
-                _IsInitialized = true;
+                    _IsInitialized = true;
 
-                return true;
+                    return true;
+                }
+                catch { return false; }
             }
-            catch { return false; }
         }
+
+        private static object closeLock = new object();
 
         /// <summary>
         /// Closes the Agilent instrument driver
@@ -99,83 +106,100 @@ namespace Agilent_ExtensionBox
         /// <returns></returns>
         public bool Close()
         {
-            if (!IsInistialized)
-                return true;
-
-            try
+            lock (closeLock)
             {
-                if (_AcquisitionInProgress == true)
-                    _Driver.AnalogIn.Acquisition.Stop();
+                if (!IsInistialized)
+                    return true;
 
-                _Driver.Close();
-                _IsInitialized = false;
-                return true;
+                try
+                {
+                    if (_AcquisitionInProgress == true)
+                        _Driver.AnalogIn.Acquisition.Stop();
+
+                    _Driver.Close();
+                    _IsInitialized = false;
+                    return true;
+                }
+                catch { return false; }
             }
-            catch { return false; }
         }
 
         #endregion
 
+        private static object resetDigitalLock = new object();
         public void Reset_Digital()
         {
-            _Driver.Digital.WriteByte("DIOA", 0x00);
-            _Driver.Digital.WriteByte("DIOB", 0x00);
-            _Driver.Digital.WriteByte("DIOC", 0x00);
-            _Driver.Digital.WriteByte("DIOD", 0x00);
+            lock (resetDigitalLock)
+            {
+                _Driver.Digital.WriteByte("DIOA", 0x00);
+                _Driver.Digital.WriteByte("DIOB", 0x00);
+                _Driver.Digital.WriteByte("DIOC", 0x00);
+                _Driver.Digital.WriteByte("DIOD", 0x00);
+            }
         }
 
         #region Acquisition control
 
+        private static object voltageMeasurementAllChannelsLock = new object();
         public double[] VoltageMeasurement_AllChannels(int AveragingNumber)
         {
-            var result = new double[] { 0.0, 0.0, 0.0, 0.0 };
-            var singleReading = new double[] { 0.0, 0.0, 0.0, 0.0 };
-
-            for (int i = 0; i < AveragingNumber; i++)
+            lock (voltageMeasurementAllChannelsLock)
             {
-                try
-                {
-                    _Driver.AnalogIn.Measurement.ReadMultiple("AIn1,AIn2,AIn3,AIn4", ref singleReading);
+                var result = new double[] { 0.0, 0.0, 0.0, 0.0 };
+                var singleReading = new double[] { 0.0, 0.0, 0.0, 0.0 };
 
-                    for (int j = 0; j < result.Length; j++)
-                        result[j] += singleReading[j];
-                }
-                catch
+                for (int i = 0; i < AveragingNumber; i++)
                 {
-                    if (i >= 0)
-                        --i;
+                    try
+                    {
+                        _Driver.AnalogIn.Measurement.ReadMultiple("AIn1,AIn2,AIn3,AIn4", ref singleReading);
+
+                        for (int j = 0; j < result.Length; j++)
+                            result[j] += singleReading[j];
+                    }
+                    catch
+                    {
+                        if (i >= 0)
+                            --i;
+                    }
                 }
+
+                for (int i = 0; i < result.Length; i++)
+                    result[i] /= AveragingNumber;
+
+                return result;
             }
-
-            for (int i = 0; i < result.Length; i++)
-                result[i] /= AveragingNumber;
-
-            return result;
         }
 
-
-
+        private static object disableAllChannelsForContiniousAcquisitionLock = new object();
         private void _DisableAllChannelsForContiniousAcquisition()
         {
-            _AI_ChannelCollection[AnalogInChannelsEnum.AIn1].Enabled = false;
-            _AI_ChannelCollection[AnalogInChannelsEnum.AIn2].Enabled = false;
-            _AI_ChannelCollection[AnalogInChannelsEnum.AIn3].Enabled = false;
-            _AI_ChannelCollection[AnalogInChannelsEnum.AIn4].Enabled = false;
+            lock (disableAllChannelsForContiniousAcquisitionLock)
+            {
+                _AI_ChannelCollection[AnalogInChannelsEnum.AIn1].Enabled = false;
+                _AI_ChannelCollection[AnalogInChannelsEnum.AIn2].Enabled = false;
+                _AI_ChannelCollection[AnalogInChannelsEnum.AIn3].Enabled = false;
+                _AI_ChannelCollection[AnalogInChannelsEnum.AIn4].Enabled = false;
+            }
         }
 
+        private static object configureAI_ChannelsLock = new object();
         public void ConfigureAI_Channels(params AI_ChannelConfig[] ChannelsConfig)
         {
-            _DisableAllChannelsForContiniousAcquisition();
-
-            if (ChannelsConfig.Length < 1 || ChannelsConfig.Length > 4)
-                throw new ArgumentException("The requested number of channels is not supported");
-
-            foreach (var item in ChannelsConfig)
+            lock (configureAI_ChannelsLock)
             {
-                _AI_ChannelCollection[item.ChannelName].Enabled = item.Enabled;
-                _AI_ChannelCollection[item.ChannelName].Mode = item.Mode;
-                _AI_ChannelCollection[item.ChannelName].Polarity = item.Polarity;
-                _AI_ChannelCollection[item.ChannelName].Range = item.Range;
+                _DisableAllChannelsForContiniousAcquisition();
+
+                if (ChannelsConfig.Length < 1 || ChannelsConfig.Length > 4)
+                    throw new ArgumentException("The requested number of channels is not supported");
+
+                for (int i = 0; i < ChannelsConfig.Length; i++)
+                {
+                    _AI_ChannelCollection[ChannelsConfig[i].ChannelName].Enabled = ChannelsConfig[i].Enabled;
+                    _AI_ChannelCollection[ChannelsConfig[i].ChannelName].Mode = ChannelsConfig[i].Mode;
+                    _AI_ChannelCollection[ChannelsConfig[i].ChannelName].Polarity = ChannelsConfig[i].Polarity;
+                    _AI_ChannelCollection[ChannelsConfig[i].ChannelName].Range = ChannelsConfig[i].Range;
+                }
             }
         }
 
@@ -188,51 +212,57 @@ namespace Agilent_ExtensionBox
 
         public delegate void CallAsync(ref short[] data);
 
+        private static object startAnalogAcquisitionLock = new object();
         public void StartAnalogAcquisition(int SampleRate)
         {
-            short[] results = { 0 };
-
-            _Driver.AnalogIn.MultiScan.Configure(SampleRate, -1);
-
-            _Driver.AnalogIn.Acquisition.BufferSize = SampleRate;
-            _Driver.AnalogIn.Acquisition.Start();
-
-            _router.Frequency = SampleRate;
-
-            foreach (var item in _AI_ChannelCollection)
+            lock (startAnalogAcquisitionLock)
             {
-                if (item.IsEnabled)
-                {
-                    item.SampleRate = SampleRate;
-                    _router.Subscribe(item);
-                }
-            }
+                short[] results = { 0 };
 
-            while (_AcquisitionInProgress)
-            {
-                while (true)
+                _Driver.AnalogIn.MultiScan.Configure(SampleRate, -1);
+
+                _Driver.AnalogIn.Acquisition.BufferSize = SampleRate;
+                _Driver.AnalogIn.Acquisition.Start();
+
+                _router.Frequency = SampleRate;
+
+                foreach (var item in _AI_ChannelCollection)
                 {
-                    if (_AcquisitionInProgress == false)
-                        break;
-                    try
+                    if (item.IsEnabled)
                     {
-                        var dataReady = (_Driver.AnalogIn.Acquisition.BufferStatus == AgilentU254xBufferStatusEnum.AgilentU254xBufferStatusDataReady);
-                        if (dataReady == true)
-                            break;
+                        item.SampleRate = SampleRate;
+                        _router.Subscribe(item);
                     }
-                    catch { return; }
                 }
 
-                _Driver.AnalogIn.Acquisition.Fetch(ref results);
-                if (results.LongLength > 0)
-                    _router.AddDataInvoke(ref results);
-            }
+                while (_AcquisitionInProgress)
+                {
+                    while (true)
+                    {
+                        if (_AcquisitionInProgress == false)
+                            break;
+                        try
+                        {
+                            // See what happens here!!!
+                            var currentDriverState = _Driver.System.DirectIO.IO.LockState;
+                            var dataReady = (_Driver.AnalogIn.Acquisition.BufferStatus == AgilentU254xBufferStatusEnum.AgilentU254xBufferStatusDataReady);
+                            if (dataReady == true)
+                                break;
+                        }
+                        catch { return; }
+                    }
 
-            try
-            {
-                _Driver.AnalogIn.Acquisition.Stop();
+                    _Driver.AnalogIn.Acquisition.Fetch(ref results);
+                    if (results.LongLength > 0)
+                        _router.AddDataInvoke(ref results);
+                }
+
+                try
+                {
+                    _Driver.AnalogIn.Acquisition.Stop();
+                }
+                catch { return; }
             }
-            catch { return; }
         }
 
         public void StopAnalogAcquisition()

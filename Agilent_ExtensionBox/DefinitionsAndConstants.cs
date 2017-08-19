@@ -71,8 +71,10 @@ namespace Agilent_ExtensionBox
             var closest = arr[arr.Length - 1];
             var minDifference = double.MaxValue;
 
-            foreach (var element in arr)
+            for (int i = 0; i < arr.Length; i++ )
             {
+                var element = arr[i];
+
                 var difference = Math.Abs(element - val);
                 if (minDifference > difference)
                 {
@@ -91,8 +93,10 @@ namespace Agilent_ExtensionBox
             var closest = arr[arr.Length - 1];
             var minDifference = int.MaxValue;
 
-            foreach (var element in arr)
+            for (int i = 0; i < arr.Length; i++)
             {
+                var element = arr[i];
+
                 var difference = Math.Abs(element - val);
                 if (minDifference > difference)
                 {

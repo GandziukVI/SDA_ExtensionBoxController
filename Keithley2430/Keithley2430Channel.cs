@@ -48,7 +48,7 @@ namespace Keithley2430Namespace
                                      {
                                          limit,
                                          distance = limit - Math.Abs(compliance)
-                                     }).OrderBy(p => p.distance).First().limit;
+                                     }).OrderBy(p => p.distance).First().limit;                        
 
                         if (query != _currentVoltageCompliance)
                         {

@@ -59,8 +59,8 @@ namespace MCBJ.Experiments
             var sb = new StringBuilder();
             sb.Append("[ ");
 
-            foreach (var item in values)
-                sb.AppendFormat("{0}, ", item.ToString("0.000", NumberFormatInfo.InvariantInfo));
+            for (int i = 0; i < values.Length; i++)                            
+                sb.AppendFormat("{0}, ", values[i].ToString("0.000", NumberFormatInfo.InvariantInfo));            
 
             sb.Append("]");
 

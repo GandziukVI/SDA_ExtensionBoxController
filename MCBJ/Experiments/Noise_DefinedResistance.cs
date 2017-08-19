@@ -696,12 +696,14 @@ namespace MCBJ.Experiments
 
             var resistanceStabilizationState = false;
 
-            foreach (var conductance in experimentSettings.SetConductanceCollection)
+            for (int i = 0; i < experimentSettings.SetConductanceCollection.Length; i++)
             {
+                var conductance = experimentSettings.SetConductanceCollection[i];
                 if (!IsRunning)
                     break;
-                foreach (var voltage in experimentSettings.ScanningVoltageCollection)
+                for (int j = 0; j < experimentSettings.ScanningVoltageCollection.Length; j++)
                 {
+                    var voltage = experimentSettings.ScanningVoltageCollection[i];
                     if (!IsRunning)
                         break;
 
