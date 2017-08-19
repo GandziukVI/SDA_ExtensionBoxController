@@ -244,7 +244,7 @@ namespace Agilent_ExtensionBox
                         try
                         {
                             // See what happens here!!!
-                            var currentDriverState = _Driver.System.DirectIO.IO.LockState;
+                            // var currentDriverState = _Driver.System.DirectIO.IO.LockState;
                             var dataReady = (_Driver.AnalogIn.Acquisition.BufferStatus == AgilentU254xBufferStatusEnum.AgilentU254xBufferStatusDataReady);
                             if (dataReady == true)
                                 break;

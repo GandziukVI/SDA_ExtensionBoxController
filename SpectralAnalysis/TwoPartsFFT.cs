@@ -140,7 +140,7 @@ namespace SpectralAnalysis
 
                     ++counter;
                 }
-                for (int i = counter; i < autoPSDHighFreq.Length; i++ )
+                for (int i = 0; i < autoPSDHighFreq.Length; i++ )
                 {
                     var item = autoPSDHighFreq[i];
                     noisePSD[counter].X = item.X;
@@ -158,16 +158,16 @@ namespace SpectralAnalysis
         {
             if (useInterpolation == false)
             {
-                var query = from spectrumPoint in spectrumData
+                var query = (from spectrumPoint in spectrumData
                             join amplifierNoisePoint in amplifierNoise on spectrumPoint.X equals amplifierNoisePoint.X
                             join frequencyResponcePoint in frequencyResponce on spectrumPoint.X equals frequencyResponcePoint.X
-                            select new Point(spectrumPoint.X, (spectrumPoint.Y - amplifierNoisePoint.Y) / (frequencyResponcePoint.Y * frequencyResponcePoint.Y));
+                            select new Point(spectrumPoint.X, (spectrumPoint.Y - amplifierNoisePoint.Y) / (frequencyResponcePoint.Y * frequencyResponcePoint.Y))).ToArray();
 
-                if (query.Count() != spectrumData.Length)
+                if (query.Length != spectrumData.Length)
                     throw new Exception("Noise spectrum and calibration data don't have the same format! Please check your measurement settings.");
 
 
-                return query.ToArray();
+                return query;
             }
             else
             {
