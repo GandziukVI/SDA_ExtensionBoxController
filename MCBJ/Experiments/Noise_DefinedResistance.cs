@@ -618,11 +618,14 @@ namespace MCBJ.Experiments
 
                         if (dataReadingSuccess)
                         {
-                            var query = from item in timeTrace
-                                        select string.Format("{0}\t{1}", item.X.ToString(NumberFormatInfo.InvariantInfo), (item.Y / kAmpl).ToString(NumberFormatInfo.InvariantInfo));
+                            if (experimentSettings.RecordTimeTraces == true)
+                            {
+                                var query = from item in timeTrace
+                                            select string.Format("{0}\t{1}", item.X.ToString(NumberFormatInfo.InvariantInfo), (item.Y / kAmpl).ToString(NumberFormatInfo.InvariantInfo));
 
-                            // First sending the time trace data before FFT
-                            onDataArrived(new ExpDataArrivedEventArgs(string.Format("TT{0}", string.Join("\r\n", query))));
+                                // First sending the time trace data before FFT
+                                onDataArrived(new ExpDataArrivedEventArgs(string.Format("TT{0}", string.Join("\r\n", query))));
+                            }
 
                             var TTVoltageValues = (from item in timeTrace
                                                    select item.Y).ToArray();
