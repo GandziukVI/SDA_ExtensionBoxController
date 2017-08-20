@@ -22,6 +22,7 @@ using System.IO;
 
 using MCBJ.Experiments.DataHandling;
 using IneltaMotorPotentiometer;
+using System.IO.MemoryMappedFiles;
 
 namespace MCBJ.Experiments
 {
@@ -519,7 +520,7 @@ namespace MCBJ.Experiments
                         motor.Enabled = false;
                         return false;
                     }
-                    else if(scaledConductance > setCond && motorPosition == maxPos)
+                    else if (scaledConductance > setCond && motorPosition == maxPos)
                     {
                         onStatusChanged(new StatusEventArgs("Unable to reach desired conductance."));
 
@@ -622,11 +623,19 @@ namespace MCBJ.Experiments
                             {
                                 try
                                 {
-                                    var query = from item in timeTrace
-                                                select string.Format("{0}\t{1}", item.X.ToString(NumberFormatInfo.InvariantInfo), (item.Y / kAmpl).ToString(NumberFormatInfo.InvariantInfo));
+                                    var ttArraySize = timeTrace.Length + 1;
+                                    var ttArray = new string[ttArraySize];
+                                    ttArray[0] = "TT";
+                                    for (int i = 1; i != ttArraySize; )
+                                    {
+                                        ttArray[i] = string.Format("{0}\t{1}", timeTrace[i].X.ToString(NumberFormatInfo.InvariantInfo), (timeTrace[i].Y / kAmpl).ToString(NumberFormatInfo.InvariantInfo));
+                                        ++i;
+                                    }
+
+                                    var ttString = string.Join("\r\n", ttArray);
 
                                     // First sending the time trace data before FFT
-                                    onDataArrived(new ExpDataArrivedEventArgs(string.Format("TT{0}", string.Join("\r\n", query))));
+                                    onDataArrived(new ExpDataArrivedEventArgs(ttString));
                                 }
                                 catch { }
                             }
@@ -639,12 +648,18 @@ namespace MCBJ.Experiments
                             if (noisePSD == null || noisePSD.Length == 0)
                             {
                                 noisePSD = new Point[singleNoiseSpectrum.Length];
-                                for (int i = 0; i < singleNoiseSpectrum.Length; i++)
+                                for (int i = 0; i != singleNoiseSpectrum.Length; )
+                                {
                                     noisePSD[i] = new Point(singleNoiseSpectrum[i].X, 0.0);
+                                    ++i;
+                                }
                             }
 
-                            for (int i = 0; i < noisePSD.Length; i++)
+                            for (int i = 0; i != noisePSD.Length; )
+                            {
                                 noisePSD[i].Y += singleNoiseSpectrum[i].Y;
+                                ++i;
+                            }
 
                             if (averagingCounter % updateNumber == 0)
                             {
