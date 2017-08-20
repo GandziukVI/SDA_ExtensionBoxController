@@ -39,10 +39,11 @@ namespace SpectralAnalysis
 
             var range = (int)((timeTrace.Length) / nDataSamples);
 
-            for (int i = 0; i < nDataSamples; i++)
+            for (int i = 0; i != nDataSamples; )
             {
                 var selection = timeTrace.Where((value, index) => index >= i * range && index < (i + 1) * range).Select(val => val);
                 timeTraceSelectionList.AddLast(selection.ToArray());
+                ++i;
             }
 
             var noisePSD = new Point[] { };
@@ -103,11 +104,12 @@ namespace SpectralAnalysis
 
                 LinkedList<double[]> selectionList = new LinkedList<double[]>();
 
-                for (int i = 0; i < highFreqPeriod; i++)
+                for (int i = 0; i != highFreqPeriod; )
                 {
                     var arr = new double[highFreqSelectionRange];
                     Array.Copy(timeTrace, i * highFreqSelectionRange, arr, 0, highFreqSelectionRange);
                     selectionList.AddLast(arr);
+                    ++i;
                 }
 
                 var cumulativePSD_HIGH_Freq = new double[] { };
@@ -120,8 +122,11 @@ namespace SpectralAnalysis
                     if (cumulativePSD_HIGH_Freq.Length == 0)
                         cumulativePSD_HIGH_Freq = Enumerable.Repeat(0.0, singlePSD_HIGH_Freq.Length).ToArray();
 
-                    for (int i = 0; i < singlePSD_HIGH_Freq.Length; i++)
+                    for (int i = 0; i != singlePSD_HIGH_Freq.Length; )
+                    {
                         cumulativePSD_HIGH_Freq[i] += singlePSD_HIGH_Freq[i];
+                        ++i;
+                    }
                 }
 
                 autoPSDHighFreq = (cumulativePSD_HIGH_Freq
@@ -132,21 +137,23 @@ namespace SpectralAnalysis
                     noisePSD = new Point[autoPSDLowFreq.Length + autoPSDHighFreq.Length];
 
                 var counter = 0;
-                for (int i = 0; i < autoPSDLowFreq.Length; i++)
+                for (int i = 0; i != autoPSDLowFreq.Length; )
                 {
                     var item = autoPSDLowFreq[i];
                     noisePSD[counter].X = item.X;
                     noisePSD[counter].Y += item.Y;
 
                     ++counter;
+                    ++i;
                 }
-                for (int i = 0; i < autoPSDHighFreq.Length; i++ )
+                for (int i = 0; i != autoPSDHighFreq.Length; )
                 {
                     var item = autoPSDHighFreq[i];
                     noisePSD[counter].X = item.X;
                     noisePSD[counter].Y += item.Y / ((double)(highFreqPeriod * highFreqPeriod));
 
                     ++counter;
+                    ++i;
                 }
             }
 

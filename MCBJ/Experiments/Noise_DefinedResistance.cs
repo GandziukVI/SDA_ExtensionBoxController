@@ -23,6 +23,7 @@ using System.IO;
 using MCBJ.Experiments.DataHandling;
 using IneltaMotorPotentiometer;
 using System.IO.MemoryMappedFiles;
+using System.Runtime.InteropServices;
 
 namespace MCBJ.Experiments
 {
@@ -567,6 +568,7 @@ namespace MCBJ.Experiments
 
         private static int averagingCounter = 0;
 
+        AutoResetEvent ttCompleted = new AutoResetEvent(false);
         void measureNoiseSpectra(
 
             int samplingFrequency,
@@ -623,19 +625,38 @@ namespace MCBJ.Experiments
                             {
                                 try
                                 {
-                                    var ttArraySize = timeTrace.Length + 1;
-                                    var ttArray = new string[ttArraySize];
-                                    ttArray[0] = "TT";
-                                    for (int i = 1; i != ttArraySize; )
+                                    var n = experimentSettings.SamplingFrequency / experimentSettings.RecordingFrequency;
+                                    var timeTraceSelection = timeTrace
+                                        .Where((value, index) => index % n == 0)
+                                        .Select(value => string.Format("{0}\t{1}\r\n", value.X.ToString(NumberFormatInfo.InvariantInfo), (value.Y / kAmpl).ToString(NumberFormatInfo.InvariantInfo)))
+                                        .ToArray();
+
+                                    var ttMemorySize = Marshal.SizeOf(timeTraceSelection);
+
+                                    int offset = 0;
+                                    int count = 0;
+                                    byte[] buf;
+
+                                    using (var ttMappedFile = MemoryMappedFile.CreateNew("TimeTraceMappedFile", ttMemorySize))
                                     {
-                                        ttArray[i] = string.Format("{0}\t{1}", timeTrace[i].X.ToString(NumberFormatInfo.InvariantInfo), (timeTrace[i].Y / kAmpl).ToString(NumberFormatInfo.InvariantInfo));
-                                        ++i;
+                                        ttCompleted.Reset();
+
+                                        using (var stream = ttMappedFile.CreateViewStream())
+                                        {
+                                            for (int i = 0; i != timeTraceSelection.Length; )
+                                            {
+                                                buf = ASCIIEncoding.ASCII.GetBytes(timeTraceSelection[i]);
+                                                count = buf.Length;
+                                                stream.Write(buf, offset, count);
+                                                offset += count;
+                                                ++i;
+                                            }
+                                        }
+
+                                        onDataArrived(new ExpDataArrivedEventArgs("TT"));
+
+                                        ttCompleted.WaitOne();
                                     }
-
-                                    var ttString = string.Join("\r\n", ttArray);
-
-                                    // First sending the time trace data before FFT
-                                    onDataArrived(new ExpDataArrivedEventArgs(ttString));
                                 }
                                 catch { }
                             }
@@ -676,6 +697,7 @@ namespace MCBJ.Experiments
                                 onDataArrived(new ExpDataArrivedEventArgs(string.Format("NS{0}", string.Join("\r\n", finalSpectrum))));
                                 onProgressChanged(new ProgressEventArgs((double)averagingCounter / (double)nAverages * 100.0));
                             }
+
                         }
                     }
                 },
@@ -945,22 +967,45 @@ namespace MCBJ.Experiments
             {
                 if (experimentSettings.RecordTimeTraces == true)
                 {
-                    if (experimentSettings.SamplingFrequency == experimentSettings.RecordingFrequency)
-                        TT_StreamWriter.Write(e.Data.Substring(2));
-                    else
+                    try
                     {
-                        if (dataBuilder != null)
-                            dataBuilder.Clear();
+                        using (var mmf = MemoryMappedFile.OpenExisting("TimeTraceMappedFile"))
+                        {                            
+                            using (var memoryMappedStream = mmf.CreateViewStream())
+                            {
+                                using (var memoryMappedStreamReader = new StreamReader(memoryMappedStream))
+                                {
+                                    while (!memoryMappedStreamReader.EndOfStream)
+                                    {
+                                        var str = memoryMappedStreamReader.ReadLine();
+                                        TT_StreamWriter.WriteLine(str);
+                                    }
+                                }
+                            }
+                        }
 
-                        var n = experimentSettings.SamplingFrequency / experimentSettings.RecordingFrequency;
-                        var selectedData = string.Join
-                            (
-                                "\r\n",
-                                e.Data.Substring(2).Split("\r\n".ToCharArray(), StringSplitOptions.RemoveEmptyEntries).Where((value, index) => index % n == 0)
-                            );
-
-                        TT_StreamWriter.Write(selectedData);
+                        ttCompleted.Set();
                     }
+                    catch (FileNotFoundException)
+                    {
+                        throw;
+                    }
+                    //if (experimentSettings.SamplingFrequency == experimentSettings.RecordingFrequency)
+                    //    TT_StreamWriter.Write(e.Data.Substring(2));
+                    //else
+                    //{
+                    //    if (dataBuilder != null)
+                    //        dataBuilder.Clear();
+
+                    //    var n = experimentSettings.SamplingFrequency / experimentSettings.RecordingFrequency;
+                    //    var selectedData = string.Join
+                    //        (
+                    //            "\r\n",
+                    //            e.Data.Substring(2).Split("\r\n".ToCharArray(), StringSplitOptions.RemoveEmptyEntries).Where((value, index) => index % n == 0)
+                    //        );
+
+                    //    TT_StreamWriter.Write(selectedData);
+                    //}
                 }
             }
             else if (e.Data.StartsWith("NS"))
