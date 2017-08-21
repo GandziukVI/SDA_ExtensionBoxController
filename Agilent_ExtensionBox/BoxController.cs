@@ -253,7 +253,7 @@ namespace Agilent_ExtensionBox
                     }
 
                     _Driver.AnalogIn.Acquisition.Fetch(ref results);
-                    if (results.LongLength > 0)
+                    if (results.Length > 0)
                         _router.AddDataInvoke(ref results);
                 }
 
