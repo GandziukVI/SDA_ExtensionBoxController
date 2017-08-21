@@ -57,7 +57,7 @@ namespace MCBJ.Experiments
             }
         }
 
-        private double minVoltageTreshold = 0.0025;
+        private double minVoltageTreshold = 0.005;
         public double MinVoltageTreshold
         {
             get { return minVoltageTreshold; }
@@ -68,7 +68,7 @@ namespace MCBJ.Experiments
             }
         }
 
-        private double voltageTreshold = 0.15;
+        private double voltageTreshold = 0.1;
         public double VoltageTreshold
         {
             get { return voltageTreshold; }
@@ -154,7 +154,7 @@ namespace MCBJ.Experiments
             }
         }
 
-        private double motionMinSpeed = 0.049;
+        private double motionMinSpeed = 0.02;
         public double MotionMinSpeed
         {
             get { return motionMinSpeed; }
@@ -169,7 +169,7 @@ namespace MCBJ.Experiments
             }
         }
 
-        private double motionMaxSpeed = 0.098;
+        private double motionMaxSpeed = 0.04;
         public double MotionMaxSpeed
         {
             get { return motionMaxSpeed; }
@@ -217,7 +217,7 @@ namespace MCBJ.Experiments
             }
         }
 
-        private int nAveragesFast = 1;
+        private int nAveragesFast = 2;
         public int NAveragesFast
         {
             get { return nAveragesFast; }
@@ -272,7 +272,7 @@ namespace MCBJ.Experiments
             }
         }
 
-        private int updateNumber = 10;
+        private int updateNumber = 1;
         public int UpdateNumber
         {
             get { return updateNumber; }
@@ -294,7 +294,7 @@ namespace MCBJ.Experiments
             }
         }
 
-        private double kAmpl = 10.0;
+        private double kAmpl = 100.0;
         public double KAmpl
         {
             get { return kAmpl; }

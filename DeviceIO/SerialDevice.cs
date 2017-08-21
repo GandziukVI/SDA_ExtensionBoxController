@@ -125,7 +125,8 @@ namespace DeviceIO
                 request = request.EndsWith("\n") ? request : request + "\n";
 
                 var strBytes = Encoding.ASCII.GetBytes(request);
-                _COMPort.Write(strBytes, 0, strBytes.Length);
+                if (_COMPort.IsOpen)
+                    _COMPort.Write(strBytes, 0, strBytes.Length);
             }
         }
 
