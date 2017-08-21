@@ -774,34 +774,34 @@ namespace MCBJ.Experiments
 
                     #endregion
 
-                    onStatusChanged(new StatusEventArgs(string.Format("Setting sample voltage V -> {0} V", voltage.ToString("0.0000", NumberFormatInfo.InvariantInfo))));
+                    //onStatusChanged(new StatusEventArgs(string.Format("Setting sample voltage V -> {0} V", voltage.ToString("0.0000", NumberFormatInfo.InvariantInfo))));
 
-                    setDrainVoltage(voltage, experimentSettings.VoltageDeviation);
+                    //setDrainVoltage(voltage, experimentSettings.VoltageDeviation);
 
-                    onStatusChanged(new StatusEventArgs(string.Format("Reaching resistance value R -> {0}", (1.0 / conductance).ToString("0.0000", NumberFormatInfo.InvariantInfo))));
+                    //onStatusChanged(new StatusEventArgs(string.Format("Reaching resistance value R -> {0}", (1.0 / conductance).ToString("0.0000", NumberFormatInfo.InvariantInfo))));
 
-                    resistanceStabilizationState = setJunctionResistance(
-                        voltage,
-                        experimentSettings.VoltageDeviation,
-                        experimentSettings.MinVoltageTreshold,
-                        experimentSettings.VoltageTreshold,
-                        conductance,
-                        experimentSettings.ConductanceDeviation,
-                        experimentSettings.StabilizationTime,
-                        experimentSettings.MotionMinSpeed,
-                        experimentSettings.MotionMaxSpeed,
-                        experimentSettings.MotorMinPos,
-                        experimentSettings.MotorMaxPos,
-                        experimentSettings.NAveragesFast,
-                        experimentSettings.LoadResistance);
+                    //resistanceStabilizationState = setJunctionResistance(
+                    //    voltage,
+                    //    experimentSettings.VoltageDeviation,
+                    //    experimentSettings.MinVoltageTreshold,
+                    //    experimentSettings.VoltageTreshold,
+                    //    conductance,
+                    //    experimentSettings.ConductanceDeviation,
+                    //    experimentSettings.StabilizationTime,
+                    //    experimentSettings.MotionMinSpeed,
+                    //    experimentSettings.MotionMaxSpeed,
+                    //    experimentSettings.MotorMinPos,
+                    //    experimentSettings.MotorMaxPos,
+                    //    experimentSettings.NAveragesFast,
+                    //    experimentSettings.LoadResistance);
 
-                    if (resistanceStabilizationState == false)
-                    {
-                        IsRunning = false;
-                        break;
-                    }
+                    //if (resistanceStabilizationState == false)
+                    //{
+                    //    IsRunning = false;
+                    //    break;
+                    //}
 
-                    setDrainVoltage(voltage, experimentSettings.VoltageDeviation);
+                    //setDrainVoltage(voltage, experimentSettings.VoltageDeviation);
 
                     motor.Disable();
 
@@ -815,7 +815,7 @@ namespace MCBJ.Experiments
                     //PerformDCStabilization();
 
                     confAIChannelsForAC_Measurement();
-                    Thread.Sleep(30000);
+                    Thread.Sleep(15000);
 
                     measureNoiseSpectra(experimentSettings.SamplingFrequency, experimentSettings.NSubSamples, experimentSettings.SpectraAveraging, experimentSettings.UpdateNumber, experimentSettings.KPreAmpl * experimentSettings.KAmpl);
 

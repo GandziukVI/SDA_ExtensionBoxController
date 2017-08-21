@@ -94,7 +94,7 @@ namespace MCBJ
             var keithley = new Keithley26xxB<Keithley2602B>(smuDriver);
             var smu = keithley[Keithley26xxB_Channels.Channel_B];
 
-            var motorDriver = new SerialDevice("COM3", 115200, Parity.None, 8, StopBits.One);
+            var motorDriver = new SerialDevice("COM1", 115200, Parity.None, 8, StopBits.One);
             var motor = new SA_2036U012V(motorDriver) as IMotionController1D;
 
             experiment = new IV_DefinedResistance(smu, motor) as IExperiment;
@@ -200,7 +200,7 @@ namespace MCBJ
             var frequencyResponce = ReadCalibrationFile(frequencyResponceFilePath);
 
 
-            var motorDriver = new SerialDevice("COM3", 115200, Parity.None, 8, StopBits.One);
+            var motorDriver = new SerialDevice("COM1", 115200, Parity.None, 8, StopBits.One);
             IMotionController1D motor = new SA_2036U012V(motorDriver) as IMotionController1D;
 
             experiment = new Noise_DefinedResistance((expStartInfo as Noise_DefinedResistanceInfo).AgilentU2542AResName, motor, amplifierNoise, frequencyResponce);
