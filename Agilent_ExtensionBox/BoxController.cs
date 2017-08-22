@@ -14,7 +14,7 @@ using System.Windows.Threading;
 
 namespace Agilent_ExtensionBox
 {
-    public class BoxController
+    public class BoxController : IDisposable
     {
         private AgilentU254x _Driver;
         public AgilentU254x Driver { get { return _Driver; } }
@@ -301,5 +301,22 @@ namespace Agilent_ExtensionBox
         }
 
         #endregion
+
+        public void Dispose()
+        {
+            if(IsInistialized)
+            {
+                if (AcquisitionInProgress)
+                    StopAnalogAcquisition();
+
+                Reset_Digital();
+                
+                _DisableAllChannelsForContiniousAcquisition();
+
+                Close();
+            }
+
+            GC.Collect();
+        }
     }
 }
