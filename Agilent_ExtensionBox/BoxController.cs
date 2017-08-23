@@ -266,6 +266,78 @@ namespace Agilent_ExtensionBox
             }
         }
 
+        private static object startBufferedAnalogAcquisitionLock = new object();
+        public void StartBufferedAnalogAcquisition(int SampleRate, int BufferSize = 65536)
+        {
+            lock(startBufferedAnalogAcquisitionLock)
+            {
+                if (BufferSize > SampleRate)
+                    BufferSize = SampleRate;
+                if (SampleRate % BufferSize != 0)
+                    throw new ArgumentException();
+
+                var results = new short[SampleRate];
+                var temp = new short[BufferSize];
+
+                _Driver.AnalogIn.MultiScan.Configure(SampleRate, -1);
+                _Driver.AnalogIn.Acquisition.BufferSize = BufferSize;
+                _Driver.AnalogIn.Acquisition.Start();
+
+                _router.Frequency = SampleRate;
+
+                foreach (var item in _AI_ChannelCollection)
+                {
+                    if (item.IsEnabled)
+                    {
+                        item.SampleRate = SampleRate;
+                        _router.Subscribe(item);
+                    }
+                }
+
+                var nSamples = (int)(SampleRate / BufferSize);
+                var counter = 0;
+                var startIndex = 0;
+
+                while (_AcquisitionInProgress)
+                {
+                    while (true)
+                    {
+                        if (_AcquisitionInProgress == false)
+                            break;
+                        try
+                        {
+                            var dataReady = (_Driver.AnalogIn.Acquisition.BufferStatus == AgilentU254xBufferStatusEnum.AgilentU254xBufferStatusDataReady);
+                            if (dataReady == true)
+                                ++counter;
+                            
+                            _Driver.AnalogIn.Acquisition.Fetch(ref temp);
+                            Array.Copy(temp, 0, results, startIndex, temp.Length);
+                            startIndex += temp.Length;
+
+                            if (counter == nSamples)
+                                break;
+                        }
+                        catch { return; }
+                    }
+
+                    try
+                    {
+                        _router.AddDataInvoke(ref results);
+                    }
+                    catch { }
+
+                    counter = 0;
+                    startIndex = 0;
+                }
+
+                try
+                {
+                    _Driver.AnalogIn.Acquisition.Stop();
+                }
+                catch { return; }
+            }
+        }
+
         public void StopAnalogAcquisition()
         {
             if (_AcquisitionInProgress == true)

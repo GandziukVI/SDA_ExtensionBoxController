@@ -715,7 +715,7 @@ namespace MCBJ.Experiments
                 },
                 async () =>
                 {
-                    acquisitionTaskResult = Task.Factory.StartNew(() => { boxController.StartAnalogAcquisition(samplingFrequency); });
+                    acquisitionTaskResult = Task.Factory.StartNew(() => { boxController.StartBufferedAnalogAcquisition(samplingFrequency); });
                     await acquisitionTaskResult;
                 });
 
