@@ -217,7 +217,7 @@ namespace Agilent_ExtensionBox
         {
             lock (startAnalogAcquisitionLock)
             {
-                short[] results = { 0 };
+                var results = new short[] { };
 
                 _Driver.AnalogIn.MultiScan.Configure(SampleRate, -1);
 
@@ -243,8 +243,6 @@ namespace Agilent_ExtensionBox
                             break;
                         try
                         {
-                            // See what happens here!!!
-                            // var currentDriverState = _Driver.System.DirectIO.IO.LockState;
                             var dataReady = (_Driver.AnalogIn.Acquisition.BufferStatus == AgilentU254xBufferStatusEnum.AgilentU254xBufferStatusDataReady);
                             if (dataReady == true)
                                 break;
@@ -252,9 +250,12 @@ namespace Agilent_ExtensionBox
                         catch { return; }
                     }
 
-                    _Driver.AnalogIn.Acquisition.Fetch(ref results);
-                    if (results.Length > 0)
+                    try
+                    {
+                        _Driver.AnalogIn.Acquisition.Fetch(ref results);
                         _router.AddDataInvoke(ref results);
+                    }
+                    catch { }
                 }
 
                 try
@@ -304,13 +305,13 @@ namespace Agilent_ExtensionBox
 
         public void Dispose()
         {
-            if(IsInistialized)
+            if (IsInistialized)
             {
                 if (AcquisitionInProgress)
                     StopAnalogAcquisition();
 
                 Reset_Digital();
-                
+
                 _DisableAllChannelsForContiniousAcquisition();
 
                 Close();
