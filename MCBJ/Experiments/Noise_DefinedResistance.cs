@@ -150,8 +150,8 @@ namespace MCBJ.Experiments
 
         void confAIChannelsForDC_Measurement()
         {
-            //if (!isDCMode)
-            //{
+            if (!isDCMode)
+            {
                 var init_conf = setDCConf(9.99, 9.99);
                 boxController.ConfigureAI_Channels(init_conf);
                 var voltages = boxController.VoltageMeasurement_AllChannels(averagingNumberSlow);
@@ -161,13 +161,13 @@ namespace MCBJ.Experiments
                 isDCMode = true;
                 isACMode = false;
                 isDCOscilloscopeMode = false;
-            //}
+            }
         }
 
         void confAIChannelsForAC_Measurement()
         {
-            //if (!isACMode)
-            //{
+            if (!isACMode)
+            {
                 var init_conf = setACConf(9.99);
                 boxController.ConfigureAI_Channels(init_conf);
 
@@ -193,13 +193,13 @@ namespace MCBJ.Experiments
                 isACMode = true;
                 isDCMode = false;
                 isDCOscilloscopeMode = false;
-            //}
+            }
         }
 
         void confAIChannelsForDCStabilization()
         {
-            //if (!isDCOscilloscopeMode)
-            //{
+            if (!isDCOscilloscopeMode)
+            {
                 var init_conf = setDCOscilloscopeConf(9.99);
                 boxController.ConfigureAI_Channels(init_conf);
 
@@ -225,7 +225,7 @@ namespace MCBJ.Experiments
                 isDCOscilloscopeMode = true;
                 isACMode = false;
                 isDCMode = false;
-            //}
+            }
         }
 
         void PerformDCStabilization()
@@ -564,8 +564,6 @@ namespace MCBJ.Experiments
         private static string TTSaveFileName = "TT.dat";
         private string NoiseSpectrumFinal = string.Empty;
 
-        Point[] noisePSD = new Point[] { };
-
         private bool acquisitionIsRunning = false;
 
         private static int averagingCounter = 0;
@@ -580,6 +578,8 @@ namespace MCBJ.Experiments
 
             )
         {
+            var noisePSD = new Point[] { };
+
             Interlocked.Exchange(ref averagingCounter, 0);
 
             if (samplingFrequency % 2 != 0)
