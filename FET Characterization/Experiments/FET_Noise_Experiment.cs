@@ -303,8 +303,6 @@ namespace FET_Characterization.Experiments
         static string TTSaveFileName = "TT.dat";
         string NoiseSpectrumFinal = string.Empty;
 
-        Point[] noisePSD = new Point[] { };
-
         bool acquisitionIsRunning = false;
 
         static int averagingCounter = 0;
@@ -319,6 +317,8 @@ namespace FET_Characterization.Experiments
 
             )
         {
+            var noisePSD = new Point[] { };
+
             Interlocked.Exchange(ref averagingCounter, 0);
 
             if (samplingFrequency % 2 != 0)
