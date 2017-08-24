@@ -368,6 +368,8 @@ namespace Agilent_ExtensionBox
 
                     _Driver.AnalogIn.MultiScan.SampleRate = SampleRate;
                     _Driver.AnalogIn.MultiScan.NumberOfScans = SampleRate;
+                    
+                    _Driver.AnalogIn.Acquisition.BufferSize = SampleRate;
                     _Driver.AnalogIn.Acquisition.Start();
 
                     while (!(_Driver.AnalogIn.Acquisition.Completed == true)) ;
