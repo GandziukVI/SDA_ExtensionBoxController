@@ -410,11 +410,11 @@ namespace Agilent_ExtensionBox
 
                 _DisableAllChannelsForContiniousAcquisition();
 
+                _Driver.Status.Clear();
+                _Driver.Utility.Reset();
+
                 Close();
             }
-
-            _Driver.Status.Clear();
-            _Driver.Utility.Reset();
 
             GC.Collect();
         }

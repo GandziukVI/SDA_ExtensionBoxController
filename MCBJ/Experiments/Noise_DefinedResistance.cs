@@ -64,8 +64,6 @@ namespace MCBJ.Experiments
             //if (!boxInit)
             //    throw new Exception("Cannot connect the box.");
 
-            VdsMotorPotentiometer = new BS350_MotorPotentiometer(boxController, BOX_AnalogOutChannelsEnum.BOX_AOut_02);
-
             motor = Motor;
 
             amplifierNoise = AmplifierNoise;
@@ -815,6 +813,8 @@ namespace MCBJ.Experiments
                         var initResult = boxController.Init(experimentSettings.AgilentU2542AResName);
                         if (!initResult)
                             throw new Exception("Cannot connect to the box");
+
+                        VdsMotorPotentiometer = new BS350_MotorPotentiometer(boxController, BOX_AnalogOutChannelsEnum.BOX_AOut_02);
 
                         onStatusChanged(new StatusEventArgs(string.Format("Setting sample voltage V -> {0} V", voltage.ToString("0.0000", NumberFormatInfo.InvariantInfo))));
 
