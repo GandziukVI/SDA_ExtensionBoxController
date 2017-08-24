@@ -179,7 +179,7 @@ namespace MCBJ.Experiments
 
                 // Acquiring single shot with AC data
 
-                boxController.AcquireSingleShot(1000);
+                while (!boxController.AcquireSingleShot(1000)) ;
                 var maxAcquiredVoltage = boxController.AI_ChannelCollection[AnalogInChannelsEnum.AIn1].ChannelData.Last().Max(p => p.Y);
 
                 // Configuring the channels to measure noise
@@ -211,7 +211,7 @@ namespace MCBJ.Experiments
 
                 // Acquiring single shot with AC data
 
-                boxController.AcquireSingleShot(1000);
+                while (!boxController.AcquireSingleShot(1000)) ;
                 var averagedVoltage = boxController.AI_ChannelCollection[AnalogInChannelsEnum.AIn4].ChannelData.Last().Average(p => p.Y);
 
                 // Configuring the channels to measure dc shift
@@ -242,7 +242,7 @@ namespace MCBJ.Experiments
             {
                 // Acquiring single shot with AC data
 
-                boxController.AcquireSingleShot(1000);
+                while (!boxController.AcquireSingleShot(1000)) ;
                 averagedVoltage = boxController.AI_ChannelCollection[AnalogInChannelsEnum.AIn4].ChannelData.Last().Average(p => p.Y);
             }
 
@@ -565,10 +565,11 @@ namespace MCBJ.Experiments
         private string NoiseSpectrumFinal = string.Empty;
 
         private bool acquisitionIsRunning = false;
+        private bool acquisitionIsSuccessful = false;
 
         private static int averagingCounter = 0;
 
-        void measureNoiseSpectra(
+        private bool measureNoiseSpectra(
 
             int samplingFrequency,
             int nDataSamples,
@@ -620,13 +621,13 @@ namespace MCBJ.Experiments
                             averagingCounter = 0;
                             break;
                         }
-                        if(acquisitionTaskResult !=null)
+                        if (acquisitionTaskResult != null)
                         {
                             var taskStatus = acquisitionTaskResult.Status;
                             var taskCompleted = acquisitionTaskResult.IsCompleted;
 
-                            if((taskCompleted == true) || 
-                                (taskStatus == TaskStatus.Canceled) || 
+                            if ((taskCompleted == true) ||
+                                (taskStatus == TaskStatus.Canceled) ||
                                 (taskStatus == TaskStatus.Faulted))
                             {
                                 averagingCounter = 0;
@@ -728,12 +729,17 @@ namespace MCBJ.Experiments
                 },
                 async () =>
                 {
-                    //acquisitionTaskResult = Task.Factory.StartNew(() => { boxController.StartBufferedAnalogAcquisition(samplingFrequency); });
-                    acquisitionTaskResult = Task.Factory.StartNew(() => { boxController.StartAnalogAcquisition(samplingFrequency); });
+                    acquisitionTaskResult = Task.Factory.StartNew(() =>
+                    {
+                        acquisitionIsSuccessful = boxController.StartAnalogAcquisition(samplingFrequency);
+                    });
+
                     await acquisitionTaskResult;
                 });
 
             acquisitionTaskResult.Wait();
+
+            return acquisitionIsSuccessful;
         }
 
         public override void ToDo(object Arg)
@@ -788,7 +794,7 @@ namespace MCBJ.Experiments
 
                     #endregion
 
-                    using(boxController = new BoxController())
+                    using (boxController = new BoxController())
                     {
                         var initResult = boxController.Init(experimentSettings.AgilentU2542AResName);
                         if (!initResult)
@@ -823,7 +829,7 @@ namespace MCBJ.Experiments
 
                         //setDrainVoltage(voltage, experimentSettings.VoltageDeviation);
 
-                        //onStatusChanged(new StatusEventArgs("Measuring sample characteristics before noise spectra measurement."));
+                        onStatusChanged(new StatusEventArgs("Measuring sample characteristics before noise spectra measurement."));
 
                         confAIChannelsForDC_Measurement();
                         var voltagesBeforeNoiseMeasurement = boxController.VoltageMeasurement_AllChannels(experimentSettings.NAveragesSlow);
@@ -835,14 +841,14 @@ namespace MCBJ.Experiments
 
                         onStatusChanged(new StatusEventArgs("Measuring noise spectra & time traces."));
 
-                        measureNoiseSpectra(experimentSettings.SamplingFrequency, experimentSettings.NSubSamples, experimentSettings.SpectraAveraging, experimentSettings.UpdateNumber, experimentSettings.KPreAmpl * experimentSettings.KAmpl);
+                        while (!measureNoiseSpectra(experimentSettings.SamplingFrequency, experimentSettings.NSubSamples, experimentSettings.SpectraAveraging, experimentSettings.UpdateNumber, experimentSettings.KPreAmpl * experimentSettings.KAmpl)) ;
 
                         onStatusChanged(new StatusEventArgs("Measuring sample characteristics after noise spectra measurement."));
 
                         confAIChannelsForDC_Measurement();
                         var voltagesAfterNoiseMeasurement = boxController.VoltageMeasurement_AllChannels(experimentSettings.NAveragesSlow);
 
-                         //Saving to log file all the parameters of the measurement
+                        //Saving to log file all the parameters of the measurement
 
                         var fileName = string.Join("\\", experimentSettings.FilePath, "Noise", experimentSettings.SaveFileName);
                         var dataFileName = GetFileNameWithIncrement(fileName);
@@ -1050,7 +1056,7 @@ namespace MCBJ.Experiments
 
                 //if (boxController != null)
                 //    boxController.Close();
-                
+
                 base.Dispose();
             }
         }

@@ -213,7 +213,7 @@ namespace Agilent_ExtensionBox
         public delegate void CallAsync(ref short[] data);
 
         private static object startAnalogAcquisitionLock = new object();
-        public void StartAnalogAcquisition(int SampleRate)
+        public bool StartAnalogAcquisition(int SampleRate)
         {
             lock (startAnalogAcquisitionLock)
             {
@@ -250,7 +250,7 @@ namespace Agilent_ExtensionBox
                         catch 
                         {
                             StopAnalogAcquisition();
-                            break;
+                            return false;
                         }
                     }
 
@@ -263,7 +263,7 @@ namespace Agilent_ExtensionBox
                     catch 
                     {
                         StopAnalogAcquisition();
-                        break;
+                        return false;
                     }
                 }
 
@@ -271,7 +271,9 @@ namespace Agilent_ExtensionBox
                 {
                     _Driver.AnalogIn.Acquisition.Stop();
                 }
-                catch { return; }
+                catch { return false; }
+
+                return true;
             }
         }
 
@@ -355,30 +357,42 @@ namespace Agilent_ExtensionBox
             }
         }
 
-        public void AcquireSingleShot(int SampleRate)
+        private static object acquireSingleShotLock = new object();
+        public bool AcquireSingleShot(int SampleRate)
         {
-            short[] results = { 0 };
-
-            _Driver.AnalogIn.MultiScan.SampleRate = SampleRate;
-            _Driver.AnalogIn.MultiScan.NumberOfScans = SampleRate;
-            _Driver.AnalogIn.Acquisition.Start();
-
-            while (!(_Driver.AnalogIn.Acquisition.Completed == true)) ;
-
-            _Driver.AnalogIn.Acquisition.Fetch(ref results);
-
-            _router.Frequency = SampleRate;
-
-            foreach (var item in _AI_ChannelCollection)
+            lock (acquireSingleShotLock)
             {
-                if (item.IsEnabled)
+                try
                 {
-                    item.SampleRate = SampleRate;
-                    _router.Subscribe(item);
+                    var results = new short[SampleRate];
+
+                    _Driver.AnalogIn.MultiScan.SampleRate = SampleRate;
+                    _Driver.AnalogIn.MultiScan.NumberOfScans = SampleRate;
+                    _Driver.AnalogIn.Acquisition.Start();
+
+                    while (!(_Driver.AnalogIn.Acquisition.Completed == true)) ;
+
+                    _Driver.AnalogIn.Acquisition.Fetch(ref results);
+
+                    _router.Frequency = SampleRate;
+
+                    foreach (var item in _AI_ChannelCollection)
+                    {
+                        if (item.IsEnabled)
+                        {
+                            item.SampleRate = SampleRate;
+                            _router.Subscribe(item);
+                        }
+                    }
+
+                    _router.AddData(ref results);
+                    return true;
+                }
+                catch
+                {
+                    return false;
                 }
             }
-
-            _router.AddData(ref results);
         }
 
         #endregion
