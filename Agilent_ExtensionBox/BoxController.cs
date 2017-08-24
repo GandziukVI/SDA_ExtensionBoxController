@@ -217,7 +217,7 @@ namespace Agilent_ExtensionBox
         {
             lock (startAnalogAcquisitionLock)
             {
-                var results = new short[] { };
+                var results = new short[SampleRate];
 
                 _Driver.AnalogIn.MultiScan.Configure(SampleRate, -1);
 
@@ -247,15 +247,24 @@ namespace Agilent_ExtensionBox
                             if (dataReady == true)
                                 break;
                         }
-                        catch { return; }
+                        catch 
+                        {
+                            StopAnalogAcquisition();
+                            break;
+                        }
                     }
 
                     try
                     {
                         _Driver.AnalogIn.Acquisition.Fetch(ref results);
-                        _router.AddDataInvoke(ref results);
+                        if (results.Length > 0)
+                            _router.AddDataInvoke(ref results);
                     }
-                    catch { }
+                    catch 
+                    {
+                        StopAnalogAcquisition();
+                        break;
+                    }
                 }
 
                 try
@@ -269,7 +278,7 @@ namespace Agilent_ExtensionBox
         private static object startBufferedAnalogAcquisitionLock = new object();
         public void StartBufferedAnalogAcquisition(int SampleRate, int BufferSize = 65536)
         {
-            lock(startBufferedAnalogAcquisitionLock)
+            lock (startBufferedAnalogAcquisitionLock)
             {
                 if (BufferSize > SampleRate)
                     BufferSize = SampleRate;
@@ -309,13 +318,12 @@ namespace Agilent_ExtensionBox
                             var dataReady = (_Driver.AnalogIn.Acquisition.BufferStatus == AgilentU254xBufferStatusEnum.AgilentU254xBufferStatusDataReady);
                             if (dataReady == true)
                                 ++counter;
-                            
-                            _Driver.AnalogIn.Acquisition.Fetch(ref temp);
-                            Array.Copy(temp, 0, results, startIndex, temp.Length);
-                            startIndex += temp.Length;
-
-                            if (counter == nSamples)
+                            if (counter == nSamples - 1)
                                 break;
+
+                            _Driver.AnalogIn.Acquisition.Fetch(ref temp);
+                            startIndex = counter * temp.Length;
+                            Array.Copy(temp, 0, results, startIndex, temp.Length);
                         }
                         catch { return; }
                     }

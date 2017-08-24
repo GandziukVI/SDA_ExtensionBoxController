@@ -620,6 +620,19 @@ namespace MCBJ.Experiments
                             averagingCounter = 0;
                             break;
                         }
+                        if(acquisitionTaskResult !=null)
+                        {
+                            var taskStatus = acquisitionTaskResult.Status;
+                            var taskCompleted = acquisitionTaskResult.IsCompleted;
+
+                            if((taskCompleted == true) || 
+                                (taskStatus == TaskStatus.Canceled) || 
+                                (taskStatus == TaskStatus.Faulted))
+                            {
+                                averagingCounter = 0;
+                                break;
+                            }
+                        }
 
                         Point[] timeTrace = new Point[] { };
                         var dataReadingSuccess = boxController.AI_ChannelCollection[AnalogInChannelsEnum.AIn1].ChannelData.TryDequeue(out timeTrace);
@@ -715,7 +728,8 @@ namespace MCBJ.Experiments
                 },
                 async () =>
                 {
-                    acquisitionTaskResult = Task.Factory.StartNew(() => { boxController.StartBufferedAnalogAcquisition(samplingFrequency); });
+                    //acquisitionTaskResult = Task.Factory.StartNew(() => { boxController.StartBufferedAnalogAcquisition(samplingFrequency); });
+                    acquisitionTaskResult = Task.Factory.StartNew(() => { boxController.StartAnalogAcquisition(samplingFrequency); });
                     await acquisitionTaskResult;
                 });
 
@@ -809,7 +823,7 @@ namespace MCBJ.Experiments
 
                         //setDrainVoltage(voltage, experimentSettings.VoltageDeviation);
 
-                        onStatusChanged(new StatusEventArgs("Measuring sample characteristics before noise spectra measurement."));
+                        //onStatusChanged(new StatusEventArgs("Measuring sample characteristics before noise spectra measurement."));
 
                         confAIChannelsForDC_Measurement();
                         var voltagesBeforeNoiseMeasurement = boxController.VoltageMeasurement_AllChannels(experimentSettings.NAveragesSlow);
@@ -817,7 +831,7 @@ namespace MCBJ.Experiments
                         motor.Enabled = false;
 
                         confAIChannelsForAC_Measurement();
-                        Thread.Sleep(30000);
+                        Thread.Sleep(15000);
 
                         onStatusChanged(new StatusEventArgs("Measuring noise spectra & time traces."));
 
