@@ -413,6 +413,9 @@ namespace Agilent_ExtensionBox
                 Close();
             }
 
+            _Driver.Status.Clear();
+            _Driver.Utility.Reset();
+
             GC.Collect();
         }
     }
