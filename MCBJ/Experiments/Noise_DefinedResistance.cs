@@ -856,7 +856,7 @@ namespace MCBJ.Experiments
 
                         if (ACConfStatus == true)
                         {
-                            Thread.Sleep(5000);
+                            Thread.Sleep(15000);
 
                             onStatusChanged(new StatusEventArgs("Measuring noise spectra & time traces."));
 

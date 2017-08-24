@@ -81,7 +81,7 @@ namespace MCBJ.Experiments
 
         private static double conductanceQuantum = 0.0000774809173;
 
-        private double[] setConductanceCollection = new double[] { 1.0 };
+        private double[] setConductanceCollection = new double[] { 50.0, 45.0, 40.0, 35.0, 30.0, 25.0, 20.0, 15.0, 14.0, 13.0, 12.0, 11.0, 10.0, 9.0, 8.0, 7.0, 6.0, 5.0, 4.0, 3.0, 2.0, 1.0 };
         public double[] SetConductanceCollection
         {
             get { return setConductanceCollection; }
@@ -103,7 +103,32 @@ namespace MCBJ.Experiments
             }
         }
 
-        private static double[] setResistanceCollection = new double[] { 1.0 / conductanceQuantum };
+        private static double[] setResistanceCollection = new double[] 
+        {
+            1.0 / (50.0 * conductanceQuantum), 
+            1.0 / (45.0 * conductanceQuantum),
+            1.0 / (40.0 * conductanceQuantum),
+            1.0 / (35.0 * conductanceQuantum),
+            1.0 / (30.0 * conductanceQuantum),
+            1.0 / (25.0 * conductanceQuantum),
+            1.0 / (20.0 * conductanceQuantum),
+            1.0 / (15.0 * conductanceQuantum),
+            1.0 / (14.0 * conductanceQuantum),
+            1.0 / (13.0 * conductanceQuantum),
+            1.0 / (12.0 * conductanceQuantum),
+            1.0 / (11.0 * conductanceQuantum),
+            1.0 / (10.0 * conductanceQuantum),
+            1.0 / (9.0 * conductanceQuantum),
+            1.0 / (8.0 * conductanceQuantum),
+            1.0 / (7.0 * conductanceQuantum),
+            1.0 / (6.0 * conductanceQuantum),
+            1.0 / (5.0 * conductanceQuantum),
+            1.0 / (4.0 * conductanceQuantum),
+            1.0 / (3.0 * conductanceQuantum),
+            1.0 / (2.0 * conductanceQuantum),
+            1.0 / (1.0 * conductanceQuantum)
+        };
+
         public double[] SetResistanceCollection
         {
             get { return setResistanceCollection; }
@@ -348,14 +373,14 @@ namespace MCBJ.Experiments
                                  arrElem = val
                              }).OrderBy(c => c.diff).First();
 
-            return query.arrElem;            
+            return query.arrElem;
         }
 
         private int recordingFrequency = 262144;
         public int RecordingFrequency
         {
             get { return recordingFrequency; }
-            set 
+            set
             {
                 value = getClosestValueInArray(value, powersOfTwo);
 
