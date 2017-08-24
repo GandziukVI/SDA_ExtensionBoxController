@@ -816,34 +816,34 @@ namespace MCBJ.Experiments
                         if (!initResult)
                             throw new Exception("Cannot connect to the box");
 
-                        //onStatusChanged(new StatusEventArgs(string.Format("Setting sample voltage V -> {0} V", voltage.ToString("0.0000", NumberFormatInfo.InvariantInfo))));
+                        onStatusChanged(new StatusEventArgs(string.Format("Setting sample voltage V -> {0} V", voltage.ToString("0.0000", NumberFormatInfo.InvariantInfo))));
 
-                        //setDrainVoltage(voltage, experimentSettings.VoltageDeviation);
+                        setDrainVoltage(voltage, experimentSettings.VoltageDeviation);
 
-                        //onStatusChanged(new StatusEventArgs(string.Format("Reaching resistance value R -> {0}", (1.0 / conductance).ToString("0.0000", NumberFormatInfo.InvariantInfo))));
+                        onStatusChanged(new StatusEventArgs(string.Format("Reaching resistance value R -> {0}", (1.0 / conductance).ToString("0.0000", NumberFormatInfo.InvariantInfo))));
 
-                        //resistanceStabilizationState = setJunctionResistance(
-                        //    voltage,
-                        //    experimentSettings.VoltageDeviation,
-                        //    experimentSettings.MinVoltageTreshold,
-                        //    experimentSettings.VoltageTreshold,
-                        //    conductance,
-                        //    experimentSettings.ConductanceDeviation,
-                        //    experimentSettings.StabilizationTime,
-                        //    experimentSettings.MotionMinSpeed,
-                        //    experimentSettings.MotionMaxSpeed,
-                        //    experimentSettings.MotorMinPos,
-                        //    experimentSettings.MotorMaxPos,
-                        //    experimentSettings.NAveragesFast,
-                        //    experimentSettings.LoadResistance);
+                        resistanceStabilizationState = setJunctionResistance(
+                            voltage,
+                            experimentSettings.VoltageDeviation,
+                            experimentSettings.MinVoltageTreshold,
+                            experimentSettings.VoltageTreshold,
+                            conductance,
+                            experimentSettings.ConductanceDeviation,
+                            experimentSettings.StabilizationTime,
+                            experimentSettings.MotionMinSpeed,
+                            experimentSettings.MotionMaxSpeed,
+                            experimentSettings.MotorMinPos,
+                            experimentSettings.MotorMaxPos,
+                            experimentSettings.NAveragesFast,
+                            experimentSettings.LoadResistance);
 
-                        //if (resistanceStabilizationState == false)
-                        //{
-                        //    IsRunning = false;
-                        //    break;
-                        //}
+                        if (resistanceStabilizationState == false)
+                        {
+                            IsRunning = false;
+                            break;
+                        }
 
-                        //setDrainVoltage(voltage, experimentSettings.VoltageDeviation);
+                        setDrainVoltage(voltage, experimentSettings.VoltageDeviation);
 
                         onStatusChanged(new StatusEventArgs("Measuring sample characteristics before noise spectra measurement."));
 
@@ -936,8 +936,8 @@ namespace MCBJ.Experiments
                 }
             }
 
-            //motor.Enabled = true;
-            //motor.Position = experimentSettings.MotorMinPos;
+            motor.Enabled = true;
+            motor.Position = experimentSettings.MotorMinPos;
 
             if (motor != null)
             {
@@ -945,17 +945,6 @@ namespace MCBJ.Experiments
                 Thread.Sleep(100);
                 motor.Dispose();
             }
-
-            //if (boxController != null)
-            //{
-            //    while (boxController.AcquisitionInProgress == true)
-            //    {
-            //        boxController.AcquisitionInProgress = false;
-            //        acquisitionIsRunning = false;
-            //    }
-
-            //    boxController.Close();
-            //}
 
             onStatusChanged(new StatusEventArgs("The measurement is done!"));
 
