@@ -46,7 +46,7 @@ namespace DeviceIO
         private static object requestQueryLocker = new object();
         public string RequestQuery(string query)
         {
-            lock (requestQueryLocker)
+            lock (sendCommandRequestLocker) lock (receiveDeviceAnswerLocker) lock (requestQueryLocker)
             {
                 var _Query = query.EndsWith("\n") ? Encoding.ASCII.GetBytes(query) : Encoding.ASCII.GetBytes(query + "\n");
 
