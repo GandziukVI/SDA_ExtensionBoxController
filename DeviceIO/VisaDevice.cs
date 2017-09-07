@@ -11,6 +11,7 @@ namespace DeviceIO
     public class VisaDevice : IDeviceIO
     {
         private MessageBasedSession mbSession;
+        private char[] delim = "\r\n".ToCharArray();
 
         public string VisaID { get; private set; }
 
@@ -24,34 +25,34 @@ namespace DeviceIO
         private static object sendCommandRequestLocker = new object();
         public void SendCommandRequest(string request)
         {
-            lock (sendCommandRequestLocker)
-            {
-                var _Request = request.EndsWith("\n") ?
-                        Encoding.ASCII.GetBytes(request) :
-                        Encoding.ASCII.GetBytes(request + "\n");
+            lock (requestQueryLocker) lock (receiveDeviceAnswerLocker) lock (sendCommandRequestLocker)
+                    {
+                        var _Request = request.EndsWith("\n") ?
+                                Encoding.ASCII.GetBytes(request) :
+                                Encoding.ASCII.GetBytes(request + "\n");
 
-                mbSession.Write(_Request);
-            }
+                        mbSession.Write(_Request);
+                    }
         }
 
         private static object receiveDeviceAnswerLocker = new object();
         public string ReceiveDeviceAnswer()
         {
-            lock (receiveDeviceAnswerLocker)
-            {
-                return mbSession.ReadString().TrimEnd("\r\n".ToCharArray());
-            }
+            lock (sendCommandRequestLocker) lock (requestQueryLocker) lock (receiveDeviceAnswerLocker)
+                    {
+                        return mbSession.ReadString().TrimEnd(delim);
+                    }
         }
 
         private static object requestQueryLocker = new object();
         public string RequestQuery(string query)
         {
             lock (sendCommandRequestLocker) lock (receiveDeviceAnswerLocker) lock (requestQueryLocker)
-            {
-                var _Query = query.EndsWith("\n") ? Encoding.ASCII.GetBytes(query) : Encoding.ASCII.GetBytes(query + "\n");
+                    {
+                        var _Query = query.EndsWith("\n") ? Encoding.ASCII.GetBytes(query) : Encoding.ASCII.GetBytes(string.Format("{0}\n", query));
 
-                return Encoding.ASCII.GetString(mbSession.Query(_Query)).TrimEnd("\r\n".ToCharArray());
-            }
+                        return Encoding.ASCII.GetString(mbSession.Query(_Query)).TrimEnd(delim);
+                    }
         }
 
         private static object disposeLocker = new object();

@@ -116,33 +116,33 @@ namespace DeviceIO
         private static object sendCommandRequestLock = new object();
         public void SendCommandRequest(string request)
         {
-            lock (sendCommandRequestLock)
-            {
-                var temp = string.Empty;
-                while (!_dataQueue.IsEmpty)
-                    _dataQueue.TryDequeue(out temp);
+            lock (requestQueryLock) lock (receiveDeviceAnswerLock) lock (sendCommandRequestLock)
+                    {
+                        var temp = string.Empty;
+                        while (!_dataQueue.IsEmpty)
+                            _dataQueue.TryDequeue(out temp);
 
-                request = request.EndsWith("\n") ? request : request + "\n";
+                        request = request.EndsWith("\n") ? request : request + "\n";
 
-                var strBytes = Encoding.ASCII.GetBytes(request);
-                _COMPort.Write(strBytes, 0, strBytes.Length);
-            }
+                        var strBytes = Encoding.ASCII.GetBytes(request);
+                        _COMPort.Write(strBytes, 0, strBytes.Length);
+                    }
         }
 
         private static object receiveDeviceAnswerLock = new object();
         public string ReceiveDeviceAnswer()
         {
-            lock (receiveDeviceAnswerLock)
-            {
-                while (_dataQueue.Count == 0) ;
+            lock (sendCommandRequestLock) lock (requestQueryLock) lock (receiveDeviceAnswerLock)
+                    {
+                        while (_dataQueue.Count == 0) ;
 
-                string result;
-                bool success = _dataQueue.TryDequeue(out result);
-                if (success)
-                    return result;
-                else
-                    throw new Exception("Unsuccessfull data reading!");
-            }
+                        string result;
+                        bool success = _dataQueue.TryDequeue(out result);
+                        if (success)
+                            return result;
+                        else
+                            throw new Exception("Unsuccessfull data reading!");
+                    }
         }
 
         private static object requestQueryLock = new object();
