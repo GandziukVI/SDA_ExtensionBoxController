@@ -16,7 +16,7 @@ namespace DeviceIO
         private SerialPort _COMPort;
         private string _returnToken;
 
-        private bool _communicatyionIsActive = false;
+        private bool _communicationIsActive = false;
         private int _dataCount;
         private string _dataReading;
         private ConcurrentQueue<string> _dataQueue;
@@ -58,7 +58,7 @@ namespace DeviceIO
             _serialThread.Priority = ThreadPriority.Normal;
             _serialThread.Name = string.Format("SerialHandle{0}", _serialThread.ManagedThreadId);
 
-            _communicatyionIsActive = true;
+            _communicationIsActive = true;
             _serialThread.Start();
         }
 
@@ -85,7 +85,7 @@ namespace DeviceIO
         {
             lock (getSerialDataContiniousLock)
             {
-                while (_communicatyionIsActive)
+                while (_communicationIsActive)
                 {
                     _timeCounter.Restart();
 
@@ -179,7 +179,7 @@ namespace DeviceIO
             {
                 if (_serialThread != null)
                 {
-                    _communicatyionIsActive = false;
+                    _communicationIsActive = false;
                     while (_serialThread.IsAlive) ;
 
                     if (_COMPort != null)
