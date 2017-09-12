@@ -118,14 +118,17 @@ namespace DeviceIO
         {
             lock (requestQueryLock) lock (receiveDeviceAnswerLock) lock (sendCommandRequestLock)
                     {
-                        var temp = string.Empty;
-                        while (!_dataQueue.IsEmpty)
-                            _dataQueue.TryDequeue(out temp);
+                        if (_COMPort != null && _COMPort.IsOpen == true)
+                        {
+                            var temp = string.Empty;
+                            while (!_dataQueue.IsEmpty)
+                                _dataQueue.TryDequeue(out temp);
 
-                        request = request.EndsWith("\n") ? request : request + "\n";
+                            request = request.EndsWith("\n") ? request : request + "\n";
 
-                        var strBytes = Encoding.ASCII.GetBytes(request);
-                        _COMPort.Write(strBytes, 0, strBytes.Length);
+                            var strBytes = Encoding.ASCII.GetBytes(request);
+                            _COMPort.Write(strBytes, 0, strBytes.Length);
+                        }
                     }
         }
 
@@ -134,14 +137,19 @@ namespace DeviceIO
         {
             lock (sendCommandRequestLock) lock (requestQueryLock) lock (receiveDeviceAnswerLock)
                     {
-                        while (_dataQueue.Count == 0) ;
+                        if (_COMPort != null && _COMPort.IsOpen == true)
+                        {
+                            while (_dataQueue.Count == 0) ;
 
-                        string result;
-                        bool success = _dataQueue.TryDequeue(out result);
-                        if (success)
-                            return result;
+                            string result;
+                            bool success = _dataQueue.TryDequeue(out result);
+                            if (success)
+                                return result;
+                            else
+                                throw new Exception("Unsuccessfull data reading!");
+                        }
                         else
-                            throw new Exception("Unsuccessfull data reading!");
+                            return string.Empty;
                     }
         }
 
@@ -150,12 +158,17 @@ namespace DeviceIO
         {
             lock (requestQueryLock)
             {
-                string temp;
-                while (_dataQueue.Count > 0)
-                    _dataQueue.TryDequeue(out temp);
+                if (_COMPort != null && _COMPort.IsOpen == true)
+                {
+                    string temp;
+                    while (_dataQueue.Count > 0)
+                        _dataQueue.TryDequeue(out temp);
 
-                SendCommandRequest(query);
-                return ReceiveDeviceAnswer();
+                    SendCommandRequest(query);
+                    return ReceiveDeviceAnswer();
+                }
+                else
+                    return string.Empty;
             }
         }
 
