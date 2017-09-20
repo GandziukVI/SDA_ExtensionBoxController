@@ -116,7 +116,11 @@ namespace DeviceIO
         private static object sendCommandRequestLock = new object();
         public void SendCommandRequest(string request)
         {
-            lock (requestQueryLock) lock (receiveDeviceAnswerLock) lock (sendCommandRequestLock)
+            lock(requestQueryLock)
+            {
+                lock(receiveDeviceAnswerLock)
+                {
+                    lock(sendCommandRequestLock)
                     {
                         if (_COMPort != null && _COMPort.IsOpen == true)
                         {
@@ -124,18 +128,24 @@ namespace DeviceIO
                             while (!_dataQueue.IsEmpty)
                                 _dataQueue.TryDequeue(out temp);
 
-                            request = request.EndsWith("\n") ? request : request + "\n";
+                            request = request.EndsWith("\n") ? request : string.Format("{0}\n", request);
 
                             var strBytes = Encoding.ASCII.GetBytes(request);
                             _COMPort.Write(strBytes, 0, strBytes.Length);
                         }
                     }
+                }
+            }
         }
 
         private static object receiveDeviceAnswerLock = new object();
         public string ReceiveDeviceAnswer()
         {
-            lock (sendCommandRequestLock) lock (requestQueryLock) lock (receiveDeviceAnswerLock)
+            lock(sendCommandRequestLock)
+            {
+                lock(requestQueryLock)
+                {
+                    lock(receiveDeviceAnswerLock)
                     {
                         if (_COMPort != null && _COMPort.IsOpen == true)
                         {
@@ -151,24 +161,43 @@ namespace DeviceIO
                         else
                             return string.Empty;
                     }
+                }
+            }
         }
 
         private static object requestQueryLock = new object();
         public string RequestQuery(string query)
         {
-            lock (requestQueryLock)
+            lock(sendCommandRequestLock)
             {
-                if (_COMPort != null && _COMPort.IsOpen == true)
+                lock(receiveDeviceAnswerLock)
                 {
-                    string temp;
-                    while (_dataQueue.Count > 0)
-                        _dataQueue.TryDequeue(out temp);
+                    lock(requestQueryLock)
+                    {
+                        if (_COMPort != null && _COMPort.IsOpen == true)
+                        {
+                            string temp;
+                            while (_dataQueue.Count > 0)
+                                _dataQueue.TryDequeue(out temp);
 
-                    SendCommandRequest(query);
-                    return ReceiveDeviceAnswer();
+                            query = query.EndsWith("\n") ? query : string.Format("{0}\n", query);
+
+                            var strBytes = Encoding.ASCII.GetBytes(query);
+                            _COMPort.Write(strBytes, 0, strBytes.Length);
+
+                            while (_dataQueue.Count == 0) ;
+
+                            string result;
+                            bool success = _dataQueue.TryDequeue(out result);
+                            if (success)
+                                return result;
+                            else
+                                throw new Exception("Unsuccessfull data reading!");
+                        }
+                        else
+                            return string.Empty;
+                    }
                 }
-                else
-                    return string.Empty;
             }
         }
 
