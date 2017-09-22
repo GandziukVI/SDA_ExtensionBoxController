@@ -957,11 +957,7 @@ namespace MCBJ.Experiments
             motor.Position = experimentSettings.MotorMinPos;
 
             if (motor != null)
-            {
                 motor.Disable();
-                Thread.Sleep(100);
-                motor.Dispose();
-            }
 
             onStatusChanged(new StatusEventArgs("The measurement is done!"));
 
@@ -1109,9 +1105,6 @@ namespace MCBJ.Experiments
 
                 if (motor != null)
                     motor.Dispose();
-
-                //if (boxController != null)
-                //    boxController.Close();
 
                 base.Dispose();
             }
