@@ -918,7 +918,6 @@ namespace MCBJ.Experiments
 
                                         File.Delete(TTSaveFileName);
                                     }
-
                                     --j;
                                 }
                             }
@@ -947,8 +946,8 @@ namespace MCBJ.Experiments
 
                             File.Delete(TTSaveFileName);
                         }
-
-                        --j;
+                        if (j > 0)
+                            --j;
                     }
                 }
             }
