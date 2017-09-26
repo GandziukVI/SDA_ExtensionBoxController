@@ -27,6 +27,7 @@ using DynamicDataDisplay.Markers.DataSources;
 using Microsoft.Research.DynamicDataDisplay.DataSources;
 using Microsoft.Research.DynamicDataDisplay;
 using System.Threading;
+using System.Runtime.ExceptionServices;
 
 namespace MCBJ
 {
@@ -264,20 +265,30 @@ namespace MCBJ
 
         #region Status and progress for all experiments
 
+        [HandleProcessCorruptedStateExceptions]
         private void experimentStatus(object sender, StatusEventArgs e)
         {
-            Dispatcher.InvokeAsync(new Action(() =>
+            try
             {
-                expStatus.Text = e.StatusMessage;
-            }));
+                Dispatcher.InvokeAsync(new Action(() =>
+                {
+                    expStatus.Text = e.StatusMessage;
+                }));
+            }
+            catch { }
         }
 
+        [HandleProcessCorruptedStateExceptions]
         void experimentProgress(object sender, ProgressEventArgs e)
         {
-            Dispatcher.InvokeAsync(new Action(() =>
+            try
             {
-                expProgress.Value = e.Progress;
-            }));
+                Dispatcher.InvokeAsync(new Action(() =>
+                {
+                    expProgress.Value = e.Progress;
+                }));
+            }
+            catch { }
         }
 
         #endregion
