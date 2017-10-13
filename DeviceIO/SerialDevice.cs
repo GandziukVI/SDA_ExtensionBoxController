@@ -15,26 +15,25 @@ namespace DeviceIO
     {
         private SerialPort _COMPort;
         private string _returnToken;
+        private string _termChars = "\f\r\n\0";
 
-        private bool _communicationIsActive = false;
-        private int _dataCount;
+        //private bool _communicationIsActive = false;
+        //private int _dataCount;
         private string _dataReading;
         private ConcurrentQueue<string> _dataQueue;
 
-        private double _PacketsRate;
-        private Thread _serialThread;
-        private Stopwatch _timeCounter;
+        //private double _PacketsRate;
+        //private Thread _serialThread;
+        //private Stopwatch _timeCounter;
         private const int _freqCriticalLimit = 20;
 
         public SerialDevice(string portName, int baudRate, Parity parity, int dataBits, StopBits stopBits, string returnToken = "\n")
         {
-            Dispose();
-
             _dataReading = string.Empty;
             _dataQueue = new ConcurrentQueue<string>();
 
-            _timeCounter = new Stopwatch();
-            _timeCounter.Start();
+            //_timeCounter = new Stopwatch();
+            //_timeCounter.Start();
 
             _COMPort = new SerialPort(portName, baudRate, parity, dataBits, stopBits);
 
@@ -54,12 +53,12 @@ namespace DeviceIO
             if (!_COMPort.IsOpen)
                 throw new Exception("Can't connect to the COM port!");
 
-            _serialThread = new Thread(new ThreadStart(getSerialDataContinious));
-            _serialThread.Priority = ThreadPriority.Normal;
-            _serialThread.Name = string.Format("SerialHandle{0}", _serialThread.ManagedThreadId);
+            //_serialThread = new Thread(new ThreadStart(getSerialDataContinious));
+            //_serialThread.Priority = ThreadPriority.Normal;
+            //_serialThread.Name = string.Format("SerialHandle{0}", _serialThread.ManagedThreadId);
 
-            _communicationIsActive = true;
-            _serialThread.Start();
+            //_communicationIsActive = true;
+            //_serialThread.Start();
         }
 
         ~SerialDevice()
@@ -67,162 +66,278 @@ namespace DeviceIO
             Dispose();
         }
 
-        private static object _getDataLock = new object();
-        private int _getData(ref byte[] bytes, int offset, int count)
-        {
-            lock (_getDataLock)
-            {
-                int readBytes = 0;
-                if (count > 0)
-                    readBytes = _COMPort.Read(bytes, offset, count);
+        //private static object _getDataLock = new object();
+        //private int _getData(ref byte[] bytes, int offset, int count)
+        //{
+        //    lock (_getDataLock)
+        //    {
+        //        int readBytes = 0;
+        //        if (count > 0)
+        //            readBytes = _COMPort.Read(bytes, offset, count);
 
-                return readBytes;
-            }
-        }
+        //        return readBytes;
+        //    }
+        //}
 
-        private static object getSerialDataContiniousLock = new object();
-        private void getSerialDataContinious()
-        {
-            lock (getSerialDataContiniousLock)
-            {
-                while (_communicationIsActive)
-                {
-                    _timeCounter.Restart();
+        //private static object getSerialDataContiniousLock = new object();
+        //private void getSerialDataContinious()
+        //{
+        //    lock (getSerialDataContiniousLock)
+        //    {
+        //        while (_communicationIsActive)
+        //        {
+        //            _timeCounter.Restart();
 
-                    _dataCount = _COMPort.BytesToRead;
-                    var buffer = new byte[_dataCount];
-                    var readBytes = _getData(ref buffer, 0, _dataCount);
+        //            _dataCount = _COMPort.BytesToRead;
+        //            var buffer = new byte[_dataCount];
+        //            var readBytes = _getData(ref buffer, 0, _dataCount);
 
-                    if (readBytes > 0)
-                    {
-                        _dataReading += Encoding.ASCII.GetString(buffer);
-                        if (_dataReading.Contains(_COMPort.NewLine))
-                        {
-                            _dataQueue.Enqueue(_dataReading.TrimEnd("\r\n".ToCharArray()));
-                            _dataReading = string.Empty;
-                        }
-                    }
+        //            if (readBytes > 0)
+        //            {
+        //                _dataReading += Encoding.ASCII.GetString(buffer);
+        //                if (_dataReading.Contains(_COMPort.NewLine))
+        //                {
+        //                    _dataQueue.Enqueue(_dataReading.TrimEnd("\r\n".ToCharArray()));
+        //                    _dataReading = string.Empty;
+        //                }
+        //            }
 
-                    _PacketsRate = ((_PacketsRate + readBytes) / 2);
+        //            _PacketsRate = ((_PacketsRate + readBytes) / 2);
 
-                    var toSleep = (int)_timeCounter.ElapsedMilliseconds;
-                    if ((double)(readBytes + _COMPort.BytesToRead) / 2.0 <= _PacketsRate)
-                        if (toSleep > 0)
-                            Thread.Sleep(toSleep > _freqCriticalLimit ? _freqCriticalLimit : toSleep);
-                }
-            }
-        }
+        //            var toSleep = (int)_timeCounter.ElapsedMilliseconds;
+        //            if ((double)(readBytes + _COMPort.BytesToRead) / 2.0 <= _PacketsRate)
+        //                if (toSleep > 0)
+        //                    Thread.Sleep(toSleep > _freqCriticalLimit ? _freqCriticalLimit : toSleep);
+        //        }
+        //    }
+        //}
+
+        //private static object sendCommandRequestLock = new object();
+        //public void SendCommandRequest(string request)
+        //{
+        //    lock (requestQueryLock)
+        //    {
+        //        lock (receiveDeviceAnswerLock)
+        //        {
+        //            lock (sendCommandRequestLock)
+        //            {
+        //                if (_COMPort != null && _COMPort.IsOpen == true)
+        //                {
+        //                    var temp = string.Empty;
+        //                    while (!_dataQueue.IsEmpty)
+        //                        _dataQueue.TryDequeue(out temp);
+
+        //                    request = request.EndsWith("\n") ? request : string.Format("{0}\n", request);
+
+        //                    var strBytes = Encoding.ASCII.GetBytes(request);
+        //                    _COMPort.Write(strBytes, 0, strBytes.Length);
+        //                }
+        //            }
+        //        }
+        //    }
+        //}
 
         private static object sendCommandRequestLock = new object();
         public void SendCommandRequest(string request)
         {
-            lock(requestQueryLock)
+            lock (requestQueryLock)
             {
-                lock(receiveDeviceAnswerLock)
+                lock (receiveDeviceAnswerLock)
                 {
-                    lock(sendCommandRequestLock)
+                    lock (sendCommandRequestLock)
                     {
                         if (_COMPort != null && _COMPort.IsOpen == true)
                         {
-                            var temp = string.Empty;
-                            while (!_dataQueue.IsEmpty)
-                                _dataQueue.TryDequeue(out temp);
-
                             request = request.EndsWith("\n") ? request : string.Format("{0}\n", request);
 
                             var strBytes = Encoding.ASCII.GetBytes(request);
                             _COMPort.Write(strBytes, 0, strBytes.Length);
                         }
+                        else
+                            throw new Exception("Serial port is closed!");
                     }
                 }
             }
         }
+
+        //private static object receiveDeviceAnswerLock = new object();
+        //public string ReceiveDeviceAnswer()
+        //{
+        //    lock(sendCommandRequestLock)
+        //    {
+        //        lock(requestQueryLock)
+        //        {
+        //            lock(receiveDeviceAnswerLock)
+        //            {
+        //                if (_COMPort != null && _COMPort.IsOpen == true)
+        //                {
+        //                    while (_dataQueue.Count == 0) ;
+
+        //                    string result;
+        //                    bool success = _dataQueue.TryDequeue(out result);
+        //                    if (success)
+        //                        return result;
+        //                    else
+        //                        throw new Exception("Unsuccessfull data reading!");
+        //                }
+        //                else
+        //                    return string.Empty;
+        //            }
+        //        }
+        //    }
+        //}
 
         private static object receiveDeviceAnswerLock = new object();
         public string ReceiveDeviceAnswer()
         {
-            lock(sendCommandRequestLock)
+            lock (sendCommandRequestLock)
             {
-                lock(requestQueryLock)
+                lock (requestQueryLock)
                 {
-                    lock(receiveDeviceAnswerLock)
+                    lock (receiveDeviceAnswerLock)
                     {
                         if (_COMPort != null && _COMPort.IsOpen == true)
                         {
-                            while (_dataQueue.Count == 0) ;
+                            StringBuilder resultBuilder = new StringBuilder();
+                            string reading;
 
-                            string result;
-                            bool success = _dataQueue.TryDequeue(out result);
-                            if (success)
-                                return result;
-                            else
-                                throw new Exception("Unsuccessfull data reading!");
+                            while (true)
+                            {
+                                while (_COMPort.BytesToRead == 0) ;
+                                reading = _COMPort.ReadExisting();
+                                resultBuilder.Append(reading);
+                                if (_termChars.Contains(reading[reading.Length - 1]))
+                                    break;
+                            }
+
+                            return resultBuilder.ToString();
                         }
                         else
-                            return string.Empty;
+                            throw new Exception("Serial port is closed!");
                     }
                 }
             }
         }
 
+        //private static object requestQueryLock = new object();
+        //public string RequestQuery(string query)
+        //{
+        //    lock (sendCommandRequestLock)
+        //    {
+        //        lock (receiveDeviceAnswerLock)
+        //        {
+        //            lock (requestQueryLock)
+        //            {
+        //                if (_COMPort != null && _COMPort.IsOpen == true)
+        //                {
+        //                    string temp;
+        //                    while (_dataQueue.Count > 0)
+        //                        _dataQueue.TryDequeue(out temp);
+
+        //                    query = query.EndsWith("\n") ? query : string.Format("{0}\n", query);
+
+        //                    var strBytes = Encoding.ASCII.GetBytes(query);
+        //                    _COMPort.Write(strBytes, 0, strBytes.Length);
+
+        //                    while (_dataQueue.Count == 0) ;
+
+        //                    string result;
+        //                    bool success = _dataQueue.TryDequeue(out result);
+        //                    if (success)
+        //                        return result;
+        //                    else
+        //                        throw new Exception("Unsuccessfull data reading!");
+        //                }
+        //                else
+        //                    return string.Empty;
+        //            }
+        //        }
+        //    }
+        //}
+
         private static object requestQueryLock = new object();
         public string RequestQuery(string query)
         {
-            lock(sendCommandRequestLock)
+            lock (sendCommandRequestLock)
             {
-                lock(receiveDeviceAnswerLock)
+                lock (receiveDeviceAnswerLock)
                 {
-                    lock(requestQueryLock)
+                    lock (requestQueryLock)
                     {
                         if (_COMPort != null && _COMPort.IsOpen == true)
                         {
-                            string temp;
-                            while (_dataQueue.Count > 0)
-                                _dataQueue.TryDequeue(out temp);
+                            while (_COMPort.BytesToRead > 0)
+                            {
+                                _COMPort.ReadExisting();
+                                Thread.Sleep(_freqCriticalLimit);
+                            }
 
                             query = query.EndsWith("\n") ? query : string.Format("{0}\n", query);
 
                             var strBytes = Encoding.ASCII.GetBytes(query);
                             _COMPort.Write(strBytes, 0, strBytes.Length);
 
-                            while (_dataQueue.Count == 0) ;
+                            StringBuilder resultBuilder = new StringBuilder();
+                            string reading;
 
-                            string result;
-                            bool success = _dataQueue.TryDequeue(out result);
-                            if (success)
-                                return result;
-                            else
-                                throw new Exception("Unsuccessfull data reading!");
+                            while (true)
+                            {
+                                while (_COMPort.BytesToRead == 0) ;
+                                reading = _COMPort.ReadExisting();
+                                resultBuilder.Append(reading);
+                                if (_termChars.Contains(reading[reading.Length - 1]))
+                                    break;
+                            }
+
+                            return resultBuilder.ToString();
                         }
                         else
-                            return string.Empty;
+                            throw new Exception("Serial port is closed!");
                     }
                 }
             }
         }
+
+        //private static object disposeLock = new object();
+        //public void Dispose()
+        //{
+        //    lock (disposeLock)
+        //    {
+        //        if (_serialThread != null)
+        //        {
+        //            _communicationIsActive = false;
+        //            while (_serialThread.IsAlive) ;
+
+        //            if (_COMPort != null)
+        //            {
+        //                if (_COMPort.IsOpen)
+        //                {
+        //                    _COMPort.Close();
+        //                    _COMPort.Dispose();
+        //                }
+        //                else
+        //                    _COMPort.Dispose();
+        //            }
+
+        //            GC.Collect();
+        //        }
+        //    }
+        //}
 
         private static object disposeLock = new object();
         public void Dispose()
         {
             lock (disposeLock)
             {
-                if (_serialThread != null)
+                if (_COMPort != null)
                 {
-                    _communicationIsActive = false;
-                    while (_serialThread.IsAlive) ;
-
-                    if (_COMPort != null)
+                    if (_COMPort.IsOpen)
                     {
-                        if (_COMPort.IsOpen)
-                        {
-                            _COMPort.Close();
-                            _COMPort.Dispose();
-                        }
-                        else
-                            _COMPort.Dispose();
+                        _COMPort.Close();
+                        _COMPort.Dispose();
                     }
-
-                    GC.Collect();
+                    else
+                        _COMPort.Dispose();
                 }
             }
         }
