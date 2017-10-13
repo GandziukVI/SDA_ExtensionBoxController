@@ -321,13 +321,13 @@ namespace FET_Characterization
                 experiment.Stop();
         }
 
-        void AddNoiseDataToPlot(object NoiseDataString)
+        void AddNoiseDataToPlot(string NoiseDataString)
         {
             try
             {
                 FETNoiseDataList.Clear();
 
-                var noiseDataString = (string)NoiseDataString;
+                var noiseDataString = NoiseDataString;
 
                 var dataPoints = noiseDataString.Substring(2)
                     .Split(delim, StringSplitOptions.RemoveEmptyEntries)
@@ -423,10 +423,12 @@ namespace FET_Characterization
         {
             if (e.Data.StartsWith("NS"))
             {
-                var ts = new ParameterizedThreadStart(AddNoiseDataToPlot);
-                var th = new Thread(ts);
+                //var ts = new ParameterizedThreadStart(AddNoiseDataToPlot);
+                //var th = new Thread(ts);
 
-                th.Start(e.Data);
+                //th.Start(e.Data);
+
+                AddNoiseDataToPlot(e.Data);
             }
             else if (e.Data.StartsWith("TT"))
             {

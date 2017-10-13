@@ -228,7 +228,7 @@ namespace MCBJ
         private static object addDataToPlotLocker = new object();
 
         [HandleProcessCorruptedStateExceptions]
-        void AddNoiseDataToPlot(object NoiseDataString)
+        void AddNoiseDataToPlot(string NoiseDataString)
         {
             lock (addDataToPlotLocker)
             {
@@ -236,7 +236,7 @@ namespace MCBJ
                 {
                     dList.Clear();
 
-                    var noiseDataString = (string)NoiseDataString;
+                    var noiseDataString = NoiseDataString;
 
                     var dataPoints = noiseDataString.Substring(2)
                         .Split(delim, StringSplitOptions.RemoveEmptyEntries)
@@ -271,10 +271,11 @@ namespace MCBJ
                 {
                     if (e.Data.StartsWith("NS"))
                     {
-                        var ts = new ParameterizedThreadStart(AddNoiseDataToPlot);
-                        var th = new Thread(ts);
+                        AddNoiseDataToPlot(e.Data);
+                        //var ts = new ParameterizedThreadStart(AddNoiseDataToPlot);
+                        //var th = new Thread(ts);
 
-                        th.Start(e.Data);
+                        //th.Start(e.Data);
                     }
                 }
                 catch { }
