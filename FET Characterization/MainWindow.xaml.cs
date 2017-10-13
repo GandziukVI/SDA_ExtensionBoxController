@@ -426,13 +426,13 @@ namespace FET_Characterization
             }
             else if (e.Data.StartsWith("TT"))
             {
-                var splitPointsData = e.Data.Substring(2).Split(delim, StringSplitOptions.RemoveEmptyEntries);
-                timeTraceDataQueue.Enqueue(splitPointsData);
+                //var splitPointsData = e.Data.Substring(2).Split(delim, StringSplitOptions.RemoveEmptyEntries);
+                //timeTraceDataQueue.Enqueue(splitPointsData);
 
-                var ts = new ThreadStart(AddTimeTraceDataToPlotContiniously);
-                var th = new Thread(ts);
+                //var ts = new ThreadStart(AddTimeTraceDataToPlotContiniously);
+                //var th = new Thread(ts);
 
-                th.Start();
+                //th.Start();
             }
         }
 

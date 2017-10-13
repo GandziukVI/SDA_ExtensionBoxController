@@ -16,6 +16,8 @@ using System.Threading;
 using Agilent_ExtensionBox.Internal;
 using System.Globalization;
 using FET_Characterization.Experiments.DataHandling;
+using System.IO.MemoryMappedFiles;
+using System.Security.AccessControl;
 
 namespace FET_Characterization.Experiments
 {
@@ -32,7 +34,8 @@ namespace FET_Characterization.Experiments
         bool isDCMode = false;
         bool isACMode = false;
 
-        StreamWriter TT_StreamWriter;
+        FileStream TT_Stream;
+        AutoResetEvent TT_AutoresetEvent = new AutoResetEvent(false);
 
         FET_NoiseModel experimentSettings;
 
@@ -304,10 +307,11 @@ namespace FET_Characterization.Experiments
         string NoiseSpectrumFinal = string.Empty;
 
         bool acquisitionIsRunning = false;
+        bool acquisitionIsSuccessful = false;
 
         static int averagingCounter = 0;
 
-        void measureNoiseSpectra(
+        bool measureNoiseSpectra(
 
             int samplingFrequency,
             int nDataSamples,
@@ -331,7 +335,11 @@ namespace FET_Characterization.Experiments
             boxController.AcquisitionInProgress = true;
 
             boxController.AI_ChannelCollection[AnalogInChannelsEnum.AIn1].DataReady -= FET_Noise_DataReady;
-            boxController.AI_ChannelCollection[AnalogInChannelsEnum.AIn1].DataReady +=  FET_Noise_DataReady;
+            boxController.AI_ChannelCollection[AnalogInChannelsEnum.AIn1].DataReady += FET_Noise_DataReady;
+
+            Point[] temp;
+            while (!boxController.AI_ChannelCollection[AnalogInChannelsEnum.AIn1].ChannelData.IsEmpty)
+                boxController.AI_ChannelCollection[AnalogInChannelsEnum.AIn1].ChannelData.TryDequeue(out temp);
 
             acquisitionIsRunning = true;
             boxController.AcquisitionInProgress = true;
@@ -355,18 +363,25 @@ namespace FET_Characterization.Experiments
                             averagingCounter = 0;
                             break;
                         }
+                        if (acquisitionTaskResult != null)
+                        {
+                            var taskStatus = acquisitionTaskResult.Status;
+                            var taskCompleted = acquisitionTaskResult.IsCompleted;
+
+                            if ((taskCompleted == true) ||
+                                (taskStatus == TaskStatus.Canceled) ||
+                                (taskStatus == TaskStatus.Faulted))
+                            {
+                                averagingCounter = 0;
+                                break;
+                            }
+                        }
 
                         Point[] timeTrace = new Point[] { };
                         var dataReadingSuccess = boxController.AI_ChannelCollection[AnalogInChannelsEnum.AIn1].ChannelData.TryDequeue(out timeTrace);
 
                         if (dataReadingSuccess)
                         {
-                            var query = from item in timeTrace
-                                        select string.Format("{0}\t{1}", item.X.ToString(NumberFormatInfo.InvariantInfo), (item.Y / kAmpl).ToString(NumberFormatInfo.InvariantInfo));
-
-                            // First sending the time trace data before FFT
-                            onDataArrived(new ExpDataArrivedEventArgs(string.Format("TT{0}", string.Join("\r\n", query))));
-
                             var TTVoltageValues = (from item in timeTrace
                                                    select item.Y).ToArray();
 
@@ -375,12 +390,18 @@ namespace FET_Characterization.Experiments
                             if (noisePSD == null || noisePSD.Length == 0)
                             {
                                 noisePSD = new Point[singleNoiseSpectrum.Length];
-                                for (int i = 0; i < singleNoiseSpectrum.Length; i++)
+                                for (int i = 0; i != singleNoiseSpectrum.Length; )
+                                {
                                     noisePSD[i] = new Point(singleNoiseSpectrum[i].X, 0.0);
+                                    ++i;
+                                }
                             }
 
-                            for (int i = 0; i < noisePSD.Length; i++)
+                            for (int i = 0; i != noisePSD.Length; )
+                            {
                                 noisePSD[i].Y += singleNoiseSpectrum[i].Y;
+                                ++i;
+                            }
 
                             if (averagingCounter % updateNumber == 0)
                             {
@@ -397,16 +418,70 @@ namespace FET_Characterization.Experiments
                                 onDataArrived(new ExpDataArrivedEventArgs(string.Format("NS{0}", string.Join("\r\n", finalSpectrum))));
                                 onProgressChanged(new ProgressEventArgs((double)averagingCounter / (double)nAverages * 100.0));
                             }
+
+                            if (experimentSettings.RecordTimeTraces == true)
+                            {
+                                TT_AutoresetEvent.Reset();
+
+                                var n = experimentSettings.SamplingFrequency / experimentSettings.RecordingFrequency;
+                                var timeTraceSelection = timeTrace
+                                    .Where((value, index) => index % n == 0)
+                                    .Select(value => string.Format("{0}\t{1}\r\n", value.X.ToString(NumberFormatInfo.InvariantInfo), (value.Y / kAmpl).ToString(NumberFormatInfo.InvariantInfo)))
+                                    .ToArray();
+
+                                var ttMemorySize = 0;
+                                for (int i = 0; i != timeTraceSelection.Length; )
+                                {
+                                    ttMemorySize += ASCIIEncoding.ASCII.GetByteCount(timeTraceSelection[i]);
+                                    ++i;
+                                }
+
+                                int offset = 0;
+                                int count = 0;
+                                byte[] buf;
+
+                                var security = new MemoryMappedFileSecurity();
+                                security.AddAccessRule(new AccessRule<MemoryMappedFileRights>("everyone", MemoryMappedFileRights.FullControl, AccessControlType.Allow));
+
+                                using (var mmf = MemoryMappedFile.CreateNew(
+                                    @"TTMappedFile",
+                                    ttMemorySize,
+                                    MemoryMappedFileAccess.ReadWrite,
+                                    MemoryMappedFileOptions.DelayAllocatePages,
+                                    security,
+                                    HandleInheritability.Inheritable))
+                                {
+                                    using (var stream = mmf.CreateViewStream(0, ttMemorySize))
+                                    {
+                                        for (int i = 0; i != timeTraceSelection.Length; )
+                                        {
+                                            buf = ASCIIEncoding.ASCII.GetBytes(timeTraceSelection[i]);
+                                            count = ASCIIEncoding.ASCII.GetByteCount(timeTraceSelection[i]);
+
+                                            stream.Write(buf, offset, count);
+                                            ++i;
+                                        }
+                                    }
+                                    onDataArrived(new ExpDataArrivedEventArgs(string.Format("TT {0}", ttMemorySize.ToString(NumberFormatInfo.InvariantInfo))));
+                                    TT_AutoresetEvent.WaitOne();
+                                }
+                            }
                         }
                     }
                 },
                 async () =>
                 {
-                    acquisitionTaskResult = Task.Factory.StartNew(() => { boxController.StartAnalogAcquisition(samplingFrequency); });
+                    acquisitionTaskResult = Task.Factory.StartNew(() =>
+                    {
+                        acquisitionIsSuccessful = boxController.StartAnalogAcquisition(samplingFrequency);
+                    });
+
                     await acquisitionTaskResult;
                 });
 
             acquisitionTaskResult.Wait();
+
+            return acquisitionIsSuccessful;
         }
 
         public override void ToDo(object Arg)
@@ -469,14 +544,14 @@ namespace FET_Characterization.Experiments
 
                     #region Recording time trace FileStream settings
 
-                    if (TT_StreamWriter != null)
-                        TT_StreamWriter.Close();
+                    if (TT_Stream != null)
+                        TT_Stream.Close();
 
                     if (experimentSettings.RecordTimeTraces == true)
                     {
                         TTSaveFileName = GetFileNameWithIncrement(string.Join("\\", experimentSettings.FilePath, "Time traces", experimentSettings.SaveFileName));
-                        createFileWithHeader(TTSaveFileName, ref mode, ref access, "", "");// "Time\tVoltage\n", "s\tV\n");
-                        TT_StreamWriter = new StreamWriter(new FileStream(TTSaveFileName, FileMode.Append, FileAccess.Write));
+                        createFileWithHeader(TTSaveFileName, ref mode, ref access, "", "");
+                        TT_Stream = new FileStream(TTSaveFileName, FileMode.Open, FileAccess.Write);
                     }
 
                     #endregion
@@ -642,37 +717,6 @@ namespace FET_Characterization.Experiments
             await WriteData(toWrite, DataLogFileName, mode, access);
         }
 
-        //private StringBuilder dataBuilder = new StringBuilder();
-        void Noise_DefinedResistance_DataArrived(object sender, ExpDataArrivedEventArgs e)
-        {
-            if (e.Data.StartsWith("TT"))
-            {
-                if (experimentSettings.RecordTimeTraces == true)
-                {
-                    if (experimentSettings.SamplingFrequency == experimentSettings.RecordingFrequency)
-                        TT_StreamWriter.Write(e.Data.Substring(2));
-                    else
-                    {
-                        if (dataBuilder != null)
-                            dataBuilder.Clear();
-
-                        var n = experimentSettings.SamplingFrequency / experimentSettings.RecordingFrequency;
-                        var selectedData = string.Join
-                            (
-                                "\r\n",
-                                e.Data.Substring(2).Split("\r\n".ToCharArray(), StringSplitOptions.RemoveEmptyEntries).Where((value, index) => index % n == 0)
-                            );
-
-                        TT_StreamWriter.Write(selectedData);
-                    }
-                }
-            }
-            else if (e.Data.StartsWith("NS"))
-            {
-                NoiseSpectrumFinal = e.Data.Substring(2);
-            }
-        }
-
         #endregion
 
         private void FET_Noise_DataReady(object sender, EventArgs e)
@@ -683,38 +727,41 @@ namespace FET_Characterization.Experiments
         StringBuilder dataBuilder = new StringBuilder();
         void FET_Noise_Experiment_DataArrived(object sender, ExpDataArrivedEventArgs e)
         {
-            if (e.Data.StartsWith("TT"))
-            {
-                if (experimentSettings.RecordTimeTraces == true)
-                {
-                    if (experimentSettings.SamplingFrequency == experimentSettings.RecordingFrequency)
-                        TT_StreamWriter.Write(e.Data.Substring(2));
-                    else
-                    {
-                        if (dataBuilder != null)
-                            dataBuilder.Clear();
-
-                        var n = experimentSettings.SamplingFrequency / experimentSettings.RecordingFrequency;
-                        var selectedData = string.Join
-                            (
-                                "\r\n",
-                                e.Data.Substring(2).Split("\r\n".ToCharArray(), StringSplitOptions.RemoveEmptyEntries).Where((value, index) => index % n == 0)
-                            );
-
-                        TT_StreamWriter.Write(selectedData);
-                    }
-                }
-            }
-            else if (e.Data.StartsWith("NS"))
+            if (e.Data.StartsWith("NS"))
             {
                 NoiseSpectrumFinal = e.Data.Substring(2);
+            }
+            else if (e.Data.StartsWith("TT") && experimentSettings.RecordTimeTraces == true)
+            {
+                var streamSize = int.Parse(e.Data.Substring(3));
+                try
+                {
+                    using (var mmf = MemoryMappedFile.OpenExisting(@"TTMappedFile", MemoryMappedFileRights.ReadWrite, HandleInheritability.Inheritable))
+                    {
+                        using (var mmfStream = mmf.CreateViewStream(0, streamSize, MemoryMappedFileAccess.Read))
+                        {
+                            byte[] toWrite = new byte[streamSize];
+                            mmfStream.Read(toWrite, 0, streamSize);
+
+                            TT_Stream.Write(toWrite, 0, toWrite.Length);
+                        }
+                    }
+                }
+                catch
+                {
+                    throw;
+                }
+                finally
+                {
+                    TT_AutoresetEvent.Set();
+                }
             }
         }
 
         public override void Stop()
         {
-            if (TT_StreamWriter != null)
-                TT_StreamWriter.Close();
+            if (TT_Stream != null)
+                TT_Stream.Close();
 
             File.Delete(TTSaveFileName);
 
