@@ -119,8 +119,6 @@ namespace FET_Characterization.Experiments
 
         double[] confAIChannelsForDC_Measurement()
         {
-            if (!isDCMode)
-            {
                 var init_conf = setDCConf(9.99, 9.99, 9.99);
                 boxController.ConfigureAI_Channels(init_conf);
                 var voltages = boxController.VoltageMeasurement_AllChannels(experimentSettings.NAveragesSlow);
@@ -131,9 +129,6 @@ namespace FET_Characterization.Experiments
                 isACMode = false;
 
                 return voltages;
-            }
-            else
-                return new double[] { };
         }
 
         void confAIChannelsForDC_Measurement(double Vs, double Vm, double Vg)
