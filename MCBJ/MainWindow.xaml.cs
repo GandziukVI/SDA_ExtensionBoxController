@@ -27,6 +27,7 @@ using DynamicDataDisplay.Markers.DataSources;
 using Microsoft.Research.DynamicDataDisplay.DataSources;
 using Microsoft.Research.DynamicDataDisplay;
 using System.Threading;
+using System.Runtime.ExceptionServices;
 
 namespace MCBJ
 {
@@ -224,39 +225,59 @@ namespace MCBJ
         char[] delim = "\r\n".ToCharArray();
         char[] sep = "\t".ToCharArray();
 
+        private static object addDataToPlotLocker = new object();
+
+        [HandleProcessCorruptedStateExceptions]
         void AddNoiseDataToPlot(object NoiseDataString)
         {
-            dList.Clear();
-
-            var noiseDataString = (string)NoiseDataString;
-
-            var dataPoints = noiseDataString.Substring(2)
-                .Split(delim, StringSplitOptions.RemoveEmptyEntries)
-                .Select(v => v.Split(sep, StringSplitOptions.RemoveEmptyEntries))
-                .Select(v => Array.ConvertAll(v, x => double.Parse(x, NumberFormatInfo.InvariantInfo)))
-                .Select(v => new Point(v[0], v[1])).ToArray();
-
-            var toPlot = from item in D3Helper.PointSelector.SelectNPointsPerDecade(ref dataPoints, 100)
-                         where item.Y > 0
-                         select item;
-
-            foreach (var item in toPlot)
-                dList.AddLast(item);
-
-            Dispatcher.InvokeAsync(new Action(() =>
+            lock (addDataToPlotLocker)
             {
-                ds.RaiseDataChanged();
-            }));
+                try
+                {
+                    dList.Clear();
+
+                    var noiseDataString = (string)NoiseDataString;
+
+                    var dataPoints = noiseDataString.Substring(2)
+                        .Split(delim, StringSplitOptions.RemoveEmptyEntries)
+                        .Select(v => v.Split(sep, StringSplitOptions.RemoveEmptyEntries))
+                        .Select(v => Array.ConvertAll(v, x => double.Parse(x, NumberFormatInfo.InvariantInfo)))
+                        .Select(v => new Point(v[0], v[1])).ToArray();
+
+                    var toPlot = from item in D3Helper.PointSelector.SelectNPointsPerDecade(ref dataPoints, 100)
+                                 where item.Y > 0
+                                 select item;
+
+                    foreach (var item in toPlot)
+                        dList.AddLast(item);
+
+                    Dispatcher.InvokeAsync(new Action(() =>
+                    {
+                        ds.RaiseDataChanged();
+                    }));
+                }
+                catch { }
+            }
         }
 
+        private static object noiseDefinedRDataArrivedLock = new object();
+
+        [HandleProcessCorruptedStateExceptions]
         void Noise_at_der_R_DataArrived(object sender, ExpDataArrivedEventArgs e)
         {
-            if (e.Data.StartsWith("NS"))
+            lock (noiseDefinedRDataArrivedLock)
             {
-                var ts = new ParameterizedThreadStart(AddNoiseDataToPlot);
-                var th = new Thread(ts);
+                try
+                {
+                    if (e.Data.StartsWith("NS"))
+                    {
+                        var ts = new ParameterizedThreadStart(AddNoiseDataToPlot);
+                        var th = new Thread(ts);
 
-                th.Start(e.Data);
+                        th.Start(e.Data);
+                    }
+                }
+                catch { }
             }
         }
 
@@ -264,20 +285,40 @@ namespace MCBJ
 
         #region Status and progress for all experiments
 
+        private static object experimentStatusLocker = new object();
+        
+        [HandleProcessCorruptedStateExceptions]
         private void experimentStatus(object sender, StatusEventArgs e)
         {
-            Dispatcher.InvokeAsync(new Action(() =>
+            lock (experimentStatusLocker)
             {
-                expStatus.Text = e.StatusMessage;
-            }));
+                try
+                {
+                    Dispatcher.InvokeAsync(new Action(() =>
+                    {
+                        expStatus.Text = e.StatusMessage;
+                    }));
+                }
+                catch { }
+            }
         }
 
+        private static object experimentProgressLocker = new object();
+
+        [HandleProcessCorruptedStateExceptions]
         void experimentProgress(object sender, ProgressEventArgs e)
         {
-            Dispatcher.InvokeAsync(new Action(() =>
+            lock (experimentProgressLocker)
             {
-                expProgress.Value = e.Progress;
-            }));
+                try
+                {
+                    Dispatcher.InvokeAsync(new Action(() =>
+                    {
+                        expProgress.Value = e.Progress;
+                    }));
+                }
+                catch { }
+            }
         }
 
         #endregion

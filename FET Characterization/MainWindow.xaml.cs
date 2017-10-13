@@ -269,7 +269,7 @@ namespace FET_Characterization
             }
             else
             {
-                var dataPoint = Array.ConvertAll(e.Data.Split(delim, StringSplitOptions.RemoveEmptyEntries), s => double.Parse(s, NumberFormatInfo.InvariantInfo));
+                var dataPoint = Array.ConvertAll(e.Data.TrimEnd(delim).Split(sep, StringSplitOptions.RemoveEmptyEntries), s => double.Parse(s, NumberFormatInfo.InvariantInfo));
                 dsMeasurement.AppendAsync(Dispatcher, new Point(dataPoint[0], dataPoint[1]));
             }
         }

@@ -952,8 +952,8 @@ namespace MCBJ.Experiments
                 }
             }
 
-            motor.Enabled = true;
-            motor.Position = experimentSettings.MotorMinPos;
+            //motor.Enabled = true;
+            //motor.Position = experimentSettings.MotorMinPos;
 
             if (motor != null)
                 motor.Disable();
