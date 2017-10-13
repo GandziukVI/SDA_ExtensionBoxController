@@ -96,7 +96,7 @@ namespace FET_Characterization
             }
         }
 
-        double[] gateVoltageCollection = new double[] { 0.02 };
+        double[] gateVoltageCollection = new double[] { -3.5 };
         public double[] GateVoltageCollection
         {
             get { return gateVoltageCollection; }
@@ -107,7 +107,7 @@ namespace FET_Characterization
             }
         }
 
-        double[] dsVoltageCollection = new double[] { 0.02 };
+        double[] dsVoltageCollection = new double[] { -0.1 };
         public double[] DSVoltageCollection
         {
             get { return dsVoltageCollection; }
@@ -118,7 +118,7 @@ namespace FET_Characterization
             }
         }
 
-        private double voltageDeviation = 0.0002;
+        private double voltageDeviation = 0.2;
         public double VoltageDeviation
         {
             get { return voltageDeviation; }
@@ -129,7 +129,7 @@ namespace FET_Characterization
             }
         }
 
-        private int nAveragesFast = 1;
+        private int nAveragesFast = 2;
         public int NAveragesFast
         {
             get { return nAveragesFast; }
@@ -151,7 +151,7 @@ namespace FET_Characterization
             }
         }
 
-        double stabilizationTime = 30.0;
+        double stabilizationTime = 45.0;
         public double StabilizationTime
         {
             get { return stabilizationTime; }
@@ -210,7 +210,7 @@ namespace FET_Characterization
             }
         }
 
-        private int updateNumber = 10;
+        private int updateNumber = 1;
         public int UpdateNumber
         {
             get { return updateNumber; }
@@ -232,7 +232,7 @@ namespace FET_Characterization
             }
         }
 
-        private double kAmpl = 10.0;
+        private double kAmpl = 100.0;
         public double KAmpl
         {
             get { return kAmpl; }
@@ -315,7 +315,7 @@ namespace FET_Characterization
             }
         }
 
-        private string saveFileName = "Noise data.dat";
+        private string saveFileName = "Ch (1, 1) T#01.dat";
         public string SaveFileName
         {
             get { return saveFileName; }
