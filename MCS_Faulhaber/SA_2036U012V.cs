@@ -62,9 +62,10 @@ namespace MCS_Faulhaber
         }
 
         private double prevPos = 0.0;
+        private char[] termChars = "\r\n".ToCharArray();
         public override double GetPosition()
         {
-            var controllerResponce = driver.RequestQuery("pos").TrimEnd("\r\r".ToCharArray());
+            var controllerResponce = driver.RequestQuery("pos").TrimEnd(termChars);
 
             var match = rgx.Match(controllerResponce);
 
@@ -72,14 +73,14 @@ namespace MCS_Faulhaber
             {
                 double motorPosition;
                 var conversionSuccess = double.TryParse(controllerResponce, out motorPosition);
-            if (conversionSuccess)
+                if (conversionSuccess)
                 {
                     prevPos = motorPosition / Gear / StepsPerRevolution * MilimetersPerRevolution;
                     return prevPos;
                 }
-            else
-                throw new Exception("Error while reading the motor position!");
-        }
+                else
+                    throw new Exception("Error while reading the motor position!");
+            }
             else
                 return prevPos;
         }
@@ -88,7 +89,7 @@ namespace MCS_Faulhaber
         public override void SetVelosity(double Velosity)
         {
             var speedRPM = (int)(Velosity / (1.0 / gear * MilimetersPerRevolution));
-            
+
             if (speedRPM < 150)
                 speedRPM = 150;
             else if (speedRPM > 15000)
