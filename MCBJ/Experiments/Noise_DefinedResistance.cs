@@ -163,7 +163,7 @@ namespace MCBJ.Experiments
             }
         }
 
-        private bool confAIChannelsForAC_Measurement()
+        bool confAIChannelsForAC_Measurement()
         {
             var result = false;
 
@@ -783,8 +783,6 @@ namespace MCBJ.Experiments
                 createFileWithHeader(logFileCaptureName, ref mode, ref access, NoiseMeasurementDataLog.DataHeader, NoiseMeasurementDataLog.DataSubHeader);
 
             #endregion
-
-            //confAIChannelsForDC_Measurement();
 
             var resistanceStabilizationState = false;
 
