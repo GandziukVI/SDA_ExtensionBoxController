@@ -11,6 +11,7 @@ using Agilent_ExtensionBox.Internal;
 using System.Windows;
 using System.Threading.Tasks;
 using System.Windows.Threading;
+using System.Runtime.ExceptionServices;
 
 namespace Agilent_ExtensionBox
 {
@@ -213,6 +214,7 @@ namespace Agilent_ExtensionBox
         public delegate void CallAsync(ref short[] data);
 
         private static object startAnalogAcquisitionLock = new object();
+        [HandleProcessCorruptedStateExceptions]
         public bool StartAnalogAcquisition(int SampleRate)
         {
             lock (startAnalogAcquisitionLock)

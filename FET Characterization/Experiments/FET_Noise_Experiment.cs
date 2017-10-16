@@ -681,6 +681,8 @@ namespace FET_Characterization.Experiments
                     }
                     catch
                     {
+                        if (boxController != null)
+                            boxController.Dispose();
                         if (experimentSettings.RecordTimeTraces == true)
                         {
                             if (TT_Stream != null)
@@ -692,17 +694,6 @@ namespace FET_Characterization.Experiments
                             --j;
                     }
                 }
-            }
-
-            if (boxController != null)
-            {
-                while (boxController.AcquisitionInProgress == true)
-                {
-                    boxController.AcquisitionInProgress = false;
-                    acquisitionIsRunning = false;
-                }
-
-                boxController.Close();
             }
 
             onStatusChanged(new StatusEventArgs("The measurement is done!"));
