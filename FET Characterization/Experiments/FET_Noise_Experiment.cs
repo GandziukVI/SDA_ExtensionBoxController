@@ -119,6 +119,8 @@ namespace FET_Characterization.Experiments
 
         double[] confAIChannelsForDC_Measurement()
         {
+            try
+            {
                 var init_conf = setDCConf(9.99, 9.99, 9.99);
                 boxController.ConfigureAI_Channels(init_conf);
                 var voltages = boxController.VoltageMeasurement_AllChannels(experimentSettings.NAveragesSlow);
@@ -129,6 +131,11 @@ namespace FET_Characterization.Experiments
                 isACMode = false;
 
                 return voltages;
+            }
+            catch
+            {
+                throw;
+            }
         }
 
         void confAIChannelsForDC_Measurement(double Vs, double Vm, double Vg)
@@ -148,30 +155,37 @@ namespace FET_Characterization.Experiments
         {
             if (!isACMode)
             {
-                var init_conf = setACConf(9.99);
-                boxController.ConfigureAI_Channels(init_conf);
+                try
+                {
+                    var init_conf = setACConf(9.99);
+                    boxController.ConfigureAI_Channels(init_conf);
 
-                // Erasing the data queue
+                    // Erasing the data queue
 
-                Point[] temp;
-                while (!boxController.AI_ChannelCollection[AnalogInChannelsEnum.AIn1].ChannelData.IsEmpty)
-                    boxController.AI_ChannelCollection[AnalogInChannelsEnum.AIn1].ChannelData.TryDequeue(out temp);
+                    Point[] temp;
+                    while (!boxController.AI_ChannelCollection[AnalogInChannelsEnum.AIn1].ChannelData.IsEmpty)
+                        boxController.AI_ChannelCollection[AnalogInChannelsEnum.AIn1].ChannelData.TryDequeue(out temp);
 
-                // Acquiring single shot with AC data
+                    // Acquiring single shot with AC data
 
-                boxController.AcquireSingleShot(1000);
-                var maxAcquiredVoltage = boxController.AI_ChannelCollection[AnalogInChannelsEnum.AIn1].ChannelData.Last().Max(p => p.Y);
+                    boxController.AcquireSingleShot(1000);
+                    var maxAcquiredVoltage = boxController.AI_ChannelCollection[AnalogInChannelsEnum.AIn1].ChannelData.Last().Max(p => p.Y);
 
-                // Configuring the channels to measure noise
+                    // Configuring the channels to measure noise
 
-                var real_conf = setACConf(maxAcquiredVoltage);
-                boxController.ConfigureAI_Channels(real_conf);
+                    var real_conf = setACConf(maxAcquiredVoltage);
+                    boxController.ConfigureAI_Channels(real_conf);
 
-                while (!boxController.AI_ChannelCollection[AnalogInChannelsEnum.AIn1].ChannelData.IsEmpty)
-                    boxController.AI_ChannelCollection[AnalogInChannelsEnum.AIn1].ChannelData.TryDequeue(out temp);
+                    while (!boxController.AI_ChannelCollection[AnalogInChannelsEnum.AIn1].ChannelData.IsEmpty)
+                        boxController.AI_ChannelCollection[AnalogInChannelsEnum.AIn1].ChannelData.TryDequeue(out temp);
 
-                isACMode = true;
-                isDCMode = false;
+                    isACMode = true;
+                    isDCMode = false;
+                }
+                catch
+                {
+                    throw;
+                }
             }
         }
 
