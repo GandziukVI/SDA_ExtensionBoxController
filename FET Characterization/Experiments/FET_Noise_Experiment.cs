@@ -206,34 +206,43 @@ namespace FET_Characterization.Experiments
 
         void setVoltage(BS350_MotorPotentiometer motorPotentiometer, int voltNum, double voltage, double voltageDev)
         {
+            var voltageSign = voltage < 0 ? -1.0 : 1.0;
+
             voltage = Math.Abs(voltage);
             var intervalCoarse = voltage * (1.0 - 1.0 / Math.Sqrt(2.0));
 
-            double drainVoltageCurr = 0.0,
-                drainVoltagePrev = 0.0,
+            double voltageCurr = 0.0,
+                voltagePrev = 0.0,
                 factorCoarse = 0.0;
 
             accuracyStopWatch.Start();
 
             averagingNumberFast = experimentSettings.NAveragesFast;
 
+            var isFirstMeasurement = true;
+            var firstVoltageReading = 0.0;
+
             while (true)
             {
                 var voltages = boxController.VoltageMeasurement_AllChannels(averagingNumberFast);
 
-                drainVoltageCurr = Math.Abs(voltages[voltNum]);
+                voltageCurr = Math.Abs(voltages[voltNum]);
 
-                var lowerVal = Math.Min(drainVoltageCurr, voltage);
-                var higherVal = Math.Max(drainVoltageCurr, voltage);
+                if(isFirstMeasurement)
+                {
+                    firstVoltageReading = voltageCurr;
+                    isFirstMeasurement = false;
+                }
 
-                //onProgressChanged(this, new ProgressChanged_EventArgs((int)(lowerVal / higherVal * 100.0)));
+                onStatusChanged(new StatusEventArgs(string.Format("Voltage value to set -> {0}, current voltage -> {1}", voltage * voltageSign, voltageCurr * voltageSign)));
+                onProgressChanged(new ProgressEventArgs(100.0 * (1.0 - Math.Abs(voltage - voltageCurr) / Math.Abs(voltage - firstVoltageReading))));
 
                 var speed = minSpeed;
                 try
                 {
-                    if (Math.Abs(voltage - drainVoltageCurr) <= 0.05)
+                    if (Math.Abs(voltage - voltageCurr) <= 0.05)
                     {
-                        factorCoarse = (1.0 - Math.Tanh(-1.0 * Math.Abs(voltage - drainVoltageCurr) / intervalCoarse * Math.PI + Math.PI)) / 2.0;
+                        factorCoarse = (1.0 - Math.Tanh(-1.0 * Math.Abs(voltage - voltageCurr) / intervalCoarse * Math.PI + Math.PI)) / 2.0;
                         speed = (byte)(minSpeed + (maxSpeed - minSpeed) * factorCoarse);
                     }
                     else
@@ -241,8 +250,8 @@ namespace FET_Characterization.Experiments
                 }
                 catch { speed = minSpeed; }
 
-                if ((drainVoltageCurr >= Math.Abs(voltage - voltageDev)) &&
-                    (drainVoltageCurr <= Math.Abs(voltage + voltageDev)))
+                if ((voltageCurr >= Math.Abs(voltage - voltageDev)) &&
+                    (voltageCurr <= Math.Abs(voltage + voltageDev)))
                 {
                     motorPotentiometer.StopMotion();
                     accuracyStopWatch.Stop();
@@ -254,18 +263,18 @@ namespace FET_Characterization.Experiments
                     if (estimationList.Count > estimationCollectionSize)
                         estimationList.RemoveFirst();
 
-                    estimationList.AddLast(new Point(accuracyStopWatch.ElapsedMilliseconds, Math.Abs(drainVoltagePrev - drainVoltageCurr)));
+                    estimationList.AddLast(new Point(accuracyStopWatch.ElapsedMilliseconds, Math.Abs(voltagePrev - voltageCurr)));
 
                     var timeAVG = estimationList.Select(val => val.X).Average();
                     var voltAVG = estimationList.Select(val => val.Y).Average();
 
                     var voltPerMilisecond = timeAVG != 0 ? voltAVG / timeAVG : voltAVG;
 
-                    var stepTime = (int)(Math.Abs(voltage - drainVoltageCurr) / voltPerMilisecond);
+                    var stepTime = (int)(Math.Abs(voltage - voltageCurr) / voltPerMilisecond);
 
-                    if (drainVoltageCurr > voltage)
+                    if (voltageCurr > voltage)
                     {
-                        if (voltageDev >= 0.006 || drainVoltageCurr - voltage > 2.0 * voltageDev)
+                        if (voltageDev >= 0.006 || voltageCurr - voltage > 2.0 * voltageDev)
                         {
                             averagingNumberFast = 2;
                             motorPotentiometer.StartMotion(speed, MotionDirection.cw);
@@ -280,7 +289,7 @@ namespace FET_Characterization.Experiments
                     }
                     else
                     {
-                        if (voltageDev >= 0.006 || voltage - drainVoltageCurr > 2.0 * voltageDev)
+                        if (voltageDev >= 0.006 || voltage - voltageCurr > 2.0 * voltageDev)
                         {
                             averagingNumberFast = 2;
                             motorPotentiometer.StartMotion(speed, MotionDirection.ccw);
@@ -297,7 +306,7 @@ namespace FET_Characterization.Experiments
                     accuracyStopWatch.Restart();
                 }
 
-                drainVoltagePrev = drainVoltageCurr;
+                voltagePrev = voltageCurr;
             }
 
             motorPotentiometer.StopMotion();

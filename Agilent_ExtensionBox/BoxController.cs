@@ -12,12 +12,16 @@ using System.Windows;
 using System.Threading.Tasks;
 using System.Windows.Threading;
 using System.Runtime.ExceptionServices;
+using System.Runtime.InteropServices;
 
 namespace Agilent_ExtensionBox
 {
     public class BoxController : IDisposable
     {
         private AgilentU254x _Driver;
+
+        AgilentU254xDigitalChannel[] _ChannelArray;
+
         public AgilentU254x Driver { get { return _Driver; } }
 
         private static readonly string Options = "Simulate=false, Cache=false, QueryInstrStatus=false";
@@ -76,7 +80,7 @@ namespace Agilent_ExtensionBox
                     _Driver.DriverOperation.QueryInstrumentStatus = false;
                     _Driver.System.TimeoutMilliseconds = 5000;
 
-                    var _ChannelArray = new AgilentU254xDigitalChannel[] {
+                    _ChannelArray = new AgilentU254xDigitalChannel[] {
                     _Driver.Digital.Channels.get_Item("DIOA"),
                     _Driver.Digital.Channels.get_Item("DIOB"),
                     _Driver.Digital.Channels.get_Item("DIOC"),
@@ -249,7 +253,7 @@ namespace Agilent_ExtensionBox
                             if (dataReady == true)
                                 break;
                         }
-                        catch 
+                        catch
                         {
                             StopAnalogAcquisition();
                             return false;
@@ -262,7 +266,7 @@ namespace Agilent_ExtensionBox
                         if (results.Length > 0)
                             _router.AddDataInvoke(ref results);
                     }
-                    catch 
+                    catch
                     {
                         StopAnalogAcquisition();
                         return false;
@@ -370,7 +374,7 @@ namespace Agilent_ExtensionBox
 
                     _Driver.AnalogIn.MultiScan.SampleRate = SampleRate;
                     _Driver.AnalogIn.MultiScan.NumberOfScans = SampleRate;
-                    
+
                     _Driver.AnalogIn.Acquisition.BufferSize = SampleRate;
                     _Driver.AnalogIn.Acquisition.Start();
 
@@ -418,7 +422,15 @@ namespace Agilent_ExtensionBox
                 Close();
             }
 
-            GC.Collect();
+            int i = _ChannelArray.Length - 1;
+
+            for (; i >= 0; )
+            {
+                Marshal.ReleaseComObject(_ChannelArray[i]);
+                --i;
+            }
+
+            Marshal.ReleaseComObject(_Driver);
         }
     }
 }
