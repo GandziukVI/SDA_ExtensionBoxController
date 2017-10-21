@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Agilent_ExtensionBox.IO
 {
-    public class DigitalBit
+    public class DigitalBit : IDisposable
     {
         private int _bitNumber;
         private DigitalChannel _channel;
@@ -39,6 +39,11 @@ namespace Agilent_ExtensionBox.IO
             Set();
             System.Threading.Thread.Sleep(100);
             Reset();
+        }
+
+        public void Dispose()
+        {
+            _channel.Dispose();
         }
     }
 }

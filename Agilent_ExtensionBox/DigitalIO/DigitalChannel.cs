@@ -63,6 +63,11 @@ namespace Agilent_ExtensionBox.IO
             }
         }
 
+        ~DigitalChannel()
+        {
+            Dispose();
+        }
+
         public void ReadByte(ref int result)
         {
             var directionIn = AgilentU254xDigitalChannelDirectionEnum.AgilentU254xDigitalChannelDirectionIn;

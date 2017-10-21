@@ -250,7 +250,7 @@ namespace Agilent_ExtensionBox
                             break;
                         try
                         {
-                            AgilentU254xBufferStatusEnum currBufferStatus =  _Driver.AnalogIn.Acquisition.BufferStatus;
+                            AgilentU254xBufferStatusEnum currBufferStatus = _Driver.AnalogIn.Acquisition.BufferStatus;
                             var dataReady = (currBufferStatus == AgilentU254xBufferStatusEnum.AgilentU254xBufferStatusDataReady);
                             //Marshal.ReleaseComObject(currBufferStatus);
                             if (dataReady == true)
@@ -423,14 +423,19 @@ namespace Agilent_ExtensionBox
                 _Driver.Utility.Reset();
 
                 Close();
+
+                _AI_ChannelCollection.Dispose();
             }
 
-            int i = _ChannelArray.Length - 1;
-
-            for (; i >= 0; )
+            if (_ChannelArray != null)
             {
-                Marshal.ReleaseComObject(_ChannelArray[i]);
-                --i;
+                int i = _ChannelArray.Length - 1;
+
+                for (; i >= 0; )
+                {
+                    Marshal.ReleaseComObject(_ChannelArray[i]);
+                    --i;
+                }
             }
 
             Marshal.ReleaseComObject(_Driver);

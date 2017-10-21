@@ -12,7 +12,7 @@ namespace Agilent_ExtensionBox.Internal
         gain100 = 0x02
     }
 
-    public class ProgrammableGainAmplifier
+    public class ProgrammableGainAmplifier : IDisposable
     {
         private DigitalChannel _channel;
         public ProgrammableGainAmplifier(DigitalChannel ControlChannel)
@@ -28,6 +28,11 @@ namespace Agilent_ExtensionBox.Internal
                 throw new ArgumentException("Gain out of range");
             Gain = gain;
             _channel.WriteByte((int)gain);
+        }
+
+        public void Dispose()
+        {
+            _channel.Dispose();
         }
     }
 }
