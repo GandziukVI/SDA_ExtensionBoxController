@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -101,11 +102,11 @@ namespace Agilent_ExtensionBox.IO
                     }
 
                 }
-            }
-
-            for (int i = 0; i < _channels.Count; i++)
-            {
-                _channels[i].OnCompleted();
+                
+                for (int i = 0; i < _channels.Count; i++)
+                {
+                    _channels[i].OnCompleted();
+                }
             }
         }
     }
