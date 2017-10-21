@@ -45,7 +45,7 @@ namespace Agilent_ExtensionBox.Internal
         gain16 = 0xf0
     }
 
-    public class Filter
+    public class Filter : IDisposable
     {
 
         private DigitalChannel _channel;
@@ -75,6 +75,11 @@ namespace Agilent_ExtensionBox.Internal
            
             CutoffFrequency = cutoff;
             Gain = gain;
+        }
+
+        public void Dispose()
+        {
+            _channel.Dispose();
         }
     }
 }

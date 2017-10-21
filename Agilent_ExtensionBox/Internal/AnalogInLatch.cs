@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Agilent_ExtensionBox.Internal
 {
-    public class AnalogInLatch : ILatch
+    public class AnalogInLatch : ILatch, IDisposable
     {
         private DigitalBit _Selector_ADC_A0;
         private DigitalBit _Selector_ADC_A1;
@@ -53,6 +53,13 @@ namespace Agilent_ExtensionBox.Internal
                     throw new ArgumentException();
             }
             _LatchPulseBit.Pulse();
+        }
+
+        public void Dispose()
+        {
+            _LatchPulseBit.Dispose();
+            _Selector_ADC_A1.Dispose();
+            _Selector_ADC_A0.Dispose();
         }
     }
 }

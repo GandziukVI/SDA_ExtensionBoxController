@@ -12,7 +12,7 @@ namespace Agilent_ExtensionBox.Internal
         DC
     }
 
-    public class ChannelModeSwitch
+    public class ChannelModeSwitch : IDisposable
     {
         private DigitalBit _pulseBit;
         private DigitalBit _setResetBit;
@@ -79,6 +79,14 @@ namespace Agilent_ExtensionBox.Internal
         private void Pulse()
         {
             _pulseBit.Pulse();
+        }
+
+        public void Dispose()
+        {
+            _pulseBit.Dispose();
+            _setResetBit.Dispose();
+            _SelectorA0.Dispose();
+            _SelectorA1.Dispose();
         }
     }
 }
