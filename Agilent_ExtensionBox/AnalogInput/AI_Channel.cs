@@ -110,17 +110,17 @@ namespace Agilent_ExtensionBox.IO
                     {
                         case AgilentU254xAnalogPolarityEnum.AgilentU254xAnalogPolarityBipolar:
                             {
-                                Marshal.ReleaseComObject(currPolarity);
+                                //Marshal.ReleaseComObject(currPolarity);
                                 return PolarityEnum.Polarity_Bipolar;
                             }                            
                         case AgilentU254xAnalogPolarityEnum.AgilentU254xAnalogPolarityUnipolar:
                             {
-                                Marshal.ReleaseComObject(currPolarity);
+                                //Marshal.ReleaseComObject(currPolarity);
                                 return PolarityEnum.Polarity_Unipolar;
                             }                            
                         default:
                             {
-                                Marshal.ReleaseComObject(currPolarity);
+                                //Marshal.ReleaseComObject(currPolarity);
                                 return PolarityEnum.Polarity_Bipolar;
                             }                            
                     }
@@ -136,14 +136,14 @@ namespace Agilent_ExtensionBox.IO
                             {
                                 var selectedPol = AgilentU254xAnalogPolarityEnum.AgilentU254xAnalogPolarityBipolar;
                                 _channel.Polarity = selectedPol;
-                                Marshal.ReleaseComObject(selectedPol);
+                                //Marshal.ReleaseComObject(selectedPol);
                                 break;
                             }                            
                         case PolarityEnum.Polarity_Unipolar:
                             {
                                 var selectedPol = AgilentU254xAnalogPolarityEnum.AgilentU254xAnalogPolarityUnipolar;
                                 _channel.Polarity = selectedPol;
-                                Marshal.ReleaseComObject(selectedPol);
+                                //Marshal.ReleaseComObject(selectedPol);
                                 break;
                             }
                     }

@@ -252,7 +252,7 @@ namespace Agilent_ExtensionBox
                         {
                             AgilentU254xBufferStatusEnum currBufferStatus =  _Driver.AnalogIn.Acquisition.BufferStatus;
                             var dataReady = (currBufferStatus == AgilentU254xBufferStatusEnum.AgilentU254xBufferStatusDataReady);
-                            Marshal.ReleaseComObject(currBufferStatus);
+                            //Marshal.ReleaseComObject(currBufferStatus);
                             if (dataReady == true)
                                 break;
                         }

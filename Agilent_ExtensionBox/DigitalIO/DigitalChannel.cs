@@ -54,7 +54,7 @@ namespace Agilent_ExtensionBox.IO
             _digitalChannel = Driver.Digital.Channels.get_Item(_channelName);
             _digitalChannel.Direction = initDirection;
 
-            Marshal.ReleaseComObject(initDirection);
+            //Marshal.ReleaseComObject(initDirection);
 
             _bitArray = new DigitalBit[width];
             for (int i = 0; i < width; i++)
@@ -72,8 +72,8 @@ namespace Agilent_ExtensionBox.IO
             _driver.Digital.ReadByte(_channelName, ref result);
             _digitalChannel.Direction = directionOut;
 
-            Marshal.ReleaseComObject(directionOut);
-            Marshal.ReleaseComObject(directionIn);
+            //Marshal.ReleaseComObject(directionOut);
+            //Marshal.ReleaseComObject(directionIn);
         }
 
         public void WriteByte(int value)
