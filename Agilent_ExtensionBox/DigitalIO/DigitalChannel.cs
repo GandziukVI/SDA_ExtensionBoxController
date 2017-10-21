@@ -1,22 +1,24 @@
 ﻿using Agilent.AgilentU254x.Interop;
 using System;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
 using System.Text;
 
 namespace Agilent_ExtensionBox.IO
 {
 
 
-    public class DigitalChannel
+    public class DigitalChannel : IDisposable
     {
         public int Width { get { return _bitArray.Length; } }
         private DigitalBit[] _bitArray;
+        
         private AgilentU254x _driver;
+        private AgilentU254xDigitalChannel _digitalChannel;
         public AgilentU254x Driver { get { return _driver; } }
         private string _channelName;
 
-
-        public DigitalChannel(DigitalChannelsEnum Channel, AgilentU254x Driver)
+        public DigitalChannel(DigitalChannelsEnum Channel, ref AgilentU254x Driver)
         {
             int width = 0;
             switch (Channel)
@@ -44,8 +46,15 @@ namespace Agilent_ExtensionBox.IO
                 default:
                     throw new ArgumentException();
             }
+            
             _driver = Driver;
-            Driver.Digital.Channels.get_Item(_channelName).Direction = AgilentU254xDigitalChannelDirectionEnum.AgilentU254xDigitalChannelDirectionOut;
+            
+            var initDirection = AgilentU254xDigitalChannelDirectionEnum.AgilentU254xDigitalChannelDirectionOut;
+            
+            _digitalChannel = Driver.Digital.Channels.get_Item(_channelName);
+            _digitalChannel.Direction = initDirection;
+
+            Marshal.ReleaseComObject(initDirection);
 
             _bitArray = new DigitalBit[width];
             for (int i = 0; i < width; i++)
@@ -54,12 +63,17 @@ namespace Agilent_ExtensionBox.IO
             }
         }
 
-
         public void ReadByte(ref int result)
         {
-            _driver.Digital.Channels.get_Item(_channelName).Direction = AgilentU254xDigitalChannelDirectionEnum.AgilentU254xDigitalChannelDirectionIn;
+            var directionIn = AgilentU254xDigitalChannelDirectionEnum.AgilentU254xDigitalChannelDirectionIn;
+            var directionOut = AgilentU254xDigitalChannelDirectionEnum.AgilentU254xDigitalChannelDirectionOut;
+
+            _digitalChannel.Direction = directionIn;
             _driver.Digital.ReadByte(_channelName, ref result);
-            _driver.Digital.Channels.get_Item(_channelName).Direction = AgilentU254xDigitalChannelDirectionEnum.AgilentU254xDigitalChannelDirectionOut;
+            _digitalChannel.Direction = directionOut;
+
+            Marshal.ReleaseComObject(directionOut);
+            Marshal.ReleaseComObject(directionIn);
         }
 
         public void WriteByte(int value)
@@ -85,6 +99,11 @@ namespace Agilent_ExtensionBox.IO
             else
                 val &= ~(0x01 << _bitNumber);
             WriteByte(val);
+        }
+
+        public void Dispose()
+        {
+            Marshal.ReleaseComObject(_digitalChannel);
         }
     }
 }

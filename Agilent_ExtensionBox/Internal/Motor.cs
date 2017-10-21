@@ -16,8 +16,5 @@ namespace Agilent_ExtensionBox.Internal
                 throw new ArgumentNullException();
             _channel = Channel;
         }
-
-
-
     }
 }

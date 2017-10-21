@@ -5,17 +5,17 @@ using System.Text;
 
 namespace Agilent_ExtensionBox.IO
 {
-    public class DigitalChannels : IEnumerable<DigitalChannel>
+    public class DigitalChannels : IEnumerable<DigitalChannel>, IDisposable
     {
         private DigitalChannel[] _channels;
-        public DigitalChannels(AgilentU254x Driver)
+        public DigitalChannels(ref AgilentU254x Driver)
         {
             _channels = new DigitalChannel[4]
             {
-                new DigitalChannel(DigitalChannelsEnum.DIOA, Driver),
-                new DigitalChannel(DigitalChannelsEnum.DIOB, Driver),
-                new DigitalChannel(DigitalChannelsEnum.DIOC, Driver),
-                new DigitalChannel(DigitalChannelsEnum.DIOD, Driver),
+                new DigitalChannel(DigitalChannelsEnum.DIOA, ref Driver),
+                new DigitalChannel(DigitalChannelsEnum.DIOB, ref Driver),
+                new DigitalChannel(DigitalChannelsEnum.DIOC, ref Driver),
+                new DigitalChannel(DigitalChannelsEnum.DIOD, ref Driver),
             };
         }
 
@@ -27,7 +27,7 @@ namespace Agilent_ExtensionBox.IO
             }
         }
 
-        public DigitalChannel  this[int ChannelNumber]
+        public DigitalChannel this[int ChannelNumber]
         {
             get
             {
@@ -51,6 +51,18 @@ namespace Agilent_ExtensionBox.IO
             for (int index = 0; index < _channels.Length; index++)
             {
                 yield return _channels[index];
+            }
+        }
+
+        public void Dispose()
+        {
+            int i = 0;
+            int cnt = _channels.Length;
+            
+            for (; i != cnt; )
+            {
+                _channels[i].Dispose();
+                ++i;
             }
         }
     }

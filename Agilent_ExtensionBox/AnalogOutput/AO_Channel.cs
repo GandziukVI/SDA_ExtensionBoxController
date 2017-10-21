@@ -18,7 +18,7 @@ namespace Agilent_ExtensionBox.IO
         private DigitalBit _Selector_A2;
         private DigitalBit _Enable;
 
-        public AO_Channel(AnalogOutChannelsEnum Channel, AgilentU254x Driver)
+        public AO_Channel(AnalogOutChannelsEnum Channel, ref AgilentU254x Driver)
         {
             switch (Channel)
             {
@@ -30,7 +30,7 @@ namespace Agilent_ExtensionBox.IO
             }
 
             _driver = Driver;
-            _DigitalChannels = new DigitalChannels(_driver);
+            _DigitalChannels = new DigitalChannels(ref _driver);
 
             switch (Channel)
             {

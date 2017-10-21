@@ -5,13 +5,13 @@ using System.Text;
 
 namespace Agilent_ExtensionBox.Internal
 {
-    public class AnalogInLatch:ILatch
+    public class AnalogInLatch : ILatch
     {
         private DigitalBit _Selector_ADC_A0;
         private DigitalBit _Selector_ADC_A1;
         private DigitalBit _LatchPulseBit;
 
-        public AnalogInLatch(DigitalBit Selector_ADC_A0,DigitalBit Selector_ADC_A1, DigitalBit LatchPulseBit)
+        public AnalogInLatch(DigitalBit Selector_ADC_A0, DigitalBit Selector_ADC_A1, DigitalBit LatchPulseBit)
         {
             if ((Selector_ADC_A0 == null) || (Selector_ADC_A1 == null) || (LatchPulseBit == null))
                 throw new ArgumentException();

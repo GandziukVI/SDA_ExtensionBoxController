@@ -7,10 +7,11 @@ using System.Collections;
 using System.Threading;
 using Agilent_ExtensionBox.Internal;
 using System.Windows;
+using System.Runtime.InteropServices;
 
 namespace Agilent_ExtensionBox.IO
 {
-    public class AI_Channel : IObserver<Point>
+    public class AI_Channel : IObserver<Point>, IDisposable
     {
         private AnalogInChannelsEnum _channelName;
         private AgilentU254x _driver;
@@ -35,7 +36,7 @@ namespace Agilent_ExtensionBox.IO
             }
         }
 
-        public AI_Channel(AnalogInChannelsEnum channelName, AgilentU254x Driver, ChannelModeSwitch ModeSwitch, Filter ChannelFilter, ProgrammableGainAmplifier ChannelPGA, AnalogInLatch CommonLatch)
+        public AI_Channel(AnalogInChannelsEnum channelName, ref AgilentU254x Driver, ChannelModeSwitch ModeSwitch, Filter ChannelFilter, ProgrammableGainAmplifier ChannelPGA, AnalogInLatch CommonLatch)
         {
             _channelName = channelName;
             _driver = Driver;
@@ -104,14 +105,24 @@ namespace Agilent_ExtensionBox.IO
             {
                 lock (polarityLock)
                 {
-                    switch (_channel.Polarity)
+                    var currPolarity = _channel.Polarity;
+                    switch (currPolarity)
                     {
                         case AgilentU254xAnalogPolarityEnum.AgilentU254xAnalogPolarityBipolar:
-                            return PolarityEnum.Polarity_Bipolar;
+                            {
+                                Marshal.ReleaseComObject(currPolarity);
+                                return PolarityEnum.Polarity_Bipolar;
+                            }                            
                         case AgilentU254xAnalogPolarityEnum.AgilentU254xAnalogPolarityUnipolar:
-                            return PolarityEnum.Polarity_Unipolar;
+                            {
+                                Marshal.ReleaseComObject(currPolarity);
+                                return PolarityEnum.Polarity_Unipolar;
+                            }                            
                         default:
-                            return PolarityEnum.Polarity_Bipolar;
+                            {
+                                Marshal.ReleaseComObject(currPolarity);
+                                return PolarityEnum.Polarity_Bipolar;
+                            }                            
                     }
                 }
             }
@@ -122,11 +133,19 @@ namespace Agilent_ExtensionBox.IO
                     switch (value)
                     {
                         case PolarityEnum.Polarity_Bipolar:
-                            _channel.Polarity = AgilentU254xAnalogPolarityEnum.AgilentU254xAnalogPolarityBipolar;
-                            break;
+                            {
+                                var selectedPol = AgilentU254xAnalogPolarityEnum.AgilentU254xAnalogPolarityBipolar;
+                                _channel.Polarity = selectedPol;
+                                Marshal.ReleaseComObject(selectedPol);
+                                break;
+                            }                            
                         case PolarityEnum.Polarity_Unipolar:
-                            _channel.Polarity = AgilentU254xAnalogPolarityEnum.AgilentU254xAnalogPolarityUnipolar;
-                            break;
+                            {
+                                var selectedPol = AgilentU254xAnalogPolarityEnum.AgilentU254xAnalogPolarityUnipolar;
+                                _channel.Polarity = selectedPol;
+                                Marshal.ReleaseComObject(selectedPol);
+                                break;
+                            }
                     }
                 }
             }
@@ -196,6 +215,11 @@ namespace Agilent_ExtensionBox.IO
         {
             _currentChannelData[_iterator] = value;
             ++_iterator;
+        }
+
+        public void Dispose()
+        {
+            Marshal.ReleaseComObject(_channel);
         }
     }
 }

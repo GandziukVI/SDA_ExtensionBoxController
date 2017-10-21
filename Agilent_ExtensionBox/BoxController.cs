@@ -73,6 +73,7 @@ namespace Agilent_ExtensionBox
                     else
                     {
                         Close();
+                        Marshal.ReleaseComObject(_Driver);
                         _Driver = new AgilentU254x();
                     }
 
@@ -92,8 +93,8 @@ namespace Agilent_ExtensionBox
 
                     Reset_Digital();
 
-                    _AI_ChannelCollection = new AI_Channels(_Driver);
-                    _AO_ChannelCollection = new AO_Channels(_Driver);
+                    _AI_ChannelCollection = new AI_Channels(ref _Driver);
+                    _AO_ChannelCollection = new AO_Channels(ref _Driver);
 
                     _IsInitialized = true;
 
@@ -249,7 +250,9 @@ namespace Agilent_ExtensionBox
                             break;
                         try
                         {
-                            var dataReady = (_Driver.AnalogIn.Acquisition.BufferStatus == AgilentU254xBufferStatusEnum.AgilentU254xBufferStatusDataReady);
+                            AgilentU254xBufferStatusEnum currBufferStatus =  _Driver.AnalogIn.Acquisition.BufferStatus;
+                            var dataReady = (currBufferStatus == AgilentU254xBufferStatusEnum.AgilentU254xBufferStatusDataReady);
+                            Marshal.ReleaseComObject(currBufferStatus);
                             if (dataReady == true)
                                 break;
                         }

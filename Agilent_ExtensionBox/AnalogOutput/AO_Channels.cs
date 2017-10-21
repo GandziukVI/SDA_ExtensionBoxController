@@ -11,14 +11,14 @@ namespace Agilent_ExtensionBox.IO
         public DigitalBit LatchEnable { get; private set; }
 
         private AO_Channel[] _channels;
-        public AO_Channels(AgilentU254x Driver)
+        public AO_Channels(ref AgilentU254x Driver)
         {
-            LatchEnable = new DigitalBit(new DigitalChannel(DigitalChannelsEnum.DIOD, Driver), 3);
+            LatchEnable = new DigitalBit(new DigitalChannel(DigitalChannelsEnum.DIOD, ref Driver), 3);
 
             _channels = new AO_Channel[2]
             {
-                new AO_Channel(AnalogOutChannelsEnum.AOut1, Driver),
-                new AO_Channel(AnalogOutChannelsEnum.AOut2, Driver)
+                new AO_Channel(AnalogOutChannelsEnum.AOut1, ref Driver),
+                new AO_Channel(AnalogOutChannelsEnum.AOut2, ref Driver)
             };
         }
 
