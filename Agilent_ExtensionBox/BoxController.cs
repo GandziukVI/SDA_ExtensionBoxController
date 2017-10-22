@@ -252,7 +252,6 @@ namespace Agilent_ExtensionBox
                         {
                             AgilentU254xBufferStatusEnum currBufferStatus = _Driver.AnalogIn.Acquisition.BufferStatus;
                             var dataReady = (currBufferStatus == AgilentU254xBufferStatusEnum.AgilentU254xBufferStatusDataReady);
-                            //Marshal.ReleaseComObject(currBufferStatus);
                             if (dataReady == true)
                                 break;
                         }
@@ -268,6 +267,15 @@ namespace Agilent_ExtensionBox
                         _Driver.AnalogIn.Acquisition.Fetch(ref results);
                         if (results.Length > 0)
                             _router.AddDataInvoke(ref results);
+
+                        unsafe
+                        {
+                            fixed (short* p = results)
+                            {
+                                IntPtr ptr = (IntPtr)p;
+                                Marshal.FreeHGlobal(ptr);
+                            }
+                        }
                     }
                     catch
                     {
@@ -385,6 +393,15 @@ namespace Agilent_ExtensionBox
 
                     _Driver.AnalogIn.Acquisition.Fetch(ref results);
 
+                    unsafe
+                    {
+                        fixed(short* p = results)
+                        {
+                            IntPtr ptr = (IntPtr)p;
+                            Marshal.FreeHGlobal(ptr);
+                        }
+                    }
+
                     _router.Frequency = SampleRate;
 
                     foreach (var item in _AI_ChannelCollection)
@@ -420,7 +437,7 @@ namespace Agilent_ExtensionBox
                 _DisableAllChannelsForContiniousAcquisition();
 
                 _Driver.Status.Clear();
-                _Driver.Utility.Reset();
+                _Driver.Utility.ResetWithDefaults();
 
                 Close();
 
