@@ -592,20 +592,20 @@ namespace FET_Characterization.Experiments
                             VdsMotorPotentiometer = new BS350_MotorPotentiometer(boxController, BOX_AnalogOutChannelsEnum.BOX_AOut_02);
                             VgMotorPotentiometer = new BS350_MotorPotentiometer(boxController, BOX_AnalogOutChannelsEnum.BOX_AOut_09);
 
-                            if (experimentSettings.IsOutputCurveMode == true)
-                            {
-                                onStatusChanged(new StatusEventArgs(string.Format("Setting gate voltage V -> {0} V", outerLoopVoltage.ToString("0.0000", NumberFormatInfo.InvariantInfo))));
-                                SetGateVoltage(outerLoopVoltage, experimentSettings.VoltageDeviation);
-                                onStatusChanged(new StatusEventArgs(string.Format("Setting drain-source voltage V -> {0} V", innerLoopVoltage.ToString("0.0000", NumberFormatInfo.InvariantInfo))));
-                                SetDrainSourceVoltage(innerLoopVoltage, experimentSettings.VoltageDeviation);
-                            }
-                            else if (experimentSettings.IsTransferCurveMode == true)
-                            {
-                                onStatusChanged(new StatusEventArgs(string.Format("Setting gate voltage V -> {0} V", innerLoopVoltage.ToString("0.0000", NumberFormatInfo.InvariantInfo))));
-                                SetGateVoltage(innerLoopVoltage, experimentSettings.VoltageDeviation);
-                                onStatusChanged(new StatusEventArgs(string.Format("Setting drain-source voltage V -> {0} V", outerLoopVoltage.ToString("0.0000", NumberFormatInfo.InvariantInfo))));
-                                SetDrainSourceVoltage(outerLoopVoltage, experimentSettings.VoltageDeviation);
-                            }
+                            //if (experimentSettings.IsOutputCurveMode == true)
+                            //{
+                            //    onStatusChanged(new StatusEventArgs(string.Format("Setting gate voltage V -> {0} V", outerLoopVoltage.ToString("0.0000", NumberFormatInfo.InvariantInfo))));
+                            //    SetGateVoltage(outerLoopVoltage, experimentSettings.VoltageDeviation);
+                            //    onStatusChanged(new StatusEventArgs(string.Format("Setting drain-source voltage V -> {0} V", innerLoopVoltage.ToString("0.0000", NumberFormatInfo.InvariantInfo))));
+                            //    SetDrainSourceVoltage(innerLoopVoltage, experimentSettings.VoltageDeviation);
+                            //}
+                            //else if (experimentSettings.IsTransferCurveMode == true)
+                            //{
+                            //    onStatusChanged(new StatusEventArgs(string.Format("Setting gate voltage V -> {0} V", innerLoopVoltage.ToString("0.0000", NumberFormatInfo.InvariantInfo))));
+                            //    SetGateVoltage(innerLoopVoltage, experimentSettings.VoltageDeviation);
+                            //    onStatusChanged(new StatusEventArgs(string.Format("Setting drain-source voltage V -> {0} V", outerLoopVoltage.ToString("0.0000", NumberFormatInfo.InvariantInfo))));
+                            //    SetDrainSourceVoltage(outerLoopVoltage, experimentSettings.VoltageDeviation);
+                            //}
 
                             onStatusChanged(new StatusEventArgs("Measuring sample characteristics before noise spectra measurement."));
 

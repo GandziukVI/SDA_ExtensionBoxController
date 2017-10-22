@@ -265,17 +265,19 @@ namespace Agilent_ExtensionBox
                     try
                     {
                         _Driver.AnalogIn.Acquisition.Fetch(ref results);
+                        _Driver.DriverOperation.InvalidateAllAttributes();
+                        
                         if (results.Length > 0)
                             _router.AddDataInvoke(ref results);
 
-                        unsafe
-                        {
-                            fixed (short* p = results)
-                            {
-                                IntPtr ptr = (IntPtr)p;
-                                Marshal.FreeHGlobal(ptr);
-                            }
-                        }
+                        //unsafe
+                        //{
+                        //    fixed (short* p = results)
+                        //    {
+                        //        IntPtr ptr = (IntPtr)p;
+                        //        Marshal.FreeCoTaskMem(ptr);
+                        //    }
+                        //}
                     }
                     catch
                     {
@@ -392,15 +394,16 @@ namespace Agilent_ExtensionBox
                     while (!(_Driver.AnalogIn.Acquisition.Completed == true)) ;
 
                     _Driver.AnalogIn.Acquisition.Fetch(ref results);
+                    _Driver.DriverOperation.InvalidateAllAttributes();
 
-                    unsafe
-                    {
-                        fixed(short* p = results)
-                        {
-                            IntPtr ptr = (IntPtr)p;
-                            Marshal.FreeHGlobal(ptr);
-                        }
-                    }
+                    //unsafe
+                    //{
+                    //    fixed (short* p = results)
+                    //    {
+                    //        IntPtr ptr = (IntPtr)p;
+                    //        Marshal.FreeHGlobal(ptr);
+                    //    }
+                    //}
 
                     _router.Frequency = SampleRate;
 
