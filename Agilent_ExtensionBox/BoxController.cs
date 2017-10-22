@@ -79,6 +79,7 @@ namespace Agilent_ExtensionBox
 
                     _Driver.Initialize(resourceName, false, true, Options);
                     _Driver.DriverOperation.QueryInstrumentStatus = false;
+                    _Driver.DriverOperation.Cache = false;
                     _Driver.System.TimeoutMilliseconds = 5000;
 
                     _ChannelArray = new AgilentU254xDigitalChannel[] {
@@ -369,11 +370,15 @@ namespace Agilent_ExtensionBox
 
         public void StopAnalogAcquisition()
         {
-            if (_AcquisitionInProgress == true)
+            try
             {
-                _AcquisitionInProgress = false;
-                _Driver.AnalogIn.Acquisition.Stop();
+                if (_AcquisitionInProgress == true)
+                {
+                    _AcquisitionInProgress = false;
+                    _Driver.AnalogIn.Acquisition.Stop();
+                }
             }
+            catch { }
         }
 
         private static object acquireSingleShotLock = new object();
