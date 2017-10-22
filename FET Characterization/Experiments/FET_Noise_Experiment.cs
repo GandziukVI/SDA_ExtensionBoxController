@@ -234,7 +234,7 @@ namespace FET_Characterization.Experiments
                     isFirstMeasurement = false;
                 }
 
-                onStatusChanged(new StatusEventArgs(string.Format("Voltage value to set -> {0}, current voltage -> {1}", voltage * voltageSign, voltageCurr * voltageSign)));
+                onStatusChanged(new StatusEventArgs(string.Format("Voltage value to set -> {0}, current voltage -> {1}", (voltage * voltageSign).ToString("0.0000", NumberFormatInfo.InvariantInfo), (voltageCurr * voltageSign).ToString("0.0000", NumberFormatInfo.InvariantInfo))));
                 onProgressChanged(new ProgressEventArgs(100.0 * (1.0 - Math.Abs(voltage - voltageCurr) / Math.Abs(voltage - firstVoltageReading))));
 
                 var speed = minSpeed;

@@ -108,7 +108,11 @@ namespace Agilent_ExtensionBox.IO
 
         public void Dispose()
         {
-            Marshal.ReleaseComObject(_digitalChannel);
+            if (_digitalChannel != null)
+            {
+                while(Marshal.ReleaseComObject(_digitalChannel) > 0) ;
+                _digitalChannel = null;
+            }
         }
     }
 }

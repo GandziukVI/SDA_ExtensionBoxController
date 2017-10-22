@@ -80,6 +80,8 @@ namespace Agilent_ExtensionBox
                     _Driver.Initialize(resourceName, false, true, Options);
                     _Driver.DriverOperation.QueryInstrumentStatus = false;
                     _Driver.DriverOperation.Cache = false;
+                    _Driver.DriverOperation.RecordCoercions = false;
+                    _Driver.DriverOperation.InterchangeCheck = false;
                     _Driver.System.TimeoutMilliseconds = 5000;
 
                     _ChannelArray = new AgilentU254xDigitalChannel[] {
@@ -225,8 +227,6 @@ namespace Agilent_ExtensionBox
         {
             lock (startAnalogAcquisitionLock)
             {
-                var results = new short[SampleRate];
-
                 _Driver.AnalogIn.MultiScan.Configure(SampleRate, -1);
 
                 _Driver.AnalogIn.Acquisition.BufferSize = SampleRate;
@@ -265,11 +265,21 @@ namespace Agilent_ExtensionBox
 
                     try
                     {
+                        short[] results = new short[SampleRate];
+
+                        int i = 0;
+                        for (; i != results.Length; )
+                        {
+                            results[i] = new short();
+                            ++i;
+                        }
+
                         _Driver.AnalogIn.Acquisition.Fetch(ref results);
-                        _Driver.DriverOperation.InvalidateAllAttributes();
-                        
+
                         if (results.Length > 0)
                             _router.AddDataInvoke(ref results);
+
+                        _Driver.DriverOperation.InvalidateAllAttributes();
 
                         //unsafe
                         //{
@@ -388,8 +398,6 @@ namespace Agilent_ExtensionBox
             {
                 try
                 {
-                    var results = new short[SampleRate];
-
                     _Driver.AnalogIn.MultiScan.SampleRate = SampleRate;
                     _Driver.AnalogIn.MultiScan.NumberOfScans = SampleRate;
 
@@ -398,8 +406,16 @@ namespace Agilent_ExtensionBox
 
                     while (!(_Driver.AnalogIn.Acquisition.Completed == true)) ;
 
+                    short[] results = new short[SampleRate];
+
+                    int i = 0;
+                    for (; i != results.Length; )
+                    {
+                        results[i] = new short();
+                        ++i;
+                    }
+                    
                     _Driver.AnalogIn.Acquisition.Fetch(ref results);
-                    _Driver.DriverOperation.InvalidateAllAttributes();
 
                     //unsafe
                     //{
@@ -422,6 +438,9 @@ namespace Agilent_ExtensionBox
                     }
 
                     _router.AddData(ref results);
+
+                    _Driver.DriverOperation.InvalidateAllAttributes();
+
                     return true;
                 }
                 catch
@@ -458,12 +477,21 @@ namespace Agilent_ExtensionBox
 
                 for (; i >= 0; )
                 {
-                    Marshal.ReleaseComObject(_ChannelArray[i]);
+                    if(_ChannelArray[i] != null)
+                    {
+                        while (Marshal.ReleaseComObject(_ChannelArray[i]) > 0) ;
+                        _ChannelArray[i] = null;
+                    }
+
                     --i;
                 }
             }
 
-            Marshal.ReleaseComObject(_Driver);
+            if(_Driver != null)
+            {
+                while(Marshal.ReleaseComObject(_Driver) > 0) ;
+                _Driver = null;
+            }
         }
     }
 }

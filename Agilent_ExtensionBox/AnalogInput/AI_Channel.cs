@@ -219,7 +219,11 @@ namespace Agilent_ExtensionBox.IO
 
         public void Dispose()
         {
-            Marshal.ReleaseComObject(_channel);
+            if (_channel != null)
+            {
+                while (Marshal.ReleaseComObject(_channel) > 0) ;
+                _channel = null;
+            }
         }
     }
 }
