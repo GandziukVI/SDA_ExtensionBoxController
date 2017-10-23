@@ -32,10 +32,10 @@ namespace AcquisitionTest
             PC.CategoryName = "Process";
             PC.CounterName = "Working Set - Private";
             PC.InstanceName = proc.ProcessName;
-            
+
             PC.Close();
             PC.Dispose();
-            
+
             return ((int)PC.NextValue()) / 1024;
         }
 
@@ -73,11 +73,10 @@ namespace AcquisitionTest
 
             bool acquisitionInProgress = true;
 
-            Task.Factory.StartNew(new Action(() => {
-                driver.AnalogIn.Acquisition.Start();
-            }));
+            driver.AnalogIn.Acquisition.Start();
 
-            var acquisitionTask = Task.Factory.StartNew(new Action(() => {
+            var acquisitionTask = Task.Factory.StartNew(new Action(() =>
+            {
                 int readingsCounter = 0;
                 short[] buf = new short[samplingFrequency];
                 while (acquisitionInProgress)
