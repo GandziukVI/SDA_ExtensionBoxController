@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
-VisualStudioVersion = 12.0.21005.1
+VisualStudioVersion = 12.0.40629.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SDA_ExtensionBoxController", "SDA_ExtensionBoxController\SDA_ExtensionBoxController.csproj", "{420D3FAB-7A48-43ED-BED7-5E8288C90578}"
 EndProject
@@ -42,6 +42,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpectralAnalysis", "SpectralAnalysis\SpectralAnalysis.csproj", "{1FCBC722-6805-4CAB-B58B-1AD1FC8F3B55}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ForTests", "ForTests\ForTests.csproj", "{163424D9-8A52-430E-9D68-AE4475495ACC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AcquisitionTest", "AcquisitionTest\AcquisitionTest.csproj", "{011B1D0B-05E4-4A79-A097-23E31A06D93A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -320,6 +322,18 @@ Global
 		{163424D9-8A52-430E-9D68-AE4475495ACC}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{163424D9-8A52-430E-9D68-AE4475495ACC}.Release|x64.ActiveCfg = Release|Any CPU
 		{163424D9-8A52-430E-9D68-AE4475495ACC}.Release|x86.ActiveCfg = Release|Any CPU
+		{011B1D0B-05E4-4A79-A097-23E31A06D93A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{011B1D0B-05E4-4A79-A097-23E31A06D93A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{011B1D0B-05E4-4A79-A097-23E31A06D93A}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{011B1D0B-05E4-4A79-A097-23E31A06D93A}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{011B1D0B-05E4-4A79-A097-23E31A06D93A}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{011B1D0B-05E4-4A79-A097-23E31A06D93A}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{011B1D0B-05E4-4A79-A097-23E31A06D93A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{011B1D0B-05E4-4A79-A097-23E31A06D93A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{011B1D0B-05E4-4A79-A097-23E31A06D93A}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{011B1D0B-05E4-4A79-A097-23E31A06D93A}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{011B1D0B-05E4-4A79-A097-23E31A06D93A}.Release|x64.ActiveCfg = Release|Any CPU
+		{011B1D0B-05E4-4A79-A097-23E31A06D93A}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
