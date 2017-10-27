@@ -16,7 +16,11 @@ namespace AcquisitionTest
     class Program
     {
         static AgilentU254x driver;
-        static AgilentU254xAnalogInChannel analogInChannel;
+
+        static AgilentU254xAnalogInChannel analogInChannel1;
+        static AgilentU254xAnalogInChannel analogInChannel2;
+        static AgilentU254xAnalogInChannel analogInChannel3;
+        static AgilentU254xAnalogInChannel analogInChannel4;
 
         static readonly string ResourceID = "USB0::2391::5912::TW54334510::INSTR";
         static readonly string Options = "Simulate=false, Cache=false, QueryInstrStatus=false";
@@ -58,14 +62,21 @@ namespace AcquisitionTest
             driver.DriverOperation.InterchangeCheck = false;
             driver.System.TimeoutMilliseconds = 5000;
 
+            analogInChannel1 = driver.AnalogIn.Channels.get_Item("AIn1");
+            analogInChannel2 = driver.AnalogIn.Channels.get_Item("AIn2");
+            analogInChannel3 = driver.AnalogIn.Channels.get_Item("AIn3");
+            analogInChannel4 = driver.AnalogIn.Channels.get_Item("AIn4");
+
+            analogInChannel1.Configure(AgilentU254xAnalogPolarityEnum.AgilentU254xAnalogPolarityBipolar, 1.25, true);
+            analogInChannel2.Configure(AgilentU254xAnalogPolarityEnum.AgilentU254xAnalogPolarityBipolar, 1.25, false);
+            analogInChannel3.Configure(AgilentU254xAnalogPolarityEnum.AgilentU254xAnalogPolarityBipolar, 1.25, false);
+            analogInChannel4.Configure(AgilentU254xAnalogPolarityEnum.AgilentU254xAnalogPolarityBipolar, 1.25, false);
+
             #endregion
 
             #region Test Acquisition
 
             int samplingFrequency = 500000;
-
-            analogInChannel = driver.AnalogIn.Channels.get_Item("AIn1");
-            analogInChannel.Configure(AgilentU254xAnalogPolarityEnum.AgilentU254xAnalogPolarityBipolar, 1.25, true);
 
             driver.AnalogIn.MultiScan.Configure(samplingFrequency, -1);
 
@@ -90,7 +101,7 @@ namespace AcquisitionTest
                 }
             }));
 
-            int numOfSeconds = 20;
+            int numOfSeconds = 100;
             Thread.Sleep(numOfSeconds * 1000);
 
             driver.AnalogIn.Acquisition.Stop();
@@ -102,10 +113,28 @@ namespace AcquisitionTest
 
             #region Releasing COM objects
 
-            if (analogInChannel != null)
+            if (analogInChannel4 != null)
             {
-                while (Marshal.ReleaseComObject(analogInChannel) > 0) ;
-                analogInChannel = null;
+                while (Marshal.ReleaseComObject(analogInChannel4) > 0) ;
+                analogInChannel4 = null;
+            }
+
+            if (analogInChannel3 != null)
+            {
+                while (Marshal.ReleaseComObject(analogInChannel3) > 0) ;
+                analogInChannel3 = null;
+            }
+
+            if (analogInChannel2 != null)
+            {
+                while (Marshal.ReleaseComObject(analogInChannel2) > 0) ;
+                analogInChannel2 = null;
+            }
+
+            if (analogInChannel1 != null)
+            {
+                while (Marshal.ReleaseComObject(analogInChannel1) > 0) ;
+                analogInChannel1 = null;
             }
 
             if (driver != null)
