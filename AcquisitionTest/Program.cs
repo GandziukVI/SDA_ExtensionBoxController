@@ -101,7 +101,7 @@ namespace AcquisitionTest
                 }
             }));
 
-            int numOfSeconds = 100;
+            int numOfSeconds = 50;
             Thread.Sleep(numOfSeconds * 1000);
 
             driver.AnalogIn.Acquisition.Stop();

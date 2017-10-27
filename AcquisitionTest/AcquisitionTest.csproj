@@ -47,11 +47,6 @@
       <EmbedInteropTypes>True</EmbedInteropTypes>
       <HintPath>..\..\..\Visual Studio 2013\Projects\SDA_ExtensionBoxController\Third_Part_Libraries\Ivi.Visa.Interop.dll</HintPath>
     </Reference>
-    <Reference Include="Keithley.Ke26XXA.Interop, Version=1.4.5.0, Culture=neutral, PublicKeyToken=a5827328ee269399, processorArchitecture=AMD64">
-      <SpecificVersion>False</SpecificVersion>
-      <EmbedInteropTypes>True</EmbedInteropTypes>
-      <HintPath>..\..\..\..\..\..\Windows\assembly\GAC_64\Keithley.Ke26XXA.Interop\1.4.5.0__a5827328ee269399\Keithley.Ke26XXA.Interop.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
