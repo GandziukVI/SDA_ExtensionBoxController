@@ -76,7 +76,7 @@ namespace AcquisitionTest
 
             #region Test Acquisition
 
-            int samplingFrequency = 500000;
+            int samplingFrequency = 20000;
 
             driver.AnalogIn.MultiScan.Configure(samplingFrequency, -1);
 
