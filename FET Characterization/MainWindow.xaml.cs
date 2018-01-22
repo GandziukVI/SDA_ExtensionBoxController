@@ -65,6 +65,43 @@ namespace FET_Characterization
             FETTimeTraceDataSource.SetXYMapping(p => p);
 
             InitializeComponent();
+
+            // Work on parsing command line arguments
+            var arguments = Environment.GetCommandLineArgs();
+
+            if (arguments.Length > 0)
+            {
+                // First arg contains the experiment type
+                if (arguments[0].Equals("FETNoise", StringComparison.InvariantCultureIgnoreCase))
+                {
+                    menuExpNoise_Click(this, new RoutedEventArgs());
+
+                    // Setting measurement mode: transfer or output curve
+                    var settings = (measurementInterface as FET_Noise).Settings;
+                    if (arguments[1].Equals("Transfer", StringComparison.InvariantCultureIgnoreCase))
+                        settings.IsTransferCurveMode = true;
+                    else
+                        settings.IsOutputCurveMode = true;
+
+                    settings.VoltageDeviation = double.Parse(arguments[2], NumberFormatInfo.InvariantInfo);
+                    settings.NAveragesFast = int.Parse(arguments[3], NumberFormatInfo.InvariantInfo);
+                    settings.NAveragesSlow = int.Parse(arguments[4], NumberFormatInfo.InvariantInfo);
+                    settings.StabilizationTime = double.Parse(arguments[5], NumberFormatInfo.InvariantInfo);
+                    settings.LoadResistance = double.Parse(arguments[6], NumberFormatInfo.InvariantInfo);
+                    settings.NSubSamples = int.Parse(arguments[7], NumberFormatInfo.InvariantInfo);
+                    settings.SpectraAveraging = int.Parse(arguments[8], NumberFormatInfo.InvariantInfo);
+                    settings.UpdateNumber = int.Parse(arguments[9], NumberFormatInfo.InvariantInfo);
+                    settings.KPreAmpl = double.Parse(arguments[10], NumberFormatInfo.InvariantInfo);
+                    settings.KAmpl = double.Parse(arguments[11], NumberFormatInfo.InvariantInfo);
+                    settings.Temperature0 = double.Parse(arguments[12], NumberFormatInfo.InvariantInfo);
+                    settings.TemperatureE = double.Parse(arguments[13], NumberFormatInfo.InvariantInfo);
+
+                    if (arguments[14].Equals("y", StringComparison.InvariantCultureIgnoreCase))
+                        settings.RecordTimeTraces = true;
+                    else if (arguments[14].Equals("n", StringComparison.InvariantCultureIgnoreCase))
+                        settings.RecordTimeTraces = false;
+                }
+            }
         }
 
         private void menuExpIV_Click(object sender, RoutedEventArgs e)
@@ -97,8 +134,6 @@ namespace FET_Characterization
 
             var control = new FET_Noise();
 
-            measurementInterface = control;
-
             Grid.SetRow(control, 1);
             Grid.SetColumn(control, 0);
 
@@ -108,6 +143,8 @@ namespace FET_Characterization
             control.cmdStop.Click += cmdStopNoise_Click;
 
             control.Settings.PropertyChanged += FET_Exp_Property_Changed;
+
+            measurementInterface = control;
         }
 
         private void FET_Exp_Property_Changed(object sender, PropertyChangedEventArgs e)
