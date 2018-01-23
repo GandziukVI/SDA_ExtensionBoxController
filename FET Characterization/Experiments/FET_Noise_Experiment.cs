@@ -19,6 +19,7 @@ using FET_Characterization.Experiments.DataHandling;
 using System.IO.MemoryMappedFiles;
 using System.Security.AccessControl;
 using System.Runtime.ExceptionServices;
+using System.Windows.Threading;
 
 namespace FET_Characterization.Experiments
 {
@@ -708,6 +709,12 @@ namespace FET_Characterization.Experiments
             onStatusChanged(new StatusEventArgs("The measurement is done!"));
 
             Dispose();
+
+            //Implementing application shutdown after measurement is finished
+            Dispatcher.CurrentDispatcher.BeginInvoke(new Action(() => 
+            {
+                Application.Current.Shutdown();
+            }));
         }
 
         #region File operations
@@ -811,10 +818,10 @@ namespace FET_Characterization.Experiments
                     {
                         using (var mmfStream = mmf.CreateViewStream(0, streamSize, MemoryMappedFileAccess.Read))
                         {
-                            byte[] toWrite = new byte[streamSize];
-                            mmfStream.Read(toWrite, 0, streamSize);
+                            byte[] toRead = new byte[streamSize];
+                            mmfStream.Read(toRead, 0, streamSize);
 
-                            TT_Stream.Write(toWrite, 0, toWrite.Length);
+                            TT_Stream.Write(toRead, 0, toRead.Length);
                         }
                     }
                 }

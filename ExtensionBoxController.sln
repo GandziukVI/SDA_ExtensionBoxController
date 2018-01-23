@@ -45,6 +45,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ForTests", "ForTests\ForTes
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AcquisitionTest", "AcquisitionTest\AcquisitionTest.csproj", "{011B1D0B-05E4-4A79-A097-23E31A06D93A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FETNoiseStarter", "FETNoiseStarter\FETNoiseStarter.csproj", "{2A8B3445-F77B-42E4-82DD-C3C9B54F311B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -334,6 +336,18 @@ Global
 		{011B1D0B-05E4-4A79-A097-23E31A06D93A}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{011B1D0B-05E4-4A79-A097-23E31A06D93A}.Release|x64.ActiveCfg = Release|Any CPU
 		{011B1D0B-05E4-4A79-A097-23E31A06D93A}.Release|x86.ActiveCfg = Release|Any CPU
+		{2A8B3445-F77B-42E4-82DD-C3C9B54F311B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2A8B3445-F77B-42E4-82DD-C3C9B54F311B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2A8B3445-F77B-42E4-82DD-C3C9B54F311B}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{2A8B3445-F77B-42E4-82DD-C3C9B54F311B}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{2A8B3445-F77B-42E4-82DD-C3C9B54F311B}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{2A8B3445-F77B-42E4-82DD-C3C9B54F311B}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{2A8B3445-F77B-42E4-82DD-C3C9B54F311B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2A8B3445-F77B-42E4-82DD-C3C9B54F311B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2A8B3445-F77B-42E4-82DD-C3C9B54F311B}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{2A8B3445-F77B-42E4-82DD-C3C9B54F311B}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{2A8B3445-F77B-42E4-82DD-C3C9B54F311B}.Release|x64.ActiveCfg = Release|Any CPU
+		{2A8B3445-F77B-42E4-82DD-C3C9B54F311B}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
