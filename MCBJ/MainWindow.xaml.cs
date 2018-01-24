@@ -135,7 +135,7 @@ namespace MCBJ
                         }
                     }
 
-                    //on_cmd_startNoiseDefR(this, new RoutedEventArgs());
+                    on_cmd_startNoiseDefR(this, new RoutedEventArgs());
                 }
             }
         }
