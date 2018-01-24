@@ -28,6 +28,7 @@ using Microsoft.Research.DynamicDataDisplay.DataSources;
 using Microsoft.Research.DynamicDataDisplay;
 using System.Threading;
 using System.Runtime.ExceptionServices;
+using System.IO.MemoryMappedFiles;
 
 namespace MCBJ
 {
@@ -51,6 +52,92 @@ namespace MCBJ
             ds.SetXYMapping(p => p);
 
             InitializeComponent();
+
+            // Work on parsing command line arguments
+            var arguments = Environment.GetCommandLineArgs();
+
+            if (arguments.Length > 1)
+            {
+                // First arg contains the experiment type
+                if (arguments[1].Equals("MCBJNoise", StringComparison.InvariantCultureIgnoreCase))
+                {
+                    onNoisedefR_Click(this, new RoutedEventArgs());
+                    var settings = (measurementInterface as Noise_at_DefinedResistance).Settings;
+
+                    settings.AgilentU2542AResName = arguments[2];
+                    settings.VoltageDeviation = double.Parse(arguments[3], NumberFormatInfo.InvariantInfo);
+                    settings.MinVoltageTreshold = double.Parse(arguments[4], NumberFormatInfo.InvariantInfo);
+                    settings.VoltageTreshold = double.Parse(arguments[5], NumberFormatInfo.InvariantInfo);
+                    settings.ConductanceDeviation = double.Parse(arguments[6], NumberFormatInfo.InvariantInfo);
+                    settings.StabilizationTime = double.Parse(arguments[7], NumberFormatInfo.InvariantInfo);
+                    settings.MotionMinSpeed = double.Parse(arguments[8], NumberFormatInfo.InvariantInfo);
+                    settings.MotionMaxSpeed = double.Parse(arguments[9], NumberFormatInfo.InvariantInfo);
+                    settings.MotorMinPos = double.Parse(arguments[10], NumberFormatInfo.InvariantInfo);
+                    settings.MotorMaxPos = double.Parse(arguments[11], NumberFormatInfo.InvariantInfo);
+                    settings.NAveragesFast = int.Parse(arguments[12], NumberFormatInfo.InvariantInfo);
+                    settings.NAveragesSlow = int.Parse(arguments[13], NumberFormatInfo.InvariantInfo);
+                    settings.LoadResistance = double.Parse(arguments[14], NumberFormatInfo.InvariantInfo);
+                    settings.NSubSamples = int.Parse(arguments[15], NumberFormatInfo.InvariantInfo);
+                    settings.SpectraAveraging = int.Parse(arguments[16], NumberFormatInfo.InvariantInfo);
+                    settings.UpdateNumber = int.Parse(arguments[17], NumberFormatInfo.InvariantInfo);
+                    settings.KPreAmpl = double.Parse(arguments[18], NumberFormatInfo.InvariantInfo);
+                    settings.KAmpl = double.Parse(arguments[19], NumberFormatInfo.InvariantInfo);
+                    settings.Temperature0 = double.Parse(arguments[20], NumberFormatInfo.InvariantInfo);
+                    settings.TemperatureE = double.Parse(arguments[21], NumberFormatInfo.InvariantInfo);
+
+                    if (arguments[22].Equals("y", StringComparison.InvariantCultureIgnoreCase))
+                        settings.RecordTimeTraces = true;
+                    else if (arguments[22].Equals("n", StringComparison.InvariantCultureIgnoreCase))
+                        settings.RecordTimeTraces = false;
+
+                    settings.RecordingFrequency = int.Parse(arguments[23], NumberFormatInfo.InvariantInfo);
+
+                    settings.FilePath = arguments[24];
+                    settings.SaveFileName = arguments[25];
+
+                    // Reading drain-source voltage set
+                    using (var VdsMMF = MemoryMappedFile.OpenExisting(@"VdsSet", MemoryMappedFileRights.Read, HandleInheritability.Inheritable))
+                    {
+                        var streamLength = 0;
+                        using (var VgMMFStream = VdsMMF.CreateViewStream(0, sizeof(int), MemoryMappedFileAccess.Read))
+                        {
+                            var toRead = new byte[sizeof(Int32)];
+                            VgMMFStream.Read(toRead, 0, toRead.Length);
+                            streamLength = BitConverter.ToInt32(toRead, 0);
+                        }
+                        using (var VgMMFStream = VdsMMF.CreateViewStream(sizeof(int), streamLength, MemoryMappedFileAccess.Read))
+                        {
+                            var toRead = new byte[streamLength];
+                            VgMMFStream.Read(toRead, 0, streamLength);
+                            var response = Encoding.ASCII.GetString(toRead);
+                            var converter = new ValueCollectionConverter();
+                            settings.ScanningVoltageCollection = (double[])converter.ConvertBack(response, typeof(double[]), null, CultureInfo.InvariantCulture);
+                        }
+                    }
+
+                    // Reading conductances set
+                    using (var ConductanceMMF = MemoryMappedFile.OpenExisting(@"ConductanceSet", MemoryMappedFileRights.Read, HandleInheritability.Inheritable))
+                    {
+                        var streamLength = 0;
+                        using (var ConductanceMMFStream = ConductanceMMF.CreateViewStream(0, sizeof(int), MemoryMappedFileAccess.Read))
+                        {
+                            var toRead = new byte[sizeof(Int32)];
+                            ConductanceMMFStream.Read(toRead, 0, toRead.Length);
+                            streamLength = BitConverter.ToInt32(toRead, 0);
+                        }
+                        using (var ConductanceMMFStream = ConductanceMMF.CreateViewStream(sizeof(int), streamLength, MemoryMappedFileAccess.Read))
+                        {
+                            var toRead = new byte[streamLength];
+                            ConductanceMMFStream.Read(toRead, 0, streamLength);
+                            var response = Encoding.ASCII.GetString(toRead);
+                            var converter = new ValueCollectionConverter();
+                            settings.SetConductanceCollection = (double[])converter.ConvertBack(response, typeof(double[]), null, CultureInfo.InvariantCulture);
+                        }
+                    }
+
+                    //on_cmd_startNoiseDefR(this, new RoutedEventArgs());
+                }
+            }
         }
 
         private void onMainWindowClosing(object sender, System.ComponentModel.CancelEventArgs e)

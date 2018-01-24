@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace MCBJNoiseStarter.Experiments
 {
-    public class Noise_DefinedResistanceInfo : INotifyPropertyChanged
+    public class Noise_DefinedResistanceModel : INotifyPropertyChanged
     {
         #region INotifyPropertyChanged implementation
 
@@ -31,6 +31,17 @@ namespace MCBJNoiseStarter.Experiments
             {
                 agilentU2542Ares = value;
                 onPropertyChanged("AgilentU2542AResName");
+            }
+        }
+
+        private int nMaxSpectra = 10;
+        public int NMaxSpectra
+        {
+            get { return nMaxSpectra; }
+            set 
+            {
+                nMaxSpectra = value;
+                onPropertyChanged("NMaxSpectra");
             }
         }
 

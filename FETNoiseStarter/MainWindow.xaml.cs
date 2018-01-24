@@ -59,12 +59,6 @@ namespace FETNoiseStarter
             }
         }
 
-        private void on_cmdOpenFolderClick(object sender, RoutedEventArgs e)
-        {
-            dialog.ShowDialog();
-            Settings.FilePath = dialog.SelectedPath;
-        }
-
         private void on_cmdStartClick(object sender, RoutedEventArgs e)
         {
             Dispatcher.BeginInvoke(new Action(() => 
@@ -173,6 +167,12 @@ namespace FETNoiseStarter
         private void on_cmdStopClick(object sender, RoutedEventArgs e)
         {
 
+        }
+
+        private void on_cmdOpenFolderClick(object sender, RoutedEventArgs e)
+        {
+            dialog.ShowDialog();
+            Settings.FilePath = dialog.SelectedPath;
         }
 
         private void on_OpenDataFolderClick(object sender, RoutedEventArgs e)

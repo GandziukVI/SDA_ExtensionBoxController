@@ -26,6 +26,7 @@ using System.IO.MemoryMappedFiles;
 using System.Runtime.InteropServices;
 using System.Security.AccessControl;
 using System.Runtime.ExceptionServices;
+using System.Windows.Threading;
 
 namespace MCBJ.Experiments
 {
@@ -959,6 +960,12 @@ namespace MCBJ.Experiments
             onStatusChanged(new StatusEventArgs("The measurement is done!"));
 
             Dispose();
+
+            //Implementing application shutdown after measurement is finished
+            Dispatcher.CurrentDispatcher.BeginInvoke(new Action(() =>
+            {
+                Application.Current.Shutdown();
+            }));
         }
 
         private void DefResistanceNoise_DataReady(object sender, EventArgs e)

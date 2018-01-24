@@ -35,11 +35,11 @@ namespace MCBJ
         }
 		
 		private void on_MCBJ_OpenDataFolder_Click(object sender, System.Windows.RoutedEventArgs e)
-        {
-        	var startInfo = new ProcessStartInfo() { UseShellExecute = true, Verb = "open" };
+        {        	
+            var startInfo = new ProcessStartInfo() { UseShellExecute = true, Verb = "open" };
 
-            if (dialog.SelectedPath != string.Empty)
-                startInfo.FileName = dialog.SelectedPath;
+            if ((Settings.FilePath != string.Empty) && Directory.Exists(Settings.FilePath))
+                startInfo.FileName = Settings.FilePath;
             else
                 startInfo.FileName = Directory.GetCurrentDirectory();
 
