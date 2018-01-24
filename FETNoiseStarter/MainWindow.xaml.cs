@@ -63,6 +63,7 @@ namespace FETNoiseStarter
         {
             Dispatcher.BeginInvoke(new Action(() => 
             {
+                var fPath = Settings.FilePath.EndsWith("\\") ? Settings.FilePath.Substring(0, Settings.FilePath.Length - 2) : Settings.FilePath;
                 var argumentsString = string.Format("{0} {1} {2} {3} {4} {5} {6} {7} {8} {9} {10} {11} {12} {13} {14} {15} {16} \"{17}\" \"{18}\"",
                 "FETNoise",
                 Settings.AgilentU2542AResName,
@@ -81,7 +82,7 @@ namespace FETNoiseStarter
                 Settings.TemperatureE.ToString(NumberFormatInfo.InvariantInfo),
                 Settings.RecordTimeTraces ? "y" : "n",
                 Settings.RecordingFrequency.ToString(NumberFormatInfo.InvariantInfo),
-                Settings.FilePath,
+                fPath,
                 Settings.SaveFileName);
 
                 double[] outerLoopCollection;
