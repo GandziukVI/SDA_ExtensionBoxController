@@ -964,7 +964,7 @@ namespace MCBJ.Experiments
             //Implementing application shutdown after measurement is finished
             Dispatcher.CurrentDispatcher.BeginInvoke(new Action(() =>
             {
-                Application.Current.Shutdown();
+                Application.Current.Shutdown(0);
             }));
         }
 

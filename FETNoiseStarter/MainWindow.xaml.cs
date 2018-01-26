@@ -61,7 +61,7 @@ namespace FETNoiseStarter
 
         private void on_cmdStartClick(object sender, RoutedEventArgs e)
         {
-            Dispatcher.BeginInvoke(new Action(() => 
+            Dispatcher.BeginInvoke(new Action(() =>
             {
                 var fPath = Settings.FilePath.EndsWith("\\") ? Settings.FilePath.Substring(0, Settings.FilePath.Length - 2) : Settings.FilePath;
                 var argumentsString = string.Format("{0} {1} {2} {3} {4} {5} {6} {7} {8} {9} {10} {11} {12} {13} {14} {15} {16} \"{17}\" \"{18}\"",
@@ -114,8 +114,10 @@ namespace FETNoiseStarter
 
                 for (int i = 0; i < outerLoopCollection.Length; i++)
                 {
-                    foreach (var innerLoopSelection in innerLoopSelectionList)
+                    for (int j = 0; j < innerLoopSelectionList.Count; j++)
                     {
+                        var innerLoopSelection = innerLoopSelectionList[j];
+
                         var dataBytesOuterLoop = Encoding.ASCII.GetBytes(outerLoopCollection[i].ToString(NumberFormatInfo.InvariantInfo));
                         var dataBytesInnerLoop = Encoding.ASCII.GetBytes((string)converter.Convert(innerLoopSelection, typeof(string), null, CultureInfo.InvariantCulture));
 
@@ -157,8 +159,12 @@ namespace FETNoiseStarter
                                 mmfVdsStream.Write(VdsSet, 0, VdsSet.Length);
                             }
 
-                            var process = Process.Start("FET Characterization.exe", argumentsString);
-                            process.WaitForExit();
+                            using (var process = Process.Start("FET Characterization.exe", argumentsString))
+                            {
+                                process.WaitForExit();
+                                if (process.ExitCode != 0)
+                                    --j;
+                            }
                         }
                     }
                 }
