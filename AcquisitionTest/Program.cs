@@ -76,7 +76,7 @@ namespace AcquisitionTest
 
             #region Test Acquisition
 
-            int samplingFrequency = 20000;
+            int samplingFrequency = 500000;
 
             driver.AnalogIn.MultiScan.Configure(samplingFrequency, -1);
 
@@ -89,7 +89,7 @@ namespace AcquisitionTest
             var acquisitionTask = Task.Factory.StartNew(new Action(() =>
             {
                 int readingsCounter = 0;
-                short[] buf = new short[samplingFrequency];
+                short[] buf = { 0 };
                 while (acquisitionInProgress)
                 {
                     if (driver.AnalogIn.Acquisition.BufferStatus == AgilentU254xBufferStatusEnum.AgilentU254xBufferStatusDataReady)
@@ -101,7 +101,7 @@ namespace AcquisitionTest
                 }
             }));
 
-            int numOfSeconds = 50;
+            int numOfSeconds = 500;
             Thread.Sleep(numOfSeconds * 1000);
 
             driver.AnalogIn.Acquisition.Stop();

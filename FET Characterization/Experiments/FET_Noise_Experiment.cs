@@ -707,14 +707,6 @@ namespace FET_Characterization.Experiments
             }
 
             onStatusChanged(new StatusEventArgs("The measurement is done!"));
-
-            Dispose();
-
-            //Implementing application shutdown after measurement is finished
-            Dispatcher.CurrentDispatcher.BeginInvoke(new Action(() => 
-            {
-                Application.Current.Shutdown(0);
-            }));
         }
 
         #region File operations

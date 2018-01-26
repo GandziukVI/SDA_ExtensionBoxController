@@ -49,7 +49,7 @@
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
     <Reference Include="Xceed.Wpf.Toolkit">
-      <HintPath>..\..\..\Visual Studio 2013\Projects\SDA_ExtensionBoxController\Third_Part_Libraries\Xceed.Wpf.Toolkit.dll</HintPath>
+      <HintPath>..\..\BreakJunctionsExperiment\BreakJunctionsExperiment\Xceed.Wpf.Toolkit.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

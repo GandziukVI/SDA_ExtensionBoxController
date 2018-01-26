@@ -60,9 +60,11 @@
   <ItemGroup>
     <Compile Include="ExpDataArrivedEventArgs.cs" />
     <Compile Include="ExperimentBase.cs" />
+    <Compile Include="FinishedEventArgs.cs" />
     <Compile Include="IExperiment.cs" />
     <Compile Include="ProgressEventArgs.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="StartedEventArgs.cs" />
     <Compile Include="StatusEventArgs.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

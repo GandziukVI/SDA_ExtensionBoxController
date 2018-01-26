@@ -18,5 +18,7 @@ namespace ExperimentController
         event EventHandler<ExpDataArrivedEventArgs> DataArrived;
         event EventHandler<StatusEventArgs> Status;
         event EventHandler<ProgressEventArgs> Progress;
+        event EventHandler<StartedEventArgs> ExpStarted;
+        event EventHandler<FinishedEventArgs> ExpFinished;
     }
 }

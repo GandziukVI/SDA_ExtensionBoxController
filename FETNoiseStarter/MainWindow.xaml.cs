@@ -61,7 +61,7 @@ namespace FETNoiseStarter
 
         private void on_cmdStartClick(object sender, RoutedEventArgs e)
         {
-            Dispatcher.BeginInvoke(new Action(() =>
+            Task.Factory.StartNew(new Action(() =>
             {
                 var fPath = Settings.FilePath.EndsWith("\\") ? Settings.FilePath.Substring(0, Settings.FilePath.Length - 2) : Settings.FilePath;
                 var argumentsString = string.Format("{0} {1} {2} {3} {4} {5} {6} {7} {8} {9} {10} {11} {12} {13} {14} {15} {16} \"{17}\" \"{18}\"",
