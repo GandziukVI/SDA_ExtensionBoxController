@@ -707,6 +707,7 @@ namespace FET_Characterization.Experiments
             }
 
             onStatusChanged(new StatusEventArgs("The measurement is done!"));
+            onExpFinished(new FinishedEventArgs());
         }
 
         #region File operations

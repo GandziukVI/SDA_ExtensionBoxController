@@ -39,6 +39,20 @@ namespace ExperimentController
                 Progress(this, e);
         }
 
+        public event EventHandler<StartedEventArgs> ExpStarted;
+        protected void onExpStarted(StartedEventArgs e)
+        {
+            if (ExpStarted != null)
+                ExpStarted(this, e);
+        }
+
+        public event EventHandler<FinishedEventArgs> ExpFinished;
+        protected void onExpFinished(FinishedEventArgs e)
+        {
+            if (ExpFinished != null)
+                ExpFinished(this, e);
+        }
+
         public virtual void ToDo(object Arg)
         {
             throw new NotImplementedException();

@@ -77,6 +77,7 @@ namespace FET_Characterization
                 if (arguments[1].Equals("FETNoise", StringComparison.InvariantCultureIgnoreCase))
                 {
                     menuExpNoise_Click(this, new RoutedEventArgs());
+
                     var settings = (measurementInterface as FET_Noise).Settings;
 
                     settings.AgilentU2542AResName = arguments[2];
@@ -152,8 +153,19 @@ namespace FET_Characterization
                     }
 
                     cmdStartNoise_Click(this, new RoutedEventArgs());
+                    
+                    if (experiment != null)
+                        experiment.ExpFinished += onAppExit;
                 }
             }
+        }
+
+        void onAppExit(object sender, FinishedEventArgs e)
+        {
+            Dispatcher.BeginInvoke(new Action(()=>
+            {
+                Application.Current.Shutdown(0);
+            }));
         }
 
         private void menuExpIV_Click(object sender, RoutedEventArgs e)
