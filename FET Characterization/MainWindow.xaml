@@ -1,7 +1,8 @@
 ﻿<Window x:Class="FET_Characterization.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="FET Characterization" Height="480" Width="640">
+        Title="FET Characterization" Height="600" Width="800"
+        WindowStartupLocation="CenterScreen">
    
    <Grid x:Name="expParentGrid">
         <Grid.RowDefinitions>
