@@ -136,8 +136,20 @@ namespace MCBJ
                     }
 
                     on_cmd_startNoiseDefR(this, new RoutedEventArgs());
+                    if (experiment != null)
+                        experiment.ExpFinished += mcbj_NoiseExpFinished;
                 }
             }
+        }
+
+        // Closing the app when the experiment is finished
+        // for automatic experiment restart
+        private void mcbj_NoiseExpFinished(object sender, FinishedEventArgs e)
+        {
+            Dispatcher.BeginInvoke(new Action(() => 
+            {
+                Application.Current.Shutdown(0);
+            }));
         }
 
         private void onMainWindowClosing(object sender, System.ComponentModel.CancelEventArgs e)
