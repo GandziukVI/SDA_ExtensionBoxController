@@ -356,7 +356,7 @@ namespace FET_Characterization.Experiments
 
             foreach (var item in boxController.AI_ChannelCollection)
                 if (item.IsEnabled)
-                    item.Parameters.SetParams(FilterCutOffFrequencies.Freq_150kHz, FilterGain.gain1, PGA_GainsEnum.gain1);
+                    item.Parameters.SetParams(FilterCutOffFrequencies.Freq_60kHz, FilterGain.gain1, PGA_GainsEnum.gain1);
 
             boxController.AcquisitionInProgress = true;
 
