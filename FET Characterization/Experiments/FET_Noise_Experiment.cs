@@ -510,21 +510,6 @@ namespace FET_Characterization.Experiments
             return acquisitionIsSuccessful;
         }
 
-        private void EnableVsDCMeasurementChannel(ref BoxController boxController)
-        {
-            boxController.AO_ChannelCollection[AnalogOutChannelsEnum.AOut2].Enabled = true;
-            boxController.AO_ChannelCollection[AnalogOutChannelsEnum.AOut2].OutputNumber = BOX_AnalogOutChannelsEnum.BOX_AOut_03;
-            boxController.AO_ChannelCollection[AnalogOutChannelsEnum.AOut2].Voltage = -6.2;
-            boxController.AO_ChannelCollection[AnalogOutChannelsEnum.AOut2].OutputON();
-        }
-
-        private void DisableVsDCMeasurementChannel(ref BoxController boxController)
-        {
-            boxController.AO_ChannelCollection[AnalogOutChannelsEnum.AOut2].Voltage = 0.0;
-            boxController.AO_ChannelCollection[AnalogOutChannelsEnum.AOut2].OutputOFF();
-            boxController.AO_ChannelCollection[AnalogOutChannelsEnum.AOut2].Enabled = false;
-        }
-
         [HandleProcessCorruptedStateExceptions]
         public override void ToDo(object Arg)
         {
@@ -606,10 +591,10 @@ namespace FET_Characterization.Experiments
                                 throw new Exception("Cannot connect the box.");
 
                             // Enabling Vds measurement channel to reduce
-                            EnableVsDCMeasurementChannel(ref boxController);
+                            boxController.AO_ChannelCollection.ApplyVoltageToChannel(BOX_AnalogOutChannelsEnum.BOX_AOut_09, -6.2);
 
-                            VdsMotorPotentiometer = new BS350_MotorPotentiometer(boxController, BOX_AnalogOutChannelsEnum.BOX_AOut_02);
-                            VgMotorPotentiometer = new BS350_MotorPotentiometer(boxController, BOX_AnalogOutChannelsEnum.BOX_AOut_09);
+                            VdsMotorPotentiometer = new BS350_MotorPotentiometer(boxController, BOX_AnalogOutChannelsEnum.BOX_AOut_01);
+                            VgMotorPotentiometer = new BS350_MotorPotentiometer(boxController, BOX_AnalogOutChannelsEnum.BOX_AOut_02);
 
                             if (experimentSettings.IsOutputCurveMode == true)
                             {
@@ -633,7 +618,7 @@ namespace FET_Characterization.Experiments
 
                             // Disabling Vds measurement channel to reduce
                             // the instrumental noise
-                            DisableVsDCMeasurementChannel(ref boxController);
+                            boxController.AO_ChannelCollection.DisableAllVoltages();
 
                             onStatusChanged(new StatusEventArgs("Measuring noise spectra & time traces."));
 
@@ -645,7 +630,7 @@ namespace FET_Characterization.Experiments
                                 var noiseSpectraMeasurementState = measureNoiseSpectra(experimentSettings.SamplingFrequency, experimentSettings.NSubSamples, experimentSettings.SpectraAveraging, experimentSettings.UpdateNumber, experimentSettings.KPreAmpl * experimentSettings.KAmpl);
 
                                 // Enabling Vds measurement channel
-                                EnableVsDCMeasurementChannel(ref boxController);
+                                boxController.AO_ChannelCollection.ApplyVoltageToChannel(BOX_AnalogOutChannelsEnum.BOX_AOut_09, -6.2);
 
                                 if (noiseSpectraMeasurementState)
                                 {
@@ -701,7 +686,7 @@ namespace FET_Characterization.Experiments
 
                                 // Disabling Vds measurement channel to reduce
                                 // the instrumental noise
-                                DisableVsDCMeasurementChannel(ref boxController);
+                                boxController.AO_ChannelCollection.DisableAllVoltages();
                             }
                             else
                             {
