@@ -41,7 +41,7 @@ namespace IneltaMotorPotentiometer
 
         public void StopMotion()
         {
-            _boxController.AO_ChannelCollection.DisableAllVoltages();
+            _boxController.AO_ChannelCollection.ApplyVoltageToChannel(_controlChannel, stopMotorVoltage);
         }
     }
 }

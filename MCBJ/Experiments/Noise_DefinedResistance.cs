@@ -817,7 +817,19 @@ namespace MCBJ.Experiments
                             if (!initResult)
                                 throw new Exception("Cannot connect to the box");
 
-                            VdsMotorPotentiometer = new BS350_MotorPotentiometer(boxController, BOX_AnalogOutChannelsEnum.BOX_AOut_02);
+                            // Implementing voltage control for automatic applying
+                            // Drain-Source voltage, as well as for automatic
+                            // disabling of the Vs DC measurement channel for the
+                            // period of noise measurement
+
+                            var VdsMotorOutChannel = BOX_AnalogOutChannelsEnum.BOX_AOut_01;
+                            var VdsEnableChannel = BOX_AnalogOutChannelsEnum.BOX_AOut_09;
+
+                            // Enabling Vds DC measurement channel before measuring noise spectra
+                            // for measuring sample characteristics before noise measurement
+                            boxController.AO_ChannelCollection.ApplyVoltageToChannel(VdsEnableChannel, -6.2);
+
+                            VdsMotorPotentiometer = new BS350_MotorPotentiometer(boxController, VdsMotorOutChannel);
 
                             onStatusChanged(new StatusEventArgs(string.Format("Setting sample voltage V -> {0} V", voltage.ToString("0.0000", NumberFormatInfo.InvariantInfo))));
 
@@ -853,17 +865,29 @@ namespace MCBJ.Experiments
                             confAIChannelsForDC_Measurement();
                             var voltagesBeforeNoiseMeasurement = boxController.VoltageMeasurement_AllChannels(experimentSettings.NAveragesSlow);
 
+                            // Disabling motor controller in order to avoid huge noise
+                            // coming from the motor controller through the connecting wires
                             motor.Enabled = false;
 
-                            var ACConfStatus = confAIChannelsForAC_Measurement();
+                            // Disabling Vds DC measurement channel for measuring noise spectra
+                            // to reduce the noise influence of the box controller on the measurement
+                            boxController.AO_ChannelCollection.DisableAllVoltages();
 
+                            var ACConfStatus = confAIChannelsForAC_Measurement();
                             if (ACConfStatus == true)
                             {
-                                Thread.Sleep(15000);
+                                // Stabilization before noise spectra measurements
+                                onProgressChanged(new ProgressEventArgs(0.0));
+                                onStatusChanged(new StatusEventArgs("Waiting for stabilization..."));
+                                Thread.Sleep((int)(experimentSettings.StabilizationTime * 1000));
 
+                                // Noise spectra measurement
                                 onStatusChanged(new StatusEventArgs("Measuring noise spectra & time traces."));
-
                                 var noiseSpectraMeasurementState = measureNoiseSpectra(experimentSettings.SamplingFrequency, experimentSettings.NSubSamples, experimentSettings.SpectraAveraging, experimentSettings.UpdateNumber, experimentSettings.KPreAmpl * experimentSettings.KAmpl);
+
+                                // Enabling Vds DC measurement channel after measuring noise spectra
+                                // for measuring sample characteristics after noise measurement
+                                boxController.AO_ChannelCollection.ApplyVoltageToChannel(VdsEnableChannel, -6.2);
 
                                 if (noiseSpectraMeasurementState)
                                 {

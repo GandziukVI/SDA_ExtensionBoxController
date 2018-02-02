@@ -590,11 +590,22 @@ namespace FET_Characterization.Experiments
                             if (!boxInit)
                                 throw new Exception("Cannot connect the box.");
 
-                            // Enabling Vds measurement channel to reduce
-                            boxController.AO_ChannelCollection.ApplyVoltageToChannel(BOX_AnalogOutChannelsEnum.BOX_AOut_09, -6.2);
+                            // Implementing voltage control for automatic applying
+                            // Gate and Drain-Source voltages, as well as for automatic
+                            // disabling of the Vs DC measurement channel for the
+                            // period of noise measurement
 
-                            VdsMotorPotentiometer = new BS350_MotorPotentiometer(boxController, BOX_AnalogOutChannelsEnum.BOX_AOut_01);
-                            VgMotorPotentiometer = new BS350_MotorPotentiometer(boxController, BOX_AnalogOutChannelsEnum.BOX_AOut_02);
+                            var VdsMotorOutChannel = BOX_AnalogOutChannelsEnum.BOX_AOut_01;
+                            var VdsEnableChannel = BOX_AnalogOutChannelsEnum.BOX_AOut_09;
+
+                            var VgMotorOutChannel = BOX_AnalogOutChannelsEnum.BOX_AOut_02;
+
+                            // Enabling Vds DC measurement channel before measuring noise spectra
+                            // for measuring sample characteristics before noise measurement
+                            boxController.AO_ChannelCollection.ApplyVoltageToChannel(VdsEnableChannel, -6.2);
+
+                            VdsMotorPotentiometer = new BS350_MotorPotentiometer(boxController, VdsMotorOutChannel);
+                            VgMotorPotentiometer = new BS350_MotorPotentiometer(boxController, VgMotorOutChannel);
 
                             if (experimentSettings.IsOutputCurveMode == true)
                             {
@@ -616,21 +627,25 @@ namespace FET_Characterization.Experiments
                             confAIChannelsForDC_Measurement();
                             var voltagesBeforeNoiseMeasurement = boxController.VoltageMeasurement_AllChannels(experimentSettings.NAveragesSlow);
 
-                            // Disabling Vds measurement channel to reduce
-                            // the instrumental noise
+                            // Disabling Vds DC measurement channel for measuring noise spectra
+                            // to reduce the noise influence of the box controller on the measurement
                             boxController.AO_ChannelCollection.DisableAllVoltages();
-
-                            onStatusChanged(new StatusEventArgs("Measuring noise spectra & time traces."));
 
                             var ACConfStatus = confAIChannelsForAC_Measurement();
                             if (ACConfStatus)
                             {
+                                // Stabilization before noise spectra measurements
+                                onProgressChanged(new ProgressEventArgs(0.0));
+                                onStatusChanged(new StatusEventArgs("Waiting for stabilization..."));
                                 Thread.Sleep((int)(experimentSettings.StabilizationTime * 1000));
-
+                                
+                                // Measuring noise spectra
+                                onStatusChanged(new StatusEventArgs("Measuring noise spectra & time traces."));
                                 var noiseSpectraMeasurementState = measureNoiseSpectra(experimentSettings.SamplingFrequency, experimentSettings.NSubSamples, experimentSettings.SpectraAveraging, experimentSettings.UpdateNumber, experimentSettings.KPreAmpl * experimentSettings.KAmpl);
 
-                                // Enabling Vds measurement channel
-                                boxController.AO_ChannelCollection.ApplyVoltageToChannel(BOX_AnalogOutChannelsEnum.BOX_AOut_09, -6.2);
+                                // Enabling Vds DC measurement channel after measuring noise spectra
+                                // for measuring sample characteristics after noise measurement
+                                boxController.AO_ChannelCollection.ApplyVoltageToChannel(VdsEnableChannel, -6.2);
 
                                 if (noiseSpectraMeasurementState)
                                 {
@@ -684,8 +699,7 @@ namespace FET_Characterization.Experiments
                                         --j;
                                 }
 
-                                // Disabling Vds measurement channel to reduce
-                                // the instrumental noise
+                                // Disabling Vds DC measurement channel
                                 boxController.AO_ChannelCollection.DisableAllVoltages();
                             }
                             else

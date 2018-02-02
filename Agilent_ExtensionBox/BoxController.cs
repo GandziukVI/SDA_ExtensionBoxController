@@ -459,6 +459,8 @@ namespace Agilent_ExtensionBox
                 if (AcquisitionInProgress)
                     StopAnalogAcquisition();
 
+                AO_ChannelCollection.DisableAllVoltages();
+
                 Reset_Digital();
 
                 _DisableAllChannelsForContiniousAcquisition();
