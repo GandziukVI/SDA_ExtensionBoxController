@@ -152,7 +152,7 @@ namespace SpectralAnalysis
             var sb = new StringBuilder();
 
             double dtLowFreq = 0.0, dtHighFreq = 0.0;
-            double dfLowFreq = 1.0, dfHighFreq = 0.0;
+            double dfLowFreq = 0.0, dfHighFreq = 0.0;
             double equivalentNoiseBandwidthLowFreq, equivalentNoiseBandwidthHighFreq;
             double coherentGainLowFreq, coherentGainHighFreq;
 
@@ -186,13 +186,13 @@ namespace SpectralAnalysis
 
                 // Selecting lower amount of data points to reduce the FFT noise
 
-                var selection64Hz = filteredData.Where((value, index) => (index) % 64 == 0).ToArray();
+                var selectionLowFreq = filteredData.Where((value, index) => (index) % 64 == 0).ToArray();
 
-                sw.Apply(selection64Hz, out equivalentNoiseBandwidthLowFreq, out coherentGainLowFreq);
+                sw.Apply(selectionLowFreq, out equivalentNoiseBandwidthLowFreq, out coherentGainLowFreq);
 
                 dtLowFreq = 64.0 * 1.0 / (double)samplingFrequency;
 
-                var singlePSD_LOW_Freq = Measurements.AutoPowerSpectrum(selection64Hz, dtLowFreq, out dfLowFreq);
+                var singlePSD_LOW_Freq = Measurements.AutoPowerSpectrum(selectionLowFreq, dtLowFreq, out dfLowFreq);
 
 
                 autoPSDLowFreq = (singlePSD_LOW_Freq.Select((value, index) => new Point(index * dfLowFreq, value)).Where(p => p.X >= 1 && p.X <= cutOffLowFreq)).ToArray();
@@ -202,7 +202,7 @@ namespace SpectralAnalysis
 
                 dtHighFreq = 1.0 / (double)samplingFrequency;
 
-                var highFreqPeriod = 64;
+                highFreqPeriod = 64;
 
                 var highFreqSelectionRange = (int)((timeTrace.Length) / highFreqPeriod);
 
