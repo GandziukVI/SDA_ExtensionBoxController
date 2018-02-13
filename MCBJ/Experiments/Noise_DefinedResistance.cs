@@ -594,21 +594,21 @@ namespace MCBJ.Experiments
 
         bool setJunctionResistance(
 
-            double ScanningVoltage,
-            double VoltageDeviation,
-            double MinVoltageTreshold,
-            double VoltageTreshold,
-            double SetConductance,
-            double ConductanceDeviation,
-            double StabilizationTime,
-            double MotionMinSpeed,
-            double MotionMaxSpeed,
-            double MotionMinPos,
-            double MotionMaxPos,
-            int NAverages,
-            double LoadResistance
+                    double ScanningVoltage,
+                    double VoltageDeviation,
+                    double MinVoltageTreshold,
+                    double VoltageTreshold,
+                    double SetConductance,
+                    double ConductanceDeviation,
+                    double StabilizationTime,
+                    double MotionMinSpeed,
+                    double MotionMaxSpeed,
+                    double MotionMinPos,
+                    double MotionMaxPos,
+                    int NAverages,
+                    double LoadResistance
 
-            )
+                    )
         {
             var setVolt = ScanningVoltage;
             var voltDev = VoltageDeviation;
@@ -637,7 +637,28 @@ namespace MCBJ.Experiments
             motor.Enabled = true;
             motor.Velosity = maxSpeed;
 
-            var interval = setCond * (1.0 - 1.0 / Math.Sqrt(2.0));
+            Func<double, double, double> interval = (varCondVal, varCondDev) =>
+            {
+                if (varCondVal > varCondDev)
+                    return Math.Abs(varCondVal - varCondDev);
+                else
+                    return varCondDev;
+            };
+
+            Func<double, double, double, double> multFactor = (varCondDest, varCondCurr, varCondDev) =>
+            {
+                var absVoltVal = Math.Abs(varCondDest);
+                var absDeviationVal = Math.Abs(varCondDev);
+
+                var divider = 1.0;
+
+                if (absVoltVal > absDeviationVal)
+                    divider = setCond - interval(setCond, varCondDev);
+                else
+                    divider = Math.Abs(setCond + interval(setCond, varCondDev));
+
+                return (1.0 - Math.Tanh(-1.0 * Math.Abs(setCond - varCondCurr) / divider * Math.PI + Math.PI)) / 2.0;
+            };
 
             // Resistance stabilization
 
@@ -650,20 +671,12 @@ namespace MCBJ.Experiments
                 }
 
                 var currResistance = measureResistance(loadResistance, nAverages, setVolt, voltDev, minVoltageTreshold, voltageTreshold);
-                var scaledConductance = (1.0 / currResistance) / ConductanceQuantum;
+                var currentCond = (1.0 / currResistance) / ConductanceQuantum;
 
-                var speed = minSpeed;
-                try
-                {
-                    var factor = (1.0 - Math.Tanh(-1.0 * Math.Abs(scaledConductance - setCond) / interval * Math.PI + Math.PI)) / 2.0;
-                    speed = minSpeed + (maxSpeed - minSpeed) * factor;
-                }
-                catch { speed = minSpeed; }
+                motor.Velosity = minSpeed + (maxSpeed - minSpeed) * multFactor(setCond, currentCond, condDev);
 
-                motor.Velosity = speed;
-
-                if ((scaledConductance >= setCond - (setCond * condDev / 100.0)) &&
-                    (scaledConductance <= setCond + (setCond * condDev / 100.0)))
+                if ((currentCond >= setCond - (setCond * condDev / 100.0)) &&
+                    (currentCond <= setCond + (setCond * condDev / 100.0)))
                 {
                     if (motor.IsEnabled == true)
                         motor.Enabled = false;
@@ -685,7 +698,7 @@ namespace MCBJ.Experiments
                     if (motor.IsEnabled == false)
                         motor.Enabled = true;
 
-                    if (scaledConductance > setCond)
+                    if (currentCond > setCond)
                         motor.PositionAsync = maxPos;
                     else
                         motor.PositionAsync = minPos;
@@ -696,14 +709,14 @@ namespace MCBJ.Experiments
                     var motorPosition = motor.Position;
 
                     onStatusChanged(new StatusEventArgs(string.Format("Reaching: G = {0} G0 ( => {1} G0), R = {2} Ohm ( => {3} Ohm). Current motor pos. is {4} [mm]",
-                            scaledConductance.ToString("0.0000", NumberFormatInfo.InvariantInfo),
+                            currentCond.ToString("0.0000", NumberFormatInfo.InvariantInfo),
                             setCond.ToString("0.0000", NumberFormatInfo.InvariantInfo),
                             currResistance.ToString("0.0000", NumberFormatInfo.InvariantInfo),
                             setResistance.ToString("0.0000", NumberFormatInfo.InvariantInfo),
                             motorPosition.ToString("0.0000", NumberFormatInfo.InvariantInfo)
                         )));
 
-                    if (scaledConductance < setCond && motorPosition == minPos)
+                    if (currentCond < setCond && motorPosition == minPos)
                     {
                         onStatusChanged(new StatusEventArgs("The sample is broken."));
 
@@ -711,7 +724,7 @@ namespace MCBJ.Experiments
                         motor.Enabled = false;
                         return false;
                     }
-                    else if (scaledConductance > setCond && motorPosition == maxPos)
+                    else if (currentCond > setCond && motorPosition == maxPos)
                     {
                         onStatusChanged(new StatusEventArgs("Unable to reach desired conductance."));
 
@@ -747,7 +760,160 @@ namespace MCBJ.Experiments
             }
         }
 
+        //bool setJunctionResistance(
 
+        //    double ScanningVoltage,
+        //    double VoltageDeviation,
+        //    double MinVoltageTreshold,
+        //    double VoltageTreshold,
+        //    double SetConductance,
+        //    double ConductanceDeviation,
+        //    double StabilizationTime,
+        //    double MotionMinSpeed,
+        //    double MotionMaxSpeed,
+        //    double MotionMinPos,
+        //    double MotionMaxPos,
+        //    int NAverages,
+        //    double LoadResistance
+
+        //    )
+        //{
+        //    var setVolt = ScanningVoltage;
+        //    var voltDev = VoltageDeviation;
+        //    var setCond = SetConductance;
+        //    var condDev = ConductanceDeviation;
+        //    var stabilizationTime = StabilizationTime;
+
+        //    var minSpeed = MotionMinSpeed;
+        //    var maxSpeed = MotionMaxSpeed;
+
+        //    var minPos = MotionMinPos;
+        //    var maxPos = MotionMaxPos;
+
+        //    var nAverages = NAverages;
+        //    var loadResistance = LoadResistance;
+        //    var minVoltageTreshold = MinVoltageTreshold;
+        //    var voltageTreshold = VoltageTreshold;
+
+        //    var inRangeCounter = 0;
+        //    var outsiderCounter = 0;
+
+        //    var setResistance = 1.0 / (setCond * ConductanceQuantum);
+
+        //    onProgressChanged(new ProgressEventArgs(0.0));
+
+        //    motor.Enabled = true;
+        //    motor.Velosity = maxSpeed;
+
+        //    var interval = setCond * (1.0 - 1.0 / Math.Sqrt(2.0));
+
+        //    // Resistance stabilization
+
+        //    while (true)
+        //    {
+        //        if (!IsRunning)
+        //        {
+        //            motor.Enabled = true;
+        //            return false;
+        //        }
+
+        //        var currResistance = measureResistance(loadResistance, nAverages, setVolt, voltDev, minVoltageTreshold, voltageTreshold);
+        //        var scaledConductance = (1.0 / currResistance) / ConductanceQuantum;
+
+        //        var speed = minSpeed;
+        //        try
+        //        {
+        //            var factor = (1.0 - Math.Tanh(-1.0 * Math.Abs(scaledConductance - setCond) / interval * Math.PI + Math.PI)) / 2.0;
+        //            speed = minSpeed + (maxSpeed - minSpeed) * factor;
+        //        }
+        //        catch { speed = minSpeed; }
+
+        //        motor.Velosity = speed;
+
+        //        if ((scaledConductance >= setCond - (setCond * condDev / 100.0)) &&
+        //            (scaledConductance <= setCond + (setCond * condDev / 100.0)))
+        //        {
+        //            if (motor.IsEnabled == true)
+        //                motor.Enabled = false;
+
+        //            if (!stabilityStopwatch.IsRunning)
+        //            {
+        //                inRangeCounter = 0;
+        //                outsiderCounter = 0;
+
+        //                stabilityStopwatch.Start();
+
+        //                onStatusChanged(new StatusEventArgs("Stabilizing the specified resistance / conductance value."));
+        //            }
+
+        //            ++inRangeCounter;
+        //        }
+        //        else
+        //        {
+        //            if (motor.IsEnabled == false)
+        //                motor.Enabled = true;
+
+        //            if (scaledConductance > setCond)
+        //                motor.PositionAsync = maxPos;
+        //            else
+        //                motor.PositionAsync = minPos;
+
+        //            if (stabilityStopwatch.IsRunning == true)
+        //                ++outsiderCounter;
+
+        //            var motorPosition = motor.Position;
+
+        //            onStatusChanged(new StatusEventArgs(string.Format("Reaching: G = {0} G0 ( => {1} G0), R = {2} Ohm ( => {3} Ohm). Current motor pos. is {4} [mm]",
+        //                    scaledConductance.ToString("0.0000", NumberFormatInfo.InvariantInfo),
+        //                    setCond.ToString("0.0000", NumberFormatInfo.InvariantInfo),
+        //                    currResistance.ToString("0.0000", NumberFormatInfo.InvariantInfo),
+        //                    setResistance.ToString("0.0000", NumberFormatInfo.InvariantInfo),
+        //                    motorPosition.ToString("0.0000", NumberFormatInfo.InvariantInfo)
+        //                )));
+
+        //            if (scaledConductance < setCond && motorPosition == minPos)
+        //            {
+        //                onStatusChanged(new StatusEventArgs("The sample is broken."));
+
+        //                motor.Position = minPos;
+        //                motor.Enabled = false;
+        //                return false;
+        //            }
+        //            else if (scaledConductance > setCond && motorPosition == maxPos)
+        //            {
+        //                onStatusChanged(new StatusEventArgs("Unable to reach desired conductance."));
+
+        //                motor.Position = minPos;
+        //                motor.Enabled = false;
+        //                return false;
+        //            }
+        //        }
+
+        //        if (stabilityStopwatch.IsRunning)
+        //        {
+        //            if (stabilityStopwatch.ElapsedMilliseconds > 0)
+        //                onProgressChanged(new ProgressEventArgs((double)stabilityStopwatch.ElapsedMilliseconds / 1000.0 / stabilizationTime * 100));
+
+        //            if ((double)stabilityStopwatch.ElapsedMilliseconds / 1000.0 >= stabilizationTime)
+        //            {
+        //                var divider = outsiderCounter > 0 ? (double)outsiderCounter : 1.0;
+        //                if (Math.Log10((double)inRangeCounter / divider) >= 1.0)
+        //                {
+        //                    stabilityStopwatch.Stop();
+        //                    motor.Disable();
+        //                    return true;
+        //                }
+        //                else
+        //                {
+        //                    inRangeCounter = 0;
+        //                    outsiderCounter = 0;
+
+        //                    stabilityStopwatch.Restart();
+        //                }
+        //            }
+        //        }
+        //    }
+        //}
 
         private static string TTSaveFileName = "TT.dat";
         private string NoiseSpectrumFinal = string.Empty;
