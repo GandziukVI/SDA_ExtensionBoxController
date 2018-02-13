@@ -25,7 +25,7 @@
 			<ColumnDefinition Width="Auto"/>
 		</Grid.ColumnDefinitions>
 		<wpfTool:DoubleUpDown x:Name="DataInput" Value="{Binding Value, ElementName=extendedDoubleUpDownControl}" Margin="0,0,5,0" MinWidth="0" Width="Auto" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
-		<ComboBox x:Name="DataMultiplier" Grid.Column="1" SelectedIndex="{Binding Multiplier, Converter={StaticResource MultiplierConverter}, ElementName=extendedDoubleUpDownControl, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Width="50" VerticalContentAlignment="Center" Height="{Binding Height, ElementName=DataInput, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="0" MinWidth="50" MaxWidth="50" >
+		<ComboBox x:Name="DataMultiplier" Grid.Column="1" Width="50" VerticalContentAlignment="Center" Height="{Binding Height, ElementName=DataInput, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="0" MinWidth="50" MaxWidth="50" >
 			<ComboBoxItem>
 				<ComboBoxItem.Content>
 					<TextBlock></TextBlock>
