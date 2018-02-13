@@ -11,6 +11,7 @@ using System.IO;
 
 namespace FET_Characterization
 {
+    [Serializable]
 	public class FET_NoiseModel : INotifyPropertyChanged
 	{
 		public FET_NoiseModel()
@@ -29,6 +30,8 @@ namespace FET_Characterization
 			}
 		}
 		#endregion
+
+        #region Oscilloscope settings
 
         private string agilentU2542Ares = "USB0::2391::5912::TW54334510::INSTR";
         public string AgilentU2542AResName
@@ -73,6 +76,8 @@ namespace FET_Characterization
                 NotifyPropertyChanged("OscilloscopePointsPerGraph");
             }
         }
+
+        #endregion
 
         private bool isTransferCurveMode = true;
         public bool IsTransferCurveMode
@@ -177,7 +182,7 @@ namespace FET_Characterization
             }
         }
 
-        private int samplingFrequency = 262144;
+        private int samplingFrequency = 500000;
         public int SamplingFrequency
         {
             get { return samplingFrequency; }

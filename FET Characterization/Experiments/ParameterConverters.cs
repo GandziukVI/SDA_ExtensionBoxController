@@ -221,34 +221,48 @@ namespace FET_Characterization.Experiments
     {
         public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
-            var multiplier = (double)value;
+            var multiplier = 1.0;
+            var conversionSuccess = false;
+            conversionSuccess = double.TryParse(System.Convert.ToString(value, NumberFormatInfo.InvariantInfo), NumberStyles.Float, NumberFormatInfo.InvariantInfo, out multiplier);
 
-            if (multiplier == 1.0)
-                return 0;
-            else if (multiplier == 1e-3)
-                return 1;
-            else if (multiplier == 1e-6)
-                return 2;
-            else if (multiplier == 1e-9)
-                return 3;
+            if (conversionSuccess)
+            {
+                if (multiplier == 1.0)
+                    return 0;
+                else if (multiplier == 1e-3)
+                    return 1;
+                else if (multiplier == 1e-6)
+                    return 2;
+                else if (multiplier == 1e-9)
+                    return 3;
+                else
+                    return -1;
+            }
             else
-                return -1;
+                return 0;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
-            var index = (int)value;
+            var index = 0;
+            var conversionSuccess = false;
+            conversionSuccess = int.TryParse(System.Convert.ToString(value, NumberFormatInfo.InvariantInfo), out index);
 
-            if (index == 0)
-                return 1.0;
-            else if (index == 1)
-                return 1e-3;
-            else if (index == 2)
-                return 1e-6;
-            else if (index == 3)
-                return 1e-9;
+            if (conversionSuccess)
+            {
+                if (index == 0)
+                    return 1.0;
+                else if (index == 1)
+                    return 1e-3;
+                else if (index == 2)
+                    return 1e-6;
+                else if (index == 3)
+                    return 1e-9;
+                else
+                    return double.NaN;
+            }
             else
-                return double.NaN;
+                return 1.0;
         }
     }
 

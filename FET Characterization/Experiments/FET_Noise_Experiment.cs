@@ -49,16 +49,6 @@ namespace FET_Characterization.Experiments
         public FET_Noise_Experiment(string SDA_ConnectionString, Point[] AmplifierNoise, Point[] FrequencyResponce)
             : base()
         {
-            //boxController = new BoxController();
-
-            //var boxInit = boxController.Init(SDA_ConnectionString);
-
-            //if (!boxInit)
-            //    throw new Exception("Cannot connect the box.");
-
-            //VdsMotorPotentiometer = new BS350_MotorPotentiometer(boxController, BOX_AnalogOutChannelsEnum.BOX_AOut_02);
-            //VgMotorPotentiometer = new BS350_MotorPotentiometer(boxController, BOX_AnalogOutChannelsEnum.BOX_AOut_09);
-
             amplifierNoise = AmplifierNoise;
             frequencyResponce = FrequencyResponce;
             twoPartsFFT = new TwoPartsFFT();
@@ -231,7 +221,7 @@ namespace FET_Characterization.Experiments
                     if (absVoltVal > absDeviationVal)
                         divider = voltSet - intervalCoarse(voltSet, varVoltDev);
                     else
-                        divider = Math.Abs(voltSet + intervalCoarse(voltSet, varVoltDev)) / 1;
+                        divider = Math.Abs(voltSet + intervalCoarse(voltSet, varVoltDev));
 
                     return (1.0 - Math.Tanh(-1.0 * Math.Abs(voltSet - varVoltCurr) / divider * Math.PI + Math.PI)) / 2.0;
                 };
@@ -585,8 +575,7 @@ namespace FET_Characterization.Experiments
                             var TTVoltageValues = (from item in timeTrace
                                                    select item.Y).ToArray();
 
-                            //var singleNoiseSpectrum = twoPartsFFT.GetTwoPartsFFT(TTVoltageValues, samplingFrequency = experimentSettings.SamplingFrequency, experimentSettings.NSubSamples);
-                            var singleNoiseSpectrum = twoPartsFFT.GetTwoPartsFFT(TTVoltageValues, 500000, experimentSettings.NSubSamples, 1.0, 1.0, 1600, 102400, 8, -1, 100, 10);
+                            var singleNoiseSpectrum = twoPartsFFT.GetTwoPartsFFT(TTVoltageValues, samplingFrequency, experimentSettings.NSubSamples, 1.0, 1.0, 1600, 102400, 8, -1, 100, 10);
 
                             if (noisePSD == null || noisePSD.Length == 0)
                             {
@@ -610,9 +599,7 @@ namespace FET_Characterization.Experiments
                                                        select new Point(item.X, item.Y / averagingCounter)).ToArray();
 
                                 // Calibration here
-                                //var calibratedSpectrum = twoPartsFFT.GetCalibratedSpecteum(ref dividedSpectrum, ref amplifierNoise, ref frequencyResponce);
-
-                                var calibratedSpectrum = dividedSpectrum;//twoPartsFFT.GetCalibratedSpecteum(ref dividedSpectrum, ref amplifierNoise, ref frequencyResponce);
+                                var calibratedSpectrum = twoPartsFFT.GetCalibratedSpecteum(ref dividedSpectrum, ref amplifierNoise, ref frequencyResponce);
 
                                 var finalSpectrum = from divSpecItem in dividedSpectrum
                                                     join calSpecItem in calibratedSpectrum on divSpecItem.X equals calSpecItem.X
@@ -677,8 +664,7 @@ namespace FET_Characterization.Experiments
                 {
                     acquisitionTaskResult = Task.Factory.StartNew(() =>
                     {
-                        //acquisitionIsSuccessful = boxController.StartAnalogAcquisition(samplingFrequency);
-                        acquisitionIsSuccessful = boxController.StartAnalogAcquisition(500000);
+                        acquisitionIsSuccessful = boxController.StartAnalogAcquisition(samplingFrequency);
                     });
 
                     await acquisitionTaskResult;
@@ -774,36 +760,36 @@ namespace FET_Characterization.Experiments
                             // disabling of the Vs DC measurement channel for the
                             // period of noise measurement
 
-                            //var VdsMotorOutChannel = BOX_AnalogOutChannelsEnum.BOX_AOut_01;
+                            var VdsMotorOutChannel = BOX_AnalogOutChannelsEnum.BOX_AOut_01;
                             var VdsEnableChannel = BOX_AnalogOutChannelsEnum.BOX_AOut_09;
 
-                            //var VgMotorOutChannel = BOX_AnalogOutChannelsEnum.BOX_AOut_02;
+                            var VgMotorOutChannel = BOX_AnalogOutChannelsEnum.BOX_AOut_02;
 
                             // Enabling Vds DC measurement channel before measuring noise spectra
                             // for measuring sample characteristics before noise measurement
                             boxController.AO_ChannelCollection.ApplyVoltageToChannel(VdsEnableChannel, -6.2);
 
-                            //VdsMotorPotentiometer = new BS350_MotorPotentiometer(boxController, VdsMotorOutChannel);
-                            //VgMotorPotentiometer = new BS350_MotorPotentiometer(boxController, VgMotorOutChannel);
+                            VdsMotorPotentiometer = new BS350_MotorPotentiometer(boxController, VdsMotorOutChannel);
+                            VgMotorPotentiometer = new BS350_MotorPotentiometer(boxController, VgMotorOutChannel);
 
-                            //if (experimentSettings.IsOutputCurveMode == true)
-                            //{
-                            //    onStatusChanged(new StatusEventArgs(string.Format("Setting gate voltage V -> {0} V", outerLoopVoltage.ToString("0.0000", NumberFormatInfo.InvariantInfo))));
-                            //    SetGateVoltage(outerLoopVoltage, experimentSettings.VoltageDeviation);
-                            //    onStatusChanged(new StatusEventArgs(string.Format("Setting drain-source voltage V -> {0} V", innerLoopVoltage.ToString("0.0000", NumberFormatInfo.InvariantInfo))));
-                            //    SetDrainSourceVoltage(innerLoopVoltage, experimentSettings.VoltageDeviation);
-                            //}
-                            //else if (experimentSettings.IsTransferCurveMode == true)
-                            //{
-                            //    onStatusChanged(new StatusEventArgs(string.Format("Setting gate voltage V -> {0} V", innerLoopVoltage.ToString("0.0000", NumberFormatInfo.InvariantInfo))));
-                            //    SetGateVoltage(innerLoopVoltage, experimentSettings.VoltageDeviation);
-                            //    onStatusChanged(new StatusEventArgs(string.Format("Setting drain-source voltage V -> {0} V", outerLoopVoltage.ToString("0.0000", NumberFormatInfo.InvariantInfo))));
-                            //    SetDrainSourceVoltage(outerLoopVoltage, experimentSettings.VoltageDeviation);
-                            //}
+                            if (experimentSettings.IsOutputCurveMode == true)
+                            {
+                                onStatusChanged(new StatusEventArgs(string.Format("Setting gate voltage V -> {0} V", outerLoopVoltage.ToString("0.0000", NumberFormatInfo.InvariantInfo))));
+                                SetGateVoltage(outerLoopVoltage, experimentSettings.VoltageDeviation);
+                                onStatusChanged(new StatusEventArgs(string.Format("Setting drain-source voltage V -> {0} V", innerLoopVoltage.ToString("0.0000", NumberFormatInfo.InvariantInfo))));
+                                SetDrainSourceVoltage(innerLoopVoltage, experimentSettings.VoltageDeviation);
+                            }
+                            else if (experimentSettings.IsTransferCurveMode == true)
+                            {
+                                onStatusChanged(new StatusEventArgs(string.Format("Setting gate voltage V -> {0} V", innerLoopVoltage.ToString("0.0000", NumberFormatInfo.InvariantInfo))));
+                                SetGateVoltage(innerLoopVoltage, experimentSettings.VoltageDeviation);
+                                onStatusChanged(new StatusEventArgs(string.Format("Setting drain-source voltage V -> {0} V", outerLoopVoltage.ToString("0.0000", NumberFormatInfo.InvariantInfo))));
+                                SetDrainSourceVoltage(outerLoopVoltage, experimentSettings.VoltageDeviation);
+                            }
 
                             onStatusChanged(new StatusEventArgs("Measuring sample characteristics before noise spectra measurement."));
 
-                            //confAIChannelsForDC_Measurement();
+                            confAIChannelsForDC_Measurement();
                             var voltagesBeforeNoiseMeasurement = boxController.VoltageMeasurement_AllChannels(experimentSettings.NAveragesSlow);
 
                             // Disabling Vds DC measurement channel for measuring noise spectra
