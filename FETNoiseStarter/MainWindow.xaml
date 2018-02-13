@@ -111,7 +111,7 @@
 
                 <TextBlock Grid.Row="1" Grid.ColumnSpan="2" HorizontalAlignment="Center" Margin="5,30,5,15"><Run FontSize="18">Starter Settings</Run></TextBlock>
 
-                <TextBlock Grid.Row="2" Grid.RowSpan="3" Text="Max points Vg" />
+                <TextBlock Grid.Row="2" Grid.RowSpan="3" Text="Max points" />
                 <wpfTool:IntegerUpDown Grid.Row="2" Grid.RowSpan="3" Grid.Column="1" Value="{Binding NMaxSpectra, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"/>
 
                 <TextBlock Grid.Row="5" Grid.ColumnSpan="2" HorizontalAlignment="Center" Margin="5,30,5,15"><Run FontSize="18">Measurement Settings</Run></TextBlock>
