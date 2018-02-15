@@ -678,6 +678,7 @@ namespace FET_Characterization.Experiments
         [HandleProcessCorruptedStateExceptions]
         public override void ToDo(object Arg)
         {
+            onExpStarted(new StartedEventArgs());
             onStatusChanged(new StatusEventArgs("Measurement started."));
             onProgressChanged(new ProgressEventArgs(0.0));
 
@@ -898,8 +899,8 @@ namespace FET_Characterization.Experiments
                 }
             }
 
-            onStatusChanged(new StatusEventArgs("The measurement is done!"));
             onExpFinished(new FinishedEventArgs());
+            onStatusChanged(new StatusEventArgs("The measurement is done!"));            
         }
 
         #region File operations

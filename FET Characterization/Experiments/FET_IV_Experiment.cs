@@ -80,6 +80,10 @@ namespace FET_Characterization.Experiments
 
         public override void ToDo(object Arg)
         {
+            onExpStarted(new StartedEventArgs());
+            onStatusChanged(new StatusEventArgs("Experiment started."));
+            onProgressChanged(new ProgressEventArgs(0.0));
+
             iv_FET_CurveDataSet = new LinkedList<IV_FET_DataContainer>();
 
             var settings = (FET_IVModel)Arg;
@@ -314,7 +318,8 @@ namespace FET_Characterization.Experiments
 
             SaveToFile(string.Format("{0}\\{1}", settings.IV_FET_DataFilePath, settings.IV_FileName));
 
-            onStatusChanged(new StatusEventArgs("Measurement completed!"));
+            onExpFinished(new FinishedEventArgs());
+            onStatusChanged(new StatusEventArgs("Measurement completed!"));            
         }
 
         public override void Stop()
