@@ -85,14 +85,7 @@ namespace FET_Characterization
 
         static void onValuePropertyChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e)
         {
-            var control = sender as ExtendedDoubleUpDown;
-            control.Value = System.Convert.ToDouble(e.NewValue, NumberFormatInfo.InvariantInfo);
-
-            var newRealValue = new DependencyPropertyChangedEventArgs(
-                RealValueProperty, sender.GetValue(RealValueProperty),
-                System.Convert.ToDouble(e.NewValue) * System.Convert.ToDouble(sender.GetValue(MultiplierProperty)));
-
-            onRealValuePropertyChanged(sender, newRealValue);
+            sender.SetValue(RealValueProperty, System.Convert.ToDouble(e.NewValue) * System.Convert.ToDouble(sender.GetValue(MultiplierProperty)));
         }
 
         #endregion
@@ -204,12 +197,7 @@ namespace FET_Characterization
 
         static void onMultiplierPropertyChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e)
         {
-            var newRealValue = new DependencyPropertyChangedEventArgs(
-                RealValueProperty,
-                sender.GetValue(RealValueProperty),
-                System.Convert.ToDouble(sender.GetValue(ValueProperty), NumberFormatInfo.InvariantInfo) * System.Convert.ToDouble(e.NewValue, NumberFormatInfo.InvariantInfo));
-
-            onRealValuePropertyChanged(sender, newRealValue);
+            sender.SetValue(RealValueProperty, System.Convert.ToDouble(sender.GetValue(ValueProperty), NumberFormatInfo.InvariantInfo) * System.Convert.ToDouble(e.NewValue, NumberFormatInfo.InvariantInfo));
         }
 
         public static readonly DependencyProperty MultiplierProperty = DependencyProperty.Register(

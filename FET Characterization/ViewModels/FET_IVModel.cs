@@ -9,6 +9,7 @@ using System.IO;
 
 namespace FET_Characterization
 {
+    [Serializable]
 	public class FET_IVModel : INotifyPropertyChanged
 	{
 		public FET_IVModel()
@@ -100,7 +101,7 @@ namespace FET_Characterization
             }
         }
 
-        private double v_dsStart = 0.0;
+        private double v_dsStart;
         public double VdsStart
         {
             get { return v_dsStart; }
@@ -111,7 +112,29 @@ namespace FET_Characterization
             }
         }
 
-        private double v_dsStop = -1.0;
+        private double vdsStartValue = 0.0;
+        public double VdsStartValue
+        {
+            get { return vdsStartValue; }
+            set 
+            {
+                vdsStartValue = value;
+                NotifyPropertyChanged("VdsStartValue");
+            }
+        }
+
+        private int vdsStartIndex;
+        public int VdsStartIndex
+        {
+            get { return vdsStartIndex; }
+            set 
+            {
+                vdsStartIndex = value;
+                NotifyPropertyChanged("VdsStartIndex");
+            }
+        }
+
+        private double v_dsStop;
         public double VdsStop
         {
             get { return v_dsStop; }
@@ -119,6 +142,28 @@ namespace FET_Characterization
             {
                 v_dsStop = value;
                 NotifyPropertyChanged("VdsStop");
+            }
+        }
+
+        private double vdsStopValue = -1.0;
+        public double VdsStopValue
+        {
+            get { return vdsStopValue; }
+            set 
+            { 
+                vdsStopValue = value;
+                NotifyPropertyChanged("VdsStopValue");
+            }
+        }
+
+        private int vdsStopIndex;
+        public int VdsStopIndex
+        {
+            get { return vdsStopIndex; }
+            set 
+            {
+                vdsStopIndex = value;
+                NotifyPropertyChanged("VdsStopIndex");
             }
         }
 
@@ -133,7 +178,7 @@ namespace FET_Characterization
             }
         }
 
-        private double dsCompliance = 0.001;
+        private double dsCompliance;
         public double DS_Complaince
         {
             get { return dsCompliance; }
@@ -144,7 +189,29 @@ namespace FET_Characterization
             }
         }
 
-        private double v_gStart = 0.0;
+        private double dsComplianceValue = 0.001;
+        public double DSComplianceValue
+        {
+            get { return dsComplianceValue; }
+            set 
+            {
+                dsComplianceValue = value;
+                NotifyPropertyChanged("DSComplianceValue");
+            }
+        }
+
+        private int dsComplianceIndex;
+        public int DSComplianceIndex
+        {
+            get { return dsComplianceIndex; }
+            set 
+            {
+                dsComplianceIndex = value;
+                NotifyPropertyChanged("DSComplianceIndex");
+            }
+        }
+        
+        private double v_gStart;
         public double VgStart
         {
             get { return v_gStart; }
@@ -155,7 +222,29 @@ namespace FET_Characterization
             }
         }
 
-        private double v_gStop = -5.0;
+        private double vgStartValue = 0.0;
+        public double VgStartValue
+        {
+            get { return vgStartValue; }
+            set 
+            { 
+                vgStartValue = value;
+                NotifyPropertyChanged("VgStartValue");
+            }
+        }
+
+        private int vgStartIndex;
+        public int VgStartIndex
+        {
+            get { return vgStartIndex; }
+            set 
+            { 
+                vgStartIndex = value;
+                NotifyPropertyChanged("VgStartIndex");
+            }
+        }
+
+        private double v_gStop;
         public double VgStop
         {
             get { return v_gStop; }
@@ -165,6 +254,29 @@ namespace FET_Characterization
                 NotifyPropertyChanged("VgStop");
             }
         }
+
+        private double vgStopValue = -5.0;
+        public double VgStopValue
+        {
+            get { return vgStopValue; }
+            set 
+            {
+                vgStopValue = value;
+                NotifyPropertyChanged("VgStopValue");
+            }
+        }
+
+        private int vgStopIndex;
+        public int VgStopIndex
+        {
+            get { return vgStopIndex; }
+            set
+            { 
+                vgStopIndex = value;
+                NotifyPropertyChanged("VgStopIndex");
+            }
+        }
+
 
         private int n_v_gStep = 6;
         public int N_VgStep
@@ -177,7 +289,7 @@ namespace FET_Characterization
             }
         }
 
-        private double gateCompliance = 0.001;
+        private double gateCompliance;
         public double Gate_Complaince
         {
             get { return gateCompliance; }
@@ -188,7 +300,29 @@ namespace FET_Characterization
             }
         }
 
-        private double pulseWidth = 0.001;
+        private double gateComplianceValue = 0.001;
+        public double GateComplianceValue
+        {
+            get { return gateComplianceValue; }
+            set
+            { 
+                gateComplianceValue = value;
+                NotifyPropertyChanged("GateComplianceValue");
+            }
+        }
+
+        private int gateComplianceIndex;
+        public int GateComplianceIndex
+        {
+            get { return gateComplianceIndex; }
+            set
+            {
+                gateComplianceIndex = value;
+                NotifyPropertyChanged("GateComplianceIndex");
+            }
+        }
+
+        private double pulseWidth;
         public double PulseWidth
         {
             get { return pulseWidth; }
@@ -199,7 +333,30 @@ namespace FET_Characterization
             }
         }
 
-        private double delayTime = 0.001;
+        private double pulseWidthValue = 0.001;
+        public double PulseWidthValue
+        {
+            get { return pulseWidthValue; }
+            set 
+            { 
+                pulseWidthValue = value;
+                NotifyPropertyChanged("PulseWidthValue");
+            }
+        }
+
+        private int pulseWidthIndex;
+        public int PulseWidthIndex
+        {
+            get { return pulseWidthIndex; }
+            set 
+            {
+                pulseWidthIndex = value;
+                NotifyPropertyChanged("PulseWidthIndex");
+            }
+        }
+        
+
+        private double delayTime;
         public double DelayTime
         {
             get { return delayTime; }
@@ -209,6 +366,29 @@ namespace FET_Characterization
                 NotifyPropertyChanged("DelayTime");
             }
         }
+
+        private double delayTimeValue = 0.001;
+        public double DelayTimeValue
+        {
+            get { return delayTimeValue; }
+            set
+            { 
+                delayTimeValue = value;
+                NotifyPropertyChanged("DelayTimeValue");
+            }
+        }
+
+        private int delayTimeIndex;
+        public int DelayTimeIndex
+        {
+            get { return delayTimeIndex; }
+            set 
+            { 
+                delayTimeIndex = value;
+                NotifyPropertyChanged("DelayTimeIndex");
+            }
+        }
+
 
         private string ivFET_FilePath = Directory.GetCurrentDirectory();
         public string IV_FET_DataFilePath
@@ -270,6 +450,28 @@ namespace FET_Characterization
             {
                 iv_FET_GateDelay = value;
                 NotifyPropertyChanged("IV_FET_GateDelay");
+            }
+        }
+
+        private double ivFETGateDelayValue = 2.0;
+        public double IVFETGateDelayValue
+        {
+            get { return ivFETGateDelayValue; }
+            set 
+            { 
+                ivFETGateDelayValue = value;
+                NotifyPropertyChanged("IVFETGateDelayValue");
+            }
+        }
+
+        private int ivFETGateDelayIndex;
+        public int IVFETGateDelayIndex
+        {
+            get { return ivFETGateDelayIndex; }
+            set 
+            {
+                ivFETGateDelayIndex = value;
+                NotifyPropertyChanged("IVFETGateDelayIndex");
             }
         }
 

@@ -151,10 +151,10 @@
 				<TextBlock Grid.Row="1" Grid.ColumnSpan="2" HorizontalAlignment="Center" Margin="5,30,5,15"><Run FontSize="18">Oscilloscope Settings</Run></TextBlock>
 				
 				<TextBlock Grid.Row="2" Text="Voltage Range" />
-				<local:ExtendedDoubleUpDown Grid.Row="2" Grid.Column="1" UnitAlias="V" Value="0.2" RealValue="{Binding OscilloscopeVoltageRange, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+				<local:ExtendedDoubleUpDown Grid.Row="2" Grid.Column="1" UnitAlias="V" Value="{Binding OscilloscopeVoltageRangeValue, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" RealValue="{Binding OscilloscopeVoltageRange, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" MultiplierIndex="{Binding OscilloscopeVoltageRangeIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
 				<TextBlock Grid.Row="3" Text="Time Range" />
-				<local:ExtendedDoubleUpDown Grid.Row="3" Grid.Column="1" UnitAlias="s" Value="1.0" RealValue="{Binding OscilloscopeTimeRange, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+				<local:ExtendedDoubleUpDown Grid.Row="3" Grid.Column="1" UnitAlias="s" Value="{Binding OscilloscopeTimeRangeValue, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" RealValue="{Binding OscilloscopeTimeRange, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" MultiplierIndex="{Binding OscilloscopeTimeRangeIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
 				<TextBlock Grid.Row="4" Text="Points per graph" />
 				<wpfTool:IntegerUpDown Grid.Row="4" Grid.Column="1" Value="{Binding OscilloscopePointsPerGraph, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
@@ -179,7 +179,7 @@
 				<TextBox Text="{Binding DSVoltageCollection, Converter={StaticResource CollectionConverter}, Mode=TwoWay, UpdateSourceTrigger=LostFocus}" Grid.Column="1" TextWrapping="Wrap" Height="100" MaxHeight="100" VerticalContentAlignment="Top" VerticalScrollBarVisibility="Auto" MouseDoubleClick="SelectAddress" PreviewMouseRightButtonUp="SelectivelyIgnoreMouseButton" GotFocus="SelectAddress" PreviewMouseLeftButtonDown="SelectivelyIgnoreMouseButton" Grid.Row="8" />
 
 				<TextBlock TextWrapping="Wrap" Text="Voltage deviation" Grid.Row="9" />
-				<local:ExtendedDoubleUpDown Grid.Row="9" Grid.Column="1" UnitAlias="V" Value="0.2" RealValue="{Binding VoltageDeviation, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"  />
+                <local:ExtendedDoubleUpDown Grid.Row="9" Grid.Column="1" UnitAlias="V" RealValue="{Binding VoltageDeviation, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Value="{Binding VoltageDeviationValue, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" MultiplierIndex="{Binding VoltageDeviationMultiplierIndex, Mode=OneWayToSource}"  />
 
 				<TextBlock TextWrapping="Wrap" Text="n Avg. (fast)" Grid.Row="10"/>
 				<wpfTool:IntegerUpDown Grid.Row="10" Grid.Column="1" Value="{Binding NAveragesFast, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />

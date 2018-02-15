@@ -44,7 +44,6 @@ namespace FET_Characterization
         char[] sep = "\t".ToCharArray();
 
         Microsoft.Research.DynamicDataDisplay.DataSources.ObservableDataSource<Point> dsMeasurement;
-        //Microsoft.Research.DynamicDataDisplay.DataSources.ObservableDataSource<Point> dsLeakage;
 
         EnumerableDataSource<Point> FETNoiseDataSource;
         LinkedList<Point> FETNoiseDataList;
@@ -153,16 +152,31 @@ namespace FET_Characterization
                     }
 
                     cmdStartNoise_Click(this, new RoutedEventArgs());
-                    
+
                     if (experiment != null)
-                        experiment.ExpFinished += onAppExit;
+                        experiment.ExpFinished += onExperimentFinished;
                 }
             }
         }
 
-        void onAppExit(object sender, FinishedEventArgs e)
+        void onExperimentFinished(object sender, FinishedEventArgs e)
         {
-            Dispatcher.BeginInvoke(new Action(()=>
+            var path = "FET Characterization\\default.bin";
+
+            if (expStartInfo is FET_IVModel)
+                path = "FET Characterization\\FETIVSettings.bin";
+            else if (expStartInfo is FET_NoiseModel)
+                path = "FET Characterization\\FETNoiseSettings.bin";
+
+            var formatter = new BinaryFormatter();
+
+            using (var stream = new FileStream(path, FileMode.Create, FileAccess.Write))
+            {
+                if (expStartInfo is FET_NoiseModel)
+                    formatter.Serialize(stream, expStartInfo);
+            }
+
+            Dispatcher.BeginInvoke(new Action(() =>
             {
                 Application.Current.Shutdown(0);
             }));
@@ -224,6 +238,17 @@ namespace FET_Characterization
                         {
                             var restr = new D3Helper.ViewportAxesRangeRestriction();
                             restr.YRange = new D3Helper.DisplayRange(-1.0 * Math.Abs(settings.OscilloscopeVoltageRange), Math.Abs(settings.OscilloscopeVoltageRange));
+
+                            exp.chartFETOscilloscope.Restrictions.Add(restr);
+                        }
+                    } break;
+                case "OscilloscopeTimeRange":
+                    {
+                        if (settings.OscilloscopeTimeRange != 0.0)
+                        {
+                            var restr = new D3Helper.ViewportAxesRangeRestriction();
+                            restr.XRange = new D3Helper.DisplayRange(0.0, settings.OscilloscopeTimeRange);
+
                             exp.chartFETOscilloscope.Restrictions.Add(restr);
                         }
                     } break;
@@ -296,7 +321,6 @@ namespace FET_Characterization
                 if (settings.MeasureLeakage == true)
                 {
                     dsMeasurement.AppendAsync(Dispatcher, new Point(dataPoint[0], dataPoint[1]));
-                    //dsLeakage.AppendAsync(Dispatcher, new Point(dataPoint[0], dataPoint[2]));
                 }
                 else
                 {
@@ -382,6 +406,16 @@ namespace FET_Characterization
         void cmdStartNoise_Click(object sender, RoutedEventArgs e)
         {
             expStartInfo = (measurementInterface as FET_Noise).Settings;
+
+            var path = "FET Characterization\\FETNoiseSettings.bin";
+            var formatter = new BinaryFormatter();
+            if (File.Exists(path))
+            {
+                using (var stream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read))
+                {
+                    expStartInfo = (FET_NoiseModel)formatter.Deserialize(stream);
+                }
+            }
 
             (measurementInterface as FET_Noise).chartFETOscilloscope.Children.RemoveAll(typeof(LineGraph));
             (measurementInterface as FET_Noise).chartFETOscilloscope.Legend.Visibility = System.Windows.Visibility.Collapsed;

@@ -44,7 +44,7 @@ namespace FET_Characterization
             }
         }
 
-        private double oscilloscopeVoltageRange = 0.2;
+        private double oscilloscopeVoltageRange;
         public double OscilloscopeVoltageRange
         {
             get { return oscilloscopeVoltageRange; }
@@ -55,7 +55,29 @@ namespace FET_Characterization
             }
         }
 
-        private double oscilloscopeTimeRange = 1.0;
+        private double oscilloscopeVoltageRangeValue = 0.2;
+        public double OscilloscopeVoltageRangeValue
+        {
+            get { return oscilloscopeVoltageRangeValue; }
+            set 
+            { 
+                oscilloscopeVoltageRangeValue = value;
+                NotifyPropertyChanged("OscilloscopeVoltageRangeValue");
+            }
+        }
+
+        private int oscilloscopeVoltageRangeIndex;
+        public int OscilloscopeVoltageRangeIndex
+        {
+            get { return oscilloscopeVoltageRangeIndex; }
+            set
+            { 
+                oscilloscopeVoltageRangeIndex = value;
+                NotifyPropertyChanged("OscilloscopeVoltageRangeIndex");
+            }
+        }
+
+        private double oscilloscopeTimeRange;
         public double OscilloscopeTimeRange
         {
             get { return oscilloscopeTimeRange; }
@@ -63,6 +85,28 @@ namespace FET_Characterization
             {
                 oscilloscopeTimeRange = value;
                 NotifyPropertyChanged("OscilloscopeTimeRange");
+            }
+        }
+
+        private double oscilloscopeTimeRangeValue = 1.0;
+        public double OscilloscopeTimeRangeValue
+        {
+            get { return oscilloscopeTimeRangeValue; }
+            set 
+            {
+                oscilloscopeTimeRangeValue = value;
+                NotifyPropertyChanged("OscilloscopeTimeRangeValue");
+            }
+        }
+
+        private int oscilloscopeTimeRangeIndex;
+        public int OscilloscopeTimeRangeIndex
+        {
+            get { return oscilloscopeTimeRangeIndex; }
+            set
+            {
+                oscilloscopeTimeRangeIndex = value;
+                NotifyPropertyChanged("OscilloscopeTimeRangeIndex");
             }
         }
 
@@ -123,7 +167,7 @@ namespace FET_Characterization
             }
         }
 
-        private double voltageDeviation = 0.2;
+        private double voltageDeviation;
         public double VoltageDeviation
         {
             get { return voltageDeviation; }
@@ -133,6 +177,29 @@ namespace FET_Characterization
                 NotifyPropertyChanged("VoltageDeviation");
             }
         }
+
+        private double voltageDeviationValue = 1.0;
+        public double VoltageDeviationValue
+        {
+            get { return voltageDeviationValue; }
+            set 
+            {
+                voltageDeviationValue = value;
+                NotifyPropertyChanged("VoltageDeviationValue");
+            }
+        }
+        
+        private int voltageDeviationMultiplierIndex;
+        public int VoltageDeviationMultiplierIndex
+        {
+            get { return voltageDeviationMultiplierIndex; }
+            set 
+            {
+                voltageDeviationMultiplierIndex = value;
+                NotifyPropertyChanged("VoltageDeviationMultiplierIndex");
+            }
+        }
+        
 
         private int nAveragesFast = 2;
         public int NAveragesFast
@@ -294,7 +361,7 @@ namespace FET_Characterization
             return query.arrElem;
         }
 
-        private int recordingFrequency = 262144;
+        private int recordingFrequency = 50000;
         public int RecordingFrequency
         {
             get { return recordingFrequency; }
@@ -306,7 +373,6 @@ namespace FET_Characterization
                 NotifyPropertyChanged("RecordingFrequency");
             }
         }
-
 
 
         private string filePath = Directory.GetCurrentDirectory();
