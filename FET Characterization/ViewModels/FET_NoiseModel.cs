@@ -20,6 +20,7 @@ namespace FET_Characterization
 		}
 
 		#region INotifyPropertyChanged
+        [field:NonSerializedAttribute()]
 		public event PropertyChangedEventHandler PropertyChanged;
 
         private void NotifyPropertyChanged(String info)

@@ -176,8 +176,11 @@ namespace FET_Characterization
 
             using (var stream = new FileStream(filePath, FileMode.Create, FileAccess.Write))
             {
-                if (expStartInfo is FET_NoiseModel)
+                if (expStartInfo is FET_IVModel)
+                {
+                    expStartInfo = (measurementInterface as FET_IV).Settings;
                     formatter.Serialize(stream, expStartInfo);
+                }
             }
         }
 
@@ -197,21 +200,7 @@ namespace FET_Characterization
 
             var control = new FET_IV();
 
-            Grid.SetRow(control, 1);
-            Grid.SetColumn(control, 0);
-
-            expParentGrid.Children.Add(control);
-
-            control.cmdStartIV.Click += cmdStartIV_Click;
-            control.cmdStopIV.Click += cmdStopIV_Click;
-
-            control.cmdStartTransfer.Click += cmdStartTransfer_Click;
-            control.cmdStopTransfer.Click += cmdStopTransfer_Click;
-
-            measurementInterface = control;
-            expStartInfo = control.Settings;
-
-            var path = Directory.GetCurrentDirectory() + "FET Characterization" + "\\FETIVSettings.bin";
+            var path = Directory.GetCurrentDirectory() + "\\FET Characterization\\FETIVSettings.bin";
             var formatter = new BinaryFormatter();
             if (File.Exists(path))
             {
@@ -220,6 +209,20 @@ namespace FET_Characterization
                     control.Settings = (FET_IVModel)formatter.Deserialize(stream);
                 }
             }
+
+            control.cmdStartIV.Click += cmdStartIV_Click;
+            control.cmdStopIV.Click += cmdStopIV_Click;
+
+            control.cmdStartTransfer.Click += cmdStartTransfer_Click;
+            control.cmdStopTransfer.Click += cmdStopTransfer_Click;
+
+            Grid.SetRow(control, 1);
+            Grid.SetColumn(control, 0);
+
+            measurementInterface = control;
+            expStartInfo = control.Settings;
+
+            expParentGrid.Children.Add(control);
         }
 
         private void menuExpNoise_Click(object sender, RoutedEventArgs e)
@@ -378,18 +381,19 @@ namespace FET_Characterization
 
             var settings = expStartInfo as FET_IVModel;
 
-            if (driver != null)
-                driver.Dispose();
-            if (measureDevice != null)
-                measureDevice.Dispose();
+            // if (driver != null)
+            //     driver.Dispose();
+            // if (measureDevice != null)
+            //     measureDevice.Dispose();
 
-            driver = new VisaDevice(settings.KeithleyRscName);
-            measureDevice = new Keithley26xxB<Keithley2602B>(driver);
+            // driver = new VisaDevice(settings.KeithleyRscName);
+            // measureDevice = new Keithley26xxB<Keithley2602B>(driver);
 
-            var DrainSourceSMU = measureDevice[settings.TransferVdsChannel];
-            var GateSMU = measureDevice[settings.TransferVgChannel];
+            // var DrainSourceSMU = measureDevice[settings.TransferVdsChannel];
+            // var GateSMU = measureDevice[settings.TransferVgChannel];
 
-            experiment = new FET_Transfer_Experiment(DrainSourceSMU, GateSMU) as IExperiment;
+            // experiment = new FET_Transfer_Experiment(DrainSourceSMU, GateSMU) as IExperiment;
+            experiment = new FET_Transfer_Experiment(null, null) as IExperiment;
 
             experiment.ExpStarted += onExperimentStarted;
             experiment.DataArrived += expTransfer_FET_dataArrived;
