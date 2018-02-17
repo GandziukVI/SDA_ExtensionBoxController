@@ -9,7 +9,7 @@
 	xmlns:wpfTool="clr-namespace:Xceed.Wpf.Toolkit;assembly=Xceed.Wpf.Toolkit"
 	xmlns:d3="http://research.microsoft.com/DynamicDataDisplay/1.0"
 	x:Class="FET_Characterization.FET_Noise"
-	d:DesignWidth="640" d:DesignHeight="480">
+	d:DesignWidth="640" d:DesignHeight="480" Loaded="onFETNoiseControlLoaded">
 	
 	<UserControl.DataContext>
 		<local:FET_NoiseModel />
@@ -124,9 +124,8 @@
 					<RowDefinition Height="Auto"/>
 					<RowDefinition Height="Auto"/>
 					<RowDefinition Height="Auto" />
-					<RowDefinition Height="Auto" />
-					<RowDefinition Height="Auto" />
-					<RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
 					<RowDefinition Height="Auto" />
 					<RowDefinition Height="Auto" />
 					<RowDefinition Height="20" MaxHeight="20" />
@@ -194,35 +193,32 @@
 				<wpfTool:DoubleUpDown Grid.Row="14" Grid.Column="1" Value="{Binding LoadResistance, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />			
 
 				<TextBlock TextWrapping="Wrap" Text="Sampling frequency" Grid.Row="15"/>
-				<wpfTool:IntegerUpDown Grid.Row="15" Grid.Column="1" Value="{Binding SamplingFrequency, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" IsEnabled="False" />
+                <wpfTool:IntegerUpDown Grid.Row="15" Grid.Column="1" Value="{Binding SamplingFrequency, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" IsEnabled="False" />
 
-				<TextBlock TextWrapping="Wrap" Text="N Sub-samples" Grid.Row="16"/>
-				<wpfTool:IntegerUpDown Grid.Row="16" Grid.Column="1" Value="{Binding NSubSamples, Mode=TwoWay, UpdateSourceTrigger=LostFocus}" />
+                <TextBlock TextWrapping="Wrap" Text="n Spectra avg." Grid.Row="16"/>
+				<wpfTool:IntegerUpDown Grid.Row="16" Grid.Column="1" Value="{Binding SpectraAveraging, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
-				<TextBlock TextWrapping="Wrap" Text="n Spectra avg." Grid.Row="17"/>
-				<wpfTool:IntegerUpDown Grid.Row="17" Grid.Column="1" Value="{Binding SpectraAveraging, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+				<TextBlock TextWrapping="Wrap" Text="Update freq." Grid.Row="17"/>
+				<wpfTool:IntegerUpDown Grid.Row="17" Grid.Column="1" Value="{Binding UpdateNumber, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
-				<TextBlock TextWrapping="Wrap" Text="Update freq." Grid.Row="18"/>
-				<wpfTool:IntegerUpDown Grid.Row="18" Grid.Column="1" Value="{Binding UpdateNumber, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+				<TextBlock TextWrapping="Wrap" Text="k pre-Amp" Grid.Row="18"/>
+				<wpfTool:DoubleUpDown Grid.Row="18" Grid.Column="1" Value="{Binding KPreAmpl, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
-				<TextBlock TextWrapping="Wrap" Text="k pre-Amp" Grid.Row="19"/>
-				<wpfTool:DoubleUpDown Grid.Row="19" Grid.Column="1" Value="{Binding KPreAmpl, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+				<TextBlock TextWrapping="Wrap" Text="k Amp" Grid.Row="19"/>
+				<wpfTool:DoubleUpDown Grid.Row="19" Grid.Column="1" Value="{Binding KAmpl, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
-				<TextBlock TextWrapping="Wrap" Text="k Amp" Grid.Row="20"/>
-				<wpfTool:DoubleUpDown Grid.Row="20" Grid.Column="1" Value="{Binding KAmpl, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+				<TextBlock TextWrapping="Wrap" Text="Temperature 0" Grid.Row="20"/>
+				<wpfTool:DoubleUpDown Grid.Row="20" Grid.Column="1" Value="{Binding Temperature0, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
-				<TextBlock TextWrapping="Wrap" Text="Temperature 0" Grid.Row="21"/>
-				<wpfTool:DoubleUpDown Grid.Row="21" Grid.Column="1" Value="{Binding Temperature0, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+				<TextBlock TextWrapping="Wrap" Text="Temperature E" Grid.Row="21"/>
+				<wpfTool:DoubleUpDown Grid.Row="21" Grid.Column="1" Value="{Binding TemperatureE, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
-				<TextBlock TextWrapping="Wrap" Text="Temperature E" Grid.Row="22"/>
-				<wpfTool:DoubleUpDown Grid.Row="22" Grid.Column="1" Value="{Binding TemperatureE, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-
-				<CheckBox x:Name="checkBox" Grid.Row="23" Grid.ColumnSpan="2" Content="Record time trace" IsChecked="{Binding RecordTimeTraces, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"></CheckBox>
+				<CheckBox x:Name="checkBox" Grid.Row="22" Grid.ColumnSpan="2" Content="Record time trace" IsChecked="{Binding RecordTimeTraces, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"></CheckBox>
 				
-				<wpfTool:IntegerUpDown Grid.Row="24" Grid.Column="1" IsEnabled="{Binding IsChecked, ElementName=checkBox, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Value="{Binding RecordingFrequency, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+				<wpfTool:IntegerUpDown Grid.Row="23" Grid.Column="1" IsEnabled="{Binding IsChecked, ElementName=checkBox, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Value="{Binding RecordingFrequency, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
-				<Separator BorderThickness="1,2" Height="1" Grid.Row="25" Grid.ColumnSpan="2" Margin="2.5,5,2.5,20" Background="Black" BorderBrush="#FFAAAAAA" />
-				<Grid Grid.Row="26" Grid.ColumnSpan="2">
+				<Separator BorderThickness="1,2" Height="1" Grid.Row="24" Grid.ColumnSpan="2" Margin="2.5,5,2.5,20" Background="Black" BorderBrush="#FFAAAAAA" />
+				<Grid Grid.Row="25" Grid.ColumnSpan="2">
 					<Grid.ColumnDefinitions>
 						<ColumnDefinition Width="Auto" />
 						<ColumnDefinition />
@@ -245,7 +241,7 @@
 				<ColumnDefinition />
 			</Grid.ColumnDefinitions>
 
-			<Button x:Name="cmdStart" Content="START" />
+			<Button x:Name="cmdStart" Content="START" Click="cmdStart_Click" />
 			<Button x:Name="cmdStop" Content="STOP" Grid.Column="1"/>
 		</Grid>	
 	</Grid>

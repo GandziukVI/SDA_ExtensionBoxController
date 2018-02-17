@@ -575,7 +575,7 @@ namespace FET_Characterization.Experiments
                             var TTVoltageValues = (from item in timeTrace
                                                    select item.Y).ToArray();
 
-                            var singleNoiseSpectrum = twoPartsFFT.GetTwoPartsFFT(TTVoltageValues, samplingFrequency, experimentSettings.NSubSamples, 1.0, 1.0, 1600, 102400, 8, -1, 100, 10);
+                            var singleNoiseSpectrum = twoPartsFFT.GetTwoPartsFFT(TTVoltageValues, samplingFrequency, 1, 1.0, 1.0, 1600, 102400, 8, -1, 100, 10);
 
                             if (noisePSD == null || noisePSD.Length == 0)
                             {
@@ -807,7 +807,7 @@ namespace FET_Characterization.Experiments
 
                                 // Measuring noise spectra
                                 onStatusChanged(new StatusEventArgs("Measuring noise spectra & time traces."));
-                                var noiseSpectraMeasurementState = measureNoiseSpectra(experimentSettings.SamplingFrequency, experimentSettings.NSubSamples, experimentSettings.SpectraAveraging, experimentSettings.UpdateNumber, experimentSettings.KPreAmpl * experimentSettings.KAmpl);
+                                var noiseSpectraMeasurementState = measureNoiseSpectra(experimentSettings.SamplingFrequency, 1, experimentSettings.SpectraAveraging, experimentSettings.UpdateNumber, experimentSettings.KPreAmpl * experimentSettings.KAmpl);
 
                                 // Enabling Vds DC measurement channel after measuring noise spectra
                                 // for measuring sample characteristics after noise measurement

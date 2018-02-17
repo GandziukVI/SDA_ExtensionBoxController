@@ -83,149 +83,149 @@ namespace FET_Characterization.Experiments
             onStatusChanged(new StatusEventArgs("Experiment started."));
             onProgressChanged(new ProgressEventArgs(0.0));
 
-            // transferCurveDataSet = new LinkedList<TransferDataContainer>();
+            transferCurveDataSet = new LinkedList<TransferDataContainer>();
 
-            // var settings = (FET_IVModel)Arg;
+            var settings = (FET_IVModel)Arg;
 
-            // #region Gate SMU settings
+            #region Gate SMU settings
 
-            // smuVg.SourceMode = SMUSourceMode.Voltage;
+            smuVg.SourceMode = SMUSourceMode.Voltage;
 
-            // smuVg.Compliance = settings.TransferGate_Complaince;
-            // smuVg.Averaging = settings.Ke_Transfer_Averaging;
-            // smuVg.NPLC = settings.Ke_Transfer_NPLC;
+            smuVg.Compliance = settings.TransferGate_Complaince;
+            smuVg.Averaging = settings.Ke_Transfer_Averaging;
+            smuVg.NPLC = settings.Ke_Transfer_NPLC;
 
-            // smuVg.Voltage = settings.TransferVgStart;
+            smuVg.Voltage = settings.TransferVgStart;
 
-            // smuVg.SwitchON();
+            smuVg.SwitchON();
 
-            // #endregion
+            #endregion
 
-            // #region Drain-Source SMU settings
+            #region Drain-Source SMU settings
 
-            // smuVds.SourceMode = settings.TransferSMU_SourceMode;
+            smuVds.SourceMode = settings.TransferSMU_SourceMode;
 
-            // smuVds.Compliance = settings.TransferDS_Complaince;
-            // smuVds.Averaging = settings.Ke_Transfer_Averaging;
-            // smuVds.NPLC = settings.Ke_Transfer_NPLC;
+            smuVds.Compliance = settings.TransferDS_Complaince;
+            smuVds.Averaging = settings.Ke_Transfer_Averaging;
+            smuVds.NPLC = settings.Ke_Transfer_NPLC;
 
-            // switch (settings.TransferSMU_SourceMode)
-            // {
-            //     case SMUSourceMode.Voltage:
-            //         smuVds.Voltage = settings.TransferVdsStart;
-            //         break;
-            //     case SMUSourceMode.Current:
-            //         smuVds.Current = settings.TransferVdsStart;
-            //         break;
-            //     case SMUSourceMode.ModeNotSet:
-            //         break;
-            //     default:
-            //         break;
-            // }
+            switch (settings.TransferSMU_SourceMode)
+            {
+                case SMUSourceMode.Voltage:
+                    smuVds.Voltage = settings.TransferVdsStart;
+                    break;
+                case SMUSourceMode.Current:
+                    smuVds.Current = settings.TransferVdsStart;
+                    break;
+                case SMUSourceMode.ModeNotSet:
+                    break;
+                default:
+                    break;
+            }
 
-            // smuVds.SwitchON();
+            smuVds.SwitchON();
 
-            // #endregion
+            #endregion
 
-            // #region General settings
+            #region General settings
 
-            // var currentVg = settings.TransferVgStart;
-            // var current_DS_value = settings.TransferVdsStart;
+            var currentVg = settings.TransferVgStart;
+            var current_DS_value = settings.TransferVdsStart;
 
-            // var dVg = (settings.TransferVgStop - settings.TransferVgStart) / (settings.TransferN_VgSweep - 1);
-            // var d_DS_value = (settings.TransferVdsStop - settings.TransferVdsStart) / (settings.TransferN_VdsStep - 1);
+            var dVg = (settings.TransferVgStop - settings.TransferVgStart) / (settings.TransferN_VgSweep - 1);
+            var d_DS_value = (settings.TransferVdsStop - settings.TransferVdsStart) / (settings.TransferN_VdsStep - 1);
 
-            // #endregion
+            #endregion
 
-            // for (int i = 0; i < settings.TransferN_VdsStep; i++)
-            // {
-            //     onDataArrived(new ExpDataArrivedEventArgs(string.Format("Vds = {0}", current_DS_value.ToString(NumberFormatInfo.InvariantInfo))));
+            for (int i = 0; i < settings.TransferN_VdsStep; i++)
+            {
+                onDataArrived(new ExpDataArrivedEventArgs(string.Format("Vds = {0}", current_DS_value.ToString(NumberFormatInfo.InvariantInfo))));
 
-            //     if (!IsRunning)
-            //         break;
+                if (!IsRunning)
+                    break;
 
-            //     singleTransferCurveData = new LinkedList<TransferData>();
+                singleTransferCurveData = new LinkedList<TransferData>();
 
-            //     for (int j = 0; j <= settings.TransferN_VgSweep; j++)
-            //     {
-            //         if (!IsRunning)
-            //             break;
+                for (int j = 0; j <= settings.TransferN_VgSweep; j++)
+                {
+                    if (!IsRunning)
+                        break;
 
-            //         smuVg.Voltage = currentVg;
+                    smuVg.Voltage = currentVg;
 
-            //         var gateVoltage = currentVg;
-            //         var drainCurrent = smuVds.Current;
-            //         var leakageCurrent = smuVg.Current;
+                    var gateVoltage = currentVg;
+                    var drainCurrent = smuVds.Current;
+                    var leakageCurrent = smuVg.Current;
 
-            //         onDataArrived(new ExpDataArrivedEventArgs(string.Format(
-            //             "{0}\t{1}\t{2}\r\n",
-            //             gateVoltage.ToString(NumberFormatInfo.InvariantInfo),
-            //             drainCurrent.ToString(NumberFormatInfo.InvariantInfo),
-            //             leakageCurrent.ToString(NumberFormatInfo.InvariantInfo))));
+                    onDataArrived(new ExpDataArrivedEventArgs(string.Format(
+                        "{0}\t{1}\t{2}\r\n",
+                        gateVoltage.ToString(NumberFormatInfo.InvariantInfo),
+                        drainCurrent.ToString(NumberFormatInfo.InvariantInfo),
+                        leakageCurrent.ToString(NumberFormatInfo.InvariantInfo))));
 
-            //         singleTransferCurveData.AddLast(new TransferData(gateVoltage, drainCurrent, leakageCurrent));
+                    singleTransferCurveData.AddLast(new TransferData(gateVoltage, drainCurrent, leakageCurrent));
 
-            //         onStatusChanged(new StatusEventArgs(string.Format("Measuring Transfer Curve # {0} out of {1}. Leakage current I = {2}", (i + 1).ToString(NumberFormatInfo.InvariantInfo), settings.TransferN_VdsStep, leakageCurrent.ToString("E4", NumberFormatInfo.InvariantInfo))));
+                    onStatusChanged(new StatusEventArgs(string.Format("Measuring Transfer Curve # {0} out of {1}. Leakage current I = {2}", (i + 1).ToString(NumberFormatInfo.InvariantInfo), settings.TransferN_VdsStep, leakageCurrent.ToString("E4", NumberFormatInfo.InvariantInfo))));
 
-            //         currentVg += dVg;
+                    currentVg += dVg;
 
-            //         var gateProgress = (1.0 - (settings.TransferN_VgSweep - (double)j) / settings.TransferN_VgSweep) / settings.TransferN_VdsStep;
-            //         var dsProgress = 1.0 - (settings.TransferN_VdsStep - (double)i) / settings.TransferN_VdsStep;
+                    var gateProgress = (1.0 - (settings.TransferN_VgSweep - (double)j) / settings.TransferN_VgSweep) / settings.TransferN_VdsStep;
+                    var dsProgress = 1.0 - (settings.TransferN_VdsStep - (double)i) / settings.TransferN_VdsStep;
 
-            //         var totalProgress = (gateProgress + dsProgress) * 100.0;
+                    var totalProgress = (gateProgress + dsProgress) * 100.0;
 
-            //         onProgressChanged(new ProgressEventArgs(totalProgress));
-            //     }
+                    onProgressChanged(new ProgressEventArgs(totalProgress));
+                }
 
-            //     var trData = new TransferDataContainer(current_DS_value, singleTransferCurveData);
+                var trData = new TransferDataContainer(current_DS_value, singleTransferCurveData);
 
-            //     transferCurveDataSet.AddLast(trData);
+                transferCurveDataSet.AddLast(trData);
 
-            //     currentVg = settings.TransferVgStart;
-            //     smuVg.Voltage = currentVg;
+                currentVg = settings.TransferVgStart;
+                smuVg.Voltage = currentVg;
 
-            //     if (i != settings.TransferN_VdsStep - 1)
-            //     {
-            //         current_DS_value += d_DS_value;
+                if (i != settings.TransferN_VdsStep - 1)
+                {
+                    current_DS_value += d_DS_value;
 
-            //         switch (settings.TransferSMU_SourceMode)
-            //         {
-            //             case SMUSourceMode.Voltage:
-            //                 smuVds.Voltage = current_DS_value;
-            //                 break;
-            //             case SMUSourceMode.Current:
-            //                 smuVds.Current = current_DS_value;
-            //                 break;
-            //             case SMUSourceMode.ModeNotSet:
-            //                 throw new ArgumentException();
-            //             default:
-            //                 throw new ArgumentException();
-            //         }
-            //     }
+                    switch (settings.TransferSMU_SourceMode)
+                    {
+                        case SMUSourceMode.Voltage:
+                            smuVds.Voltage = current_DS_value;
+                            break;
+                        case SMUSourceMode.Current:
+                            smuVds.Current = current_DS_value;
+                            break;
+                        case SMUSourceMode.ModeNotSet:
+                            throw new ArgumentException();
+                        default:
+                            throw new ArgumentException();
+                    }
+                }
 
-            //     Thread.Sleep((int)(settings.Transfer_VdsDelay * 1000));
-            // }
+                Thread.Sleep((int)(settings.Transfer_VdsDelay * 1000));
+            }
 
-            // smuVg.SwitchOFF();
-            // smuVds.SwitchOFF();
+            smuVg.SwitchOFF();
+            smuVds.SwitchOFF();
 
-            // smuVg.Voltage = 0.0;
+            smuVg.Voltage = 0.0;
 
-            // switch (settings.SMU_SourceMode)
-            // {
-            //     case SMUSourceMode.Voltage:
-            //         smuVds.Voltage = 0.0;
-            //         break;
-            //     case SMUSourceMode.Current:
-            //         smuVds.Current = 0.0;
-            //         break;
-            //     case SMUSourceMode.ModeNotSet:
-            //         throw new ArgumentException();
-            //     default:
-            //         throw new ArgumentException();
-            // }
+            switch (settings.SMU_SourceMode)
+            {
+                case SMUSourceMode.Voltage:
+                    smuVds.Voltage = 0.0;
+                    break;
+                case SMUSourceMode.Current:
+                    smuVds.Current = 0.0;
+                    break;
+                case SMUSourceMode.ModeNotSet:
+                    throw new ArgumentException();
+                default:
+                    throw new ArgumentException();
+            }
 
-            // SaveToFile(string.Format("{0}\\{1}", settings.TransferDataFilePath, settings.Transfer_FileName));
+            SaveToFile(string.Format("{0}\\{1}", settings.TransferDataFilePath, settings.Transfer_FileName));
 
             onExpFinished(new FinishedEventArgs());
             onStatusChanged(new StatusEventArgs("Measurement completed!"));

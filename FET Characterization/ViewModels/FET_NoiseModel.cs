@@ -261,17 +261,6 @@ namespace FET_Characterization
             }
         }
 
-        private int nSubSamples = 1;
-        public int NSubSamples
-        {
-            get { return nSubSamples; }
-            set
-            {
-                nSubSamples = value;
-                NotifyPropertyChanged("NSubSamples");
-            }
-        }
-
         private int spectraAveraging = 100;
         public int SpectraAveraging
         {

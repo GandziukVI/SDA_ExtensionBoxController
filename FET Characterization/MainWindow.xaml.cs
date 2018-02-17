@@ -91,25 +91,24 @@ namespace FET_Characterization
                     settings.NAveragesSlow = int.Parse(arguments[6], NumberFormatInfo.InvariantInfo);
                     settings.StabilizationTime = double.Parse(arguments[7], NumberFormatInfo.InvariantInfo);
                     settings.LoadResistance = double.Parse(arguments[8], NumberFormatInfo.InvariantInfo);
-                    settings.NSubSamples = int.Parse(arguments[9], NumberFormatInfo.InvariantInfo);
-                    settings.SpectraAveraging = int.Parse(arguments[10], NumberFormatInfo.InvariantInfo);
-                    settings.UpdateNumber = int.Parse(arguments[11], NumberFormatInfo.InvariantInfo);
-                    settings.KPreAmpl = double.Parse(arguments[12], NumberFormatInfo.InvariantInfo);
-                    settings.KAmpl = double.Parse(arguments[13], NumberFormatInfo.InvariantInfo);
-                    settings.Temperature0 = double.Parse(arguments[14], NumberFormatInfo.InvariantInfo);
-                    settings.TemperatureE = double.Parse(arguments[15], NumberFormatInfo.InvariantInfo);
+                    settings.SpectraAveraging = int.Parse(arguments[9], NumberFormatInfo.InvariantInfo);
+                    settings.UpdateNumber = int.Parse(arguments[10], NumberFormatInfo.InvariantInfo);
+                    settings.KPreAmpl = double.Parse(arguments[11], NumberFormatInfo.InvariantInfo);
+                    settings.KAmpl = double.Parse(arguments[12], NumberFormatInfo.InvariantInfo);
+                    settings.Temperature0 = double.Parse(arguments[13], NumberFormatInfo.InvariantInfo);
+                    settings.TemperatureE = double.Parse(arguments[14], NumberFormatInfo.InvariantInfo);
 
-                    if (arguments[16].Equals("y", StringComparison.InvariantCultureIgnoreCase))
+                    if (arguments[15].Equals("y", StringComparison.InvariantCultureIgnoreCase))
                         settings.RecordTimeTraces = true;
-                    else if (arguments[16].Equals("n", StringComparison.InvariantCultureIgnoreCase))
+                    else if (arguments[15].Equals("n", StringComparison.InvariantCultureIgnoreCase))
                         settings.RecordTimeTraces = false;
 
-                    settings.RecordingFrequency = int.Parse(arguments[17], NumberFormatInfo.InvariantInfo);
+                    settings.RecordingFrequency = int.Parse(arguments[16], NumberFormatInfo.InvariantInfo);
 
-                    var saveDirInfo = new DirectoryInfo(arguments[18]);
+                    var saveDirInfo = new DirectoryInfo(arguments[17]);
 
                     settings.FilePath = saveDirInfo.FullName;
-                    settings.SaveFileName = arguments[19];
+                    settings.SaveFileName = arguments[18];
 
                     // Reading gate voltage set
                     using (var VgMMF = MemoryMappedFile.OpenExisting(@"VgSet", MemoryMappedFileRights.Read, HandleInheritability.Inheritable))
