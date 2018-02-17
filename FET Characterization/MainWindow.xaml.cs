@@ -70,7 +70,7 @@ namespace FET_Characterization
             // Work on parsing command line arguments
             var arguments = Environment.GetCommandLineArgs();
 
-            if (arguments.Length >= 1)
+            if (arguments.Length == 2)
             {
                 // First arg contains the experiment type
                 if (arguments[1].Equals("FETNoise", StringComparison.InvariantCultureIgnoreCase))
@@ -261,21 +261,21 @@ namespace FET_Characterization
             (measurementInterface as FET_IV).expTransfer_FET_Chart.Children.RemoveAll(typeof(LineGraph));
             (measurementInterface as FET_IV).expTransfer_FET_Chart.Legend.Visibility = System.Windows.Visibility.Visible;
 
-            expStartInfo = (measurementInterface as FET_IV).DataContext;//expStartInfo as FET_IVModel;
+            expStartInfo = (measurementInterface as FET_IV).DataContext;
+            var settings = expStartInfo as FET_IVModel;
 
-            // if (driver != null)
-            //     driver.Dispose();
-            // if (measureDevice != null)
-            //     measureDevice.Dispose();
+            if (driver != null)
+                driver.Dispose();
+            if (measureDevice != null)
+                measureDevice.Dispose();
 
-            // driver = new VisaDevice(settings.KeithleyRscName);
-            // measureDevice = new Keithley26xxB<Keithley2602B>(driver);
+            driver = new VisaDevice(settings.KeithleyRscName);
+            measureDevice = new Keithley26xxB<Keithley2602B>(driver);
 
-            // var DrainSourceSMU = measureDevice[settings.TransferVdsChannel];
-            // var GateSMU = measureDevice[settings.TransferVgChannel];
+            var DrainSourceSMU = measureDevice[settings.TransferVdsChannel];
+            var GateSMU = measureDevice[settings.TransferVgChannel];
 
-            // experiment = new FET_Transfer_Experiment(DrainSourceSMU, GateSMU) as IExperiment;
-            experiment = new FET_Transfer_Experiment(null, null) as IExperiment;
+            experiment = new FET_Transfer_Experiment(DrainSourceSMU, GateSMU) as IExperiment;
 
             experiment.ExpStarted += onExperimentStarted;
             experiment.DataArrived += expTransfer_FET_dataArrived;
@@ -322,18 +322,25 @@ namespace FET_Characterization
 
         void cmdStartNoise_Click(object sender, RoutedEventArgs e)
         {
-            (measurementInterface as FET_Noise).chartFETOscilloscope.Children.RemoveAll(typeof(LineGraph));
-            (measurementInterface as FET_Noise).chartFETOscilloscope.Legend.Visibility = System.Windows.Visibility.Collapsed;
-
-            (measurementInterface as FET_Noise).chartFETNoise.Children.RemoveAll(typeof(LineGraph));
-            (measurementInterface as FET_Noise).chartFETNoise.Legend.Visibility = System.Windows.Visibility.Collapsed;
-
-            var settings = expStartInfo as FET_NoiseModel;
             var control = measurementInterface as FET_Noise;
+            var settings = control.DataContext as FET_NoiseModel;            
 
-            var psdGraph = new LineGraph(FETNoiseDataSource);
-            psdGraph.AddToPlotter(control.chartFETNoise);
-            control.chartFETNoise.Viewport.FitToView();
+            control.chartFETOscilloscope.Children.RemoveAll(typeof(LineGraph));
+            control.chartFETOscilloscope.Legend.Visibility = System.Windows.Visibility.Collapsed;
+
+            control.graphFETNoise.Children.RemoveAll(typeof(NationalInstruments.Controls.Plot));
+
+            var psdPlot = new NationalInstruments.Controls.Plot();
+            psdPlot.DataContext = FETNoiseDataSource;
+            
+            control.graphFETNoise.Plots.Add(psdPlot);
+
+            //(measurementInterface as FET_Noise).chartFETNoise.Children.RemoveAll(typeof(LineGraph));
+            //(measurementInterface as FET_Noise).chartFETNoise.Legend.Visibility = System.Windows.Visibility.Collapsed;                        
+
+            //var psdGraph = new LineGraph(FETNoiseDataSource);
+            //psdGraph.AddToPlotter(control.chartFETNoise);
+            //control.chartFETNoise.Viewport.FitToView();
 
             if (experiment != null)
                 experiment.Dispose();
