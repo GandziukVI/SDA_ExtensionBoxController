@@ -128,7 +128,7 @@
                     <RowDefinition Height="Auto" />
 					<RowDefinition Height="Auto" />
 					<RowDefinition Height="Auto" />
-					<RowDefinition Height="20" MaxHeight="20" />
+					<RowDefinition Height="Auto" />
 					<RowDefinition Height="Auto" />
 					<RowDefinition Height="Auto" />
 					<RowDefinition Height="Auto" />
@@ -178,7 +178,7 @@
 				<TextBox Text="{Binding DSVoltageCollection, Converter={StaticResource CollectionConverter}, Mode=TwoWay, UpdateSourceTrigger=LostFocus}" Grid.Column="1" TextWrapping="Wrap" Height="100" MaxHeight="100" VerticalContentAlignment="Top" VerticalScrollBarVisibility="Auto" MouseDoubleClick="SelectAddress" PreviewMouseRightButtonUp="SelectivelyIgnoreMouseButton" GotFocus="SelectAddress" PreviewMouseLeftButtonDown="SelectivelyIgnoreMouseButton" Grid.Row="8" />
 
 				<TextBlock TextWrapping="Wrap" Text="Voltage deviation" Grid.Row="9" />
-                <local:ExtendedDoubleUpDown Grid.Row="9" Grid.Column="1" UnitAlias="V" RealValue="{Binding VoltageDeviation, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Value="{Binding VoltageDeviationValue, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" MultiplierIndex="{Binding VoltageDeviationMultiplierIndex, Mode=OneWayToSource}"  />
+                <local:ExtendedDoubleUpDown Grid.Row="9" Grid.Column="1" UnitAlias="V" RealValue="{Binding VoltageDeviation, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Value="{Binding VoltageDeviationValue, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" MultiplierIndex="{Binding VoltageDeviationMultiplierIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"  />
 
 				<TextBlock TextWrapping="Wrap" Text="n Avg. (fast)" Grid.Row="10"/>
 				<wpfTool:IntegerUpDown Grid.Row="10" Grid.Column="1" Value="{Binding NAveragesFast, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />

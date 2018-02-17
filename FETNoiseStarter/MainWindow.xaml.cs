@@ -7,6 +7,7 @@ using System.Globalization;
 using System.IO;
 using System.IO.MemoryMappedFiles;
 using System.Linq;
+using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -61,29 +62,21 @@ namespace FETNoiseStarter
 
         private void on_cmdStartClick(object sender, RoutedEventArgs e)
         {
-            Task.Factory.StartNew(new Action(() =>
+            var filePath = Directory.GetCurrentDirectory() + "tempFETNoiseMeasurement.bin";
+            var formatter = new BinaryFormatter();
+            using (var stream = new FileStream(filePath, FileMode.Create, FileAccess.Write))
             {
-                var fPath = Settings.FilePath.EndsWith("\\") ? Settings.FilePath.Substring(0, Settings.FilePath.Length - 2) : Settings.FilePath;
-                var argumentsString = string.Format("{0} {1} {2} {3} {4} {5} {6} {7} {8} {9} {10} {11} {12} {13} {14} {15} {16} \"{17}\" \"{18}\"",
-                "FETNoise",
-                Settings.AgilentU2542AResName,
-                Settings.IsTransferCurveMode ? "Transfer" : "Output",
-                Settings.VoltageDeviation.ToString(NumberFormatInfo.InvariantInfo),
-                Settings.NAveragesFast.ToString(NumberFormatInfo.InvariantInfo),
-                Settings.NAveragesSlow.ToString(NumberFormatInfo.InvariantInfo),
-                Settings.StabilizationTime.ToString(NumberFormatInfo.InvariantInfo),
-                Settings.LoadResistance.ToString(NumberFormatInfo.InvariantInfo),
-                Settings.NSubSamples.ToString(NumberFormatInfo.InvariantInfo),
-                Settings.SpectraAveraging.ToString(NumberFormatInfo.InvariantInfo),
-                Settings.UpdateNumber.ToString(NumberFormatInfo.InvariantInfo),
-                Settings.KPreAmpl.ToString(NumberFormatInfo.InvariantInfo),
-                Settings.KAmpl.ToString(NumberFormatInfo.InvariantInfo),
-                Settings.Temperature0.ToString(NumberFormatInfo.InvariantInfo),
-                Settings.TemperatureE.ToString(NumberFormatInfo.InvariantInfo),
-                Settings.RecordTimeTraces ? "y" : "n",
-                Settings.RecordingFrequency.ToString(NumberFormatInfo.InvariantInfo),
-                fPath,
-                Settings.SaveFileName);
+                formatter.Serialize(stream, DataContext);
+            }
+
+            Task.Factory.StartNew(new Action(() =>
+            {                
+                FET_NoiseModel Settings;
+
+                using (var stream = new FileStream(filePath, FileMode.Open, FileAccess.Read))
+                {
+                    Settings = formatter.Deserialize(stream) as FET_NoiseModel;
+                }
 
                 double[] outerLoopCollection;
                 double[] innerLoopCollection;
@@ -116,55 +109,35 @@ namespace FETNoiseStarter
                 {
                     for (int j = 0; j < innerLoopSelectionList.Count; j++)
                     {
-                        var innerLoopSelection = innerLoopSelectionList[j];
-
-                        var dataBytesOuterLoop = Encoding.ASCII.GetBytes(outerLoopCollection[i].ToString(NumberFormatInfo.InvariantInfo));
-                        var dataBytesInnerLoop = Encoding.ASCII.GetBytes((string)converter.Convert(innerLoopSelection, typeof(string), null, CultureInfo.InvariantCulture));
-
-                        int VgSetLen = 0;
-                        byte[] VgSet = { 0 };
-
-                        int VdsSetLen = 0;
-                        byte[] VdsSet = { 0 };
+                        var innerLoopSelection = innerLoopSelectionList[j];                        
 
                         if (Settings.IsTransferCurveMode == true)
                         {
-                            VgSetLen = dataBytesInnerLoop.Length;
-                            VgSet = dataBytesInnerLoop;
-
-                            VdsSetLen = dataBytesOuterLoop.Length;
-                            VdsSet = dataBytesOuterLoop;
+                            Settings.DSVoltageCollection = new double[] { outerLoopCollection[i] };
+                            Settings.GateVoltageCollection = innerLoopSelection;
                         }
                         else if (Settings.IsOutputCurveMode == true)
                         {
-                            VgSetLen = dataBytesOuterLoop.Length;
-                            VgSet = dataBytesOuterLoop;
-
-                            VdsSetLen = dataBytesInnerLoop.Length;
-                            VdsSet = dataBytesInnerLoop;
+                            Settings.DSVoltageCollection = innerLoopSelection;
+                            Settings.GateVoltageCollection = new double[] { outerLoopCollection[i] };
+                        }
+                        
+                        var path = Directory.GetCurrentDirectory() + "\\FET Characterization";
+                        if (!Directory.Exists(path))
+                            Directory.CreateDirectory(path);
+                        
+                        var noiseFilePath = path + "\\FETNoiseSettings.bin";
+                        
+                        using (var stream = new FileStream(noiseFilePath, FileMode.Create, FileAccess.Write))
+                        {
+                            formatter.Serialize(stream, Settings);
                         }
 
-                        using (var mmfVg = MemoryMappedFile.CreateNew(@"VgSet", VgSetLen + sizeof(Int32), MemoryMappedFileAccess.ReadWrite))
-                        using (var mmfVds = MemoryMappedFile.CreateNew(@"VdsSet", VgSetLen + sizeof(Int32), MemoryMappedFileAccess.ReadWrite))
+                        using (var process = Process.Start("FET Characterization.exe", "FETNoise"))
                         {
-                            using (var mmfVgStream = mmfVg.CreateViewStream(0, VgSetLen + sizeof(Int32), MemoryMappedFileAccess.Write))
-                            using (var mmfVdsStream = mmfVds.CreateViewStream(0, VdsSetLen + sizeof(Int32), MemoryMappedFileAccess.Write))
-                            {
-                                var VgSetLengthBytes = BitConverter.GetBytes(VgSetLen);
-                                mmfVgStream.Write(VgSetLengthBytes, 0, VgSetLengthBytes.Length);
-                                mmfVgStream.Write(VgSet, 0, VgSet.Length);
-
-                                var VdsSetLengthBytes = BitConverter.GetBytes(VdsSetLen);
-                                mmfVdsStream.Write(VdsSetLengthBytes, 0, VdsSetLengthBytes.Length);
-                                mmfVdsStream.Write(VdsSet, 0, VdsSet.Length);
-                            }
-
-                            using (var process = Process.Start("FET Characterization.exe", argumentsString))
-                            {
-                                process.WaitForExit();
-                                if (process.ExitCode != 0)
-                                    --j;
-                            }
+                            process.WaitForExit();
+                            if (process.ExitCode != 0)
+                                --j;
                         }
                     }
                 }
@@ -179,7 +152,7 @@ namespace FETNoiseStarter
         private void on_cmdOpenFolderClick(object sender, RoutedEventArgs e)
         {
             dialog.ShowDialog();
-            Settings.FilePath = dialog.SelectedPath;
+            (DataContext as FET_NoiseModel).FilePath = dialog.SelectedPath;
         }
 
         private void on_OpenDataFolderClick(object sender, RoutedEventArgs e)

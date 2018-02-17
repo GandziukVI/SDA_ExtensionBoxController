@@ -56,7 +56,7 @@
     </Window.Resources>
     
     <Window.DataContext>
-        <local:FET_NoiseModel x:Name="Settings" />
+        <local:FET_NoiseModel />
     </Window.DataContext>
     
     <Grid>

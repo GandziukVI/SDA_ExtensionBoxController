@@ -70,86 +70,12 @@ namespace FET_Characterization
             // Work on parsing command line arguments
             var arguments = Environment.GetCommandLineArgs();
 
-            if (arguments.Length > 1)
+            if (arguments.Length >= 1)
             {
                 // First arg contains the experiment type
                 if (arguments[1].Equals("FETNoise", StringComparison.InvariantCultureIgnoreCase))
                 {
-                    menuExpNoise_Click(this, new RoutedEventArgs());
-
-                    var settings = (measurementInterface as FET_Noise).DataContext as FET_NoiseModel;
-
-                    settings.AgilentU2542AResName = arguments[2];
-
-                    if (arguments[3].Equals("Transfer", StringComparison.InvariantCultureIgnoreCase))
-                        settings.IsTransferCurveMode = true;
-                    else if (arguments[3].Equals("Output", StringComparison.InvariantCultureIgnoreCase))
-                        settings.IsOutputCurveMode = true;
-
-                    settings.VoltageDeviation = double.Parse(arguments[4], NumberFormatInfo.InvariantInfo);
-                    settings.NAveragesFast = int.Parse(arguments[5], NumberFormatInfo.InvariantInfo);
-                    settings.NAveragesSlow = int.Parse(arguments[6], NumberFormatInfo.InvariantInfo);
-                    settings.StabilizationTime = double.Parse(arguments[7], NumberFormatInfo.InvariantInfo);
-                    settings.LoadResistance = double.Parse(arguments[8], NumberFormatInfo.InvariantInfo);
-                    settings.SpectraAveraging = int.Parse(arguments[9], NumberFormatInfo.InvariantInfo);
-                    settings.UpdateNumber = int.Parse(arguments[10], NumberFormatInfo.InvariantInfo);
-                    settings.KPreAmpl = double.Parse(arguments[11], NumberFormatInfo.InvariantInfo);
-                    settings.KAmpl = double.Parse(arguments[12], NumberFormatInfo.InvariantInfo);
-                    settings.Temperature0 = double.Parse(arguments[13], NumberFormatInfo.InvariantInfo);
-                    settings.TemperatureE = double.Parse(arguments[14], NumberFormatInfo.InvariantInfo);
-
-                    if (arguments[15].Equals("y", StringComparison.InvariantCultureIgnoreCase))
-                        settings.RecordTimeTraces = true;
-                    else if (arguments[15].Equals("n", StringComparison.InvariantCultureIgnoreCase))
-                        settings.RecordTimeTraces = false;
-
-                    settings.RecordingFrequency = int.Parse(arguments[16], NumberFormatInfo.InvariantInfo);
-
-                    var saveDirInfo = new DirectoryInfo(arguments[17]);
-
-                    settings.FilePath = saveDirInfo.FullName;
-                    settings.SaveFileName = arguments[18];
-
-                    // Reading gate voltage set
-                    using (var VgMMF = MemoryMappedFile.OpenExisting(@"VgSet", MemoryMappedFileRights.Read, HandleInheritability.Inheritable))
-                    {
-                        var streamLength = 0;
-                        using (var VgMMFStream = VgMMF.CreateViewStream(0, sizeof(int), MemoryMappedFileAccess.Read))
-                        {
-                            var toRead = new byte[sizeof(Int32)];
-                            VgMMFStream.Read(toRead, 0, toRead.Length);
-                            streamLength = BitConverter.ToInt32(toRead, 0);
-                        }
-                        using (var VgMMFStream = VgMMF.CreateViewStream(sizeof(int), streamLength, MemoryMappedFileAccess.Read))
-                        {
-                            var toRead = new byte[streamLength];
-                            VgMMFStream.Read(toRead, 0, streamLength);
-                            var response = Encoding.ASCII.GetString(toRead);
-                            var converter = new ValueCollectionConverter();
-                            settings.GateVoltageCollection = (double[])converter.ConvertBack(response, typeof(double[]), null, CultureInfo.InvariantCulture);
-                        }
-                    }
-
-                    // Reading drain-source voltage set
-                    using (var VdsMMF = MemoryMappedFile.OpenExisting(@"VdsSet", MemoryMappedFileRights.Read, HandleInheritability.Inheritable))
-                    {
-                        var streamLength = 0;
-                        using (var VgMMFStream = VdsMMF.CreateViewStream(0, sizeof(int), MemoryMappedFileAccess.Read))
-                        {
-                            var toRead = new byte[sizeof(Int32)];
-                            VgMMFStream.Read(toRead, 0, toRead.Length);
-                            streamLength = BitConverter.ToInt32(toRead, 0);
-                        }
-                        using (var VgMMFStream = VdsMMF.CreateViewStream(sizeof(int), streamLength, MemoryMappedFileAccess.Read))
-                        {
-                            var toRead = new byte[streamLength];
-                            VgMMFStream.Read(toRead, 0, streamLength);
-                            var response = Encoding.ASCII.GetString(toRead);
-                            var converter = new ValueCollectionConverter();
-                            settings.DSVoltageCollection = (double[])converter.ConvertBack(response, typeof(double[]), null, CultureInfo.InvariantCulture);
-                        }
-                    }
-
+                    menuExpNoise_Click(this, new RoutedEventArgs());                    
                     cmdStartNoise_Click(this, new RoutedEventArgs());
 
                     if (experiment != null)
