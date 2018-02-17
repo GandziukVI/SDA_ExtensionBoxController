@@ -11,6 +11,7 @@ using System.IO;
 
 namespace FETNoiseStarter
 {
+    [Serializable]
 	public class FET_NoiseModel : INotifyPropertyChanged
 	{
 		public FET_NoiseModel()
@@ -19,6 +20,8 @@ namespace FETNoiseStarter
 		}
 
 		#region INotifyPropertyChanged
+
+        [field: NonSerializedAttribute()]
 		public event PropertyChangedEventHandler PropertyChanged;
 
         private void NotifyPropertyChanged(String info)
@@ -29,6 +32,17 @@ namespace FETNoiseStarter
 			}
 		}
 		#endregion
+
+        private int nMaxSpectra = 10;
+        public int NMaxSpectra
+        {
+            get { return nMaxSpectra; }
+            set
+            {
+                nMaxSpectra = value;
+                NotifyPropertyChanged("NMaxSpectra");
+            }
+        }
 
         private string agilentU2542Ares = "USB0::2391::5912::TW54334510::INSTR";
         public string AgilentU2542AResName
@@ -41,14 +55,71 @@ namespace FETNoiseStarter
             }
         }
 
-        private int nMaxSpectra = 10;
-        public int NMaxSpectra
+        #region Oscilloscope settings        
+
+        private double oscilloscopeVoltageRange;
+        public double OscilloscopeVoltageRange
         {
-            get { return nMaxSpectra; }
-            set 
+            get { return oscilloscopeVoltageRange; }
+            set
             {
-                nMaxSpectra = value;
-                NotifyPropertyChanged("NMaxSpectra");
+                oscilloscopeVoltageRange = value;
+                NotifyPropertyChanged("OscilloscopeVoltageRange");
+            }
+        }
+
+        private double oscilloscopeVoltageRangeValue = 0.2;
+        public double OscilloscopeVoltageRangeValue
+        {
+            get { return oscilloscopeVoltageRangeValue; }
+            set
+            {
+                oscilloscopeVoltageRangeValue = value;
+                NotifyPropertyChanged("OscilloscopeVoltageRangeValue");
+            }
+        }
+
+        private int oscilloscopeVoltageRangeIndex;
+        public int OscilloscopeVoltageRangeIndex
+        {
+            get { return oscilloscopeVoltageRangeIndex; }
+            set
+            {
+                oscilloscopeVoltageRangeIndex = value;
+                NotifyPropertyChanged("OscilloscopeVoltageRangeIndex");
+            }
+        }
+
+        private double oscilloscopeTimeRange;
+        public double OscilloscopeTimeRange
+        {
+            get { return oscilloscopeTimeRange; }
+            set
+            {
+                oscilloscopeTimeRange = value;
+                NotifyPropertyChanged("OscilloscopeTimeRange");
+            }
+        }
+
+        private double oscilloscopeTimeRangeValue = 1.0;
+        public double OscilloscopeTimeRangeValue
+        {
+            get { return oscilloscopeTimeRangeValue; }
+            set
+            {
+                oscilloscopeTimeRangeValue = value;
+                NotifyPropertyChanged("OscilloscopeTimeRangeValue");
+            }
+        }
+
+        private int oscilloscopeTimeRangeIndex;
+        public int OscilloscopeTimeRangeIndex
+        {
+            get { return oscilloscopeTimeRangeIndex; }
+            set
+            {
+                oscilloscopeTimeRangeIndex = value;
+                NotifyPropertyChanged("OscilloscopeTimeRangeIndex");
             }
         }
 
@@ -56,18 +127,20 @@ namespace FETNoiseStarter
         public int OscilloscopePointsPerGraph
         {
             get { return oscilloscopePointsPerGraph; }
-            set 
+            set
             {
                 oscilloscopePointsPerGraph = value;
                 NotifyPropertyChanged("OscilloscopePointsPerGraph");
             }
         }
 
+        #endregion
+
         private bool isTransferCurveMode = true;
         public bool IsTransferCurveMode
         {
             get { return isTransferCurveMode; }
-            set 
+            set
             {
                 isTransferCurveMode = value;
                 NotifyPropertyChanged("IsTransferCurveMode");
@@ -107,7 +180,7 @@ namespace FETNoiseStarter
             }
         }
 
-        private double voltageDeviation = 0.2;
+        private double voltageDeviation;
         public double VoltageDeviation
         {
             get { return voltageDeviation; }
@@ -117,6 +190,29 @@ namespace FETNoiseStarter
                 NotifyPropertyChanged("VoltageDeviation");
             }
         }
+
+        private double voltageDeviationValue = 1.0;
+        public double VoltageDeviationValue
+        {
+            get { return voltageDeviationValue; }
+            set
+            {
+                voltageDeviationValue = value;
+                NotifyPropertyChanged("VoltageDeviationValue");
+            }
+        }
+
+        private int voltageDeviationMultiplierIndex;
+        public int VoltageDeviationMultiplierIndex
+        {
+            get { return voltageDeviationMultiplierIndex; }
+            set
+            {
+                voltageDeviationMultiplierIndex = value;
+                NotifyPropertyChanged("VoltageDeviationMultiplierIndex");
+            }
+        }
+
 
         private int nAveragesFast = 2;
         public int NAveragesFast
@@ -166,7 +262,7 @@ namespace FETNoiseStarter
             }
         }
 
-        private int samplingFrequency = 262144;
+        private int samplingFrequency = 500000;
         public int SamplingFrequency
         {
             get { return samplingFrequency; }
@@ -174,17 +270,6 @@ namespace FETNoiseStarter
             {
                 samplingFrequency = value;
                 NotifyPropertyChanged("SamplingFrequency");
-            }
-        }
-
-        private int nSubSamples = 1;
-        public int NSubSamples
-        {
-            get { return nSubSamples; }
-            set
-            {
-                nSubSamples = value;
-                NotifyPropertyChanged("NSubSamples");
             }
         }
 
@@ -278,7 +363,7 @@ namespace FETNoiseStarter
             return query.arrElem;
         }
 
-        private int recordingFrequency = 262144;
+        private int recordingFrequency = 50000;
         public int RecordingFrequency
         {
             get { return recordingFrequency; }
@@ -290,7 +375,6 @@ namespace FETNoiseStarter
                 NotifyPropertyChanged("RecordingFrequency");
             }
         }
-
 
 
         private string filePath = Directory.GetCurrentDirectory();

@@ -30,14 +30,10 @@
         </Style>
         <Style TargetType="wpfTool:IntegerUpDown">
             <Setter Property="Margin" Value="2.5" />
-            <!--<Setter Property="Width" Value="130" />
-            <Setter Property="MaxWidth" Value="130" />-->
             <Setter Property="HorizontalAlignment" Value="Stretch" />
             <Setter Property="VerticalAlignment" Value="Stretch" />
         </Style>
         <Style TargetType="local:ExtendedDoubleUpDown">
-            <!--<Setter Property="Width" Value="130" />
-            <Setter Property="MaxWidth" Value="130" />-->
             <Setter Property="Margin" Value="2.5" />
         </Style>
         <Style TargetType="Button">
@@ -51,8 +47,6 @@
         </Style>
         <Style TargetType="TextBox">
             <Setter Property="Margin" Value="2.5" />
-            <!--<Setter Property="Width" Value="130" />-->
-            <!--<Setter Property="MaxWidth" Value="130" />-->
             <Setter Property="HorizontalContentAlignment" Value="Stretch" />
             <Setter Property="VerticalAlignment" Value="Stretch" />
             <Setter Property="HorizontalContentAlignment" Value="Right" />
@@ -102,39 +96,38 @@
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="*"/>
+                    <RowDefinition/>
                 </Grid.RowDefinitions>
 
                 <TextBlock TextWrapping="Wrap" Text="Agilent U2542A res." Padding="0,20,0,0" />
                 <TextBox Height="100" MaxHeight="100" VerticalContentAlignment="Top" HorizontalContentAlignment="Left" VerticalScrollBarVisibility="Auto" MouseDoubleClick="SelectAddress" PreviewMouseRightButtonUp="SelectivelyIgnoreMouseButton" GotFocus="SelectAddress" PreviewMouseLeftButtonDown="SelectivelyIgnoreMouseButton" Grid.Column="1" Text="{Binding AgilentU2542AResName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" AcceptsReturn="True" TextWrapping="Wrap" />
 
-                <TextBlock Grid.Row="1" Grid.ColumnSpan="2" HorizontalAlignment="Center" Margin="5,30,5,15"><Run FontSize="18">Starter Settings</Run></TextBlock>
+                <TextBlock Grid.Row="1" Grid.ColumnSpan="2" HorizontalAlignment="Center" Margin="5,30,5,15"><Run FontSize="18" Text="Starter Settings"/></TextBlock>
 
                 <TextBlock Grid.Row="2" Grid.RowSpan="3" Text="Max points" />
                 <wpfTool:IntegerUpDown Grid.Row="2" Grid.RowSpan="3" Grid.Column="1" Value="{Binding NMaxSpectra, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"/>
 
-                <TextBlock Grid.Row="5" Grid.ColumnSpan="2" HorizontalAlignment="Center" Margin="5,30,5,15"><Run FontSize="18">Measurement Settings</Run></TextBlock>
+                <TextBlock Grid.Row="5" Grid.ColumnSpan="2" HorizontalAlignment="Center" Margin="5,30,5,15"><Run FontSize="18" Text="Measurement Settings"/></TextBlock>
 
                 <GroupBox Grid.Row="6" Grid.ColumnSpan="2" Margin="5">
                     <GroupBox.Header>
-                        <TextBlock>Measurement mode</TextBlock>
+                        <TextBlock><Run Text="Measurement mode"/></TextBlock>
                     </GroupBox.Header>
 
                     <StackPanel Orientation="Vertical" Margin="0,5">
-                        <RadioButton IsChecked="{Binding IsTransferCurveMode, Mode=TwoWay}">Transfer curve</RadioButton>
-                        <RadioButton IsChecked="{Binding IsOutputCurveMode, Mode=TwoWay}">Output curve</RadioButton>
+                        <RadioButton IsChecked="{Binding IsTransferCurveMode, Mode=TwoWay}" Content="Transfer curve"/>
+                        <RadioButton IsChecked="{Binding IsOutputCurveMode, Mode=TwoWay}" Content="Output curve"/>
                     </StackPanel>
                 </GroupBox>
 
-                <TextBlock TextWrapping="Wrap" Grid.Row="7" Padding="0,20,0,0">Gate Voltages V<Run FontSize="9" BaselineAlignment="Subscript">G</Run> (V)</TextBlock>
+                <TextBlock TextWrapping="Wrap" Grid.Row="7" Padding="0,20,0,0"><Run Text="Gate Voltages V"/><Run FontSize="9" BaselineAlignment="Subscript" Text="G"/><Run Text=" (V)"/></TextBlock>
                 <TextBox Text="{Binding GateVoltageCollection, Converter={StaticResource CollectionConverter}, Mode=TwoWay, UpdateSourceTrigger=LostFocus}" Grid.Column="1" TextWrapping="Wrap" Height="100" MaxHeight="100" VerticalContentAlignment="Top" VerticalScrollBarVisibility="Auto" MouseDoubleClick="SelectAddress" PreviewMouseRightButtonUp="SelectivelyIgnoreMouseButton" GotFocus="SelectAddress" PreviewMouseLeftButtonDown="SelectivelyIgnoreMouseButton" Grid.Row="7" />
 
-                <TextBlock TextWrapping="Wrap" Grid.Row="8" Padding="0,20,0,0">D-S Voltages V<Run FontSize="9" BaselineAlignment="Subscript">DS</Run> (V)</TextBlock>
+                <TextBlock TextWrapping="Wrap" Grid.Row="8" Padding="0,20,0,0"><Run Text="D-S Voltages V"/><Run FontSize="9" BaselineAlignment="Subscript" Text="DS"/><Run Text=" (V)"/></TextBlock>
                 <TextBox Text="{Binding DSVoltageCollection, Converter={StaticResource CollectionConverter}, Mode=TwoWay, UpdateSourceTrigger=LostFocus}" Grid.Column="1" TextWrapping="Wrap" Height="100" MaxHeight="100" VerticalContentAlignment="Top" VerticalScrollBarVisibility="Auto" MouseDoubleClick="SelectAddress" PreviewMouseRightButtonUp="SelectivelyIgnoreMouseButton" GotFocus="SelectAddress" PreviewMouseLeftButtonDown="SelectivelyIgnoreMouseButton" Grid.Row="8" />
 
                 <TextBlock TextWrapping="Wrap" Text="Voltage deviation" Grid.Row="9" />
-                <local:ExtendedDoubleUpDown Grid.Row="9" Grid.Column="1" UnitAlias="V" Value="0.2" RealValue="{Binding VoltageDeviation, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"  />
+                <local:ExtendedDoubleUpDown Grid.Row="9" Grid.Column="1" UnitAlias="V" Value="{Binding VoltageDeviationValue, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" RealValue="{Binding VoltageDeviation, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" MultiplierIndex="{Binding VoltageDeviationMultiplierIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"  />
 
                 <TextBlock TextWrapping="Wrap" Text="n Avg. (fast)" Grid.Row="10"/>
                 <wpfTool:IntegerUpDown Grid.Row="10" Grid.Column="1" Value="{Binding NAveragesFast, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
@@ -151,33 +144,30 @@
                 <TextBlock TextWrapping="Wrap" Text="Sampling frequency" Grid.Row="15"/>
                 <wpfTool:IntegerUpDown Grid.Row="15" Grid.Column="1" Value="{Binding SamplingFrequency, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" IsEnabled="False" />
 
-                <TextBlock TextWrapping="Wrap" Text="N Sub-samples" Grid.Row="16"/>
-                <wpfTool:IntegerUpDown Grid.Row="16" Grid.Column="1" Value="{Binding NSubSamples, Mode=TwoWay, UpdateSourceTrigger=LostFocus}" />
+                <TextBlock TextWrapping="Wrap" Text="n Spectra avg." Grid.Row="16"/>
+                <wpfTool:IntegerUpDown Grid.Row="16" Grid.Column="1" Value="{Binding SpectraAveraging, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
-                <TextBlock TextWrapping="Wrap" Text="n Spectra avg." Grid.Row="17"/>
-                <wpfTool:IntegerUpDown Grid.Row="17" Grid.Column="1" Value="{Binding SpectraAveraging, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                <TextBlock TextWrapping="Wrap" Text="Update freq." Grid.Row="17"/>
+                <wpfTool:IntegerUpDown Grid.Row="17" Grid.Column="1" Value="{Binding UpdateNumber, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
-                <TextBlock TextWrapping="Wrap" Text="Update freq." Grid.Row="18"/>
-                <wpfTool:IntegerUpDown Grid.Row="18" Grid.Column="1" Value="{Binding UpdateNumber, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                <TextBlock TextWrapping="Wrap" Text="k pre-Amp" Grid.Row="18"/>
+                <wpfTool:DoubleUpDown Grid.Row="18" Grid.Column="1" Value="{Binding KPreAmpl, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
-                <TextBlock TextWrapping="Wrap" Text="k pre-Amp" Grid.Row="19"/>
-                <wpfTool:DoubleUpDown Grid.Row="19" Grid.Column="1" Value="{Binding KPreAmpl, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                <TextBlock TextWrapping="Wrap" Text="k Amp" Grid.Row="19"/>
+                <wpfTool:DoubleUpDown Grid.Row="19" Grid.Column="1" Value="{Binding KAmpl, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
-                <TextBlock TextWrapping="Wrap" Text="k Amp" Grid.Row="20"/>
-                <wpfTool:DoubleUpDown Grid.Row="20" Grid.Column="1" Value="{Binding KAmpl, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                <TextBlock TextWrapping="Wrap" Text="Temperature 0" Grid.Row="20"/>
+                <wpfTool:DoubleUpDown Grid.Row="20" Grid.Column="1" Value="{Binding Temperature0, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
-                <TextBlock TextWrapping="Wrap" Text="Temperature 0" Grid.Row="21"/>
-                <wpfTool:DoubleUpDown Grid.Row="21" Grid.Column="1" Value="{Binding Temperature0, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                <TextBlock TextWrapping="Wrap" Text="Temperature E" Grid.Row="21"/>
+                <wpfTool:DoubleUpDown Grid.Row="21" Grid.Column="1" Value="{Binding TemperatureE, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
-                <TextBlock TextWrapping="Wrap" Text="Temperature E" Grid.Row="22"/>
-                <wpfTool:DoubleUpDown Grid.Row="22" Grid.Column="1" Value="{Binding TemperatureE, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                <CheckBox x:Name="checkBox" Grid.Row="22" Grid.ColumnSpan="2" Content="Record time trace" IsChecked="{Binding RecordTimeTraces, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
 
-                <CheckBox x:Name="checkBox" Grid.Row="23" Grid.ColumnSpan="2" Content="Record time trace" IsChecked="{Binding RecordTimeTraces, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"></CheckBox>
+                <wpfTool:IntegerUpDown Grid.Row="23" Grid.Column="1" IsEnabled="{Binding IsChecked, ElementName=checkBox, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Value="{Binding RecordingFrequency, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
-                <wpfTool:IntegerUpDown Grid.Row="24" Grid.Column="1" IsEnabled="{Binding IsChecked, ElementName=checkBox, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Value="{Binding RecordingFrequency, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-
-                <Separator BorderThickness="1,2" Height="1" Grid.Row="25" Grid.ColumnSpan="2" Margin="2.5,5,2.5,20" Background="Black" BorderBrush="#FFAAAAAA" />
-                <Grid Grid.Row="26" Grid.ColumnSpan="2">
+                <Separator BorderThickness="1,2" Height="1" Grid.Row="24" Grid.ColumnSpan="2" Margin="2.5,5,2.5,20" Background="Black" BorderBrush="#FFAAAAAA" />
+                <Grid Grid.Row="25" Grid.ColumnSpan="2">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto" />
                         <ColumnDefinition />

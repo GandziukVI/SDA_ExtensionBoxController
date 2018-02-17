@@ -32,8 +32,6 @@ namespace FET_Characterization
 		}
 		#endregion
 
-        #region Oscilloscope settings
-
         private string agilentU2542Ares = "USB0::2391::5912::TW54334510::INSTR";
         public string AgilentU2542AResName
         {
@@ -44,6 +42,8 @@ namespace FET_Characterization
                 NotifyPropertyChanged("AgilentU2542AResName");
             }
         }
+
+        #region Oscilloscope settings       
 
         private double oscilloscopeVoltageRange;
         public double OscilloscopeVoltageRange
