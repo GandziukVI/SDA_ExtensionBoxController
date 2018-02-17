@@ -31,9 +31,9 @@ namespace FET_Characterization
 		}
 
 		private void on_cmdOpenFolderClick(object sender, System.Windows.RoutedEventArgs e)
-		{
+		{            
             dialog.ShowDialog();
-            Settings.FilePath = dialog.SelectedPath;
+            (DataContext as FET_NoiseModel).FilePath = dialog.SelectedPath;
 		}
 
         private void SelectAddress(object sender, System.Windows.RoutedEventArgs e)
@@ -64,8 +64,8 @@ namespace FET_Characterization
         {
             var startInfo = new ProcessStartInfo() { UseShellExecute = true, Verb = "open" };
 
-            if (Settings.FilePath != string.Empty || !Directory.Exists(Settings.FilePath))
-                startInfo.FileName = Settings.FilePath;
+            if ((DataContext as FET_NoiseModel).FilePath != string.Empty || !Directory.Exists((DataContext as FET_NoiseModel).FilePath))
+                startInfo.FileName = (DataContext as FET_NoiseModel).FilePath;
             else
                 startInfo.FileName = Directory.GetCurrentDirectory();
 

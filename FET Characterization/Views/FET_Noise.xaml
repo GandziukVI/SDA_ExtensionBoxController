@@ -12,7 +12,7 @@
 	d:DesignWidth="640" d:DesignHeight="480">
 	
 	<UserControl.DataContext>
-		<local:FET_NoiseModel x:Name="Settings" />
+		<local:FET_NoiseModel />
 	</UserControl.DataContext>
 
 	<UserControl.Resources>		

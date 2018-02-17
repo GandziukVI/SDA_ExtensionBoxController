@@ -77,7 +77,7 @@ namespace FET_Characterization
                 {
                     menuExpNoise_Click(this, new RoutedEventArgs());
 
-                    var settings = (measurementInterface as FET_Noise).Settings;
+                    var settings = (measurementInterface as FET_Noise).DataContext as FET_NoiseModel;
 
                     settings.AgilentU2542AResName = arguments[2];
 
@@ -160,28 +160,7 @@ namespace FET_Characterization
         }
 
         void onExperimentStarted(object sender, StartedEventArgs e)
-        {
-            var path = Directory.GetCurrentDirectory() + "\\FET Characterization";
-            if (!Directory.Exists(path))
-                Directory.CreateDirectory(path);
-
-            var filePath = path + "\\default.bin";
-
-            if (expStartInfo is FET_IVModel)
-                filePath = path + "\\FETIVSettings.bin";
-            else if (expStartInfo is FET_NoiseModel)
-                filePath = path + "\\FETNoiseSettings.bin";
-
-            var formatter = new BinaryFormatter();
-
-            using (var stream = new FileStream(filePath, FileMode.Create, FileAccess.Write))
-            {
-                if (expStartInfo is FET_IVModel)
-                {
-                    expStartInfo = (measurementInterface as FET_IV).Settings;
-                    formatter.Serialize(stream, expStartInfo);
-                }
-            }
+        {            
         }
 
         void onExperimentFinished(object sender, FinishedEventArgs e)
@@ -198,17 +177,7 @@ namespace FET_Characterization
                 if (expParentGrid.Children.Contains(measurementInterface))
                     expParentGrid.Children.Remove(measurementInterface);
 
-            var control = new FET_IV();
-
-            var path = Directory.GetCurrentDirectory() + "\\FET Characterization\\FETIVSettings.bin";
-            var formatter = new BinaryFormatter();
-            if (File.Exists(path))
-            {
-                using (var stream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read))
-                {
-                    control.Settings = (FET_IVModel)formatter.Deserialize(stream);
-                }
-            }
+            var control = new FET_IV();            
 
             control.cmdStartIV.Click += cmdStartIV_Click;
             control.cmdStopIV.Click += cmdStopIV_Click;
@@ -220,7 +189,7 @@ namespace FET_Characterization
             Grid.SetColumn(control, 0);
 
             measurementInterface = control;
-            expStartInfo = control.Settings;
+            expStartInfo = control.DataContext;
 
             expParentGrid.Children.Add(control);
         }
@@ -241,26 +210,16 @@ namespace FET_Characterization
             control.cmdStart.Click += cmdStartNoise_Click;
             control.cmdStop.Click += cmdStopNoise_Click;
 
-            control.Settings.PropertyChanged += FET_Exp_Property_Changed;
+            (control.DataContext as FET_NoiseModel).PropertyChanged += FET_Exp_Property_Changed;
 
             measurementInterface = control;
-            expStartInfo = control.Settings;
-
-            var path = "FET Characterization\\FETNoiseSettings.bin";
-            var formatter = new BinaryFormatter();
-            if (File.Exists(path))
-            {
-                using (var stream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read))
-                {
-                    expStartInfo = (FET_NoiseModel)formatter.Deserialize(stream);
-                }
-            }
+            expStartInfo = control.DataContext;
         }
 
         private void FET_Exp_Property_Changed(object sender, PropertyChangedEventArgs e)
         {
             var exp = (measurementInterface as FET_Noise);
-            var settings = exp.Settings;
+            var settings = exp.DataContext as FET_NoiseModel;
 
             switch (e.PropertyName)
             {
@@ -291,7 +250,7 @@ namespace FET_Characterization
 
         void cmdStartIV_Click(object sender, RoutedEventArgs e)
         {
-            expStartInfo = (measurementInterface as FET_IV).Settings;
+            expStartInfo = (measurementInterface as FET_IV).DataContext;
 
             (measurementInterface as FET_IV).expIV_FET_Chart.Children.RemoveAll(typeof(LineGraph));
             (measurementInterface as FET_IV).expIV_FET_Chart.Legend.Visibility = System.Windows.Visibility.Visible;
@@ -374,12 +333,10 @@ namespace FET_Characterization
 
         void cmdStartTransfer_Click(object sender, RoutedEventArgs e)
         {
-            expStartInfo = (measurementInterface as FET_IV).Settings;
-
             (measurementInterface as FET_IV).expTransfer_FET_Chart.Children.RemoveAll(typeof(LineGraph));
             (measurementInterface as FET_IV).expTransfer_FET_Chart.Legend.Visibility = System.Windows.Visibility.Visible;
 
-            var settings = expStartInfo as FET_IVModel;
+            expStartInfo = (measurementInterface as FET_IV).DataContext;//expStartInfo as FET_IVModel;
 
             // if (driver != null)
             //     driver.Dispose();
@@ -635,6 +592,11 @@ namespace FET_Characterization
             {
                 expProgress.Value = e.Progress;
             }));
+        }
+
+        private void Window_Closing(object sender, CancelEventArgs e)
+        {
+
         }
     }
 }

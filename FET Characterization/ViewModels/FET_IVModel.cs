@@ -18,7 +18,7 @@ namespace FET_Characterization
         }
 
         #region INotifyPropertyChanged
-        [field:NonSerializedAttribute()]
+        [field: NonSerializedAttribute()]
         public event PropertyChangedEventHandler PropertyChanged;
 
         private void NotifyPropertyChanged(String info)
@@ -391,10 +391,16 @@ namespace FET_Characterization
         }
 
 
-        private string ivFET_FilePath = Directory.GetCurrentDirectory();
+        private string ivFET_FilePath;
         public string IV_FET_DataFilePath
         {
-            get { return ivFET_FilePath; }
+            get
+            {
+                if (!string.IsNullOrEmpty(ivFET_FilePath))
+                    return ivFET_FilePath;
+                else
+                    return Directory.GetCurrentDirectory();
+            }
             set
             {
                 ivFET_FilePath = value;
@@ -659,7 +665,7 @@ namespace FET_Characterization
                 NotifyPropertyChanged("TransferDSComplianceIndex");
             }
         }
-        
+
         private double transfer_v_gStart;
         public double TransferVgStart
         {
@@ -785,7 +791,7 @@ namespace FET_Characterization
         public double TransferPulseWidthValue
         {
             get { return transferPulseWidthValue; }
-            set 
+            set
             {
                 transferPulseWidthValue = value;
                 NotifyPropertyChanged("TransferPulseWidthValue");
@@ -818,7 +824,7 @@ namespace FET_Characterization
         public double TransferDelayTimeValue
         {
             get { return transferDelayTimeValue; }
-            set 
+            set
             {
                 transferDelayTimeValue = value;
                 NotifyPropertyChanged("TransferDelayTimeValue");
@@ -835,12 +841,18 @@ namespace FET_Characterization
                 NotifyPropertyChanged("TransferDelayTimeIndex");
             }
         }
-        
 
-        private string transferFilePath = Directory.GetCurrentDirectory();
+
+        private string transferFilePath = string.Empty;
         public string TransferDataFilePath
         {
-            get { return transferFilePath; }
+            get
+            {
+                if (!string.IsNullOrEmpty(transferFilePath))
+                    return transferFilePath;
+                else 
+                    return Directory.GetCurrentDirectory();
+            }
             set
             {
                 transferFilePath = value;
@@ -904,7 +916,7 @@ namespace FET_Characterization
         public double TransferVdsDelayValue
         {
             get { return transferVdsDelayValue; }
-            set 
+            set
             {
                 transferVdsDelayValue = value;
                 NotifyPropertyChanged("TransferVdsDelayValue");
@@ -915,7 +927,7 @@ namespace FET_Characterization
         public int TransferVdsDelayIndex
         {
             get { return transferVdsDelayIndex; }
-            set 
+            set
             {
                 transferVdsDelayIndex = value;
                 NotifyPropertyChanged("TransferVdsDelayIndex");
