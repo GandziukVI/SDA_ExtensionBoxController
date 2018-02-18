@@ -9,10 +9,12 @@ using System.Threading.Tasks;
 
 namespace MCBJ.Experiments
 {
-    public class IV_DefinedResistanceInfo : INotifyPropertyChanged
+    [Serializable]
+    public class IV_DefinedResistanceModel : INotifyPropertyChanged
     {
         #region INotifyPropertyChanged implementation
 
+        [field: NonSerializedAttribute()]
         public event PropertyChangedEventHandler PropertyChanged;
 
         void onPropertyChanged(string PropertyName)

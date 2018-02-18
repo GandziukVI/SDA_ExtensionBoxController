@@ -8,10 +8,12 @@ using System.Threading.Tasks;
 
 namespace MCBJ.Experiments
 {
-    public class Noise_DefinedResistanceInfo : INotifyPropertyChanged
+    [Serializable]
+    public class Noise_DefinedResistanceModel : INotifyPropertyChanged
     {
         #region INotifyPropertyChanged implementation
 
+        [field: NonSerializedAttribute()]
         public event PropertyChangedEventHandler PropertyChanged;
 
         void onPropertyChanged(string PropertyName)
@@ -46,7 +48,7 @@ namespace MCBJ.Experiments
             }
         }
 
-        private double voltageDeviation = 0.0002;
+        private double voltageDeviation;
         public double VoltageDeviation
         {
             get { return voltageDeviation; }
@@ -57,7 +59,30 @@ namespace MCBJ.Experiments
             }
         }
 
-        private double minVoltageTreshold = 0.005;
+        private double voltageDeviationValue = 0.0002;
+        public double VoltageDeviationValue
+        {
+            get { return voltageDeviationValue; }
+            set 
+            {
+                voltageDeviationValue = value;
+                onPropertyChanged("VoltageDeviationValue");
+            }
+        }
+
+        private int voltageDeviationIndex;
+        public int VoltageDeviationIndex
+        {
+            get { return voltageDeviationIndex; }
+            set 
+            {
+                voltageDeviationIndex = value;
+                onPropertyChanged("VoltageDeviationIndex");
+            }
+        }
+
+
+        private double minVoltageTreshold;
         public double MinVoltageTreshold
         {
             get { return minVoltageTreshold; }
@@ -68,7 +93,29 @@ namespace MCBJ.Experiments
             }
         }
 
-        private double voltageTreshold = 0.1;
+        private double minVoltageTresholdValue = 0.005;
+        public double MinVoltageTresholdValue
+        {
+            get { return minVoltageTresholdValue; }
+            set
+            {
+                minVoltageTresholdValue = value;
+                onPropertyChanged("MinVoltageTresholdValue");
+            }
+        }
+
+        private int minVoltageTresholdIndex;
+        public int MinVoltageTresholdIndex
+        {
+            get { return minVoltageTresholdIndex; }
+            set 
+            {
+                minVoltageTresholdIndex = value;
+                onPropertyChanged("MinVoltageTresholdIndex");
+            }
+        }
+
+        private double voltageTreshold;
         public double VoltageTreshold
         {
             get { return voltageTreshold; }
@@ -76,6 +123,28 @@ namespace MCBJ.Experiments
             {
                 voltageTreshold = value;
                 onPropertyChanged("VoltageTreshold");
+            }
+        }
+
+        private double voltageTresholdValue = 0.1;
+        public double VoltageTresholdValue
+        {
+            get { return voltageTresholdValue; }
+            set 
+            {
+                voltageTresholdValue = value;
+                onPropertyChanged("VoltageTresholdValue");
+            }
+        }
+
+        private int voltageTresholdIndex;        
+        public int VoltageTresholdIndex
+        {
+            get { return voltageTresholdIndex; }
+            set 
+            {
+                voltageTresholdIndex = value;
+                onPropertyChanged("VoltageTresholdIndex");
             }
         }
 

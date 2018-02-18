@@ -8,10 +8,12 @@ using System.Threading.Tasks;
 
 namespace MCBJNoiseStarter.Experiments
 {
+    [Serializable]
     public class Noise_DefinedResistanceModel : INotifyPropertyChanged
     {
         #region INotifyPropertyChanged implementation
 
+        [field: NonSerializedAttribute()]
         public event PropertyChangedEventHandler PropertyChanged;
 
         void onPropertyChanged(string PropertyName)

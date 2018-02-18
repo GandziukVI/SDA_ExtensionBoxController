@@ -4,7 +4,7 @@
         xmlns:wpfTool="clr-namespace:Xceed.Wpf.Toolkit;assembly=Xceed.Wpf.Toolkit"
         xmlns:local="clr-namespace:MCBJNoiseStarter"
         xmlns:Experiments="clr-namespace:MCBJNoiseStarter.Experiments"
-        Title="MainWindow" Height="600" Width="325">
+        Title="MCBJ Noise Starter" Height="600" Width="325" Closing="onWindowClosing" Loaded="onWindowLoaded">
 
     <Window.Resources>
         <Experiments:ValueCollectionConverter x:Key="CollectionConverter" />
@@ -52,7 +52,7 @@
     </Window.Resources>
 
     <Window.DataContext>
-        <Experiments:Noise_DefinedResistanceModel x:Name="Settings" />
+        <Experiments:Noise_DefinedResistanceModel />
     </Window.DataContext>
 
     <Grid>

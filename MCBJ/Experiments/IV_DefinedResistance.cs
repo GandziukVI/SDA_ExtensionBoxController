@@ -54,7 +54,7 @@ namespace MCBJ.Experiments
 
         public override void ToDo(object Arg)
         {
-            var settings = (IV_DefinedResistanceInfo)Arg;
+            var settings = (IV_DefinedResistanceModel)Arg;
 
             var setVolt = settings.ScanningVoltage;
             var setCond = settings.SetConductance;

@@ -107,7 +107,8 @@
     <Reference Include="WindowsBase" />
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
-    <Reference Include="Xceed.Wpf.Toolkit">
+    <Reference Include="Xceed.Wpf.Toolkit, Version=2.2.0.0, Culture=neutral, PublicKeyToken=3e4669d2f30244f4, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\Third_Part_Libraries\Xceed.Wpf.Toolkit.dll</HintPath>
     </Reference>
   </ItemGroup>
@@ -116,6 +117,9 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Views\ExtendedDoubleUpDown.xaml.cs">
+      <DependentUpon>ExtendedDoubleUpDown.xaml</DependentUpon>
+    </Compile>
     <Page Include="Experiments\IV_at_DefinedResistance.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -138,13 +142,13 @@
       <DependentUpon>IV_at_DefinedResistance.xaml</DependentUpon>
     </Compile>
     <Compile Include="Experiments\IV_DefinedResistance.cs" />
-    <Compile Include="Experiments\IV_DefinedResistanceInfo.cs" />
+    <Compile Include="Experiments\IV_DefinedResistanceModel.cs" />
     <Compile Include="Experiments\NoiseCalibration.cs" />
     <Compile Include="Experiments\Noise_at_DefinedResistance.xaml.cs">
       <DependentUpon>Noise_at_DefinedResistance.xaml</DependentUpon>
     </Compile>
     <Compile Include="Experiments\Noise_DefinedResistance.cs" />
-    <Compile Include="Experiments\Noise_DefinedResistanceInfo.cs" />
+    <Compile Include="Experiments\Noise_DefinedResistanceModel.cs" />
     <Compile Include="Experiments\ParametersConverter.cs" />
     <Compile Include="Experiments\TT_SmartMode.cs" />
     <Compile Include="Experiments\TT_SmartModeInfo.cs" />
@@ -152,6 +156,10 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="Views\ExtendedDoubleUpDown.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs">
@@ -225,6 +233,9 @@
       <Project>{1fcbc722-6805-4cab-b58b-1ad1fc8f3b55}</Project>
       <Name>SpectralAnalysis</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="ViewModels\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -57,29 +57,21 @@ namespace FETNoiseStarter
             InitializeComponent();
         }
 
-        private void SelectAddress(object sender, System.Windows.RoutedEventArgs e)
+        private void onWindowLoaded(object sender, RoutedEventArgs e)
         {
-            TextBox tb = (sender as TextBox);
-
-            if (tb != null)
+            var fileName = GetSerializationFilePath();
+            if (File.Exists(fileName))
             {
-                tb.SelectAll();
+                var context = DeserializeDataContext(fileName);
+                DataContext = context;
+                dialog.SelectedPath = context.FilePath;
             }
         }
 
-        private void SelectivelyIgnoreMouseButton(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        private void onWindowClosing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            TextBox tb = (sender as TextBox);
-
-            if (tb != null)
-            {
-                if (!tb.IsKeyboardFocusWithin)
-                {
-                    e.Handled = true;
-                    tb.Focus();
-                }
-            }
-        }
+            SerializeDataContext(GetSerializationFilePath());
+        }  
 
         private void on_cmdStartClick(object sender, RoutedEventArgs e)
         {
@@ -116,8 +108,6 @@ namespace FETNoiseStarter
 
                 if (nResidualSpectra > 0)
                     innerLoopSelectionList.Add(innerLoopCollection.Where((value, index) => index >= nCompleteSelections * Settings.NMaxSpectra && index < nCompleteSelections * Settings.NMaxSpectra + nResidualSpectra).ToArray());
-
-                var converter = new ValueCollectionConverter();
 
                 for (int i = 0; i < outerLoopCollection.Length; i++)
                 {
@@ -180,23 +170,31 @@ namespace FETNoiseStarter
                 startInfo.FileName = Directory.GetCurrentDirectory();
 
             Process.Start(startInfo);
-        }
+        }             
 
-        private void onWindowLoaded(object sender, RoutedEventArgs e)
+        private void SelectAddress(object sender, System.Windows.RoutedEventArgs e)
         {
-            var fileName = GetSerializationFilePath();
-            if (File.Exists(fileName))
+            TextBox tb = (sender as TextBox);
+
+            if (tb != null)
             {
-                var context = DeserializeDataContext(fileName);
-                DataContext = context;
-                dialog.SelectedPath = context.FilePath;
+                tb.SelectAll();
             }
         }
 
-        private void onWindowClosing(object sender, System.ComponentModel.CancelEventArgs e)
+        private void SelectivelyIgnoreMouseButton(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
-            SerializeDataContext(GetSerializationFilePath());
-        }       
+            TextBox tb = (sender as TextBox);
+
+            if (tb != null)
+            {
+                if (!tb.IsKeyboardFocusWithin)
+                {
+                    e.Handled = true;
+                    tb.Focus();
+                }
+            }
+        }
 
         string GetSerializationFilePath()
         {

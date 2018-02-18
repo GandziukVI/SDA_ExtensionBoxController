@@ -49,7 +49,7 @@ namespace MCBJ.Experiments
         private AutoResetEvent TT_AutoresetEvent = new AutoResetEvent(false);
         private FileStream TT_Stream;
 
-        private Noise_DefinedResistanceInfo experimentSettings;
+        private Noise_DefinedResistanceModel experimentSettings;
 
         private Point[] amplifierNoise;
         private Point[] frequencyResponce;
@@ -1102,7 +1102,7 @@ namespace MCBJ.Experiments
             onStatusChanged(new StatusEventArgs("Measurement started."));
             onProgressChanged(new ProgressEventArgs(0.0));
 
-            experimentSettings = (Noise_DefinedResistanceInfo)Arg;
+            experimentSettings = (Noise_DefinedResistanceModel)Arg;
 
             #region Writing data to log files
 

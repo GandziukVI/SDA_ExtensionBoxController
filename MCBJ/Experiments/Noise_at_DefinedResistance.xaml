@@ -5,206 +5,215 @@
 	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 	xmlns:wpfTool="clr-namespace:Xceed.Wpf.Toolkit;assembly=Xceed.Wpf.Toolkit"
 	xmlns:d3="http://research.microsoft.com/DynamicDataDisplay/1.0"
+    xmlns:local="clr-namespace:MCBJ"
 	xmlns:Experiments="clr-namespace:MCBJ.Experiments"
 	mc:Ignorable="d"
 	x:Class="MCBJ.Noise_at_DefinedResistance"
 	x:Name="UserControl"
-	d:DesignWidth="640" d:DesignHeight="480">
+	d:DesignWidth="640" d:DesignHeight="480" Loaded="onMCBJNoiseLoaded">
 
-	<UserControl.DataContext>
-		<Experiments:Noise_DefinedResistanceInfo x:Name="Settings" />
-	</UserControl.DataContext>
+    <UserControl.DataContext>
+        <Experiments:Noise_DefinedResistanceModel />
+    </UserControl.DataContext>
 
-	<UserControl.Resources>
-		<Experiments:ValueCollectionConverter x:Key="CollectionConverter" />
-		<d3:Log10Transform x:Key="SpectraDataTransform" />
-		<d3:LogarithmNumericTicksProvider x:Key="Log10XTicksProvider" />
-		<d3:LogarithmNumericTicksProvider x:Key="Log10YTicksProvider" />
+    <UserControl.Resources>
+        <Experiments:ValueCollectionConverter x:Key="CollectionConverter" />
+        <d3:Log10Transform x:Key="SpectraDataTransform" />
+        <d3:LogarithmNumericTicksProvider x:Key="Log10XTicksProvider" />
+        <d3:LogarithmNumericTicksProvider x:Key="Log10YTicksProvider" />
 
         <Style TargetType="TextBlock">
-			<Setter Property="Margin" Value="2.5" />
-			<Setter Property="HorizontalAlignment" Value="Stretch" />
-			<Setter Property="VerticalAlignment" Value="Stretch" />
-		</Style>
-		<Style TargetType="CheckBox">
-			<Setter Property="Margin" Value="2.5" />
-			<Setter Property="HorizontalAlignment" Value="Stretch" />
-			<Setter Property="VerticalAlignment" Value="Stretch" />
-			<Setter Property="VerticalContentAlignment" Value="Center" />
-		</Style>
-		<Style TargetType="wpfTool:DoubleUpDown">
-			<Setter Property="Margin" Value="2.5" />
-			<Setter Property="Width" Value="110" />
-			<Setter Property="MaxWidth" Value="110" />			
-			<Setter Property="HorizontalAlignment" Value="Stretch" />
-			<Setter Property="VerticalAlignment" Value="Stretch" />
-			<Setter Property="CultureInfo" Value="en-Us"/>
-			<Setter Property="FormatString" Value="G4" />
-		</Style>
-		<Style TargetType="wpfTool:IntegerUpDown">
-			<Setter Property="Margin" Value="2.5" />
-			<Setter Property="Width" Value="110" />
-			<Setter Property="MaxWidth" Value="110" />	
-			<Setter Property="HorizontalAlignment" Value="Stretch" />
-			<Setter Property="VerticalAlignment" Value="Stretch" />
-		</Style>
-		<Style TargetType="Button">
-			<Setter Property="Margin" Value="2.5" />
-			<Setter Property="Height" Value="35" />
-			<Setter Property="HorizontalAlignment" Value="Stretch" />
-			<Setter Property="VerticalAlignment" Value="Bottom" />
-		</Style>
-		<Style TargetType="ComboBox">
-			<Setter Property="Margin" Value="2.5" />
-		</Style>
-		<Style TargetType="TextBox">
-			<Setter Property="Margin" Value="2.5" />
-			<Setter Property="Width" Value="110" />
-			<Setter Property="MaxWidth" Value="110" />
-			<Setter Property="HorizontalContentAlignment" Value="Stretch" />
-			<Setter Property="VerticalAlignment" Value="Stretch" />
-			<Setter Property="HorizontalContentAlignment" Value="Right" />
-			<Setter Property="VerticalContentAlignment" Value="Center" />
-			<Setter Property="TextWrapping" Value="NoWrap" />
-		</Style>
-	</UserControl.Resources>
+            <Setter Property="Margin" Value="2.5" />
+            <Setter Property="HorizontalAlignment" Value="Stretch" />
+            <Setter Property="VerticalAlignment" Value="Stretch" />
+        </Style>
+        <Style TargetType="CheckBox">
+            <Setter Property="Margin" Value="2.5" />
+            <Setter Property="HorizontalAlignment" Value="Stretch" />
+            <Setter Property="VerticalAlignment" Value="Stretch" />
+            <Setter Property="VerticalContentAlignment" Value="Center" />
+        </Style>
+        <Style TargetType="wpfTool:DoubleUpDown">
+            <Setter Property="Margin" Value="2.5" />
+            <Setter Property="Width" Value="110" />
+            <Setter Property="MaxWidth" Value="110" />
+            <Setter Property="HorizontalAlignment" Value="Stretch" />
+            <Setter Property="VerticalAlignment" Value="Stretch" />
+            <Setter Property="CultureInfo" Value="en-Us"/>
+            <Setter Property="FormatString" Value="G4" />
+        </Style>
+        <Style TargetType="wpfTool:IntegerUpDown">
+            <Setter Property="Margin" Value="2.5" />
+            <Setter Property="Width" Value="110" />
+            <Setter Property="MaxWidth" Value="110" />
+            <Setter Property="HorizontalAlignment" Value="Stretch" />
+            <Setter Property="VerticalAlignment" Value="Stretch" />
+        </Style>
+        <Style TargetType="local:ExtendedDoubleUpDown">
+            <Setter Property="Margin" Value="2.5" />
+            <Setter Property="Width" Value="110" />
+            <Setter Property="MaxWidth" Value="110" />
+            <Setter Property="HorizontalAlignment" Value="Stretch" />
+            <Setter Property="VerticalAlignment" Value="Stretch" />
+            <Setter Property="FormatString" Value="G4" />
+        </Style>
+        <Style TargetType="Button">
+            <Setter Property="Margin" Value="2.5" />
+            <Setter Property="Height" Value="35" />
+            <Setter Property="HorizontalAlignment" Value="Stretch" />
+            <Setter Property="VerticalAlignment" Value="Bottom" />
+        </Style>
+        <Style TargetType="ComboBox">
+            <Setter Property="Margin" Value="2.5" />
+        </Style>
+        <Style TargetType="TextBox">
+            <Setter Property="Margin" Value="2.5" />
+            <Setter Property="Width" Value="110" />
+            <Setter Property="MaxWidth" Value="110" />
+            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+            <Setter Property="VerticalAlignment" Value="Stretch" />
+            <Setter Property="HorizontalContentAlignment" Value="Right" />
+            <Setter Property="VerticalContentAlignment" Value="Center" />
+            <Setter Property="TextWrapping" Value="NoWrap" />
+        </Style>
+    </UserControl.Resources>
 
-	<Grid x:Name="LayoutRoot" Margin="10,10,10,2">
-		<Grid.ColumnDefinitions>
-			<ColumnDefinition/>
-			<ColumnDefinition Width="Auto"/>
-		</Grid.ColumnDefinitions>
-		<Grid.RowDefinitions>
-			<RowDefinition />
-			<RowDefinition Height="Auto" />
-		</Grid.RowDefinitions>
-		<d3:ChartPlotter x:Name="chartIV" Margin="5" LegendVisibility="Collapsed" NewLegendVisible="False" DataTransform="{StaticResource SpectraDataTransform}" Grid.RowSpan="2">
-			<d3:HorizontalAxis TicksProvider="{StaticResource Log10XTicksProvider}">
-				<d3:HorizontalAxisTitle Content="Frequency (Hz)" />
-			</d3:HorizontalAxis>
-			<d3:VerticalAxis TicksProvider="{StaticResource Log10YTicksProvider}">
-				<d3:VerticalAxisTitle>
-					<TextBlock>S<Run FontSize="9" BaselineAlignment="Subscript">V</Run> (V<Run FontSize="9" BaselineAlignment="Superscript">2</Run> / Hz)</TextBlock>
-				</d3:VerticalAxisTitle>
-			</d3:VerticalAxis>
-		</d3:ChartPlotter>
-		<ScrollViewer Grid.Column="1" VerticalScrollBarVisibility="Auto">
-			<Grid>
-			<Grid.ColumnDefinitions>
-				<ColumnDefinition Width="Auto"/>
-				<ColumnDefinition />
-			</Grid.ColumnDefinitions>
-			<Grid.RowDefinitions>
-				<RowDefinition Height="Auto"/>
-				<RowDefinition Height="Auto"/>
-				<RowDefinition Height="Auto"/>
-				<RowDefinition Height="Auto"/>
-				<RowDefinition Height="Auto"/>
-				<RowDefinition Height="Auto"/>
-				<RowDefinition Height="Auto"/>
-				<RowDefinition Height="Auto"/>
-				<RowDefinition Height="Auto"/>
-				<RowDefinition Height="Auto"/>
-				<RowDefinition Height="Auto"/>
-				<RowDefinition Height="Auto"/>
-				<RowDefinition Height="Auto"/>
-				<RowDefinition Height="Auto"/>
-				<RowDefinition Height="Auto"/>
-				<RowDefinition Height="20" MaxHeight="20"/>
-				<RowDefinition Height="Auto"/>
-				<RowDefinition Height="Auto"/>
-				<RowDefinition Height="Auto"/>
-				<RowDefinition Height="Auto"/>
-				<RowDefinition Height="Auto"/>
-				<RowDefinition Height="Auto"/>
-				<RowDefinition Height="Auto"/>
-				<RowDefinition Height="Auto"/>
-				<RowDefinition Height="Auto"/>
-				<RowDefinition Height="Auto"/>
-				<RowDefinition Height="Auto"/>
-				<RowDefinition Height="Auto"/>
-				<RowDefinition MinHeight="50"/>			
-			</Grid.RowDefinitions>
+    <Grid x:Name="LayoutRoot" Margin="10,10,10,2">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition/>
+            <ColumnDefinition Width="Auto"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <d3:ChartPlotter x:Name="chartIV" Margin="5" LegendVisibility="Collapsed" NewLegendVisible="False" DataTransform="{StaticResource SpectraDataTransform}" Grid.RowSpan="2">
+            <d3:HorizontalAxis TicksProvider="{StaticResource Log10XTicksProvider}">
+                <d3:HorizontalAxisTitle Content="Frequency (Hz)" />
+            </d3:HorizontalAxis>
+            <d3:VerticalAxis TicksProvider="{StaticResource Log10YTicksProvider}">
+                <d3:VerticalAxisTitle>
+                    <TextBlock>S<Run FontSize="9" BaselineAlignment="Subscript">V</Run> (V<Run FontSize="9" BaselineAlignment="Superscript">2</Run> / Hz)</TextBlock>
+                </d3:VerticalAxisTitle>
+            </d3:VerticalAxis>
+        </d3:ChartPlotter>
+        <ScrollViewer Grid.Column="1" VerticalScrollBarVisibility="Auto">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="20" MaxHeight="20"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition MinHeight="50"/>
+                </Grid.RowDefinitions>
 
-			<TextBlock TextWrapping="Wrap" Text="Agilent U2542A res." />
-			<TextBlock TextWrapping="Wrap" Text="Scanning voltages" Grid.Row="1" />
-			<TextBlock TextWrapping="Wrap" Text="Voltage deviation" Grid.Row="2" Margin="2.5,2.5,2.5,2"/>
-			<TextBlock TextWrapping="Wrap" Text="Min voltage treshold" Grid.Row="3" Margin="2.5"/>
-			<TextBlock TextWrapping="Wrap" Text="Max voltage treshold" Grid.Row="4" Margin="2.5"/>
-			<TextBlock TextWrapping="Wrap" Text="Conductances" Grid.Row="5" ToolTip=""/>
-			<TextBlock TextWrapping="Wrap" Text="Resistances" Grid.Row="6"/>
-			<TextBlock TextWrapping="Wrap" Text="Conductance dev." Grid.Row="7"/>
-			<TextBlock TextWrapping="Wrap" Text="Stabilization time" Grid.Row="8"/>
-			<TextBlock TextWrapping="Wrap" Text="Motor min speed" Grid.Row="9"/>
-			<TextBlock TextWrapping="Wrap" Text="Motor max speed" Grid.Row="10"/>
-			<TextBlock TextWrapping="Wrap" Text="Motor min pos." Grid.Row="11" ToolTip="The number of data points per branch."/>
-			<TextBlock TextWrapping="Wrap" Text="Motor max pos." Grid.Row="12"/>
-			<TextBlock TextWrapping="Wrap" Text="n Avg. (fast)" Grid.Row="13"/>
-			<TextBlock TextWrapping="Wrap" Text="n Avg. (slow)" Grid.Row="14"/>
-			<TextBlock TextWrapping="Wrap" Text="Load resistance" Grid.Row="16"/>			
-			<TextBlock TextWrapping="Wrap" Text="Sampling frequency" Grid.Row="17"/>
-			<TextBlock TextWrapping="Wrap" Text="N Sub-samples" Grid.Row="18"/>
-			<TextBlock TextWrapping="Wrap" Text="n Spectra avg." Grid.Row="19"/>
-			<TextBlock TextWrapping="Wrap" Text="Update freq." Grid.Row="20"/>
-			<TextBlock TextWrapping="Wrap" Text="k pre-Amp" Grid.Row="21"/>
-			<TextBlock TextWrapping="Wrap" Text="k Amp" Grid.Row="22"/>
-			<TextBlock TextWrapping="Wrap" Text="Temperature 0" Grid.Row="23"/>
-			<TextBlock TextWrapping="Wrap" Text="Temperature E" Grid.Row="24"/>
-			<TextBlock TextWrapping="Wrap" Text="Time trace Freq." Grid.Row="26" IsEnabled="{Binding IsChecked, ElementName=checkBox, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                <TextBlock TextWrapping="Wrap" Text="Agilent U2542A res." />
+                <TextBlock TextWrapping="Wrap" Text="Scanning voltages" Grid.Row="1" />
+                <TextBlock TextWrapping="Wrap" Text="Voltage deviation" Grid.Row="2" Margin="2.5,2.5,2.5,2"/>
+                <TextBlock TextWrapping="Wrap" Text="Min voltage treshold" Grid.Row="3" Margin="2.5"/>
+                <TextBlock TextWrapping="Wrap" Text="Max voltage treshold" Grid.Row="4" Margin="2.5"/>
+                <TextBlock TextWrapping="Wrap" Text="Conductances" Grid.Row="5" ToolTip=""/>
+                <TextBlock TextWrapping="Wrap" Text="Resistances" Grid.Row="6"/>
+                <TextBlock TextWrapping="Wrap" Text="Conductance dev." Grid.Row="7"/>
+                <TextBlock TextWrapping="Wrap" Text="Stabilization time" Grid.Row="8"/>
+                <TextBlock TextWrapping="Wrap" Text="Motor min speed" Grid.Row="9"/>
+                <TextBlock TextWrapping="Wrap" Text="Motor max speed" Grid.Row="10"/>
+                <TextBlock TextWrapping="Wrap" Text="Motor min pos." Grid.Row="11" ToolTip="The number of data points per branch."/>
+                <TextBlock TextWrapping="Wrap" Text="Motor max pos." Grid.Row="12"/>
+                <TextBlock TextWrapping="Wrap" Text="n Avg. (fast)" Grid.Row="13"/>
+                <TextBlock TextWrapping="Wrap" Text="n Avg. (slow)" Grid.Row="14"/>
+                <TextBlock TextWrapping="Wrap" Text="Load resistance" Grid.Row="16"/>
+                <TextBlock TextWrapping="Wrap" Text="Sampling frequency" Grid.Row="17"/>
+                <TextBlock TextWrapping="Wrap" Text="N Sub-samples" Grid.Row="18"/>
+                <TextBlock TextWrapping="Wrap" Text="n Spectra avg." Grid.Row="19"/>
+                <TextBlock TextWrapping="Wrap" Text="Update freq." Grid.Row="20"/>
+                <TextBlock TextWrapping="Wrap" Text="k pre-Amp" Grid.Row="21"/>
+                <TextBlock TextWrapping="Wrap" Text="k Amp" Grid.Row="22"/>
+                <TextBlock TextWrapping="Wrap" Text="Temperature 0" Grid.Row="23"/>
+                <TextBlock TextWrapping="Wrap" Text="Temperature E" Grid.Row="24"/>
+                <TextBlock TextWrapping="Wrap" Text="Time trace Freq." Grid.Row="26" IsEnabled="{Binding IsChecked, ElementName=checkBox, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
 
-			<TextBox Height="100" MaxHeight="100" VerticalContentAlignment="Top" HorizontalContentAlignment="Left" VerticalScrollBarVisibility="Auto" MouseDoubleClick="SelectAddress" PreviewMouseRightButtonUp="SelectivelyIgnoreMouseButton" GotFocus="SelectAddress" PreviewMouseLeftButtonDown="SelectivelyIgnoreMouseButton" Grid.Column="1" Text="{Binding AgilentU2542AResName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" AcceptsReturn="True" TextWrapping="Wrap" />
-			<TextBox Text="{Binding ScanningVoltageCollection, Converter={StaticResource CollectionConverter}, Mode=TwoWay, UpdateSourceTrigger=LostFocus}" Grid.Column="1" TextWrapping="Wrap" Height="100" MaxHeight="100" VerticalContentAlignment="Top" VerticalScrollBarVisibility="Auto" MouseDoubleClick="SelectAddress" PreviewMouseRightButtonUp="SelectivelyIgnoreMouseButton" GotFocus="SelectAddress" PreviewMouseLeftButtonDown="SelectivelyIgnoreMouseButton" Grid.Row="1"/>
-			<wpfTool:DoubleUpDown Grid.Row="2" Grid.Column="1" Value="{Binding VoltageDeviation, Mode=TwoWay, UpdateSourceTrigger=LostFocus}" Increment="0.0001"/>
-			<wpfTool:DoubleUpDown Grid.Row="3" Grid.Column="1" Value="{Binding MinVoltageTreshold, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"/>
-			<wpfTool:DoubleUpDown Grid.Row="4" Grid.Column="1" Value="{Binding VoltageTreshold, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"/>
-			<TextBox Grid.Row="5" Grid.Column="1" Text="{Binding SetConductanceCollection, Converter={StaticResource CollectionConverter}, Mode=TwoWay, UpdateSourceTrigger=LostFocus}" TextWrapping="Wrap" Height="100" MaxHeight="100" VerticalContentAlignment="Top" VerticalScrollBarVisibility="Auto" PreviewMouseLeftButtonDown="SelectivelyIgnoreMouseButton" MouseDoubleClick="SelectAddress" GotFocus="SelectAddress"/>
-			<TextBox Grid.Row="6" Grid.Column="1" Text="{Binding SetResistanceCollection, Converter={StaticResource CollectionConverter}, Mode=TwoWay, UpdateSourceTrigger=LostFocus}" TextWrapping="Wrap" Height="100" MaxHeight="100" VerticalContentAlignment="Top" VerticalScrollBarVisibility="Auto" GotFocus="SelectAddress" MouseDoubleClick="SelectAddress" PreviewMouseLeftButtonDown="SelectivelyIgnoreMouseButton"/>
-			<wpfTool:DoubleUpDown Grid.Row="7" Grid.Column="1" Value="{Binding ConductanceDeviation, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
-			<wpfTool:DoubleUpDown Grid.Row="8" Grid.Column="1" Value="{Binding StabilizationTime, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
-			<wpfTool:DoubleUpDown Grid.Row="9" Grid.Column="1" Value="{Binding MotionMinSpeed, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
-			<wpfTool:DoubleUpDown Grid.Row="10" Grid.Column="1" Value="{Binding MotionMaxSpeed, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
-			<wpfTool:IntegerUpDown Grid.Row="11" Grid.Column="1" Value="{Binding MotorMinPos, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
-			<wpfTool:IntegerUpDown Grid.Row="12" Grid.Column="1" Value="{Binding MotorMaxPos, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
-			<wpfTool:IntegerUpDown Grid.Row="13" Grid.Column="1" Value="{Binding NAveragesFast, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
-			<wpfTool:IntegerUpDown Grid.Row="14" Grid.Column="1" Value="{Binding NAveragesSlow, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
-			<wpfTool:DoubleUpDown Grid.Row="16" Grid.Column="1" Value="{Binding LoadResistance, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>			
-			<wpfTool:IntegerUpDown Grid.Row="17" Grid.Column="1" Value="{Binding SamplingFrequency, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" IsEnabled="False"/>
-			<wpfTool:IntegerUpDown Grid.Row="18" Grid.Column="1" Value="{Binding NSubSamples, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"/>
-			<wpfTool:IntegerUpDown Grid.Row="19" Grid.Column="1" Value="{Binding SpectraAveraging, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
-			<wpfTool:IntegerUpDown Grid.Row="20" Grid.Column="1" Value="{Binding UpdateNumber, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
-			<wpfTool:DoubleUpDown Grid.Row="21" Grid.Column="1" Value="{Binding KPreAmpl, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
-			<wpfTool:DoubleUpDown Grid.Row="22" Grid.Column="1" Value="{Binding KAmpl, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
-			<wpfTool:DoubleUpDown Grid.Row="23" Grid.Column="1" Value="{Binding Temperature0, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
-			<wpfTool:DoubleUpDown Grid.Row="24" Grid.Column="1" Value="{Binding TemperatureE, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                <TextBox Height="100" MaxHeight="100" VerticalContentAlignment="Top" HorizontalContentAlignment="Left" VerticalScrollBarVisibility="Auto" MouseDoubleClick="SelectAddress" PreviewMouseRightButtonUp="SelectivelyIgnoreMouseButton" GotFocus="SelectAddress" PreviewMouseLeftButtonDown="SelectivelyIgnoreMouseButton" Grid.Column="1" Text="{Binding AgilentU2542AResName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" AcceptsReturn="True" TextWrapping="Wrap" />
+                <TextBox Text="{Binding ScanningVoltageCollection, Converter={StaticResource CollectionConverter}, Mode=TwoWay, UpdateSourceTrigger=LostFocus}" Grid.Column="1" TextWrapping="Wrap" Height="100" MaxHeight="100" VerticalContentAlignment="Top" VerticalScrollBarVisibility="Auto" MouseDoubleClick="SelectAddress" PreviewMouseRightButtonUp="SelectivelyIgnoreMouseButton" GotFocus="SelectAddress" PreviewMouseLeftButtonDown="SelectivelyIgnoreMouseButton" Grid.Row="1"/>
+                <local:ExtendedDoubleUpDown Grid.Row="2" Grid.Column="1" UnitAlias="V" Value="{Binding VoltageDeviationValue, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" RealValue="{Binding VoltageDeviation, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" MultiplierIndex="{Binding VoltageDeviationIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                <local:ExtendedDoubleUpDown Grid.Row="3" Grid.Column="1" UnitAlias="V" Value="{Binding MinVoltageTresholdValue, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" RealValue="{Binding MinVoltageTreshold, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" MultiplierIndex="{Binding MinVoltageTresholdIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                <local:ExtendedDoubleUpDown Grid.Row="4" Grid.Column="1" UnitAlias="V" Value="{Binding VoltageTresholdValue, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" RealValue="{Binding VoltageTreshold, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" MultiplierIndex="{Binding VoltageTresholdIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                <TextBox Grid.Row="5" Grid.Column="1" Text="{Binding SetConductanceCollection, Converter={StaticResource CollectionConverter}, Mode=TwoWay, UpdateSourceTrigger=LostFocus}" TextWrapping="Wrap" Height="100" MaxHeight="100" VerticalContentAlignment="Top" VerticalScrollBarVisibility="Auto" PreviewMouseLeftButtonDown="SelectivelyIgnoreMouseButton" MouseDoubleClick="SelectAddress" GotFocus="SelectAddress"/>
+                <TextBox Grid.Row="6" Grid.Column="1" Text="{Binding SetResistanceCollection, Converter={StaticResource CollectionConverter}, Mode=TwoWay, UpdateSourceTrigger=LostFocus}" TextWrapping="Wrap" Height="100" MaxHeight="100" VerticalContentAlignment="Top" VerticalScrollBarVisibility="Auto" GotFocus="SelectAddress" MouseDoubleClick="SelectAddress" PreviewMouseLeftButtonDown="SelectivelyIgnoreMouseButton"/>
+                <wpfTool:DoubleUpDown Grid.Row="7" Grid.Column="1" Value="{Binding ConductanceDeviation, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                <wpfTool:DoubleUpDown Grid.Row="8" Grid.Column="1" Value="{Binding StabilizationTime, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                <wpfTool:DoubleUpDown Grid.Row="9" Grid.Column="1" Value="{Binding MotionMinSpeed, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                <wpfTool:DoubleUpDown Grid.Row="10" Grid.Column="1" Value="{Binding MotionMaxSpeed, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                <wpfTool:IntegerUpDown Grid.Row="11" Grid.Column="1" Value="{Binding MotorMinPos, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                <wpfTool:IntegerUpDown Grid.Row="12" Grid.Column="1" Value="{Binding MotorMaxPos, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                <wpfTool:IntegerUpDown Grid.Row="13" Grid.Column="1" Value="{Binding NAveragesFast, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                <wpfTool:IntegerUpDown Grid.Row="14" Grid.Column="1" Value="{Binding NAveragesSlow, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                <wpfTool:DoubleUpDown Grid.Row="16" Grid.Column="1" Value="{Binding LoadResistance, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                <wpfTool:IntegerUpDown Grid.Row="17" Grid.Column="1" Value="{Binding SamplingFrequency, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" IsEnabled="False"/>
+                <wpfTool:IntegerUpDown Grid.Row="18" Grid.Column="1" Value="{Binding NSubSamples, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"/>
+                <wpfTool:IntegerUpDown Grid.Row="19" Grid.Column="1" Value="{Binding SpectraAveraging, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                <wpfTool:IntegerUpDown Grid.Row="20" Grid.Column="1" Value="{Binding UpdateNumber, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                <wpfTool:DoubleUpDown Grid.Row="21" Grid.Column="1" Value="{Binding KPreAmpl, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                <wpfTool:DoubleUpDown Grid.Row="22" Grid.Column="1" Value="{Binding KAmpl, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                <wpfTool:DoubleUpDown Grid.Row="23" Grid.Column="1" Value="{Binding Temperature0, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                <wpfTool:DoubleUpDown Grid.Row="24" Grid.Column="1" Value="{Binding TemperatureE, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
 
-			<CheckBox x:Name="checkBox" Grid.Row="25" Grid.ColumnSpan="2" Content="Record time trace" IsChecked="{Binding RecordTimeTraces, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"></CheckBox>
-			<wpfTool:IntegerUpDown Grid.Row="26" Grid.Column="1" IsEnabled="{Binding IsChecked, ElementName=checkBox, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Value="{Binding RecordingFrequency, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                <CheckBox x:Name="checkBox" Grid.Row="25" Grid.ColumnSpan="2" Content="Record time trace" IsChecked="{Binding RecordTimeTraces, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"></CheckBox>
+                <wpfTool:IntegerUpDown Grid.Row="26" Grid.Column="1" IsEnabled="{Binding IsChecked, ElementName=checkBox, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Value="{Binding RecordingFrequency, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
 
-			<Separator BorderThickness="1,2" Height="1" Grid.Row="27" Grid.ColumnSpan="2" Margin="2.5,5,2.5,20" Background="Black" BorderBrush="#FFAAAAAA" />
-			<Grid Grid.Row="28" Grid.ColumnSpan="2">
-				<Grid.ColumnDefinitions>
-					<ColumnDefinition Width="Auto" />
-					<ColumnDefinition />
-				</Grid.ColumnDefinitions>
-				<Button x:Name="cmdOpenFolder" Content="..." HorizontalAlignment="Center" VerticalAlignment="Center" Width="35" Click="on_cmdOpenFolderClick">
-					<Button.ContextMenu>
-						<ContextMenu>
-							<MenuItem Header="Open data folder" Click="on_MCBJ_OpenDataFolder_Click" />
-						</ContextMenu>
-					</Button.ContextMenu>
-				</Button>
-				<TextBox Grid.Column="1" Margin="10,2.5,2.5,2" HorizontalAlignment="Stretch" VerticalContentAlignment="Center" HorizontalContentAlignment="Left" Height="35" Text="{Binding SaveFileName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Width="Auto" MaxWidth="173" Padding="5,0,0,0"/>
-			</Grid>		
-		</Grid>
-		</ScrollViewer>
-		<Grid Grid.Row="2" Grid.Column="1">
-			<Grid.ColumnDefinitions>
-				<ColumnDefinition />
-				<ColumnDefinition />
-			</Grid.ColumnDefinitions>
+                <Separator BorderThickness="1,2" Height="1" Grid.Row="27" Grid.ColumnSpan="2" Margin="2.5,5,2.5,20" Background="Black" BorderBrush="#FFAAAAAA" />
+                <Grid Grid.Row="28" Grid.ColumnSpan="2">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition />
+                    </Grid.ColumnDefinitions>
+                    <Button x:Name="cmdOpenFolder" Content="..." HorizontalAlignment="Center" VerticalAlignment="Center" Width="35" Click="on_cmdOpenFolderClick">
+                        <Button.ContextMenu>
+                            <ContextMenu>
+                                <MenuItem Header="Open data folder" Click="on_MCBJ_OpenDataFolder_Click" />
+                            </ContextMenu>
+                        </Button.ContextMenu>
+                    </Button>
+                    <TextBox Grid.Column="1" Margin="10,2.5,2.5,2" HorizontalAlignment="Stretch" VerticalContentAlignment="Center" HorizontalContentAlignment="Left" Height="35" Text="{Binding SaveFileName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Width="Auto" MaxWidth="173" Padding="5,0,0,0"/>
+                </Grid>
+            </Grid>
+        </ScrollViewer>
+        <Grid Grid.Row="2" Grid.Column="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition />
+                <ColumnDefinition />
+            </Grid.ColumnDefinitions>
 
-			<Button x:Name="cmdStart" Content="START" />
-			<Button x:Name="cmdStop" Content="STOP" Grid.Column="1"/>
-		</Grid>	
-	</Grid>
+            <Button x:Name="cmdStart" Content="START" Height="Auto" VerticalAlignment="Stretch" Click="cmdStart_Click" />
+            <Button x:Name="cmdStop" Content="STOP" Grid.Column="1" VerticalAlignment="Stretch"/>
+        </Grid>
+    </Grid>
 </UserControl>
