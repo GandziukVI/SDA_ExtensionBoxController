@@ -30,6 +30,27 @@ namespace FETNoiseStarter
     {
         System.Windows.Forms.FolderBrowserDialog dialog;
 
+        private readonly object isInProgressLocker = new object();
+
+        private bool isInProgress = false;        
+        public bool IsInProgress
+        {
+            get 
+            {
+                lock(isInProgressLocker)
+                {
+                    return isInProgress; 
+                }                
+            }
+            set 
+            {
+                lock (isInProgressLocker)
+                {
+                    isInProgress = value;
+                }
+            }
+        }
+
         public MainWindow()
         {
             dialog = new System.Windows.Forms.FolderBrowserDialog();
@@ -62,8 +83,9 @@ namespace FETNoiseStarter
 
         private void on_cmdStartClick(object sender, RoutedEventArgs e)
         {
-            var filePath = GetSerializationFilePath();
-            
+            IsInProgress = true;
+
+            var filePath = GetSerializationFilePath();            
             SerializeDataContext(filePath);
 
             Task.Factory.StartNew(new Action(() =>
@@ -99,8 +121,12 @@ namespace FETNoiseStarter
 
                 for (int i = 0; i < outerLoopCollection.Length; i++)
                 {
+                    if (!IsInProgress)
+                        break;
                     for (int j = 0; j < innerLoopSelectionList.Count; j++)
                     {
+                        if (!IsInProgress)
+                            break;
                         var innerLoopSelection = innerLoopSelectionList[j];                        
 
                         if (Settings.IsTransferCurveMode == true)
@@ -113,8 +139,8 @@ namespace FETNoiseStarter
                             Settings.DSVoltageCollection = innerLoopSelection;
                             Settings.GateVoltageCollection = new double[] { outerLoopCollection[i] };
                         }
-                        
-                        var noiseFilePath = Directory.GetCurrentDirectory() + "\\FET Characterization";
+
+                        var noiseFilePath = GetNoiseSerializationFilePath(); ;
                         var noiseFileDir = System.IO.Path.GetDirectoryName(noiseFilePath);
 
                         if (!Directory.Exists(noiseFileDir))
@@ -131,11 +157,11 @@ namespace FETNoiseStarter
                     }
                 }
             }));
-        }
+        }                
 
         private void on_cmdStopClick(object sender, RoutedEventArgs e)
         {
-
+            IsInProgress = false;
         }
 
         private void on_cmdOpenFolderClick(object sender, RoutedEventArgs e)
