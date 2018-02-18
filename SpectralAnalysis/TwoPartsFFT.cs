@@ -32,8 +32,6 @@ namespace SpectralAnalysis
             double equivalentNoiseBandwidthLowFreq, equivalentNoiseBandwidthHighFreq;
             double coherentGainLowFreq, coherentGainHighFreq;
 
-            var filter = new NationalInstruments.Analysis.Dsp.Filters.EllipticLowpassFilter(filterOrder, samplingFrequency, cutOffLowFreq, 0.1, 100.0);
-
             // Subsetting samples from the entire trace
             var timeTraceSelectionList = new LinkedList<double[]>();
 
@@ -46,13 +44,15 @@ namespace SpectralAnalysis
                 ++i;
             }
 
+            var filter = new NationalInstruments.Analysis.Dsp.Filters.EllipticLowpassFilter(filterOrder, samplingFrequency, filterFrequency, 0.1, 100.0);
+
+            var unit = new System.Text.StringBuilder("V", 256);
+
             var noisePSD = new Point[] { };
 
             // Calculating FFT in each sample
             foreach (var trace in timeTraceSelectionList)
             {
-                var unit = new System.Text.StringBuilder("V", 256);
-
                 // Calculation of the LOW-FREQUENCY part of the spectrum
 
                 // Filtering data for low frequency selection

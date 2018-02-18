@@ -574,8 +574,8 @@ namespace FET_Characterization.Experiments
                         {
                             var TTVoltageValues = (from item in timeTrace
                                                    select item.Y).ToArray();
-
-                            var singleNoiseSpectrum = twoPartsFFT.GetTwoPartsFFT(TTVoltageValues, samplingFrequency, 1, 1.0, 1.0, 1600, 102400, 8, -1, 100, 10);
+                            
+                            var singleNoiseSpectrum = twoPartsFFT.GetTwoPartsFFT(TTVoltageValues, samplingFrequency, 1, 1.0, 1.0, 1600, 102400, 8, 5000, 10, 10);
 
                             if (noisePSD == null || noisePSD.Length == 0)
                             {
