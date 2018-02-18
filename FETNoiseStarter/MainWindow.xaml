@@ -4,7 +4,7 @@
         xmlns:wpfTool="clr-namespace:Xceed.Wpf.Toolkit;assembly=Xceed.Wpf.Toolkit"
         xmlns:local="clr-namespace:FETNoiseStarter"
         xmlns:Experiments="clr-namespace:FETNoiseStarter.Experiments"
-        Title="MainWindow" Height="600" Width="325">
+        Title="FET Noise Starter" Height="600" Width="325" Closing="onWindowClosing" Loaded="onWindowLoaded">
     
     <Window.Resources>
         <Experiments:ValueCollectionConverter x:Key="CollectionConverter" />

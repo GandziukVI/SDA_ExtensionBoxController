@@ -62,21 +62,13 @@ namespace FETNoiseStarter
 
         private void on_cmdStartClick(object sender, RoutedEventArgs e)
         {
-            var filePath = Directory.GetCurrentDirectory() + "tempFETNoiseMeasurement.bin";
-            var formatter = new BinaryFormatter();
-            using (var stream = new FileStream(filePath, FileMode.Create, FileAccess.Write))
-            {
-                formatter.Serialize(stream, DataContext);
-            }
+            var filePath = GetSerializationFilePath();
+            
+            SerializeDataContext(filePath);
 
             Task.Factory.StartNew(new Action(() =>
-            {                
-                FET_NoiseModel Settings;
-
-                using (var stream = new FileStream(filePath, FileMode.Open, FileAccess.Read))
-                {
-                    Settings = formatter.Deserialize(stream) as FET_NoiseModel;
-                }
+            {
+                var Settings = DeserializeDataContext(filePath);                
 
                 double[] outerLoopCollection;
                 double[] innerLoopCollection;
@@ -122,16 +114,13 @@ namespace FETNoiseStarter
                             Settings.GateVoltageCollection = new double[] { outerLoopCollection[i] };
                         }
                         
-                        var path = Directory.GetCurrentDirectory() + "\\FET Characterization";
-                        if (!Directory.Exists(path))
-                            Directory.CreateDirectory(path);
+                        var noiseFilePath = Directory.GetCurrentDirectory() + "\\FET Characterization";
+                        var noiseFileDir = System.IO.Path.GetDirectoryName(noiseFilePath);
+
+                        if (!Directory.Exists(noiseFileDir))
+                            Directory.CreateDirectory(noiseFileDir);
                         
-                        var noiseFilePath = path + "\\FETNoiseSettings.bin";
-                        
-                        using (var stream = new FileStream(noiseFilePath, FileMode.Create, FileAccess.Write))
-                        {
-                            formatter.Serialize(stream, Settings);
-                        }
+                        SerializeDataContext(noiseFilePath, Settings);
 
                         using (var process = Process.Start("FET Characterization.exe", "FETNoise"))
                         {
@@ -166,5 +155,61 @@ namespace FETNoiseStarter
 
             Process.Start(startInfo);
         }
+
+        private void onWindowLoaded(object sender, RoutedEventArgs e)
+        {
+            var fileName = GetSerializationFilePath();
+            if (File.Exists(fileName))
+            {
+                var context = DeserializeDataContext(fileName);
+                DataContext = context;
+                dialog.SelectedPath = context.FilePath;
+            }
+        }
+
+        private void onWindowClosing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            SerializeDataContext(GetSerializationFilePath());
+        }       
+
+        string GetSerializationFilePath()
+        {
+            return Directory.GetCurrentDirectory() + "\\NoiseFETStarter.bin";
+        }
+
+        string GetNoiseSerializationFilePath()
+        {
+            return Directory.GetCurrentDirectory() + "\\FET Characterization\\FETNoiseSettings.bin";
+        }
+
+        void SerializeDataContext(string filePath)
+        {            
+            var formatter = new BinaryFormatter();
+            using (var stream = new FileStream(filePath, FileMode.Create, FileAccess.Write))
+            {
+                formatter.Serialize(stream, DataContext);
+            }
+        }
+
+        void SerializeDataContext(string filePath, object context)
+        {
+            var formatter = new BinaryFormatter();
+            using (var stream = new FileStream(filePath, FileMode.Open, FileAccess.Write))
+            {
+                formatter.Serialize(stream, context);
+            }
+        }
+
+        FET_NoiseModel DeserializeDataContext(string filePath)
+        {
+            FET_NoiseModel result;
+            var formatter = new BinaryFormatter();
+            using (var stream = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.Read))
+            {
+                result = formatter.Deserialize(stream) as FET_NoiseModel;
+            }
+
+            return result;
+        }        
     }
 }
