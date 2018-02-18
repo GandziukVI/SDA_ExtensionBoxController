@@ -323,17 +323,14 @@ namespace FET_Characterization
         void cmdStartNoise_Click(object sender, RoutedEventArgs e)
         {
             var control = measurementInterface as FET_Noise;
-            var settings = control.DataContext as FET_NoiseModel;            
+            var settings = control.DataContext as FET_NoiseModel;                        
 
             control.chartFETOscilloscope.Children.RemoveAll(typeof(LineGraph));
             control.chartFETOscilloscope.Legend.Visibility = System.Windows.Visibility.Collapsed;
 
-            control.graphFETNoise.Children.RemoveAll(typeof(NationalInstruments.Controls.Plot));
-
-            var psdPlot = new NationalInstruments.Controls.Plot();
-            psdPlot.DataContext = FETNoiseDataSource;
-            
-            control.graphFETNoise.Plots.Add(psdPlot);
+            //control.graphFETNoise.Children.RemoveAll(typeof(NationalInstruments.Controls.Plot));
+            //var psdPlot = new NationalInstruments.Controls.Plot();            
+            //control.graphFETNoise.Plots.Add(psdPlot);
 
             //(measurementInterface as FET_Noise).chartFETNoise.Children.RemoveAll(typeof(LineGraph));
             //(measurementInterface as FET_Noise).chartFETNoise.Legend.Visibility = System.Windows.Visibility.Collapsed;                        
@@ -373,27 +370,42 @@ namespace FET_Characterization
         {
             try
             {
-                FETNoiseDataList.Clear();
-
-                var noiseDataString = NoiseDataString;
-
-                var dataPoints = noiseDataString.Substring(2)
+                var dataPoints = NoiseDataString.Substring(2)
                     .Split(delim, StringSplitOptions.RemoveEmptyEntries)
                     .Select(v => v.Split(sep, StringSplitOptions.RemoveEmptyEntries))
                     .Select(v => Array.ConvertAll(v, x => double.Parse(x, NumberFormatInfo.InvariantInfo)))
                     .Select(v => new Point(v[0], v[1])).ToArray();
 
-                var toPlot = from item in D3Helper.PointSelector.SelectNPointsPerDecade(ref dataPoints, 100)
+                var toPlot = (from item in D3Helper.PointSelector.SelectNPointsPerDecade(ref dataPoints, 100)
                              where item.Y > 0
-                             select item;
+                             select new double[] { item.X, item.Y }).ToArray();
 
-                foreach (var item in toPlot)
-                    FETNoiseDataList.AddLast(item);
+                var control = measurementInterface as FET_Noise;
+                var settings = control.DataContext as FET_NoiseModel;
 
-                Dispatcher.InvokeAsync(new Action(() =>
-                {
-                    FETNoiseDataSource.RaiseDataChanged();
-                }));
+                settings.NoisePSDData.Append(toPlot);
+
+            //    FETNoiseDataList.Clear();
+
+            //    var noiseDataString = NoiseDataString;
+
+            //    var dataPoints = noiseDataString.Substring(2)
+            //        .Split(delim, StringSplitOptions.RemoveEmptyEntries)
+            //        .Select(v => v.Split(sep, StringSplitOptions.RemoveEmptyEntries))
+            //        .Select(v => Array.ConvertAll(v, x => double.Parse(x, NumberFormatInfo.InvariantInfo)))
+            //        .Select(v => new Point(v[0], v[1])).ToArray();
+
+            //    var toPlot = from item in D3Helper.PointSelector.SelectNPointsPerDecade(ref dataPoints, 100)
+            //                 where item.Y > 0
+            //                 select item;
+
+            //    foreach (var item in toPlot)
+            //        FETNoiseDataList.AddLast(item);
+
+            //    Dispatcher.InvokeAsync(new Action(() =>
+            //    {
+            //        FETNoiseDataSource.RaiseDataChanged();
+            //    }));
             }
             catch { }
         }

@@ -389,5 +389,16 @@ namespace FET_Characterization
                 NotifyPropertyChanged("SaveFileName");
             }
         }
+
+        private NationalInstruments.AnalogWaveform<double[]> noisePSDData = new NationalInstruments.AnalogWaveform<double[]>(0);
+        public NationalInstruments.AnalogWaveform<double[]> NoisePSDData
+        {
+            get { return noisePSDData; }
+            set
+            {
+                noisePSDData = value;
+                NotifyPropertyChanged("NoisePSDData");
+            }
+        }
     }
 }
