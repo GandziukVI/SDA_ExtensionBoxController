@@ -997,7 +997,7 @@ namespace MCBJ.Experiments
                             var TTVoltageValues = (from item in timeTrace
                                                    select item.Y).ToArray();
 
-                            var singleNoiseSpectrum = twoPartsFFT.GetTwoPartsFFT(TTVoltageValues, samplingFrequency = experimentSettings.SamplingFrequency, experimentSettings.NSubSamples);
+                            var singleNoiseSpectrum = twoPartsFFT.GetTwoPartsFFT(TTVoltageValues, samplingFrequency, 1, 1.0, 1.0, 1600, 102400, 8, 6400, 10, 10);
 
                             if (noisePSD == null || noisePSD.Length == 0)
                             {

@@ -17,7 +17,7 @@ namespace SpectralAnalysis
 {
     public class TwoPartsFFT
     {
-        public Point[] GetTwoPartsFFT(double[] timeTrace, int samplingFrequency = 500000, int nDataSamples = 1, double kAmpl = 1.0, double lowFreqStartFreq = 1.0, double cutOffLowFreq = 1600, double cutOffHighFreq = 102400, int filterOrder = 8, double filterFrequency = -1, int lowFreqPeriod = 100, int highFreqPeriod = 10)
+        public Point[] GetTwoPartsFFT(double[] timeTrace, int samplingFrequency = 500000, int nDataSamples = 1, double kAmpl = 1.0, double lowFreqStartFreq = 1.0, double cutOffLowFreq = 1600, double cutOffHighFreq = 102400, int filterOrder = 8, double filterFrequency = 6400, int lowFreqPeriod = 10, int highFreqPeriod = 10)
         {
             Point[] autoPSDLowFreq = new Point[] { };
             Point[] autoPSDHighFreq = new Point[] { };
