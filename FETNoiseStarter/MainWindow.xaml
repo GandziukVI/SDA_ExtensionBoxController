@@ -5,7 +5,7 @@
         xmlns:local="clr-namespace:FETNoiseStarter"
         xmlns:Experiments="clr-namespace:FETNoiseStarter.Experiments"
         Title="FET Noise Starter" Height="600" Width="325" Closing="onWindowClosing" Loaded="onWindowLoaded">
-    
+
     <Window.Resources>
         <Experiments:ValueCollectionConverter x:Key="CollectionConverter" />
 
@@ -54,11 +54,11 @@
             <Setter Property="TextWrapping" Value="NoWrap" />
         </Style>
     </Window.Resources>
-    
+
     <Window.DataContext>
         <local:FET_NoiseModel />
     </Window.DataContext>
-    
+
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition />
@@ -72,19 +72,19 @@
                 </Grid.ColumnDefinitions>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
-                    <RowDefinition Height="20" MaxHeight="20" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
@@ -137,6 +137,9 @@
 
                 <TextBlock TextWrapping="Wrap" Text="Stabilization time" Grid.Row="12"/>
                 <wpfTool:DoubleUpDown Grid.Row="12" Grid.Column="1" Value="{Binding StabilizationTime, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+                <TextBlock TextWrapping="Wrap" Text="Amp input resistance" Grid.Row="13" />
+                <wpfTool:DoubleUpDown Grid.Row="13" Grid.Column="1" Value="{Binding AmpInputResistance, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
                 <TextBlock TextWrapping="Wrap" Text="Load resistance" Grid.Row="14"/>
                 <wpfTool:DoubleUpDown Grid.Row="14" Grid.Column="1" Value="{Binding LoadResistance, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />

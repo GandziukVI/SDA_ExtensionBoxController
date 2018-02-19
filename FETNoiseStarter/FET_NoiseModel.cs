@@ -251,6 +251,17 @@ namespace FETNoiseStarter
             }
         }
 
+        private double ampInputResistance = 1000000.0;
+        public double AmpInputResistance
+        {
+            get { return ampInputResistance;}
+            set
+            {
+                 ampInputResistance = value;
+                 NotifyPropertyChanged("AmpInputResistance");
+            }
+        }
+
         private double loadResistance = 5000.0;
         public double LoadResistance
         {

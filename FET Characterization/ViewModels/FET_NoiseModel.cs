@@ -19,7 +19,8 @@ namespace FET_Characterization
 			
 		}
 
-		#region INotifyPropertyChanged
+		#region INotifyPropertyChanged implementation
+
         [field:NonSerializedAttribute()]
 		public event PropertyChangedEventHandler PropertyChanged;
 
@@ -30,6 +31,7 @@ namespace FET_Characterization
 				PropertyChanged(this, new PropertyChangedEventArgs(info));
 			}
 		}
+
 		#endregion
 
         private string agilentU2542Ares = "USB0::2391::5912::TW54334510::INSTR";
@@ -111,7 +113,7 @@ namespace FET_Characterization
             }
         }
 
-        private int oscilloscopePointsPerGraph;
+        private int oscilloscopePointsPerGraph = 1000;
         public int OscilloscopePointsPerGraph
         {
             get { return oscilloscopePointsPerGraph; }
@@ -248,6 +250,17 @@ namespace FET_Characterization
                     throw new ArgumentException("The stabilization time should have positive value.");
 
                 NotifyPropertyChanged("StabilizationTime");
+            }
+        }
+
+        private double ampInputResistance = 1000000.0;
+        public double AmpInputResistance
+        {
+            get { return ampInputResistance;}
+            set
+            {
+                 ampInputResistance = value;
+                 NotifyPropertyChanged("AmpInputResistance");
             }
         }
 

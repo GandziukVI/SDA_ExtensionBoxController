@@ -769,25 +769,30 @@ namespace FET_Characterization.Experiments
                             // Enabling Vds DC measurement channel before measuring noise spectra
                             // for measuring sample characteristics before noise measurement
                             boxController.AO_ChannelCollection.ApplyVoltageToChannel(VdsEnableChannel, -6.2);
-
-                            VdsMotorPotentiometer = new BS350_MotorPotentiometer(boxController, VdsMotorOutChannel);
-                            VgMotorPotentiometer = new BS350_MotorPotentiometer(boxController, VgMotorOutChannel);
-
-                            if (experimentSettings.IsOutputCurveMode == true)
+                            
+                            if (experimentSettings.UseVoltageControl == true)
                             {
-                                onStatusChanged(new StatusEventArgs(string.Format("Setting gate voltage V -> {0} V", outerLoopVoltage.ToString("0.0000", NumberFormatInfo.InvariantInfo))));
-                                SetGateVoltage(outerLoopVoltage, experimentSettings.VoltageDeviation);
-                                onStatusChanged(new StatusEventArgs(string.Format("Setting drain-source voltage V -> {0} V", innerLoopVoltage.ToString("0.0000", NumberFormatInfo.InvariantInfo))));
-                                SetDrainSourceVoltage(innerLoopVoltage, experimentSettings.VoltageDeviation);
-                            }
-                            else if (experimentSettings.IsTransferCurveMode == true)
-                            {
-                                onStatusChanged(new StatusEventArgs(string.Format("Setting gate voltage V -> {0} V", innerLoopVoltage.ToString("0.0000", NumberFormatInfo.InvariantInfo))));
-                                SetGateVoltage(innerLoopVoltage, experimentSettings.VoltageDeviation);
-                                onStatusChanged(new StatusEventArgs(string.Format("Setting drain-source voltage V -> {0} V", outerLoopVoltage.ToString("0.0000", NumberFormatInfo.InvariantInfo))));
-                                SetDrainSourceVoltage(outerLoopVoltage, experimentSettings.VoltageDeviation);
-                            }
+                                VdsMotorPotentiometer = new BS350_MotorPotentiometer(boxController, VdsMotorOutChannel);
+                                VgMotorPotentiometer = new BS350_MotorPotentiometer(boxController, VgMotorOutChannel);
 
+                                if (experimentSettings.IsOutputCurveMode == true)
+                                {
+                                    onStatusChanged(new StatusEventArgs(string.Format("Setting gate voltage V -> {0} V", outerLoopVoltage.ToString("0.0000", NumberFormatInfo.InvariantInfo))));
+                                    SetGateVoltage(outerLoopVoltage, experimentSettings.VoltageDeviation);
+                                    onStatusChanged(new StatusEventArgs(string.Format("Setting drain-source voltage V -> {0} V", innerLoopVoltage.ToString("0.0000", NumberFormatInfo.InvariantInfo))));
+                                    SetDrainSourceVoltage(innerLoopVoltage, experimentSettings.VoltageDeviation);
+                                }
+                                else if (experimentSettings.IsTransferCurveMode == true)
+                                {
+                                    onStatusChanged(new StatusEventArgs(string.Format("Setting gate voltage V -> {0} V", innerLoopVoltage.ToString("0.0000", NumberFormatInfo.InvariantInfo))));
+                                    SetGateVoltage(innerLoopVoltage, experimentSettings.VoltageDeviation);
+                                    onStatusChanged(new StatusEventArgs(string.Format("Setting drain-source voltage V -> {0} V", outerLoopVoltage.ToString("0.0000", NumberFormatInfo.InvariantInfo))));
+                                    SetDrainSourceVoltage(outerLoopVoltage, experimentSettings.VoltageDeviation);
+                                }
+                            }
+                            else
+                                IsRunning = false;
+                            
                             onStatusChanged(new StatusEventArgs("Measuring sample characteristics before noise spectra measurement."));
 
                             confAIChannelsForDC_Measurement();
@@ -839,7 +844,7 @@ namespace FET_Characterization.Experiments
                                     noiseMeasLog.U0Gate = voltagesBeforeNoiseMeasurement[2];
                                     noiseMeasLog.R0sample = noiseMeasLog.U0sample / (noiseMeasLog.U0Rload / noiseMeasLog.Rload);
                                     noiseMeasLog.REsample = noiseMeasLog.SampleVoltage / (noiseMeasLog.URload / noiseMeasLog.Rload);
-                                    noiseMeasLog.EquivalentResistance = 1.0 / (1.0 / experimentSettings.LoadResistance + 1.0 / noiseMeasLog.REsample);
+                                    noiseMeasLog.EquivalentResistance = 1.0 / (1.0 / experimentSettings.LoadResistance + 1.0 / noiseMeasLog.REsample + 1.0 / experimentSettings.AmpInputResistance);
                                     noiseMeasLog.Temperature0 = experimentSettings.Temperature0;
                                     noiseMeasLog.TemperatureE = experimentSettings.TemperatureE;
                                     noiseMeasLog.kAmpl = experimentSettings.KAmpl;

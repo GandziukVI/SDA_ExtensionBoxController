@@ -293,8 +293,8 @@ namespace FET_Characterization
             var control = measurementInterface as FET_Noise;
             var settings = control.DataContext as FET_NoiseModel;                        
 
-            control.chartFETOscilloscope.Children.RemoveAll(typeof(LineGraph));
-            control.chartFETOscilloscope.Legend.Visibility = System.Windows.Visibility.Collapsed;
+            //control.chartFETOscilloscope.Children.RemoveAll(typeof(LineGraph));
+            //control.chartFETOscilloscope.Legend.Visibility = System.Windows.Visibility.Collapsed;
 
             //control.graphFETNoise.Children.RemoveAll(typeof(NationalInstruments.Controls.Plot));
             //var psdPlot = new NationalInstruments.Controls.Plot();            

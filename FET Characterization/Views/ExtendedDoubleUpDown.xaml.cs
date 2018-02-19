@@ -1,9 +1,10 @@
 ﻿using FET_Characterization.Experiments;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Globalization;
+using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -11,6 +12,7 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using System.Windows.Navigation;
 using System.Windows.Shapes;
 
 namespace FET_Characterization
@@ -20,7 +22,7 @@ namespace FET_Characterization
         IValueConverter multConv;
         public SelectedIndexMultiBindingConverter()
         {
-            multConv = new MultiplierConverter();;
+            multConv = new MultiplierConverter(); ;
         }
 
         public object Convert(object[] values, Type targetType, object parameter, System.Globalization.CultureInfo culture)
@@ -40,15 +42,14 @@ namespace FET_Characterization
     }
 
     /// <summary>
-    /// Логика взаимодействия для ExtendedDoubleUpDown.xaml
+    /// Interaction logic for ExtendedDoubleUpDown.xaml
     /// </summary>
     public partial class ExtendedDoubleUpDown : UserControl
     {
         public ExtendedDoubleUpDown()
         {
-            this.InitializeComponent();
+            InitializeComponent();
 
-            
             var multiValueConverter = new SelectedIndexMultiBindingConverter();
 
             var multiBinding = new MultiBinding() { NotifyOnSourceUpdated = true };
@@ -73,10 +74,14 @@ namespace FET_Characterization
         public double Value
         {
             get { return (double)GetValue(ValueProperty); }
-            set { SetValue(ValueProperty, value); }
+            set 
+            {
+                //SetValue(RealValueProperty, System.Convert.ToDouble(value, NumberFormatInfo.InvariantInfo) * System.Convert.ToDouble(GetValue(MultiplierProperty), NumberFormatInfo.InvariantInfo));
+                SetValue(ValueProperty, value); 
+            }
         }
 
-        static FrameworkPropertyMetadata ValuePropertyMetadata = new FrameworkPropertyMetadata(Double.NaN, flags, new PropertyChangedCallback(onValuePropertyChanged));
+        static FrameworkPropertyMetadata ValuePropertyMetadata = new FrameworkPropertyMetadata(0.0, flags, new PropertyChangedCallback(onValuePropertyChanged));
         static readonly DependencyProperty ValueProperty = DependencyProperty.Register(
             "Value",
             typeof(Double),
@@ -98,7 +103,7 @@ namespace FET_Characterization
             set { SetValue(RealValueProperty, value); }
         }
 
-        static FrameworkPropertyMetadata RealValueMetadata = new FrameworkPropertyMetadata(double.NaN, flags, new PropertyChangedCallback(onRealValuePropertyChanged));
+        static FrameworkPropertyMetadata RealValueMetadata = new FrameworkPropertyMetadata(0.0, flags, new PropertyChangedCallback(onRealValuePropertyChanged));
         public static readonly DependencyProperty RealValueProperty = DependencyProperty.Register(
             "RealValue",
             typeof(Double),
@@ -190,7 +195,11 @@ namespace FET_Characterization
         public double Multiplier
         {
             get { return (double)GetValue(MultiplierProperty); }
-            set { SetValue(MultiplierProperty, value); }
+            set 
+            {
+                //SetValue(RealValueProperty, System.Convert.ToDouble(GetValue(ValueProperty), NumberFormatInfo.InvariantInfo) * System.Convert.ToDouble(value, NumberFormatInfo.InvariantInfo));
+                SetValue(MultiplierProperty, value); 
+            }
         }
 
         static FrameworkPropertyMetadata MultiplierMetadata = new FrameworkPropertyMetadata(1.0, flags, new PropertyChangedCallback(onMultiplierPropertyChanged));
@@ -221,11 +230,11 @@ namespace FET_Characterization
         private static void onMultiplierIndexPropertyChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e)
         {
         }
-        
+
         public static readonly DependencyProperty MultiplierIndexProperty =
             DependencyProperty.Register("MultiplierIndex", typeof(int), typeof(ExtendedDoubleUpDown), MultiplierIndexMetadata);
 
-        
+
 
         #endregion
     }

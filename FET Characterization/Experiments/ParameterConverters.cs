@@ -456,15 +456,30 @@ namespace FET_Characterization.Experiments
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            var range = (NationalInstruments.Controls.Range<double>)value;
-            return range.Maximum;
+            var doubleRange = System.Convert.ToDouble(value, NumberFormatInfo.InvariantInfo);
+            return new NationalInstruments.Controls.Range<double>(-1.0 * doubleRange, doubleRange);
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            var doubleRange = System.Convert.ToDouble(value, NumberFormatInfo.InvariantInfo);
-            return new NationalInstruments.Controls.Range<double>(-1.0 * doubleRange, doubleRange);
+            var range = (NationalInstruments.Controls.Range<double>)value;
+            return range.Maximum;
         }
     }
 
+    [ValueConversion(typeof(double), typeof(NationalInstruments.Controls.Range<double>))]
+    public class OscilloscopeTimeAxisRangeConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            var doubleRange = System.Convert.ToDouble(value, NumberFormatInfo.InvariantInfo);
+            return new NationalInstruments.Controls.Range<double>(0.0, doubleRange);
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            var range = (NationalInstruments.Controls.Range<double>)value;
+            return range.Maximum;
+        }
+    }
 }
