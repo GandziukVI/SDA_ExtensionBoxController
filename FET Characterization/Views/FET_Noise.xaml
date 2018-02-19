@@ -91,10 +91,15 @@
 				<RowDefinition />
 			</Grid.RowDefinitions>
 
-			<d3:ChartPlotter x:Name="chartFETOscilloscope" Margin="5" LegendVisibility="Collapsed" NewLegendVisible="False" >
-				<d3:HorizontalAxisTitle Content="Time (s)" />
-				<d3:VerticalAxisTitle Content="Amplitude (V)" />
-			</d3:ChartPlotter>
+            <ni:Graph x:Name="chartFETOscilloscope" Margin="5">
+                <ni:Graph.Plots>
+                    <ni:Plot x:Name="timeTracePlot"/>
+                </ni:Graph.Plots>
+                <ni:Graph.Axes>
+                    <ni:AxisDouble Orientation="Horizontal" Adjuster="FitExactly" Label="Frequency, Hz" Range="0.5, 250000" ScaleKind="LogarithmBase10"/>
+                    <ni:AxisDouble Orientation="Vertical" Adjuster="FitExactly"  Label="Noise PSD, V^2 / Hz" Range="1e-19, 1e-4" ScaleKind="LogarithmBase10" />
+                </ni:Graph.Axes>
+            </ni:Graph>
 
 			<GridSplitter Grid.Row="1" Height="5" HorizontalAlignment="Stretch" VerticalAlignment="Center" />
             
@@ -173,22 +178,22 @@
 
 				<GroupBox Grid.Row="6" Grid.ColumnSpan="2" Margin="5">
 					<GroupBox.Header>
-						<TextBlock>Measurement mode</TextBlock>
+						<CheckBox IsChecked="{Binding UseVoltageControl, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">Use voltage control</CheckBox>
 					</GroupBox.Header>
 
-					<StackPanel Orientation="Vertical" Margin="0,5">
+                    <StackPanel IsEnabled="{Binding UseVoltageControl, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Orientation="Vertical" Margin="0,5">
 						<RadioButton IsChecked="{Binding IsTransferCurveMode, Mode=TwoWay}">Transfer curve</RadioButton>
 						<RadioButton IsChecked="{Binding IsOutputCurveMode, Mode=TwoWay}">Output curve</RadioButton>
 					</StackPanel>
 				</GroupBox>
 
 				<TextBlock TextWrapping="Wrap" Grid.Row="7" Padding="0,20,0,0">Gate Voltages V<Run FontSize="9" BaselineAlignment="Subscript">G</Run> (V)</TextBlock>
-				<TextBox Text="{Binding GateVoltageCollection, Converter={StaticResource CollectionConverter}, Mode=TwoWay, UpdateSourceTrigger=LostFocus}" Grid.Column="1" TextWrapping="Wrap" Height="100" MaxHeight="100" VerticalContentAlignment="Top" VerticalScrollBarVisibility="Auto" MouseDoubleClick="SelectAddress" PreviewMouseRightButtonUp="SelectivelyIgnoreMouseButton" GotFocus="SelectAddress" PreviewMouseLeftButtonDown="SelectivelyIgnoreMouseButton" Grid.Row="7" />
+				<TextBox Text="{Binding GateVoltageCollection, Converter={StaticResource CollectionConverter}, Mode=TwoWay, UpdateSourceTrigger=LostFocus}" Grid.Column="1" TextWrapping="Wrap" Height="100" MaxHeight="100" VerticalContentAlignment="Top" VerticalScrollBarVisibility="Auto" MouseDoubleClick="SelectAddress" PreviewMouseRightButtonUp="SelectivelyIgnoreMouseButton" GotFocus="SelectAddress" PreviewMouseLeftButtonDown="SelectivelyIgnoreMouseButton" Grid.Row="7" IsEnabled="{Binding UseVoltageControl, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
-				<TextBlock TextWrapping="Wrap" Grid.Row="8" Padding="0,20,0,0">D-S Voltages V<Run FontSize="9" BaselineAlignment="Subscript">DS</Run> (V)</TextBlock>
-				<TextBox Text="{Binding DSVoltageCollection, Converter={StaticResource CollectionConverter}, Mode=TwoWay, UpdateSourceTrigger=LostFocus}" Grid.Column="1" TextWrapping="Wrap" Height="100" MaxHeight="100" VerticalContentAlignment="Top" VerticalScrollBarVisibility="Auto" MouseDoubleClick="SelectAddress" PreviewMouseRightButtonUp="SelectivelyIgnoreMouseButton" GotFocus="SelectAddress" PreviewMouseLeftButtonDown="SelectivelyIgnoreMouseButton" Grid.Row="8" />
+				<TextBlock TextWrapping="Wrap" Grid.Row="8" Padding="0,20,0,0" IsEnabled="{Binding UseVoltageControl, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">D-S Voltages V<Run FontSize="9" BaselineAlignment="Subscript">DS</Run> (V)</TextBlock>
+				<TextBox Text="{Binding DSVoltageCollection, Converter={StaticResource CollectionConverter}, Mode=TwoWay, UpdateSourceTrigger=LostFocus}" Grid.Column="1" TextWrapping="Wrap" Height="100" MaxHeight="100" VerticalContentAlignment="Top" VerticalScrollBarVisibility="Auto" MouseDoubleClick="SelectAddress" PreviewMouseRightButtonUp="SelectivelyIgnoreMouseButton" GotFocus="SelectAddress" PreviewMouseLeftButtonDown="SelectivelyIgnoreMouseButton" Grid.Row="8" IsEnabled="{Binding UseVoltageControl, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
-				<TextBlock TextWrapping="Wrap" Text="Voltage deviation" Grid.Row="9" />
+				<TextBlock TextWrapping="Wrap" Text="Voltage deviation" Grid.Row="9" IsEnabled="{Binding UseVoltageControl, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                 <local:ExtendedDoubleUpDown Grid.Row="9" Grid.Column="1" UnitAlias="V" RealValue="{Binding VoltageDeviation, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Value="{Binding VoltageDeviationValue, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" MultiplierIndex="{Binding VoltageDeviationMultiplierIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"  />
 
 				<TextBlock TextWrapping="Wrap" Text="n Avg. (fast)" Grid.Row="10"/>

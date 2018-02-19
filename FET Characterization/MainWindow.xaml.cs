@@ -135,40 +135,8 @@ namespace FET_Characterization
             control.cmdStart.Click += cmdStartNoise_Click;
             control.cmdStop.Click += cmdStopNoise_Click;
 
-            (control.DataContext as FET_NoiseModel).PropertyChanged += FET_Exp_Property_Changed;
-
             measurementInterface = control;
             expStartInfo = control.DataContext;
-        }
-
-        private void FET_Exp_Property_Changed(object sender, PropertyChangedEventArgs e)
-        {
-            var exp = (measurementInterface as FET_Noise);
-            var settings = exp.DataContext as FET_NoiseModel;
-
-            switch (e.PropertyName)
-            {
-                case "OscilloscopeVoltageRange":
-                    {
-                        if (settings.OscilloscopeVoltageRange != 0.0)
-                        {
-                            var restr = new D3Helper.ViewportAxesRangeRestriction();
-                            restr.YRange = new D3Helper.DisplayRange(-1.0 * Math.Abs(settings.OscilloscopeVoltageRange), Math.Abs(settings.OscilloscopeVoltageRange));
-
-                            exp.chartFETOscilloscope.Restrictions.Add(restr);
-                        }
-                    } break;
-                case "OscilloscopeTimeRange":
-                    {
-                        if (settings.OscilloscopeTimeRange != 0.0)
-                        {
-                            var restr = new D3Helper.ViewportAxesRangeRestriction();
-                            restr.XRange = new D3Helper.DisplayRange(0.0, settings.OscilloscopeTimeRange);
-
-                            exp.chartFETOscilloscope.Restrictions.Add(restr);
-                        }
-                    } break;
-            }
         }
 
         #region Interface and logic for FET I-V measurement
@@ -378,12 +346,12 @@ namespace FET_Characterization
 
                 var toPlot = (from item in D3Helper.PointSelector.SelectNPointsPerDecade(ref dataPoints, 100)
                              where item.Y > 0
-                             select new double[] { item.X, item.Y }).ToArray();
+                             select item).ToArray();
 
                 var control = measurementInterface as FET_Noise;
                 var settings = control.DataContext as FET_NoiseModel;
 
-                settings.NoisePSDData.Append(toPlot);
+                settings.NoisePSDData = toPlot;
 
             //    FETNoiseDataList.Clear();
 

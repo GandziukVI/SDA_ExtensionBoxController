@@ -124,6 +124,18 @@ namespace FET_Characterization
 
         #endregion
 
+        private bool useVoltageControl = true;
+        public bool UseVoltageControl
+        {
+            get { return useVoltageControl; }
+            set 
+            {
+                useVoltageControl = value;
+                NotifyPropertyChanged("UseVoltageControl");
+            }
+        }
+        
+
         private bool isTransferCurveMode = true;
         public bool IsTransferCurveMode
         {
@@ -390,8 +402,8 @@ namespace FET_Characterization
             }
         }
 
-        private NationalInstruments.AnalogWaveform<double[]> noisePSDData = new NationalInstruments.AnalogWaveform<double[]>(0);
-        public NationalInstruments.AnalogWaveform<double[]> NoisePSDData
+        private System.Windows.Point[] noisePSDData;
+        public System.Windows.Point[] NoisePSDData
         {
             get { return noisePSDData; }
             set
