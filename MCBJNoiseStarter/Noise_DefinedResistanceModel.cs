@@ -25,6 +25,17 @@ namespace MCBJNoiseStarter.Experiments
 
         #endregion
 
+        private int nMaxSpectra = 10;
+        public int NMaxSpectra
+        {
+            get { return nMaxSpectra; }
+            set
+            {
+                nMaxSpectra = value;
+                onPropertyChanged("NMaxSpectra");
+            }
+        }
+
         private string agilentU2542Ares = "USB0::2391::5912::TW54334510::INSTR";
         public string AgilentU2542AResName
         {
@@ -33,17 +44,6 @@ namespace MCBJNoiseStarter.Experiments
             {
                 agilentU2542Ares = value;
                 onPropertyChanged("AgilentU2542AResName");
-            }
-        }
-
-        private int nMaxSpectra = 10;
-        public int NMaxSpectra
-        {
-            get { return nMaxSpectra; }
-            set 
-            {
-                nMaxSpectra = value;
-                onPropertyChanged("NMaxSpectra");
             }
         }
 
@@ -59,7 +59,7 @@ namespace MCBJNoiseStarter.Experiments
             }
         }
 
-        private double voltageDeviation = 0.0002;
+        private double voltageDeviation;
         public double VoltageDeviation
         {
             get { return voltageDeviation; }
@@ -70,7 +70,30 @@ namespace MCBJNoiseStarter.Experiments
             }
         }
 
-        private double minVoltageTreshold = 0.005;
+        private double voltageDeviationValue = 0.0002;
+        public double VoltageDeviationValue
+        {
+            get { return voltageDeviationValue; }
+            set
+            {
+                voltageDeviationValue = value;
+                onPropertyChanged("VoltageDeviationValue");
+            }
+        }
+
+        private int voltageDeviationIndex;
+        public int VoltageDeviationIndex
+        {
+            get { return voltageDeviationIndex; }
+            set
+            {
+                voltageDeviationIndex = value;
+                onPropertyChanged("VoltageDeviationIndex");
+            }
+        }
+
+
+        private double minVoltageTreshold;
         public double MinVoltageTreshold
         {
             get { return minVoltageTreshold; }
@@ -81,7 +104,29 @@ namespace MCBJNoiseStarter.Experiments
             }
         }
 
-        private double voltageTreshold = 0.1;
+        private double minVoltageTresholdValue = 0.005;
+        public double MinVoltageTresholdValue
+        {
+            get { return minVoltageTresholdValue; }
+            set
+            {
+                minVoltageTresholdValue = value;
+                onPropertyChanged("MinVoltageTresholdValue");
+            }
+        }
+
+        private int minVoltageTresholdIndex;
+        public int MinVoltageTresholdIndex
+        {
+            get { return minVoltageTresholdIndex; }
+            set
+            {
+                minVoltageTresholdIndex = value;
+                onPropertyChanged("MinVoltageTresholdIndex");
+            }
+        }
+
+        private double voltageTreshold;
         public double VoltageTreshold
         {
             get { return voltageTreshold; }
@@ -89,6 +134,28 @@ namespace MCBJNoiseStarter.Experiments
             {
                 voltageTreshold = value;
                 onPropertyChanged("VoltageTreshold");
+            }
+        }
+
+        private double voltageTresholdValue = 0.1;
+        public double VoltageTresholdValue
+        {
+            get { return voltageTresholdValue; }
+            set
+            {
+                voltageTresholdValue = value;
+                onPropertyChanged("VoltageTresholdValue");
+            }
+        }
+
+        private int voltageTresholdIndex;
+        public int VoltageTresholdIndex
+        {
+            get { return voltageTresholdIndex; }
+            set
+            {
+                voltageTresholdIndex = value;
+                onPropertyChanged("VoltageTresholdIndex");
             }
         }
 
@@ -381,22 +448,20 @@ namespace MCBJNoiseStarter.Experiments
         {
             var query = (from val in arr
                          select new
-                             {
-                                 diff = Math.Abs(val - value),
-                                 arrElem = val
-                             }).OrderBy(c => c.diff).First();
+                         {
+                             diff = Math.Abs(val - value),
+                             arrElem = val
+                         }).OrderBy(c => c.diff).First();
 
             return query.arrElem;
         }
 
-        private int recordingFrequency = 262144;
+        private int recordingFrequency = 50000;
         public int RecordingFrequency
         {
             get { return recordingFrequency; }
             set
             {
-                value = getClosestValueInArray(value, powersOfTwo);
-
                 recordingFrequency = value;
                 onPropertyChanged("RecordingFrequency");
             }

@@ -445,14 +445,12 @@ namespace MCBJ.Experiments
             return query.arrElem;
         }
 
-        private int recordingFrequency = 262144;
+        private int recordingFrequency = 50000;
         public int RecordingFrequency
         {
             get { return recordingFrequency; }
             set
             {
-                value = getClosestValueInArray(value, powersOfTwo);
-
                 recordingFrequency = value;
                 onPropertyChanged("RecordingFrequency");
             }

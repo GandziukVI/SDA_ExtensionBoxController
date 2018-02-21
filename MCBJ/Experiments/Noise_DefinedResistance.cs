@@ -436,103 +436,103 @@ namespace MCBJ.Experiments
             motorPotentiometer.StopMotion();
         }
 
-        void setDrainVoltage(double voltage, double voltageDev)
-        {
-            setVoltage(VdsMotorPotentiometer, 3, voltage, voltageDev);
-        }
-
         //void setDrainVoltage(double voltage, double voltageDev)
         //{
-        //    voltage = Math.Abs(voltage);
-        //    var intervalCoarse = voltage * (1.0 - 1.0 / Math.Sqrt(2.0));
-
-        //    averagingNumberFast = experimentSettings.NAveragesFast;
-
-        //    double drainVoltageCurr = 0.0,
-        //        drainVoltagePrev = 0.0,
-        //        factorCoarse = 0.0;
-
-        //    confAIChannelsForDC_Measurement();
-
-        //    accuracyStopWatch.Start();
-
-        //    while (true)
-        //    {
-        //        var voltages = boxController.VoltageMeasurement_AllChannels(averagingNumberFast);
-
-        //        onStatusChanged(new StatusEventArgs(string.Format("Vs = {0} (=> {1} V), Vm = {2}", voltages[3].ToString("0.0000", NumberFormatInfo.InvariantInfo), voltage.ToString("0.0000", NumberFormatInfo.InvariantInfo), voltages[1].ToString("0.0000", NumberFormatInfo.InvariantInfo))));
-
-        //        drainVoltageCurr = Math.Abs(voltages[3]);
-
-        //        var speed = minSpeed;
-        //        try
-        //        {
-        //            factorCoarse = (1.0 - Math.Tanh(-1.0 * Math.Abs(voltage - drainVoltageCurr) / intervalCoarse * Math.PI + Math.PI)) / 2.0;
-        //            speed = (byte)(minSpeed + (maxSpeed - minSpeed) * factorCoarse);
-        //        }
-        //        catch { speed = minSpeed; }
-
-        //        if ((drainVoltageCurr >= Math.Abs(voltage - voltageDev)) &&
-        //            (drainVoltageCurr <= Math.Abs(voltage + voltageDev)))
-        //        {
-        //            VdsMotorPotentiometer.StopMotion();
-        //            accuracyStopWatch.Stop();
-        //            break;
-        //        }
-        //        else
-        //        {
-        //            // Implementing voltage set with enchansed accuracy
-        //            if (estimationList.Count > estimationCollectionSize)
-        //                estimationList.RemoveFirst();
-
-        //            estimationList.AddLast(new Point(accuracyStopWatch.ElapsedMilliseconds, Math.Abs(drainVoltagePrev - drainVoltageCurr)));
-
-        //            var timeAVG = estimationList.Select(val => val.X).Average();
-        //            var voltAVG = estimationList.Select(val => val.Y).Average();
-
-        //            var voltPerMilisecond = timeAVG != 0 ? voltAVG / timeAVG : voltAVG;
-
-        //            var stepTime = (int)(Math.Abs(voltage - drainVoltageCurr) / voltPerMilisecond);
-
-        //            if (drainVoltageCurr > voltage)
-        //            {
-        //                if (voltageDev >= 0.006 || drainVoltageCurr - voltage > 2.0 * voltageDev)
-        //                {
-        //                    averagingNumberFast = 2;
-        //                    VdsMotorPotentiometer.StartMotion(speed, MotionDirection.cw);
-        //                }
-        //                else
-        //                {
-        //                    VdsMotorPotentiometer.StartMotion(speed, MotionDirection.cw);
-        //                    Thread.Sleep(stepTime);
-        //                    VdsMotorPotentiometer.StopMotion();
-        //                    averagingNumberFast = 25;
-        //                }
-        //            }
-        //            else
-        //            {
-        //                if (voltageDev >= 0.006 || voltage - drainVoltageCurr > 2.0 * voltageDev)
-        //                {
-        //                    averagingNumberFast = 2;
-        //                    VdsMotorPotentiometer.StartMotion(speed, MotionDirection.ccw);
-        //                }
-        //                else
-        //                {
-        //                    VdsMotorPotentiometer.StartMotion(speed, MotionDirection.ccw);
-        //                    Thread.Sleep(stepTime);
-        //                    VdsMotorPotentiometer.StopMotion();
-        //                    averagingNumberFast = 25;
-        //                }
-        //            }
-
-        //            accuracyStopWatch.Restart();
-        //        }
-
-        //        drainVoltagePrev = drainVoltageCurr;
-        //    }
-
-        //    VdsMotorPotentiometer.StopMotion();
+        //    setVoltage(VdsMotorPotentiometer, 3, voltage, voltageDev);
         //}
+
+        void setDrainVoltage(double voltage, double voltageDev)
+        {
+            voltage = Math.Abs(voltage);
+            var intervalCoarse = voltage * (1.0 - 1.0 / Math.Sqrt(2.0));
+
+            averagingNumberFast = experimentSettings.NAveragesFast;
+
+            double drainVoltageCurr = 0.0,
+                drainVoltagePrev = 0.0,
+                factorCoarse = 0.0;
+
+            confAIChannelsForDC_Measurement();
+
+            accuracyStopWatch.Start();
+
+            while (true)
+            {
+                var voltages = boxController.VoltageMeasurement_AllChannels(averagingNumberFast);
+
+                onStatusChanged(new StatusEventArgs(string.Format("Vs = {0} (=> {1} V), Vm = {2}", voltages[3].ToString("0.0000", NumberFormatInfo.InvariantInfo), voltage.ToString("0.0000", NumberFormatInfo.InvariantInfo), voltages[1].ToString("0.0000", NumberFormatInfo.InvariantInfo))));
+
+                drainVoltageCurr = Math.Abs(voltages[3]);
+
+                var speed = minSpeed;
+                try
+                {
+                    factorCoarse = (1.0 - Math.Tanh(-1.0 * Math.Abs(voltage - drainVoltageCurr) / intervalCoarse * Math.PI + Math.PI)) / 2.0;
+                    speed = (byte)(minSpeed + (maxSpeed - minSpeed) * factorCoarse);
+                }
+                catch { speed = minSpeed; }
+
+                if ((drainVoltageCurr >= Math.Abs(voltage - voltageDev)) &&
+                    (drainVoltageCurr <= Math.Abs(voltage + voltageDev)))
+                {
+                    VdsMotorPotentiometer.StopMotion();
+                    accuracyStopWatch.Stop();
+                    break;
+                }
+                else
+                {
+                    // Implementing voltage set with enchansed accuracy
+                    if (estimationList.Count > estimationCollectionSize)
+                        estimationList.RemoveFirst();
+
+                    estimationList.AddLast(new Point(accuracyStopWatch.ElapsedMilliseconds, Math.Abs(drainVoltagePrev - drainVoltageCurr)));
+
+                    var timeAVG = estimationList.Select(val => val.X).Average();
+                    var voltAVG = estimationList.Select(val => val.Y).Average();
+
+                    var voltPerMilisecond = timeAVG != 0 ? voltAVG / timeAVG : voltAVG;
+
+                    var stepTime = (int)(Math.Abs(voltage - drainVoltageCurr) / voltPerMilisecond);
+
+                    if (drainVoltageCurr > voltage)
+                    {
+                        if (voltageDev >= 0.006 || drainVoltageCurr - voltage > 2.0 * voltageDev)
+                        {
+                            averagingNumberFast = 2;
+                            VdsMotorPotentiometer.StartMotion(speed, MotionDirection.cw);
+                        }
+                        else
+                        {
+                            VdsMotorPotentiometer.StartMotion(speed, MotionDirection.cw);
+                            Thread.Sleep(stepTime);
+                            VdsMotorPotentiometer.StopMotion();
+                            averagingNumberFast = 25;
+                        }
+                    }
+                    else
+                    {
+                        if (voltageDev >= 0.006 || voltage - drainVoltageCurr > 2.0 * voltageDev)
+                        {
+                            averagingNumberFast = 2;
+                            VdsMotorPotentiometer.StartMotion(speed, MotionDirection.ccw);
+                        }
+                        else
+                        {
+                            VdsMotorPotentiometer.StartMotion(speed, MotionDirection.ccw);
+                            Thread.Sleep(stepTime);
+                            VdsMotorPotentiometer.StopMotion();
+                            averagingNumberFast = 25;
+                        }
+                    }
+
+                    accuracyStopWatch.Restart();
+                }
+
+                drainVoltagePrev = drainVoltageCurr;
+            }
+
+            VdsMotorPotentiometer.StopMotion();
+        }
 
         double measureResistance(
 
@@ -1166,11 +1166,12 @@ namespace MCBJ.Experiments
                             var VdsMotorOutChannel = BOX_AnalogOutChannelsEnum.BOX_AOut_01;
                             var VdsEnableChannel = BOX_AnalogOutChannelsEnum.BOX_AOut_09;
 
+                            VdsMotorPotentiometer = new BS350_MotorPotentiometer(boxController, VdsMotorOutChannel);
+
                             // Enabling Vds DC measurement channel before measuring noise spectra
                             // for measuring sample characteristics before noise measurement
                             boxController.AO_ChannelCollection.ApplyVoltageToChannel(VdsEnableChannel, -6.2);
-
-                            VdsMotorPotentiometer = new BS350_MotorPotentiometer(boxController, VdsMotorOutChannel);
+                            //confAIChannelsForDC_Measurement();
 
                             onStatusChanged(new StatusEventArgs(string.Format("Setting sample voltage V -> {0} V", voltage.ToString("0.0000", NumberFormatInfo.InvariantInfo))));
 

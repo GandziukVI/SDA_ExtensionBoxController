@@ -75,9 +75,8 @@ namespace MCBJ
             var fileName = GetNoiseSerializationFilePath();
             if (File.Exists(fileName))
             {
-                var context = DeserializeDataContext(fileName);
-                DataContext = context;
-                dialog.SelectedPath = context.FilePath;
+                DeserializeDataContext(fileName);
+                dialog.SelectedPath = (DataContext as Noise_DefinedResistanceModel).FilePath;
             }
         }
 
@@ -88,28 +87,32 @@ namespace MCBJ
 
         string GetNoiseSerializationFilePath()
         {
-            return Directory.GetCurrentDirectory() + "\\MCBJ Characterization\\MCBJNoiseSettings.bin";
+            return Directory.GetCurrentDirectory() + "\\MCBJCharacterization\\MCBJNoiseSettings.bin";
         }
 
         void SerializeDataContext(string filePath)
         {
             var formatter = new BinaryFormatter();
+            var dir = System.IO.Path.GetDirectoryName(filePath);
+            if (!Directory.Exists(dir))
+                Directory.CreateDirectory(dir);
+
             using (var stream = new FileStream(filePath, FileMode.Create, FileAccess.Write))
             {
                 formatter.Serialize(stream, DataContext);
             }
         }
 
-        Noise_DefinedResistanceModel DeserializeDataContext(string filePath)
+        void DeserializeDataContext(string filePath)
         {
-            Noise_DefinedResistanceModel result;
             var formatter = new BinaryFormatter();
-            using (var stream = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.Read))
+            if(File.Exists(filePath))
             {
-                result = formatter.Deserialize(stream) as Noise_DefinedResistanceModel;
+                using (var stream = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.Read))
+                {
+                    DataContext = formatter.Deserialize(stream);
+                }
             }
-
-            return result;
         }              
     }
 }

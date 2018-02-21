@@ -7,8 +7,7 @@
 	mc:Ignorable="d"
 	xmlns:local="clr-namespace:MCBJ"
     xmlns:Experiments="clr-namespace:MCBJ.Experiments"
-	x:Class="MCBJ.ExtendedDoubleUpDown"
-	x:Name="extendedDoubleUpDownControl">
+	x:Class="MCBJ.ExtendedDoubleUpDown" >
 	
 	<UserControl.Resources>
 		<Experiments:MultiplierConverter x:Key="MultiplierConverter"/>
@@ -18,34 +17,34 @@
 			<Setter Property="HorizontalAlignment" Value="Left" />
 		</Style>
 	</UserControl.Resources>
-	
-	<Grid>
-		<Grid.ColumnDefinitions>
-			<ColumnDefinition />
-			<ColumnDefinition Width="Auto"/>
-		</Grid.ColumnDefinitions>
-		<wpfTool:DoubleUpDown x:Name="DataInput" Value="{Binding Value, ElementName=extendedDoubleUpDownControl}" Margin="0,0,5,0" MinWidth="0" Width="Auto" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
-		<ComboBox x:Name="DataMultiplier" Grid.Column="1" Width="50" VerticalContentAlignment="Center" Height="{Binding Height, ElementName=DataInput, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="0" MinWidth="50" MaxWidth="50" >
-			<ComboBoxItem>
-				<ComboBoxItem.Content>
-					<TextBlock></TextBlock>
-				</ComboBoxItem.Content>				
-			</ComboBoxItem>
-			<ComboBoxItem>
-				<ComboBoxItem.Content>
-					<TextBlock>m</TextBlock>
-				</ComboBoxItem.Content>				
-			</ComboBoxItem>
-			<ComboBoxItem>
-				<ComboBoxItem.Content>
-					<TextBlock>µ</TextBlock>
-				</ComboBoxItem.Content>				
-			</ComboBoxItem>					
-			<ComboBoxItem>
-				<ComboBoxItem.Content>
-					<TextBlock>n</TextBlock>
-				</ComboBoxItem.Content>				
-			</ComboBoxItem>
-		</ComboBox>
-	</Grid>
+
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition />
+            <ColumnDefinition Width="Auto"/>
+        </Grid.ColumnDefinitions>
+        <wpfTool:DoubleUpDown x:Name="DataInput" Value="{Binding Value, Mode=TwoWay, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:ExtendedDoubleUpDown}}, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,5,0" MinWidth="0" Width="Auto" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
+        <ComboBox x:Name="DataMultiplier" Grid.Column="1" Width="50" VerticalContentAlignment="Center" Height="{Binding Height, ElementName=DataInput, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="0" MinWidth="50" MaxWidth="50" >
+            <ComboBoxItem>
+                <ComboBoxItem.Content>
+                    <TextBlock></TextBlock>
+                </ComboBoxItem.Content>
+            </ComboBoxItem>
+            <ComboBoxItem>
+                <ComboBoxItem.Content>
+                    <TextBlock>m</TextBlock>
+                </ComboBoxItem.Content>
+            </ComboBoxItem>
+            <ComboBoxItem>
+                <ComboBoxItem.Content>
+                    <TextBlock>µ</TextBlock>
+                </ComboBoxItem.Content>
+            </ComboBoxItem>
+            <ComboBoxItem>
+                <ComboBoxItem.Content>
+                    <TextBlock>n</TextBlock>
+                </ComboBoxItem.Content>
+            </ComboBoxItem>
+        </ComboBox>
+    </Grid>
 </UserControl>

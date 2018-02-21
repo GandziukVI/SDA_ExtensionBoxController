@@ -181,7 +181,7 @@ namespace MCBJNoiseStarter
 
         string GetNoiseSerializationFilePath()
         {
-            return Directory.GetCurrentDirectory() + "\\MCBJ Characterization\\MCBJNoiseSettings.bin";
+            return Directory.GetCurrentDirectory() + "\\MCBJCharacterization\\MCBJNoiseSettings.bin";
         }
 
         void SerializeDataContext(string filePath)
@@ -196,7 +196,7 @@ namespace MCBJNoiseStarter
         void SerializeDataContext(string filePath, object context)
         {
             var formatter = new BinaryFormatter();
-            using (var stream = new FileStream(filePath, FileMode.Open, FileAccess.Write))
+            using (var stream = new FileStream(filePath, FileMode.Create, FileAccess.Write))
             {
                 formatter.Serialize(stream, context);
             }
