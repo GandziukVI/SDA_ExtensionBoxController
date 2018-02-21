@@ -61,7 +61,7 @@ namespace MCBJ
                 // First arg contains the experiment type
                 if (arguments[1].Equals("MCBJNoise", StringComparison.InvariantCultureIgnoreCase))
                 {
-                    onNoisedefR_Click(this, new RoutedEventArgs());                   
+                    onNoisedefR_Click(this, new RoutedEventArgs());
                     on_cmd_startNoiseDefR(this, new RoutedEventArgs());
 
                     if (experiment != null)
@@ -74,7 +74,7 @@ namespace MCBJ
         // for automatic experiment restart
         private void mcbj_NoiseExpFinished(object sender, FinishedEventArgs e)
         {
-            Dispatcher.BeginInvoke(new Action(() => 
+            Dispatcher.BeginInvoke(new Action(() =>
             {
                 Application.Current.Shutdown(0);
             }));
@@ -194,7 +194,7 @@ namespace MCBJ
             psdGraph.AddToPlotter(control.chartIV);
             control.chartIV.Viewport.FitToView();
 
-            expStartInfo = control.DataContext;
+            expStartInfo = control.DataContext as Noise_DefinedResistanceModel;
         }
 
         Point[] ReadCalibrationFile(string fileName)
@@ -239,8 +239,9 @@ namespace MCBJ
             experiment.Status += experimentStatus;
             experiment.Progress += experimentProgress;
 
-            if (expStartInfo != null)
-                experiment.Start(expStartInfo);
+            if (measurementInterface != null)
+                if (measurementInterface is Noise_at_DefinedResistance)
+                    experiment.Start((measurementInterface as Noise_at_DefinedResistance).DataContext);
         }
 
         void on_cmd_stopNoiseDefR(object sender, RoutedEventArgs e)
@@ -314,7 +315,7 @@ namespace MCBJ
         #region Status and progress for all experiments
 
         private static object experimentStatusLocker = new object();
-        
+
         [HandleProcessCorruptedStateExceptions]
         private void experimentStatus(object sender, StatusEventArgs e)
         {

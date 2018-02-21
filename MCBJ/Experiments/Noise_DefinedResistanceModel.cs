@@ -172,6 +172,7 @@ namespace MCBJ.Experiments
             }
         }
 
+        [field: NonSerializedAttribute()]
         private static double[] setResistanceCollection = new double[] 
         {
             1.0 / (50.0 * conductanceQuantum), 
@@ -333,7 +334,7 @@ namespace MCBJ.Experiments
             }
         }
 
-        private int samplingFrequency = 262144;
+        private int samplingFrequency = 500000;
         public int SamplingFrequency
         {
             get { return samplingFrequency; }

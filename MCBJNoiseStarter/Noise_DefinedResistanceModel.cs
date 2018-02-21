@@ -183,6 +183,7 @@ namespace MCBJNoiseStarter.Experiments
             }
         }
 
+        [field: NonSerializedAttribute()]
         private static double[] setResistanceCollection = new double[] 
         {
             1.0 / (50.0 * conductanceQuantum), 
