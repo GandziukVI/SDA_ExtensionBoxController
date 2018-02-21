@@ -42,15 +42,15 @@ namespace FET_Characterization.Experiments
         FET_NoiseModel experimentSettings;
 
         Point[] amplifierNoise;
-        Point[] frequencyResponce;
+        Point[] frequencyResponse;
 
         TwoPartsFFT twoPartsFFT;
 
-        public FET_Noise_Experiment(string SDA_ConnectionString, Point[] AmplifierNoise, Point[] FrequencyResponce)
+        public FET_Noise_Experiment(string SDA_ConnectionString, Point[] AmplifierNoise, Point[] FrequencyResponse)
             : base()
         {
             amplifierNoise = AmplifierNoise;
-            frequencyResponce = FrequencyResponce;
+            frequencyResponse = FrequencyResponse;
             twoPartsFFT = new TwoPartsFFT();
 
             stabilityStopwatch = new Stopwatch();
@@ -596,14 +596,17 @@ namespace FET_Characterization.Experiments
                             if (averagingCounter % updateNumber == 0)
                             {
                                 var dividedSpectrum = (from item in noisePSD
-                                                       select new Point(item.X, item.Y / averagingCounter)).ToArray();
+                                                       select new Point(item.X, item.Y / averagingCounter));
+
+                                var normalizedSpectrum = (from item in dividedSpectrum
+                                                          select new Point(item.X, item.Y / (kAmpl * kAmpl))).ToArray();
 
                                 // Calibration here
-                                var calibratedSpectrum = twoPartsFFT.GetCalibratedSpecteum(ref dividedSpectrum, ref amplifierNoise, ref frequencyResponce);
+                                var calibratedSpectrum = twoPartsFFT.GetCalibratedSpectrum(ref normalizedSpectrum, ref amplifierNoise, ref frequencyResponse);
 
                                 var finalSpectrum = from divSpecItem in dividedSpectrum
                                                     join calSpecItem in calibratedSpectrum on divSpecItem.X equals calSpecItem.X
-                                                    select string.Format("{0}\t{1}\t{2}", divSpecItem.X.ToString(NumberFormatInfo.InvariantInfo), (calSpecItem.Y / (kAmpl * kAmpl)).ToString(NumberFormatInfo.InvariantInfo), divSpecItem.Y.ToString(NumberFormatInfo.InvariantInfo));
+                                                    select string.Format("{0}\t{1}\t{2}", divSpecItem.X.ToString(NumberFormatInfo.InvariantInfo), calSpecItem.Y.ToString(NumberFormatInfo.InvariantInfo), divSpecItem.Y.ToString(NumberFormatInfo.InvariantInfo));
 
                                 // Sending the calculated spectrum data
                                 onDataArrived(new ExpDataArrivedEventArgs(string.Format("NS{0}", string.Join("\r\n", finalSpectrum))));

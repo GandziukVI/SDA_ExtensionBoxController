@@ -31,11 +31,11 @@ namespace Keithley24xx.DISPlay
         {
             get
             {
-                var responce = _driver.RequestQuery(string.Format("{0}{1}", SubsystemIdentifier, ":ENAB?"));
+                var response = _driver.RequestQuery(string.Format("{0}{1}", SubsystemIdentifier, ":ENAB?"));
 
-                if (responce == "ON")
+                if (response == "ON")
                     return true;
-                else if (responce == "OFF")
+                else if (response == "OFF")
                     return false;
                 else
                     throw new Exception("The device answer is not corect!");
@@ -73,9 +73,9 @@ namespace Keithley24xx.DISPlay
         {
             get
             {
-                var responce = _driver.RequestQuery(string.Format("{0}{1}", SubsystemIdentifier, ":DIG?"));
+                var response = _driver.RequestQuery(string.Format("{0}{1}", SubsystemIdentifier, ":DIG?"));
                 var result = 4;
-                var success = int.TryParse(responce, out result);
+                var success = int.TryParse(response, out result);
 
                 if (success)
                     return result;
@@ -210,11 +210,11 @@ namespace Keithley24xx.DISPlay
         {
             get
             {
-                var responce = _driver.RequestQuery(string.Format("{0}{1}", _textIdentifier, ":STAT?"));
+                var response = _driver.RequestQuery(string.Format("{0}{1}", _textIdentifier, ":STAT?"));
 
-                if (responce == "ON")
+                if (response == "ON")
                     return true;
-                else if (responce == "OFF")
+                else if (response == "OFF")
                     return false;
                 else
                     throw new Exception("The device answer is not corect!");

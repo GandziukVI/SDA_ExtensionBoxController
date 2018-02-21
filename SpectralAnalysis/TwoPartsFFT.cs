@@ -137,14 +137,14 @@ namespace SpectralAnalysis
                     select new Point(item.X, item.Y / (kAmpl * kAmpl))).ToArray();
         }
 
-        public Point[] GetCalibratedSpecteum(ref Point[] spectrumData, ref Point[] amplifierNoise, ref Point[] frequencyResponce, bool useInterpolation = false)
+        public Point[] GetCalibratedSpectrum(ref Point[] spectrumData, ref Point[] amplifierNoise, ref Point[] frequencyResponse, bool useInterpolation = false)
         {
             if (useInterpolation == false)
             {
                 var query = (from spectrumPoint in spectrumData
                             join amplifierNoisePoint in amplifierNoise on spectrumPoint.X equals amplifierNoisePoint.X
-                            join frequencyResponcePoint in frequencyResponce on spectrumPoint.X equals frequencyResponcePoint.X
-                            select new Point(spectrumPoint.X, (spectrumPoint.Y - amplifierNoisePoint.Y) / (frequencyResponcePoint.Y * frequencyResponcePoint.Y))).ToArray();
+                            join frequencyResponsePoint in frequencyResponse on spectrumPoint.X equals frequencyResponsePoint.X
+                            select new Point(spectrumPoint.X, (spectrumPoint.Y - amplifierNoisePoint.Y) / (frequencyResponsePoint.Y * frequencyResponsePoint.Y))).ToArray();
 
                 if (query.Length != spectrumData.Length)
                     throw new Exception("Noise spectrum and calibration data don't have the same format! Please check your measurement settings.");
@@ -159,17 +159,17 @@ namespace SpectralAnalysis
                 var yValuesAmpNoise = from item in amplifierNoise
                                       select item.Y;
 
-                var xValuesFrequencyResponce = from item in frequencyResponce
+                var xValuesFrequencyResponse = from item in frequencyResponse
                                                select item.X;
-                var yValuesFrequencyResponce = from item in frequencyResponce
+                var yValuesFrequencyResponse = from item in frequencyResponse
                                                select item.Y;
 
 
                 var interpolationSplineAmpNoise = MathNet.Numerics.Interpolation.CubicSpline.InterpolateAkima(xValuesAmpNoise, yValuesAmpNoise);
-                var interpolationSplineFrequencyResponce = MathNet.Numerics.Interpolation.CubicSpline.InterpolateAkima(xValuesFrequencyResponce, yValuesFrequencyResponce);
+                var interpolationSplineFrequencyResponse = MathNet.Numerics.Interpolation.CubicSpline.InterpolateAkima(xValuesFrequencyResponse, yValuesFrequencyResponse);
 
                 var query = from spectrumPoint in spectrumData
-                            select new Point(spectrumPoint.X, (spectrumPoint.Y - interpolationSplineAmpNoise.Interpolate(spectrumPoint.X)) / (Math.Pow(interpolationSplineFrequencyResponce.Interpolate(spectrumPoint.X), 2)));
+                            select new Point(spectrumPoint.X, (spectrumPoint.Y - interpolationSplineAmpNoise.Interpolate(spectrumPoint.X)) / (Math.Pow(interpolationSplineFrequencyResponse.Interpolate(spectrumPoint.X), 2)));
 
 
                 return query.ToArray();

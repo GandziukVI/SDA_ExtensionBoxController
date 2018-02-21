@@ -65,14 +65,14 @@ namespace MCS_Faulhaber
         private char[] termChars = "\r\n".ToCharArray();
         public override double GetPosition()
         {
-            var controllerResponce = driver.RequestQuery("pos").TrimEnd(termChars);
+            var controllerResponse = driver.RequestQuery("pos").TrimEnd(termChars);
 
-            var match = rgx.Match(controllerResponce);
+            var match = rgx.Match(controllerResponse);
 
             if (match.Success == true)
             {
                 double motorPosition;
-                var conversionSuccess = double.TryParse(controllerResponce, out motorPosition);
+                var conversionSuccess = double.TryParse(controllerResponse, out motorPosition);
                 if (conversionSuccess)
                 {
                     prevPos = motorPosition / Gear / StepsPerRevolution * MilimetersPerRevolution;

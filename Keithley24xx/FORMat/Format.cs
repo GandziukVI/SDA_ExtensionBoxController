@@ -29,15 +29,15 @@ namespace Keithley24xx.FORMat
         {
             get
             {
-                var responce = _driver.RequestQuery(string.Format("{0}{1}", SubsystemIdentifier, ":SREG?")).Substring(0, 3).ToLower();
+                var response = _driver.RequestQuery(string.Format("{0}{1}", SubsystemIdentifier, ":SREG?")).Substring(0, 3).ToLower();
 
-                if (responce == "asc")
+                if (response == "asc")
                     return StatusRegisterDataFormats.ASCii;
-                else if (responce == "hex")
+                else if (response == "hex")
                     return StatusRegisterDataFormats.HEXadecimal;
-                else if (responce == "oct")
+                else if (response == "oct")
                     return StatusRegisterDataFormats.OCTal;
-                else if (responce == "bin")
+                else if (response == "bin")
                     return StatusRegisterDataFormats.BINary;
                 else
                     throw new Exception("Unable to acquire data format!");
@@ -73,15 +73,15 @@ namespace Keithley24xx.FORMat
         {
             get
             {
-                var responce = _driver.RequestQuery(string.Format("{0}{1}", SubsystemIdentifier, ":DATA?")).ToLower();
+                var response = _driver.RequestQuery(string.Format("{0}{1}", SubsystemIdentifier, ":DATA?")).ToLower();
 
-                if ("ASCii".ToLower().Contains(responce))
+                if ("ASCii".ToLower().Contains(response))
                     return OutputDataFormats.ASCii;
-                else if ("REAL".ToLower().Contains(responce))
+                else if ("REAL".ToLower().Contains(response))
                     return OutputDataFormats.REAL;
-                else if ("32".ToLower().Contains(responce))
+                else if ("32".ToLower().Contains(response))
                     return OutputDataFormats.Format_32;
-                else if ("SREal".ToLower().Contains(responce))
+                else if ("SREal".ToLower().Contains(response))
                     return OutputDataFormats.SREal;
                 else
                     throw new Exception("Unable to acquire data format!");
@@ -117,11 +117,11 @@ namespace Keithley24xx.FORMat
         {
             get
             {
-                var responce = _driver.RequestQuery(string.Format("{0}{1}", SubsystemIdentifier, ":BORD?")).ToLower();
+                var response = _driver.RequestQuery(string.Format("{0}{1}", SubsystemIdentifier, ":BORD?")).ToLower();
 
-                if ("NORMal".ToLower().Contains(responce))
+                if ("NORMal".ToLower().Contains(response))
                     return BorderTypes.NORMal;
-                else if ("SWAPed".ToLower().Contains(responce))
+                else if ("SWAPed".ToLower().Contains(response))
                     return BorderTypes.SWAPed;
                 else
                     throw new Exception("Can't acquire border type from the device!");

@@ -52,17 +52,17 @@ namespace MCBJ.Experiments
         private Noise_DefinedResistanceModel experimentSettings;
 
         private Point[] amplifierNoise;
-        private Point[] frequencyResponce;
+        private Point[] frequencyResponse;
 
         private SpectralAnalysis.TwoPartsFFT twoPartsFFT;
 
-        public Noise_DefinedResistance(string SDA_ConnectionString, IMotionController1D Motor, Point[] AmplifierNoise, Point[] FrequencyResponce)
+        public Noise_DefinedResistance(string SDA_ConnectionString, IMotionController1D Motor, Point[] AmplifierNoise, Point[] FrequencyResponse)
             : base()
         {
             motor = Motor;
 
             amplifierNoise = AmplifierNoise;
-            frequencyResponce = FrequencyResponce;
+            frequencyResponse = FrequencyResponse;
             twoPartsFFT = new SpectralAnalysis.TwoPartsFFT();
 
             stabilityStopwatch = new Stopwatch();
@@ -1018,13 +1018,16 @@ namespace MCBJ.Experiments
                             if (averagingCounter % updateNumber == 0)
                             {
                                 var dividedSpectrum = (from item in noisePSD
-                                                       select new Point(item.X, item.Y / averagingCounter)).ToArray();
+                                                       select new Point(item.X, item.Y / averagingCounter));
 
-                                var calibratedSpectrum = twoPartsFFT.GetCalibratedSpecteum(ref dividedSpectrum, ref amplifierNoise, ref frequencyResponce);
+                                var normalizedSpectrum = (from item in dividedSpectrum
+                                                          select new Point(item.X, item.Y / (kAmpl * kAmpl))).ToArray();
+
+                                var calibratedSpectrum = twoPartsFFT.GetCalibratedSpectrum(ref normalizedSpectrum, ref amplifierNoise, ref frequencyResponse);
 
                                 var finalSpectrum = from divSpecItem in dividedSpectrum
                                                     join calSpecItem in calibratedSpectrum on divSpecItem.X equals calSpecItem.X
-                                                    select string.Format("{0}\t{1}\t{2}", divSpecItem.X.ToString(NumberFormatInfo.InvariantInfo), (calSpecItem.Y / (kAmpl * kAmpl)).ToString(NumberFormatInfo.InvariantInfo), divSpecItem.Y.ToString(NumberFormatInfo.InvariantInfo));
+                                                    select string.Format("{0}\t{1}\t{2}", divSpecItem.X.ToString(NumberFormatInfo.InvariantInfo), calSpecItem.Y.ToString(NumberFormatInfo.InvariantInfo), divSpecItem.Y.ToString(NumberFormatInfo.InvariantInfo));
 
                                 // Sending the calculated spectrum data
                                 onDataArrived(new ExpDataArrivedEventArgs(string.Format("NS{0}", string.Join("\r\n", finalSpectrum))));

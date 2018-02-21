@@ -352,10 +352,10 @@ namespace Keithley26xx
                 _display.smuX.measure.func = Keithley26xxBMeasureFunctions.MEASURE_DCVOLTS;
             }
 
-            var responce = _driver.RequestQuery(string.Format("MeasureVoltage_smu{0}({1}, {2}, {3})", ChannelIdentifier, _currentAveraging, _currentNPLC.ToString(CultureInfo.InvariantCulture), _currentDelay.ToString(CultureInfo.InvariantCulture)));
+            var response = _driver.RequestQuery(string.Format("MeasureVoltage_smu{0}({1}, {2}, {3})", ChannelIdentifier, _currentAveraging, _currentNPLC.ToString(CultureInfo.InvariantCulture), _currentDelay.ToString(CultureInfo.InvariantCulture)));
 
             var result = 0.0;
-            var success = double.TryParse(responce, NumberStyles.Float, CultureInfo.InvariantCulture, out result);
+            var success = double.TryParse(response, NumberStyles.Float, CultureInfo.InvariantCulture, out result);
 
             if (success)
                 return result;
@@ -371,10 +371,10 @@ namespace Keithley26xx
                 _display.smuX.measure.func = Keithley26xxBMeasureFunctions.MEASURE_DCAMPS;
             }
 
-            var responce = _driver.RequestQuery(string.Format("MeasureCurrent_smu{0}({1}, {2}, {3})", ChannelIdentifier, _currentAveraging, _currentNPLC.ToString(CultureInfo.InvariantCulture), _currentDelay.ToString(CultureInfo.InvariantCulture)));
+            var response = _driver.RequestQuery(string.Format("MeasureCurrent_smu{0}({1}, {2}, {3})", ChannelIdentifier, _currentAveraging, _currentNPLC.ToString(CultureInfo.InvariantCulture), _currentDelay.ToString(CultureInfo.InvariantCulture)));
 
             var result = 0.0;
-            var success = double.TryParse(responce, NumberStyles.Float, CultureInfo.InvariantCulture, out result);
+            var success = double.TryParse(response, NumberStyles.Float, CultureInfo.InvariantCulture, out result);
 
             if (success)
                 return result;
@@ -390,10 +390,10 @@ namespace Keithley26xx
                 _display.smuX.measure.func = Keithley26xxBMeasureFunctions.MEASURE_OHMS;
             }
 
-            var responce = _driver.RequestQuery(string.Format("MeasureResistance_smu{0}({1}, {2}, {3})", ChannelIdentifier, _currentAveraging, _currentNPLC.ToString(CultureInfo.InvariantCulture), _currentDelay.ToString(CultureInfo.InvariantCulture)));
+            var response = _driver.RequestQuery(string.Format("MeasureResistance_smu{0}({1}, {2}, {3})", ChannelIdentifier, _currentAveraging, _currentNPLC.ToString(CultureInfo.InvariantCulture), _currentDelay.ToString(CultureInfo.InvariantCulture)));
 
             var result = 0.0;
-            var success = double.TryParse(responce, NumberStyles.Float, CultureInfo.InvariantCulture, out result);
+            var success = double.TryParse(response, NumberStyles.Float, CultureInfo.InvariantCulture, out result);
 
             if (success)
                 return result;

@@ -33,11 +33,11 @@ namespace Keithley24xx.CALCulate
         {
             get
             {
-                var responce = _driver.RequestQuery(string.Format("{0}{1}", SubsystemIdentifier, ":STAT?"));
+                var response = _driver.RequestQuery(string.Format("{0}{1}", SubsystemIdentifier, ":STAT?"));
 
-                if (responce == "ON")
+                if (response == "ON")
                     return MATH_StateEnum.ON;
-                else if (responce == "OFF")
+                else if (response == "OFF")
                     return MATH_StateEnum.OFF;
                 else
                     throw new Exception("Math state not supported!");

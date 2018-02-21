@@ -65,11 +65,11 @@ namespace Keithley26xx
         {
             var result = new double[3];
             _driver.SendCommandRequest("cursorRow, cursorColumn, cursorStyle = display.getcursor()");
-            var responce = _driver.RequestQuery("print(cursorRow, cursorColumn, cursorStyle)").Split("\r\n\t, ".ToCharArray(), StringSplitOptions.RemoveEmptyEntries);
+            var response = _driver.RequestQuery("print(cursorRow, cursorColumn, cursorStyle)").Split("\r\n\t, ".ToCharArray(), StringSplitOptions.RemoveEmptyEntries);
 
-            var _isRowReadingSucceed = double.TryParse(responce[0], NumberStyles.Float, CultureInfo.InvariantCulture, out result[0]);
-            var _isColumnReadingSucceed = double.TryParse(responce[1], NumberStyles.Float, CultureInfo.InvariantCulture, out result[1]);
-            var _isStyleReadingSucceed = double.TryParse(responce[2], NumberStyles.Float, CultureInfo.InvariantCulture, out result[2]);
+            var _isRowReadingSucceed = double.TryParse(response[0], NumberStyles.Float, CultureInfo.InvariantCulture, out result[0]);
+            var _isColumnReadingSucceed = double.TryParse(response[1], NumberStyles.Float, CultureInfo.InvariantCulture, out result[1]);
+            var _isStyleReadingSucceed = double.TryParse(response[2], NumberStyles.Float, CultureInfo.InvariantCulture, out result[2]);
 
             if (_isRowReadingSucceed && _isColumnReadingSucceed && _isStyleReadingSucceed)
                 return result;
@@ -85,33 +85,33 @@ namespace Keithley26xx
             get
             {
                 _driver.SendCommandRequest("displayID = display.screen");
-                var responce = _driver.RequestQuery("print(displayID)");
+                var response = _driver.RequestQuery("print(displayID)");
 
-                var doubleResponce = 0.0;
-                var success = double.TryParse(responce, NumberStyles.Float, NumberFormatInfo.InvariantInfo, out doubleResponce);
+                var doubleResponse = 0.0;
+                var success = double.TryParse(response, NumberStyles.Float, NumberFormatInfo.InvariantInfo, out doubleResponse);
                 
                 if (success)
                 {
-                    if (0 == (int)doubleResponce)
+                    if (0 == (int)doubleResponse)
                         return Keithley26xxBAvailableChannels.SMUA;
-                    else if (1 == (int)doubleResponce)
+                    else if (1 == (int)doubleResponse)
                         return Keithley26xxBAvailableChannels.SMUB;
-                    else if (2 == (int)doubleResponce)
+                    else if (2 == (int)doubleResponse)
                         return Keithley26xxBAvailableChannels.SMUA_SMUB;
-                    else if (3 == (int)doubleResponce)
+                    else if (3 == (int)doubleResponse)
                         return Keithley26xxBAvailableChannels.USER;
                     else
                         throw new Exception("Can't read current screen!");
                 }
                 else
                 {
-                    if (responce == "0" || responce == "display.SMUA")
+                    if (response == "0" || response == "display.SMUA")
                         return Keithley26xxBAvailableChannels.SMUA;
-                    else if (responce == "1" || responce == "display.SMUB")
+                    else if (response == "1" || response == "display.SMUB")
                         return Keithley26xxBAvailableChannels.SMUB;
-                    else if (responce == "2" || responce == "display.SMUA_SMUB")
+                    else if (response == "2" || response == "display.SMUA_SMUB")
                         return Keithley26xxBAvailableChannels.SMUA_SMUB;
-                    else if (responce == "3" || responce == "display.USER")
+                    else if (response == "3" || response == "display.USER")
                         return Keithley26xxBAvailableChannels.USER;
                     else
                         throw new Exception("Can't read current screen!");
@@ -159,25 +159,25 @@ namespace Keithley26xx
             get
             {
                 _driver.SendCommandRequest(string.Format("display{0}LimitFunc = display.smu{0}.limit.func", _channelID));
-                var responce = _driver.RequestQuery(string.Format("print(display{0}LimitFunc)", _channelID));
+                var response = _driver.RequestQuery(string.Format("print(display{0}LimitFunc)", _channelID));
 
-                var doubleResponce = 0.0;
-                var success = double.TryParse(responce, NumberStyles.Float, NumberFormatInfo.InvariantInfo, out doubleResponce);
+                var doubleResponse = 0.0;
+                var success = double.TryParse(response, NumberStyles.Float, NumberFormatInfo.InvariantInfo, out doubleResponse);
 
                 if (success)
                 {
-                    if (0 == (int)doubleResponce)
+                    if (0 == (int)doubleResponse)
                         return Keithley26xxBLimitFunctions.LIMIT_IV;
-                    else if (1 == (int)doubleResponce)
+                    else if (1 == (int)doubleResponse)
                         return Keithley26xxBLimitFunctions.LIMIT_P;
                     else
                         throw new Exception(string.Format("Can't read smu{0} limit function", _channelID));
                 }
                 else
                 {
-                    if (responce == "0" || responce == "display.LIMIT_IV")
+                    if (response == "0" || response == "display.LIMIT_IV")
                         return Keithley26xxBLimitFunctions.LIMIT_IV;
-                    else if (responce == "1" || responce == "display.LIMIT_P")
+                    else if (response == "1" || response == "display.LIMIT_P")
                         return Keithley26xxBLimitFunctions.LIMIT_P;
                     else
                         throw new Exception(string.Format("Can't read smu{0} limit function", _channelID));
@@ -206,33 +206,33 @@ namespace Keithley26xx
             get
             {
                 _driver.SendCommandRequest(string.Format("smu{0}MeasureFunc = display.smu{0}.measure.func", _channelID));
-                var responce = _driver.RequestQuery(string.Format("print(smu{0}MeasureFunc)", _channelID));
+                var response = _driver.RequestQuery(string.Format("print(smu{0}MeasureFunc)", _channelID));
 
-                var doubleResponce = 0.0;
-                var success = double.TryParse(responce, NumberStyles.Float, NumberFormatInfo.InvariantInfo, out doubleResponce);
+                var doubleResponse = 0.0;
+                var success = double.TryParse(response, NumberStyles.Float, NumberFormatInfo.InvariantInfo, out doubleResponse);
 
                 if (success)
                 {
-                    if (0 == (int)doubleResponce)
+                    if (0 == (int)doubleResponse)
                         return Keithley26xxBMeasureFunctions.MEASURE_DCAMPS;
-                    else if (1 == (int)doubleResponce)
+                    else if (1 == (int)doubleResponse)
                         return Keithley26xxBMeasureFunctions.MEASURE_DCVOLTS;
-                    else if (2 == (int)doubleResponce)
+                    else if (2 == (int)doubleResponse)
                         return Keithley26xxBMeasureFunctions.MEASURE_OHMS;
-                    else if (3 == (int)doubleResponce)
+                    else if (3 == (int)doubleResponse)
                         return Keithley26xxBMeasureFunctions.MEASURE_WATTS;
                     else
                         throw new Exception(string.Format("Can't read smu{0} measure function!", _channelID));
                 }
                 else
                 {
-                    if (responce == "0" || responce == "display.MEASURE_DCAMPS")
+                    if (response == "0" || response == "display.MEASURE_DCAMPS")
                         return Keithley26xxBMeasureFunctions.MEASURE_DCAMPS;
-                    else if (responce == "1" || responce == "display.MEASURE_DCVOLTS")
+                    else if (response == "1" || response == "display.MEASURE_DCVOLTS")
                         return Keithley26xxBMeasureFunctions.MEASURE_DCVOLTS;
-                    else if (responce == "2" || responce == "MEASURE_OHMS")
+                    else if (response == "2" || response == "MEASURE_OHMS")
                         return Keithley26xxBMeasureFunctions.MEASURE_OHMS;
-                    else if (responce == "3" || responce == "display.MEASURE_WATTS")
+                    else if (response == "3" || response == "display.MEASURE_WATTS")
                         return Keithley26xxBMeasureFunctions.MEASURE_WATTS;
                     else
                         throw new Exception(string.Format("Can't read smu{0} measure function!", _channelID));

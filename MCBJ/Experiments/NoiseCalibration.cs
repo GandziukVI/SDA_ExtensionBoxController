@@ -9,7 +9,7 @@ namespace MCBJ.Experiments
     public interface IAmplifier
     {
         double[] GetIntrinsicNoiseCurve();
-        double[] GetFrequencyResponceCurve();
+        double[] GetFrequencyResponseCurve();
 
         double[,] GetCalibratedCurve();
     }
@@ -31,7 +31,7 @@ namespace MCBJ.Experiments
             throw new NotImplementedException();
         }
 
-        public double[] GetFrequencyResponceCurve()
+        public double[] GetFrequencyResponseCurve()
         {
             throw new NotImplementedException();
         }

@@ -222,17 +222,17 @@ namespace MCBJ
 
             var calPath = string.Format("{0}\\{1}", AppDomain.CurrentDomain.BaseDirectory, "NoiseCalibration");
             var amplifierNoiseFilePath = string.Format("{0}\\{1}", calPath, "AmplifierNoise.dat");
-            var frequencyResponceFilePath = string.Format("{0}\\{1}", calPath, "FrequencyResponce.dat");
+            var frequencyResponseFilePath = string.Format("{0}\\{1}", calPath, "FrequencyResponse.dat");
 
             var amplifierNoise = ReadCalibrationFile(amplifierNoiseFilePath);
-            var frequencyResponce = ReadCalibrationFile(frequencyResponceFilePath);
+            var frequencyResponse = ReadCalibrationFile(frequencyResponseFilePath);
 
 
             var motorDriver = new SerialDevice("COM1", 115200, Parity.None, 8, StopBits.One);
             IMotionController1D motor = new SA_2036U012V(motorDriver) as IMotionController1D;
 
-            experiment = new Noise_DefinedResistance((expStartInfo as Noise_DefinedResistanceModel).AgilentU2542AResName, motor, amplifierNoise, frequencyResponce);
-            //experiment = new Noise_DefinedResistance((expStartInfo as Noise_DefinedResistanceInfo).AgilentU2542AResName, null, amplifierNoise, frequencyResponce);
+            experiment = new Noise_DefinedResistance((expStartInfo as Noise_DefinedResistanceModel).AgilentU2542AResName, motor, amplifierNoise, frequencyResponse);
+            //experiment = new Noise_DefinedResistance((expStartInfo as Noise_DefinedResistanceInfo).AgilentU2542AResName, null, amplifierNoise, frequencyResponse);
 
             experiment.DataArrived += Noise_at_der_R_DataArrived;
 

@@ -312,12 +312,12 @@ namespace FET_Characterization
 
             var calPath = string.Format("{0}\\{1}", AppDomain.CurrentDomain.BaseDirectory, "NoiseCalibration");
             var amplifierNoiseFilePath = string.Format("{0}\\{1}", calPath, "AmplifierNoise.dat");
-            var frequencyResponceFilePath = string.Format("{0}\\{1}", calPath, "FrequencyResponce.dat");
+            var frequencyResponseFilePath = string.Format("{0}\\{1}", calPath, "FrequencyResponse.dat");
 
             var amplifierNoise = ReadCalibrationFile(amplifierNoiseFilePath);
-            var frequencyResponce = ReadCalibrationFile(frequencyResponceFilePath);
+            var frequencyResponse = ReadCalibrationFile(frequencyResponseFilePath);
 
-            experiment = new FET_Noise_Experiment(settings.AgilentU2542AResName, amplifierNoise, frequencyResponce);
+            experiment = new FET_Noise_Experiment(settings.AgilentU2542AResName, amplifierNoise, frequencyResponse);
 
             experiment.ExpStarted += onExperimentStarted;
             experiment.DataArrived += expFET_Noise_DataArrived;
