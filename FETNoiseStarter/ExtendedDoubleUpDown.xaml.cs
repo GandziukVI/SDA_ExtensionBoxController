@@ -58,10 +58,6 @@ namespace FETNoiseStarter
             multiBinding.Bindings.Add(new Binding("Multiplier") { Source = this, Mode = BindingMode.TwoWay, UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged });
 
             DataMultiplier.SetBinding(ComboBox.SelectedIndexProperty, multiBinding);
-
-            var formatStrBinding = new Binding("FormatString") { Source = this, Mode = BindingMode.TwoWay, UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged, NotifyOnSourceUpdated = true };
-
-            DataInput.SetBinding(Xceed.Wpf.Toolkit.DoubleUpDown.FormatStringProperty, formatStrBinding);
         }
 
         // Flags for properties
@@ -75,7 +71,7 @@ namespace FETNoiseStarter
             set { SetValue(ValueProperty, value); }
         }
 
-        static FrameworkPropertyMetadata ValuePropertyMetadata = new FrameworkPropertyMetadata(Double.NaN, flags, new PropertyChangedCallback(onValuePropertyChanged));
+        static FrameworkPropertyMetadata ValuePropertyMetadata = new FrameworkPropertyMetadata(0.0, flags | FrameworkPropertyMetadataOptions.Inherits, new PropertyChangedCallback(onValuePropertyChanged));
         static readonly DependencyProperty ValueProperty = DependencyProperty.Register(
             "Value",
             typeof(Double),
@@ -97,16 +93,17 @@ namespace FETNoiseStarter
             set { SetValue(RealValueProperty, value); }
         }
 
-        static FrameworkPropertyMetadata RealValueMetadata = new FrameworkPropertyMetadata(double.NaN, flags, new PropertyChangedCallback(onRealValuePropertyChanged));
+        static FrameworkPropertyMetadata RealValueMetadata = new FrameworkPropertyMetadata(0.0, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, new PropertyChangedCallback(onRealValuePropertyChanged));
+
+        private static void onRealValuePropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+        }
+
         public static readonly DependencyProperty RealValueProperty = DependencyProperty.Register(
             "RealValue",
             typeof(Double),
             typeof(ExtendedDoubleUpDown),
             RealValueMetadata);
-
-        static void onRealValuePropertyChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e)
-        {
-        }
 
         #endregion
 
@@ -118,16 +115,17 @@ namespace FETNoiseStarter
             set { SetValue(FormatStringProperty, value); }
         }
 
-        static FrameworkPropertyMetadata FormatStringMetadata = new FrameworkPropertyMetadata("F3", flags, new PropertyChangedCallback(onFormatStringPropertyChanged));
+        static FrameworkPropertyMetadata FormatStringMetadata = new FrameworkPropertyMetadata("F3", flags | FrameworkPropertyMetadataOptions.Inherits, new PropertyChangedCallback(onFormatStringPropertyChanged));
+
+        private static void onFormatStringPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+        }
+
         public static readonly DependencyProperty FormatStringProperty = DependencyProperty.Register(
             "FormatString",
             typeof(String),
             typeof(ExtendedDoubleUpDown),
             FormatStringMetadata);
-
-        static void onFormatStringPropertyChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e)
-        {
-        }
 
         #endregion
 

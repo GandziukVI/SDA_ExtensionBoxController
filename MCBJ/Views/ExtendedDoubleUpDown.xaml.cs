@@ -20,7 +20,7 @@ namespace MCBJ
         IValueConverter multConv;
         public SelectedIndexMultiBindingConverter()
         {
-            multConv = new MultiplierConverter();;
+            multConv = new MultiplierConverter();
         }
 
         public object Convert(object[] values, Type targetType, object parameter, System.Globalization.CultureInfo culture)
@@ -30,10 +30,11 @@ namespace MCBJ
 
         public object[] ConvertBack(object value, Type[] targetTypes, object parameter, System.Globalization.CultureInfo culture)
         {
-            var result = new object[2];
+            var result = new object[3];
 
             result[0] = System.Convert.ToInt32(value);
             result[1] = System.Convert.ToDouble(multConv.ConvertBack(value, typeof(double), null, CultureInfo.InvariantCulture), NumberFormatInfo.InvariantInfo);
+            result[2] = System.Convert.ToDouble(result[0]) * System.Convert.ToDouble(result[1]);
 
             return result;
         }
@@ -57,12 +58,9 @@ namespace MCBJ
 
             multiBinding.Bindings.Add(new Binding("MultiplierIndex") { Source = this, Mode = BindingMode.TwoWay, UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged });
             multiBinding.Bindings.Add(new Binding("Multiplier") { Source = this, Mode = BindingMode.TwoWay, UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged });
+            multiBinding.Bindings.Add(new Binding("RealValue") { Source = this, Mode = BindingMode.TwoWay, UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged });
 
             DataMultiplier.SetBinding(ComboBox.SelectedIndexProperty, multiBinding);
-
-            var formatStrBinding = new Binding("FormatString") { Source = this, Mode = BindingMode.TwoWay, UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged, NotifyOnSourceUpdated = true };
-
-            DataInput.SetBinding(Xceed.Wpf.Toolkit.DoubleUpDown.FormatStringProperty, formatStrBinding);
         }
 
         // Flags for properties
@@ -76,7 +74,7 @@ namespace MCBJ
             set { SetValue(ValueProperty, value); }
         }
 
-        static FrameworkPropertyMetadata ValuePropertyMetadata = new FrameworkPropertyMetadata(Double.NaN, flags, new PropertyChangedCallback(onValuePropertyChanged));
+        static FrameworkPropertyMetadata ValuePropertyMetadata = new FrameworkPropertyMetadata(0.0, flags | FrameworkPropertyMetadataOptions.Inherits, new PropertyChangedCallback(onValuePropertyChanged));
         static readonly DependencyProperty ValueProperty = DependencyProperty.Register(
             "Value",
             typeof(Double),
@@ -98,14 +96,15 @@ namespace MCBJ
             set { SetValue(RealValueProperty, value); }
         }
 
-        static FrameworkPropertyMetadata RealValueMetadata = new FrameworkPropertyMetadata(double.NaN, flags, new PropertyChangedCallback(onRealValuePropertyChanged));
+        static FrameworkPropertyMetadata RealValueMetadata = new FrameworkPropertyMetadata(0.0, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, new PropertyChangedCallback(onRealValuePropertyChanged));
+
         public static readonly DependencyProperty RealValueProperty = DependencyProperty.Register(
             "RealValue",
             typeof(Double),
             typeof(ExtendedDoubleUpDown),
             RealValueMetadata);
 
-        static void onRealValuePropertyChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e)
+        private static void onRealValuePropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
         }
 
@@ -119,14 +118,15 @@ namespace MCBJ
             set { SetValue(FormatStringProperty, value); }
         }
 
-        static FrameworkPropertyMetadata FormatStringMetadata = new FrameworkPropertyMetadata("F3", flags, new PropertyChangedCallback(onFormatStringPropertyChanged));
+        static FrameworkPropertyMetadata FormatStringMetadata = new FrameworkPropertyMetadata("F3", flags | FrameworkPropertyMetadataOptions.Inherits, new PropertyChangedCallback(onFormatStringPropertyChanged));
+
         public static readonly DependencyProperty FormatStringProperty = DependencyProperty.Register(
             "FormatString",
             typeof(String),
             typeof(ExtendedDoubleUpDown),
             FormatStringMetadata);
 
-        static void onFormatStringPropertyChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e)
+        private static void onFormatStringPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
         }
 
@@ -140,7 +140,7 @@ namespace MCBJ
             set { SetValue(UnitAliasProperty, value); }
         }
 
-        static FrameworkPropertyMetadata UnitAliasMetadata = new FrameworkPropertyMetadata("", flags, new PropertyChangedCallback(onUnitAliasPropertyChanged), new CoerceValueCallback(CoerseUnitAlias));
+        static FrameworkPropertyMetadata UnitAliasMetadata = new FrameworkPropertyMetadata("", flags, new PropertyChangedCallback(onUnitAliasPropertyChanged), new CoerceValueCallback(CoerceUnitAlias));
         public static readonly DependencyProperty UnitAliasProperty = DependencyProperty.Register(
             "UnitAlias",
             typeof(String),
@@ -153,7 +153,7 @@ namespace MCBJ
             control.CoerceValue(UnitAliasProperty);
         }
 
-        static object CoerseUnitAlias(DependencyObject sender, object value)
+        static object CoerceUnitAlias(DependencyObject sender, object value)
         {
             var control = (ExtendedDoubleUpDown)sender;
             var result = (String)value;
