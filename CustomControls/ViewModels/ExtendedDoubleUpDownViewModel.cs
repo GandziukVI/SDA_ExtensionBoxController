@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 
 namespace CustomControls.ViewModels
 {
+    [Serializable]
     public class ExtendedDoubleUpDownViewModel : NotifyPropertyChangedBase
     {
         public ExtendedDoubleUpDownViewModel() { }

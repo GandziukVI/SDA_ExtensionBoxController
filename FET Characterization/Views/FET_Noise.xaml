@@ -18,6 +18,8 @@
     </UserControl.DataContext>
 
     <UserControl.Resources>
+        <Experiments:OscilloscopeVoltageAxisRangeConverter x:Key="OscVoltageAxisConverter" />
+        <Experiments:OscilloscopeTimeAxisRangeConverter x:Key="OscTimeAxisConverter" />
         <Experiments:ValueCollectionConverter x:Key="CollectionConverter" />        
         <d3:Log10Transform x:Key="SpectraDataTransform" />
         <d3:LogarithmNumericTicksProvider x:Key="Log10XTicksProvider" />
@@ -97,8 +99,8 @@
                     <ni:Plot x:Name="timeTracePlot"/>
                 </ni:Graph.Plots>
                 <ni:Graph.Axes>
-                    <ni:AxisDouble Orientation="Horizontal" Adjuster="ContinuousChart"  Label="Time, s" ScaleKind="Linear" Range="{Binding OscilloscopeTimeRange.RealValue, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"/>
-                    <ni:AxisDouble Orientation="Vertical" Adjuster="FitExactly"  Label="Voltage, V" ScaleKind="Linear" Range="{Binding OscilloscopeVoltageRange.RealValue, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
+                    <ni:AxisDouble Orientation="Horizontal" Adjuster="ContinuousChart"  Label="Time, s" ScaleKind="Linear" Range="{Binding OscilloscopeTimeRange.RealValue, Converter={StaticResource OscTimeAxisConverter}, Mode=Default}"/>
+                    <ni:AxisDouble Orientation="Vertical" Adjuster="FitExactly"  Label="Voltage, V" ScaleKind="Linear" Range="{Binding OscilloscopeVoltageRange.RealValue, Converter={StaticResource OscVoltageAxisConverter}, Mode=Default}" />
                 </ni:Graph.Axes>
             </ni:Graph>
 
