@@ -91,11 +91,11 @@ namespace FET_Characterization.Experiments
 
             smuVg.SourceMode = SMUSourceMode.Voltage;
 
-            smuVg.Compliance = settings.TransferGate_Complaince;
+            smuVg.Compliance = settings.TransferGate_Complaince.RealValue;
             smuVg.Averaging = settings.Ke_Transfer_Averaging;
             smuVg.NPLC = settings.Ke_Transfer_NPLC;
 
-            smuVg.Voltage = settings.TransferVgStart;
+            smuVg.Voltage = settings.TransferVgStart.RealValue;
 
             smuVg.SwitchON();
 
@@ -105,17 +105,17 @@ namespace FET_Characterization.Experiments
 
             smuVds.SourceMode = settings.TransferSMU_SourceMode;
 
-            smuVds.Compliance = settings.TransferDS_Complaince;
+            smuVds.Compliance = settings.TransferDS_Complaince.RealValue;
             smuVds.Averaging = settings.Ke_Transfer_Averaging;
             smuVds.NPLC = settings.Ke_Transfer_NPLC;
 
             switch (settings.TransferSMU_SourceMode)
             {
                 case SMUSourceMode.Voltage:
-                    smuVds.Voltage = settings.TransferVdsStart;
+                    smuVds.Voltage = settings.TransferVdsStart.RealValue;
                     break;
                 case SMUSourceMode.Current:
-                    smuVds.Current = settings.TransferVdsStart;
+                    smuVds.Current = settings.TransferVdsStart.RealValue;
                     break;
                 case SMUSourceMode.ModeNotSet:
                     break;
@@ -129,11 +129,11 @@ namespace FET_Characterization.Experiments
 
             #region General settings
 
-            var currentVg = settings.TransferVgStart;
-            var current_DS_value = settings.TransferVdsStart;
+            var currentVg = settings.TransferVgStart.RealValue;
+            var current_DS_value = settings.TransferVdsStart.RealValue;
 
-            var dVg = (settings.TransferVgStop - settings.TransferVgStart) / (settings.TransferN_VgSweep - 1);
-            var d_DS_value = (settings.TransferVdsStop - settings.TransferVdsStart) / (settings.TransferN_VdsStep - 1);
+            var dVg = (settings.TransferVgStop.RealValue - settings.TransferVgStart.RealValue) / (settings.TransferN_VgSweep - 1);
+            var d_DS_value = (settings.TransferVdsStop.RealValue - settings.TransferVdsStart.RealValue) / (settings.TransferN_VdsStep - 1);
 
             #endregion
 
@@ -181,7 +181,7 @@ namespace FET_Characterization.Experiments
 
                 transferCurveDataSet.AddLast(trData);
 
-                currentVg = settings.TransferVgStart;
+                currentVg = settings.TransferVgStart.RealValue;
                 smuVg.Voltage = currentVg;
 
                 if (i != settings.TransferN_VdsStep - 1)
@@ -203,7 +203,7 @@ namespace FET_Characterization.Experiments
                     }
                 }
 
-                Thread.Sleep((int)(settings.Transfer_VdsDelay * 1000));
+                Thread.Sleep((int)(settings.Transfer_VdsDelay.RealValue * 1000));
             }
 
             smuVg.SwitchOFF();

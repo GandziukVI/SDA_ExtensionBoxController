@@ -6,29 +6,18 @@ using System.ComponentModel;
 using SourceMeterUnit;
 using Keithley26xx;
 using System.IO;
+using ControlAssist;
+using CustomControls.ViewModels;
 
 namespace FET_Characterization
 {
     [Serializable]
-    public class FET_IVModel : INotifyPropertyChanged
+    public class FET_IVModel : NotifyPropertyChangedBase
     {
         public FET_IVModel()
         {
 
-        }
-
-        #region INotifyPropertyChanged
-        [field: NonSerializedAttribute()]
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        private void NotifyPropertyChanged(String info)
-        {
-            if (PropertyChanged != null)
-            {
-                PropertyChanged(this, new PropertyChangedEventArgs(info));
-            }
-        }
-        #endregion
+        }       
 
         private string keithleyRscName = "GPIB0::26::INSTR";
         public string KeithleyRscName
@@ -36,8 +25,7 @@ namespace FET_Characterization
             get { return keithleyRscName; }
             set
             {
-                keithleyRscName = value;
-                NotifyPropertyChanged("KeithleyRscName");
+                SetField(ref keithleyRscName, value, "KeithleyRscName");
             }
         }
 
@@ -46,23 +34,23 @@ namespace FET_Characterization
         {
             get { return v_dsChannel; }
             set
-            {
-                v_dsChannel = value;
+            {                
+                var vgChannelValue = Keithley26xxB_Channels.Channel_B;
 
                 switch (value)
                 {
                     case Keithley26xxB_Channels.Channel_A:
-                        v_gChannel = Keithley26xxB_Channels.Channel_B;
+                        vgChannelValue = Keithley26xxB_Channels.Channel_B;
                         break;
                     case Keithley26xxB_Channels.Channel_B:
-                        v_gChannel = Keithley26xxB_Channels.Channel_A;
+                        vgChannelValue = Keithley26xxB_Channels.Channel_A;
                         break;
                     default:
                         break;
                 }
 
-                NotifyPropertyChanged("VdsChannel");
-                NotifyPropertyChanged("VgChannel");
+                SetField(ref v_dsChannel, value, "VdsChannel");
+                SetField(ref v_gChannel, vgChannelValue, "VgChannel");
             }
         }
 
@@ -72,22 +60,22 @@ namespace FET_Characterization
             get { return v_gChannel; }
             set
             {
-                v_gChannel = value;
+                var vdsChannelValue = Keithley26xxB_Channels.Channel_A;
 
                 switch (value)
                 {
                     case Keithley26xxB_Channels.Channel_A:
-                        v_dsChannel = Keithley26xxB_Channels.Channel_B;
+                        vdsChannelValue = Keithley26xxB_Channels.Channel_B;
                         break;
                     case Keithley26xxB_Channels.Channel_B:
-                        v_dsChannel = Keithley26xxB_Channels.Channel_A;
+                        vdsChannelValue = Keithley26xxB_Channels.Channel_A;
                         break;
                     default:
                         break;
                 }
 
-                NotifyPropertyChanged("VgChannel");
-                NotifyPropertyChanged("VdsChannel");
+                SetField(ref v_gChannel, value, "VgChannel");
+                SetField(ref v_dsChannel, vdsChannelValue, "VdsChannel");
             }
         }
 
@@ -97,76 +85,29 @@ namespace FET_Characterization
             get { return smu_SourceMode; }
             set
             {
-                smu_SourceMode = value;
-                NotifyPropertyChanged("SMU_SourceMode");
+                SetField(ref smu_SourceMode, value, "SMU_SourceMode");
             }
         }
 
-        private double v_dsStart;
-        public double VdsStart
+        private ExtendedDoubleUpDownViewModel v_dsStart;
+        public ExtendedDoubleUpDownViewModel VdsStart
         {
             get { return v_dsStart; }
             set
             {
-                v_dsStart = value;
-                NotifyPropertyChanged("VdsStart");
+                SetField(ref v_dsStart, value, "VdsStart");
             }
-        }
+        }       
 
-        private double vdsStartValue = 0.0;
-        public double VdsStartValue
-        {
-            get { return vdsStartValue; }
-            set
-            {
-                vdsStartValue = value;
-                NotifyPropertyChanged("VdsStartValue");
-            }
-        }
-
-        private int vdsStartIndex;
-        public int VdsStartIndex
-        {
-            get { return vdsStartIndex; }
-            set
-            {
-                vdsStartIndex = value;
-                NotifyPropertyChanged("VdsStartIndex");
-            }
-        }
-
-        private double v_dsStop;
-        public double VdsStop
+        private ExtendedDoubleUpDownViewModel v_dsStop;
+        public ExtendedDoubleUpDownViewModel VdsStop
         {
             get { return v_dsStop; }
             set
             {
-                v_dsStop = value;
-                NotifyPropertyChanged("VdsStop");
+                SetField(ref v_dsStop, value, "VdsStop");
             }
-        }
-
-        private double vdsStopValue = -1.0;
-        public double VdsStopValue
-        {
-            get { return vdsStopValue; }
-            set
-            {
-                vdsStopValue = value;
-                NotifyPropertyChanged("VdsStopValue");
-            }
-        }
-
-        private int vdsStopIndex;
-        public int VdsStopIndex
-        {
-            get { return vdsStopIndex; }
-            set
-            {
-                vdsStopIndex = value;
-                NotifyPropertyChanged("VdsStopIndex");
-            }
-        }
+        }       
 
         private int n_v_dsSweep = 101;
         public int N_VdsSweep
@@ -174,110 +115,39 @@ namespace FET_Characterization
             get { return n_v_dsSweep; }
             set
             {
-                n_v_dsSweep = value;
-                NotifyPropertyChanged("N_VdsSweep");
+                SetField(ref n_v_dsSweep, value, "N_VdsSweep");        
             }
         }
 
-        private double dsCompliance;
-        public double DS_Complaince
+        private ExtendedDoubleUpDownViewModel dsCompliance;
+        public ExtendedDoubleUpDownViewModel DS_Complaince
         {
             get { return dsCompliance; }
             set
             {
-                dsCompliance = value;
-                NotifyPropertyChanged("DS_Complaince");
+                SetField(ref dsCompliance, value, "DS_Complaince");
             }
         }
 
-        private double dsComplianceValue = 0.001;
-        public double DSComplianceValue
-        {
-            get { return dsComplianceValue; }
-            set
-            {
-                dsComplianceValue = value;
-                NotifyPropertyChanged("DSComplianceValue");
-            }
-        }
-
-        private int dsComplianceIndex;
-        public int DSComplianceIndex
-        {
-            get { return dsComplianceIndex; }
-            set
-            {
-                dsComplianceIndex = value;
-                NotifyPropertyChanged("DSComplianceIndex");
-            }
-        }
-
-        private double v_gStart;
-        public double VgStart
+        private ExtendedDoubleUpDownViewModel v_gStart;
+        public ExtendedDoubleUpDownViewModel VgStart
         {
             get { return v_gStart; }
             set
             {
-                v_gStart = value;
-                NotifyPropertyChanged("VgStart");
+                SetField(ref v_gStart, value, "VgStart");
             }
-        }
+        }        
 
-        private double vgStartValue = 0.0;
-        public double VgStartValue
-        {
-            get { return vgStartValue; }
-            set
-            {
-                vgStartValue = value;
-                NotifyPropertyChanged("VgStartValue");
-            }
-        }
-
-        private int vgStartIndex;
-        public int VgStartIndex
-        {
-            get { return vgStartIndex; }
-            set
-            {
-                vgStartIndex = value;
-                NotifyPropertyChanged("VgStartIndex");
-            }
-        }
-
-        private double v_gStop;
-        public double VgStop
+        private ExtendedDoubleUpDownViewModel v_gStop;
+        public ExtendedDoubleUpDownViewModel VgStop
         {
             get { return v_gStop; }
             set
             {
-                v_gStop = value;
-                NotifyPropertyChanged("VgStop");
+                SetField(ref v_gStop, value, "VgStop");
             }
-        }
-
-        private double vgStopValue = -5.0;
-        public double VgStopValue
-        {
-            get { return vgStopValue; }
-            set
-            {
-                vgStopValue = value;
-                NotifyPropertyChanged("VgStopValue");
-            }
-        }
-
-        private int vgStopIndex;
-        public int VgStopIndex
-        {
-            get { return vgStopIndex; }
-            set
-            {
-                vgStopIndex = value;
-                NotifyPropertyChanged("VgStopIndex");
-            }
-        }
-
+        }    
 
         private int n_v_gStep = 6;
         public int N_VgStep
@@ -285,111 +155,40 @@ namespace FET_Characterization
             get { return n_v_gStep; }
             set
             {
-                n_v_gStep = value;
-                NotifyPropertyChanged("N_VgStep");
+                SetField(ref n_v_gStep, value, "N_VgStep");
             }
         }
 
-        private double gateCompliance;
-        public double Gate_Complaince
+        private ExtendedDoubleUpDownViewModel gateCompliance;
+        public ExtendedDoubleUpDownViewModel Gate_Complaince
         {
             get { return gateCompliance; }
             set
             {
-                gateCompliance = value;
-                NotifyPropertyChanged("Gate_Complaince");
+                SetField(ref gateCompliance, value, "Gate_Complaince");
             }
-        }
+        }        
 
-        private double gateComplianceValue = 0.001;
-        public double GateComplianceValue
-        {
-            get { return gateComplianceValue; }
-            set
-            {
-                gateComplianceValue = value;
-                NotifyPropertyChanged("GateComplianceValue");
-            }
-        }
-
-        private int gateComplianceIndex;
-        public int GateComplianceIndex
-        {
-            get { return gateComplianceIndex; }
-            set
-            {
-                gateComplianceIndex = value;
-                NotifyPropertyChanged("GateComplianceIndex");
-            }
-        }
-
-        private double pulseWidth;
-        public double PulseWidth
+        private ExtendedDoubleUpDownViewModel pulseWidth;
+        public ExtendedDoubleUpDownViewModel PulseWidth
         {
             get { return pulseWidth; }
             set
             {
-                pulseWidth = value;
-                NotifyPropertyChanged("PulseWidth");
+                SetField(ref pulseWidth, value, "PulseWidth");
             }
-        }
-
-        private double pulseWidthValue = 0.001;
-        public double PulseWidthValue
-        {
-            get { return pulseWidthValue; }
-            set
-            {
-                pulseWidthValue = value;
-                NotifyPropertyChanged("PulseWidthValue");
-            }
-        }
-
-        private int pulseWidthIndex;
-        public int PulseWidthIndex
-        {
-            get { return pulseWidthIndex; }
-            set
-            {
-                pulseWidthIndex = value;
-                NotifyPropertyChanged("PulseWidthIndex");
-            }
-        }
+        }       
 
 
-        private double delayTime;
-        public double DelayTime
+        private ExtendedDoubleUpDownViewModel delayTime;
+        public ExtendedDoubleUpDownViewModel DelayTime
         {
             get { return delayTime; }
             set
             {
-                delayTime = value;
-                NotifyPropertyChanged("DelayTime");
+                SetField(ref delayTime, value, "DelayTime");
             }
-        }
-
-        private double delayTimeValue = 0.001;
-        public double DelayTimeValue
-        {
-            get { return delayTimeValue; }
-            set
-            {
-                delayTimeValue = value;
-                NotifyPropertyChanged("DelayTimeValue");
-            }
-        }
-
-        private int delayTimeIndex;
-        public int DelayTimeIndex
-        {
-            get { return delayTimeIndex; }
-            set
-            {
-                delayTimeIndex = value;
-                NotifyPropertyChanged("DelayTimeIndex");
-            }
-        }
-
+        }        
 
         private string ivFET_FilePath;
         public string IV_FET_DataFilePath
@@ -403,8 +202,7 @@ namespace FET_Characterization
             }
             set
             {
-                ivFET_FilePath = value;
-                NotifyPropertyChanged("IV_FET_DataFilePath");
+                SetField(ref ivFET_FilePath, value, "IV_FET_DataFilePath");
             }
         }
 
@@ -417,8 +215,7 @@ namespace FET_Characterization
                 if (!value.EndsWith(".dat"))
                     value += ".dat";
 
-                ivFileName = value;
-                NotifyPropertyChanged("IV_FileName");
+                SetField(ref ivFileName, value, "IV_FileName");
             }
         }
 
@@ -428,8 +225,7 @@ namespace FET_Characterization
             get { return ke_IV_FET_Averaging; }
             set
             {
-                ke_IV_FET_Averaging = value;
-                NotifyPropertyChanged("Ke_IV_FET_Averaging");
+                SetField(ref ke_IV_FET_Averaging, value, "Ke_IV_FET_Averaging");
             }
         }
 
@@ -444,43 +240,19 @@ namespace FET_Characterization
                 else if (value > 25)
                     value = 25;
 
-                ke_IV_FET_NPLC = value;
-                NotifyPropertyChanged("Ke_IV_FET_NPLC");
+                SetField(ref ke_IV_FET_NPLC, value, "Ke_IV_FET_NPLC");
             }
         }
 
-        private double iv_FET_GateDelay;
-        public double IV_FET_GateDelay
+        private ExtendedDoubleUpDownViewModel iv_FET_GateDelay;
+        public ExtendedDoubleUpDownViewModel IV_FET_GateDelay
         {
             get { return iv_FET_GateDelay; }
             set
             {
-                iv_FET_GateDelay = value;
-                NotifyPropertyChanged("IV_FET_GateDelay");
+                SetField(ref iv_FET_GateDelay, value, "IV_FET_GateDelay");
             }
-        }
-
-        private double ivFETGateDelayValue = 2.0;
-        public double IVFETGateDelayValue
-        {
-            get { return ivFETGateDelayValue; }
-            set
-            {
-                ivFETGateDelayValue = value;
-                NotifyPropertyChanged("IVFETGateDelayValue");
-            }
-        }
-
-        private int ivFETGateDelayIndex;
-        public int IVFETGateDelayIndex
-        {
-            get { return ivFETGateDelayIndex; }
-            set
-            {
-                ivFETGateDelayIndex = value;
-                NotifyPropertyChanged("IVFETGateDelayIndex");
-            }
-        }
+        }       
 
         // Transfer implementation
 
@@ -490,8 +262,7 @@ namespace FET_Characterization
             get { return transferKeithleyRscName; }
             set
             {
-                transferKeithleyRscName = value;
-                NotifyPropertyChanged("TransferKeithleyRscName");
+                SetField(ref transferKeithleyRscName, value, "TransferKeithleyRscName");
             }
         }
 
@@ -501,22 +272,22 @@ namespace FET_Characterization
             get { return transfer_v_dsChannel; }
             set
             {
-                transfer_v_dsChannel = value;
+                var transferVGChannelValue = Keithley26xxB_Channels.Channel_B;
 
                 switch (value)
                 {
                     case Keithley26xxB_Channels.Channel_A:
-                        transfer_v_gChannel = Keithley26xxB_Channels.Channel_B;
+                        transferVGChannelValue = Keithley26xxB_Channels.Channel_B;
                         break;
                     case Keithley26xxB_Channels.Channel_B:
-                        transfer_v_gChannel = Keithley26xxB_Channels.Channel_A;
+                        transferVGChannelValue = Keithley26xxB_Channels.Channel_A;
                         break;
                     default:
                         break;
                 }
 
-                NotifyPropertyChanged("TransferVdsChannel");
-                NotifyPropertyChanged("TransferVgChannel");
+                SetField(ref transfer_v_dsChannel, value, "TransferVdsChannel");
+                SetField(ref transfer_v_gChannel, transferVGChannelValue, "TransferVgChannel");
             }
         }
 
@@ -526,22 +297,22 @@ namespace FET_Characterization
             get { return transfer_v_gChannel; }
             set
             {
-                transfer_v_gChannel = value;
+                var transferVDSChannelValue = Keithley26xxB_Channels.Channel_A;
 
                 switch (value)
                 {
                     case Keithley26xxB_Channels.Channel_A:
-                        transfer_v_dsChannel = Keithley26xxB_Channels.Channel_B;
+                        transferVDSChannelValue = Keithley26xxB_Channels.Channel_B;
                         break;
                     case Keithley26xxB_Channels.Channel_B:
-                        transfer_v_dsChannel = Keithley26xxB_Channels.Channel_A;
+                        transferVDSChannelValue = Keithley26xxB_Channels.Channel_A;
                         break;
                     default:
                         break;
                 }
 
-                NotifyPropertyChanged("TransferVgChannel");
-                NotifyPropertyChanged("TransferVdsChannel");
+                SetField(ref transfer_v_gChannel, value, "TransferVgChannel");
+                SetField(ref transfer_v_dsChannel, transferVDSChannelValue, "TransferVdsChannel");
             }
         }
 
@@ -551,76 +322,29 @@ namespace FET_Characterization
             get { return transfer_smu_SourceMode; }
             set
             {
-                transfer_smu_SourceMode = value;
-                NotifyPropertyChanged("TransferSMU_SourceMode");
+                SetField(ref transfer_smu_SourceMode, value, "TransferSMU_SourceMode");
             }
         }
 
-        private double transfer_v_dsStart;
-        public double TransferVdsStart
+        private ExtendedDoubleUpDownViewModel transfer_v_dsStart;
+        public ExtendedDoubleUpDownViewModel TransferVdsStart
         {
             get { return transfer_v_dsStart; }
             set
             {
-                transfer_v_dsStart = value;
-                NotifyPropertyChanged("TransferVdsStart");
+                SetField(ref transfer_v_dsStart, value, "TransferVdsStart");
             }
         }
 
-        private double transferVdsStartValue = 0.0;
-        public double TransferVdsStartValue
-        {
-            get { return transferVdsStartValue; }
-            set
-            {
-                transferVdsStartValue = value;
-                NotifyPropertyChanged("TransferVdsStartValue");
-            }
-        }
-
-        private int transferVdsStartIndex;
-        public int TransferVdsStartIndex
-        {
-            get { return transferVdsStartIndex; }
-            set
-            {
-                transferVdsStartIndex = value;
-                NotifyPropertyChanged("TransferVdsStartIndex");
-            }
-        }
-
-        private double transfer_v_dsStop;
-        public double TransferVdsStop
+        private ExtendedDoubleUpDownViewModel transfer_v_dsStop;
+        public ExtendedDoubleUpDownViewModel TransferVdsStop
         {
             get { return transfer_v_dsStop; }
             set
             {
-                transfer_v_dsStop = value;
-                NotifyPropertyChanged("TransferVdsStop");
+                SetField(ref transfer_v_dsStop, value, "TransferVdsStop");
             }
-        }
-
-        private double transferVdsStopValue = -1.0;
-        public double TransferVdsStopValue
-        {
-            get { return transferVdsStopValue; }
-            set
-            {
-                transferVdsStopValue = value;
-                NotifyPropertyChanged("TransferVdsStopValue");
-            }
-        }
-
-        private int transferVdsStopIndex;
-        public int TransferVdsStopIndex
-        {
-            get { return transferVdsStopIndex; }
-            set
-            {
-                transferVdsStopIndex = value;
-                NotifyPropertyChanged("TransferVdsStopIndex");
-            }
-        }
+        }       
 
         private int transfer_n_v_dsStep = 6;
         public int TransferN_VdsStep
@@ -628,220 +352,80 @@ namespace FET_Characterization
             get { return transfer_n_v_dsStep; }
             set
             {
-                transfer_n_v_dsStep = value;
-                NotifyPropertyChanged("TransferN_VdsStep");
+                SetField(ref transfer_n_v_dsStep, value, "TransferN_VdsStep");
             }
         }
 
-        private double transfer_dsCompliance;
-        public double TransferDS_Complaince
+        private ExtendedDoubleUpDownViewModel transfer_dsCompliance;
+        public ExtendedDoubleUpDownViewModel TransferDS_Complaince
         {
             get { return transfer_dsCompliance; }
             set
             {
-                transfer_dsCompliance = value;
-                NotifyPropertyChanged("TransferDS_Complaince");
+                SetField(ref transfer_dsCompliance, value, "TransferDS_Complaince");
             }
-        }
+        }        
 
-        private double transferDSComplianceValue = 0.001;
-        public double TransferDSComplianceValue
-        {
-            get { return transferDSComplianceValue; }
-            set
-            {
-                transferDSComplianceValue = value;
-                NotifyPropertyChanged("TransferDSComplianceValue");
-            }
-        }
-
-        private int transferDSComplianceIndex;
-        public int TransferDSComplianceIndex
-        {
-            get { return transferDSComplianceIndex; }
-            set
-            {
-                transferDSComplianceIndex = value;
-                NotifyPropertyChanged("TransferDSComplianceIndex");
-            }
-        }
-
-        private double transfer_v_gStart;
-        public double TransferVgStart
+        private ExtendedDoubleUpDownViewModel transfer_v_gStart;
+        public ExtendedDoubleUpDownViewModel TransferVgStart
         {
             get { return transfer_v_gStart; }
             set
             {
-                transfer_v_gStart = value;
-                NotifyPropertyChanged("TransferVgStart");
+                SetField(ref transfer_v_gStart, value, "TransferVgStart");
             }
-        }
+        }        
 
-        private double transferVgStartValue = 0.0;
-        public double TransferVgStartValue
-        {
-            get { return transferVgStartValue; }
-            set
-            {
-                transferVgStartValue = value;
-                NotifyPropertyChanged("TransferVgStartValue");
-            }
-        }
-
-        private int transferVgStartIndex;
-        public int TransferVgStartIndex
-        {
-            get { return transferVgStartIndex; }
-            set
-            {
-                transferVgStartIndex = value;
-                NotifyPropertyChanged("TransferVgStartIndex");
-            }
-        }
-
-        private double transfer_v_gStop;
-        public double TransferVgStop
+        private ExtendedDoubleUpDownViewModel transfer_v_gStop;
+        public ExtendedDoubleUpDownViewModel TransferVgStop
         {
             get { return transfer_v_gStop; }
             set
             {
-                transfer_v_gStop = value;
-                NotifyPropertyChanged("TransferVgStop");
+                SetField(ref transfer_v_gStop, value, "TransferVgStop");
             }
         }
 
-        private double transferVgStopValue = -5.0;
-        public double TransferVgStopValue
-        {
-            get { return transferVgStopValue; }
-            set
-            {
-                transferVgStopValue = value;
-                NotifyPropertyChanged("TransferVgStopValue");
-            }
-        }
-
-        private int transferVgStopIndex;
-        public int TransferVgStopIndex
-        {
-            get { return transferVgStopIndex; }
-            set
-            {
-                transferVgStopIndex = value;
-                NotifyPropertyChanged("TransferVgStopIndex");
-            }
-        }
-
+    
         private int transfer_n_v_gSweep = 101;
         public int TransferN_VgSweep
         {
             get { return transfer_n_v_gSweep; }
             set
             {
-                transfer_n_v_gSweep = value;
-                NotifyPropertyChanged("TransferN_VgSweep");
+                SetField(ref transfer_n_v_gSweep, value, "TransferN_VgSweep");
             }
         }
 
-        private double transfer_gateCompliance;
-        public double TransferGate_Complaince
+        private ExtendedDoubleUpDownViewModel transfer_gateCompliance;
+        public ExtendedDoubleUpDownViewModel TransferGate_Complaince
         {
             get { return transfer_gateCompliance; }
             set
             {
-                transfer_gateCompliance = value;
-                NotifyPropertyChanged("TransferGate_Complaince");
+                SetField(ref transfer_gateCompliance, value, "TransferGate_Complaince");
             }
         }
 
-        private double transferGateComplianceValue = 0.001;
-        public double TransferGateComplianceValue
-        {
-            get { return transferGateComplianceValue; }
-            set
-            {
-                transferGateComplianceValue = value;
-                NotifyPropertyChanged("TransferGateComplianceValue");
-            }
-        }
-
-        private int transferGateComplianceIndex;
-        public int TransferGateComplianceIndex
-        {
-            get { return transferGateComplianceIndex; }
-            set
-            {
-                transferGateComplianceIndex = value;
-                NotifyPropertyChanged("TransferGateComplianceIndex");
-            }
-        }
-
-        private double transfer_pulseWidth;
-        public double TransferPulseWidth
+        private ExtendedDoubleUpDownViewModel transfer_pulseWidth;
+        public ExtendedDoubleUpDownViewModel TransferPulseWidth
         {
             get { return transfer_pulseWidth; }
             set
             {
-                transfer_pulseWidth = value;
-                NotifyPropertyChanged("TransferPulseWidth");
+                SetField(ref transfer_pulseWidth, value, "TransferPulseWidth");
             }
-        }
+        }       
 
-        private double transferPulseWidthValue = 0.001;
-        public double TransferPulseWidthValue
-        {
-            get { return transferPulseWidthValue; }
-            set
-            {
-                transferPulseWidthValue = value;
-                NotifyPropertyChanged("TransferPulseWidthValue");
-            }
-        }
-
-        private int transferPulseWidthIndex;
-        public int TransferPulseWidthIndex
-        {
-            get { return transferPulseWidthIndex; }
-            set
-            {
-                transferPulseWidthIndex = value;
-                NotifyPropertyChanged("TransferPulseWidthIndex");
-            }
-        }
-
-        private double transfer_delayTime;
-        public double TransferDelayTime
+        private ExtendedDoubleUpDownViewModel transfer_delayTime;
+        public ExtendedDoubleUpDownViewModel TransferDelayTime
         {
             get { return transfer_delayTime; }
             set
             {
-                transfer_delayTime = value;
-                NotifyPropertyChanged("TransferDelayTime");
+                SetField(ref transfer_delayTime, value, "TransferDelayTime");
             }
         }
-
-        private double transferDelayTimeValue = 0.001;
-        public double TransferDelayTimeValue
-        {
-            get { return transferDelayTimeValue; }
-            set
-            {
-                transferDelayTimeValue = value;
-                NotifyPropertyChanged("TransferDelayTimeValue");
-            }
-        }
-
-        private int transferDelayTimeIndex;
-        public int TransferDelayTimeIndex
-        {
-            get { return transferDelayTimeIndex; }
-            set
-            {
-                transferDelayTimeIndex = value;
-                NotifyPropertyChanged("TransferDelayTimeIndex");
-            }
-        }
-
 
         private string transferFilePath = string.Empty;
         public string TransferDataFilePath
@@ -855,8 +439,7 @@ namespace FET_Characterization
             }
             set
             {
-                transferFilePath = value;
-                NotifyPropertyChanged("TransferDataFilePath");
+                SetField(ref transferFilePath, value, "TransferDataFilePath");
             }
         }
 
@@ -869,8 +452,7 @@ namespace FET_Characterization
                 if (!value.EndsWith(".dat"))
                     value += ".dat";
 
-                transferFileName = value;
-                NotifyPropertyChanged("Transfer_FileName");
+                SetField(ref transferFileName, value, "Transfer_FileName");
             }
         }
 
@@ -880,8 +462,7 @@ namespace FET_Characterization
             get { return ke_Transfer_Averaging; }
             set
             {
-                ke_Transfer_Averaging = value;
-                NotifyPropertyChanged("Ke_Transfer_Averaging");
+                SetField(ref ke_Transfer_Averaging, value, "Ke_Transfer_Averaging");
             }
         }
 
@@ -896,52 +477,27 @@ namespace FET_Characterization
                 else if (value > 25)
                     value = 25;
 
-                ke_Transfer_NPLC = value;
-                NotifyPropertyChanged("Ke_Transfer_NPLC");
+                SetField(ref ke_Transfer_NPLC, value, "Ke_Transfer_NPLC");
             }
         }
 
-        private double transfer_VdsDelay;
-        public double Transfer_VdsDelay
+        private ExtendedDoubleUpDownViewModel transfer_VdsDelay;
+        public ExtendedDoubleUpDownViewModel Transfer_VdsDelay
         {
             get { return transfer_VdsDelay; }
             set
             {
-                transfer_VdsDelay = value;
-                NotifyPropertyChanged("Transfer_VdsDelay");
+                SetField(ref transfer_VdsDelay, value, "Transfer_VdsDelay");
             }
         }
-
-        private double transferVdsDelayValue = 2.0;
-        public double TransferVdsDelayValue
-        {
-            get { return transferVdsDelayValue; }
-            set
-            {
-                transferVdsDelayValue = value;
-                NotifyPropertyChanged("TransferVdsDelayValue");
-            }
-        }
-
-        private int transferVdsDelayIndex;
-        public int TransferVdsDelayIndex
-        {
-            get { return transferVdsDelayIndex; }
-            set
-            {
-                transferVdsDelayIndex = value;
-                NotifyPropertyChanged("TransferVdsDelayIndex");
-            }
-        }
-
+        
         private bool measureLeakage = true;
         public bool MeasureLeakage
         {
             get { return measureLeakage; }
             set
             {
-                measureLeakage = value;
-                NotifyPropertyChanged("MeasureLeakage");
+                SetField(ref measureLeakage, value, "MeasureLeakage");
             }
         }
     }

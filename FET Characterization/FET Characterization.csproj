@@ -83,9 +83,6 @@
     <Compile Include="Experiments\FET_Noise_Experiment.cs" />
     <Compile Include="Experiments\FET_Transfer_Experiment.cs" />
     <Compile Include="Experiments\ParameterConverters.cs" />
-    <Compile Include="Views\ExtendedDoubleUpDown.xaml.cs">
-      <DependentUpon>ExtendedDoubleUpDown.xaml</DependentUpon>
-    </Compile>
     <Compile Include="ViewModels\FET_IVModel.cs" />
     <Compile Include="ViewModels\FET_NoiseModel.cs" />
     <Compile Include="Views\FET_IV.xaml.cs">
@@ -94,10 +91,6 @@
     <Compile Include="Views\FET_Noise.xaml.cs">
       <DependentUpon>FET_Noise.xaml</DependentUpon>
     </Compile>
-    <Page Include="Views\ExtendedDoubleUpDown.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -151,6 +144,14 @@
     <ProjectReference Include="..\Agilent_ExtensionBox\Agilent_ExtensionBox.csproj">
       <Project>{0d6daee4-591c-475c-84b8-91326698926f}</Project>
       <Name>Agilent_ExtensionBox</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ControlAssist\ControlAssist.csproj">
+      <Project>{4f265752-d0c3-408b-b26f-4a08bd13e24d}</Project>
+      <Name>ControlAssist</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\CustomControls\CustomControls.csproj">
+      <Project>{2afba55d-3f2e-469f-b299-c8e47373efc7}</Project>
+      <Name>CustomControls</Name>
     </ProjectReference>
     <ProjectReference Include="..\D3Helper\D3Helper.csproj">
       <Project>{08a28cf7-e060-48e3-bc2e-f9e29fe89358}</Project>

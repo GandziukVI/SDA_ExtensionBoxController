@@ -4,6 +4,7 @@
 	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 	mc:Ignorable="d"
+    xmlns:customControls="clr-namespace:CustomControls;assembly=CustomControls"
 	xmlns:local="clr-namespace:FET_Characterization"
 	xmlns:Experiments="clr-namespace:FET_Characterization.Experiments"
 	xmlns:wpfTool="clr-namespace:Xceed.Wpf.Toolkit;assembly=Xceed.Wpf.Toolkit"
@@ -17,9 +18,7 @@
     </UserControl.DataContext>
 
     <UserControl.Resources>
-        <Experiments:ValueCollectionConverter x:Key="CollectionConverter" />
-        <Experiments:OscilloscopeVoltageAxisRangeConverter x:Key="OscVoltageAxisRangeConverter" />
-        <Experiments:OscilloscopeTimeAxisRangeConverter x:Key="OscVoltageTimeRangeConverter" />
+        <Experiments:ValueCollectionConverter x:Key="CollectionConverter" />        
         <d3:Log10Transform x:Key="SpectraDataTransform" />
         <d3:LogarithmNumericTicksProvider x:Key="Log10XTicksProvider" />
         <d3:LogarithmNumericTicksProvider x:Key="Log10YTicksProvider" />
@@ -50,7 +49,7 @@
             <Setter Property="HorizontalAlignment" Value="Stretch" />
             <Setter Property="VerticalAlignment" Value="Stretch" />
         </Style>
-        <Style TargetType="local:ExtendedDoubleUpDown">
+        <Style TargetType="customControls:ExtendedDoubleUpDown">
             <Setter Property="Width" Value="130" />
             <Setter Property="MaxWidth" Value="130" />
             <Setter Property="Margin" Value="2.5" />
@@ -98,8 +97,8 @@
                     <ni:Plot x:Name="timeTracePlot"/>
                 </ni:Graph.Plots>
                 <ni:Graph.Axes>
-                    <ni:AxisDouble Orientation="Horizontal" Adjuster="ContinuousChart"  Label="Time, s" ScaleKind="Linear" Range="{Binding OscilloscopeTimeRange, Converter={StaticResource OscVoltageTimeRangeConverter}, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"/>
-                    <ni:AxisDouble Orientation="Vertical" Adjuster="FitExactly"  Label="Voltage, V" ScaleKind="Linear" Range="{Binding OscilloscopeVoltageRange, Converter={StaticResource OscVoltageAxisRangeConverter}, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
+                    <ni:AxisDouble Orientation="Horizontal" Adjuster="ContinuousChart"  Label="Time, s" ScaleKind="Linear" Range="{Binding OscilloscopeTimeRange.RealValue, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"/>
+                    <ni:AxisDouble Orientation="Vertical" Adjuster="FitExactly"  Label="Voltage, V" ScaleKind="Linear" Range="{Binding OscilloscopeVoltageRange.RealValue, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
                 </ni:Graph.Axes>
             </ni:Graph>
 
@@ -113,18 +112,7 @@
                     <ni:AxisDouble Orientation="Horizontal" Adjuster="FitExactly" Label="Frequency, Hz" Range="0.5, 250000" ScaleKind="LogarithmBase10"/>
                     <ni:AxisDouble Orientation="Vertical" Adjuster="FitLoosely" Label="Noise PSD, V^2 / Hz" Range="1e-19, 1e-4" ScaleKind="LogarithmBase10" />
                 </ni:Graph.Axes>
-            </ni:Graph>
-
-            <!--<d3:ChartPlotter x:Name="chartFETNoise" Margin="5" LegendVisibility="Collapsed" NewLegendVisible="False" DataTransform="{StaticResource SpectraDataTransform}" Grid.Row="2" >
-				<d3:HorizontalAxis TicksProvider="{StaticResource Log10XTicksProvider}">
-					<d3:HorizontalAxisTitle Content="Frequency (Hz)" />
-				</d3:HorizontalAxis>
-				<d3:VerticalAxis TicksProvider="{StaticResource Log10YTicksProvider}">
-					<d3:VerticalAxisTitle>
-						<TextBlock>S<Run FontSize="9" BaselineAlignment="Subscript">V</Run> (V<Run FontSize="9" BaselineAlignment="Superscript">2</Run> / Hz)</TextBlock>
-					</d3:VerticalAxisTitle>
-				</d3:VerticalAxis>
-			</d3:ChartPlotter>-->
+            </ni:Graph>          
         </Grid>
 
         <ScrollViewer Grid.Column="1"  HorizontalAlignment="Left" VerticalScrollBarVisibility="Auto" >
@@ -168,10 +156,10 @@
                 <TextBlock Grid.Row="1" Grid.ColumnSpan="2" HorizontalAlignment="Center" Margin="5,30,5,15"><Run FontSize="18">Oscilloscope Settings</Run></TextBlock>
 
                 <TextBlock Grid.Row="2" Text="Voltage Range" />
-                <local:ExtendedDoubleUpDown Grid.Row="2" Grid.Column="1" UnitAlias="V" RealValue="{Binding OscilloscopeVoltageRange, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Value="{Binding OscilloscopeVoltageRangeValue, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" MultiplierIndex="{Binding OscilloscopeVoltageRangeIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                <customControls:ExtendedDoubleUpDown Grid.Row="2" Grid.Column="1" DataContext="{Binding OscilloscopeVoltageRange}" />
 
                 <TextBlock Grid.Row="3" Text="Time Range" />
-                <local:ExtendedDoubleUpDown Grid.Row="3" Grid.Column="1" UnitAlias="s"  RealValue="{Binding OscilloscopeTimeRange, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Value="{Binding OscilloscopeTimeRangeValue, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" MultiplierIndex="{Binding OscilloscopeTimeRangeIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                <customControls:ExtendedDoubleUpDown Grid.Row="3" Grid.Column="1" DataContext="{Binding OscilloscopeTimeRange}" />
 
                 <TextBlock Grid.Row="4" Text="Points per graph" />
                 <wpfTool:IntegerUpDown Grid.Row="4" Grid.Column="1" Value="{Binding OscilloscopePointsPerGraph, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
@@ -196,7 +184,7 @@
                 <TextBox Text="{Binding DSVoltageCollection, Converter={StaticResource CollectionConverter}, Mode=TwoWay, UpdateSourceTrigger=LostFocus}" Grid.Column="1" TextWrapping="Wrap" Height="100" MaxHeight="100" VerticalContentAlignment="Top" VerticalScrollBarVisibility="Auto" MouseDoubleClick="SelectAddress" PreviewMouseRightButtonUp="SelectivelyIgnoreMouseButton" GotFocus="SelectAddress" PreviewMouseLeftButtonDown="SelectivelyIgnoreMouseButton" Grid.Row="8" IsEnabled="{Binding UseVoltageControl, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
                 <TextBlock TextWrapping="Wrap" Text="Voltage deviation" Grid.Row="9" IsEnabled="{Binding UseVoltageControl, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                <local:ExtendedDoubleUpDown Grid.Row="9" Grid.Column="1" UnitAlias="V" RealValue="{Binding VoltageDeviation, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Value="{Binding VoltageDeviationValue, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" MultiplierIndex="{Binding VoltageDeviationMultiplierIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"  />
+                <customControls:ExtendedDoubleUpDown Grid.Row="9" Grid.Column="1" DataContext="{Binding VoltageDeviation}" />
 
                 <TextBlock TextWrapping="Wrap" Text="n Avg. (fast)" Grid.Row="10"/>
                 <wpfTool:IntegerUpDown Grid.Row="10" Grid.Column="1" Value="{Binding NAveragesFast, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />

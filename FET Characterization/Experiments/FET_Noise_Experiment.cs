@@ -781,16 +781,16 @@ namespace FET_Characterization.Experiments
                                 if (experimentSettings.IsOutputCurveMode == true)
                                 {
                                     onStatusChanged(new StatusEventArgs(string.Format("Setting gate voltage V -> {0} V", outerLoopVoltage.ToString("0.0000", NumberFormatInfo.InvariantInfo))));
-                                    SetGateVoltage(outerLoopVoltage, experimentSettings.VoltageDeviation);
+                                    SetGateVoltage(outerLoopVoltage, experimentSettings.VoltageDeviation.RealValue);
                                     onStatusChanged(new StatusEventArgs(string.Format("Setting drain-source voltage V -> {0} V", innerLoopVoltage.ToString("0.0000", NumberFormatInfo.InvariantInfo))));
-                                    SetDrainSourceVoltage(innerLoopVoltage, experimentSettings.VoltageDeviation);
+                                    SetDrainSourceVoltage(innerLoopVoltage, experimentSettings.VoltageDeviation.RealValue);
                                 }
                                 else if (experimentSettings.IsTransferCurveMode == true)
                                 {
                                     onStatusChanged(new StatusEventArgs(string.Format("Setting gate voltage V -> {0} V", innerLoopVoltage.ToString("0.0000", NumberFormatInfo.InvariantInfo))));
-                                    SetGateVoltage(innerLoopVoltage, experimentSettings.VoltageDeviation);
+                                    SetGateVoltage(innerLoopVoltage, experimentSettings.VoltageDeviation.RealValue);
                                     onStatusChanged(new StatusEventArgs(string.Format("Setting drain-source voltage V -> {0} V", outerLoopVoltage.ToString("0.0000", NumberFormatInfo.InvariantInfo))));
-                                    SetDrainSourceVoltage(outerLoopVoltage, experimentSettings.VoltageDeviation);
+                                    SetDrainSourceVoltage(outerLoopVoltage, experimentSettings.VoltageDeviation.RealValue);
                                 }
                             }
                             else

@@ -92,11 +92,11 @@ namespace FET_Characterization.Experiments
 
             smuVg.SourceMode = SMUSourceMode.Voltage;
 
-            smuVg.Compliance = settings.Gate_Complaince;
+            smuVg.Compliance = settings.Gate_Complaince.RealValue;
             smuVg.Averaging = settings.Ke_IV_FET_Averaging;
             smuVg.NPLC = settings.Ke_IV_FET_NPLC;
 
-            smuVg.Voltage = settings.VgStart;
+            smuVg.Voltage = settings.VgStart.RealValue;
 
             smuVg.SwitchON();
 
@@ -106,17 +106,17 @@ namespace FET_Characterization.Experiments
 
             smuVds.SourceMode = settings.SMU_SourceMode;
 
-            smuVds.Compliance = settings.DS_Complaince;
+            smuVds.Compliance = settings.DS_Complaince.RealValue;
             smuVds.Averaging = settings.Ke_IV_FET_Averaging;
             smuVds.NPLC = settings.Ke_IV_FET_NPLC;
 
             switch (settings.SMU_SourceMode)
             {
                 case SMUSourceMode.Voltage:
-                    smuVds.Voltage = settings.VdsStart;
+                    smuVds.Voltage = settings.VdsStart.RealValue;
                     break;
                 case SMUSourceMode.Current:
-                    smuVds.Current = settings.VdsStart;
+                    smuVds.Current = settings.VdsStart.RealValue;
                     break;
                 case SMUSourceMode.ModeNotSet:
                     break;
@@ -130,11 +130,11 @@ namespace FET_Characterization.Experiments
 
             #region General settings
 
-            var currentVg = settings.VgStart;
-            var current_DS_value = settings.VdsStart;
+            var currentVg = settings.VgStart.RealValue;
+            var current_DS_value = settings.VdsStart.RealValue;
 
-            var dVg = (settings.VgStop - settings.VgStart) / (settings.N_VgStep - 1);
-            var d_DS_value = (settings.VdsStop - settings.VdsStart) / (settings.N_VdsSweep - 1);
+            var dVg = (settings.VgStop.RealValue - settings.VgStart.RealValue) / (settings.N_VgStep - 1);
+            var d_DS_value = (settings.VdsStop.RealValue - settings.VdsStart.RealValue) / (settings.N_VdsSweep - 1);
 
             #endregion
 
@@ -211,7 +211,7 @@ namespace FET_Characterization.Experiments
                     var ivData = new IV_FET_DataContainer(currentVg, singleIV_FET_CurveData);
                     iv_FET_CurveDataSet.AddLast(ivData);
 
-                    current_DS_value = settings.VdsStart;
+                    current_DS_value = settings.VdsStart.RealValue;
 
                     switch (settings.SMU_SourceMode)
                     {
@@ -233,7 +233,7 @@ namespace FET_Characterization.Experiments
                         smuVg.Voltage = currentVg;
                     }
 
-                    Thread.Sleep((int)(settings.IV_FET_GateDelay * 1000));
+                    Thread.Sleep((int)(settings.IV_FET_GateDelay.RealValue * 1000));
                 }
             }
             else
@@ -252,7 +252,7 @@ namespace FET_Characterization.Experiments
                     {
                         case SMUSourceMode.Voltage:
                             {
-                                var ivData = smuVds.LinearVoltageSweep(settings.VdsStart, settings.VdsStop, settings.N_VdsSweep);
+                                var ivData = smuVds.LinearVoltageSweep(settings.VdsStart.RealValue, settings.VdsStop.RealValue, settings.N_VdsSweep);
 
                                 onDataArrived(new ExpDataArrivedEventArgs(ivData.ToStringExtension()));
 
@@ -263,7 +263,7 @@ namespace FET_Characterization.Experiments
                             } break;
                         case SMUSourceMode.Current:
                             {
-                                var ivData = smuVds.LinearCurrentSweep(settings.VdsStart, settings.VdsStop, settings.N_VdsSweep);
+                                var ivData = smuVds.LinearCurrentSweep(settings.VdsStart.RealValue, settings.VdsStop.RealValue, settings.N_VdsSweep);
 
                                 onDataArrived(new ExpDataArrivedEventArgs(ivData.ToStringExtension()));
 
@@ -281,7 +281,7 @@ namespace FET_Characterization.Experiments
                     var ivSingleCurveWithDescription = new IV_FET_DataContainer(currentVg, singleIV_FET_CurveData);
                     iv_FET_CurveDataSet.AddLast(ivSingleCurveWithDescription);
 
-                    current_DS_value = settings.VdsStart;
+                    current_DS_value = settings.VdsStart.RealValue;
 
                     if (i != settings.N_VgStep - 1)
                     {
@@ -289,7 +289,7 @@ namespace FET_Characterization.Experiments
                         smuVg.Voltage = currentVg;
                     }
 
-                    Thread.Sleep((int)(settings.IV_FET_GateDelay * 1000));
+                    Thread.Sleep((int)(settings.IV_FET_GateDelay.RealValue * 1000));
 
                     var gateProgress = 1.0 - (settings.N_VgStep - (double)(i + 1)) / settings.N_VgStep;
 

@@ -8,31 +8,18 @@ using System.ComponentModel;
 using Microsoft.Research.DynamicDataDisplay;
 using Microsoft.Research.DynamicDataDisplay.Charts.Axes.Numeric;
 using System.IO;
+using ControlAssist;
+using CustomControls.ViewModels;
 
 namespace FET_Characterization
 {
     [Serializable]
-	public class FET_NoiseModel : INotifyPropertyChanged
+	public class FET_NoiseModel : NotifyPropertyChangedBase
 	{
 		public FET_NoiseModel()
 		{
 			
 		}
-
-		#region INotifyPropertyChanged implementation
-
-        [field:NonSerializedAttribute()]
-		public event PropertyChangedEventHandler PropertyChanged;
-
-        private void NotifyPropertyChanged(String info)
-		{
-			if (PropertyChanged != null)
-			{
-				PropertyChanged(this, new PropertyChangedEventArgs(info));
-			}
-		}
-
-		#endregion
 
         private string agilentU2542Ares = "USB0::2391::5912::TW54334510::INSTR";
         public string AgilentU2542AResName
@@ -40,78 +27,31 @@ namespace FET_Characterization
             get { return agilentU2542Ares; }
             set
             {
-                agilentU2542Ares = value;
-                NotifyPropertyChanged("AgilentU2542AResName");
+                SetField(ref agilentU2542Ares, value, "AgilentU2542AResName");
             }
         }
 
         #region Oscilloscope settings       
 
-        private double oscilloscopeVoltageRange;
-        public double OscilloscopeVoltageRange
+        private ExtendedDoubleUpDownViewModel oscilloscopeVoltageRange = new ExtendedDoubleUpDownViewModel() { Value = 200, MultiplierIndex = 1, UnitAlias = "V" };
+        public ExtendedDoubleUpDownViewModel OscilloscopeVoltageRange
         {
             get { return oscilloscopeVoltageRange; }
             set 
             {
-                oscilloscopeVoltageRange = value;
-                NotifyPropertyChanged("OscilloscopeVoltageRange");
+                SetField(ref oscilloscopeVoltageRange, value, "OscilloscopeVoltageRange");
             }
-        }
+        }        
 
-        private double oscilloscopeVoltageRangeValue = 0.2;
-        public double OscilloscopeVoltageRangeValue
-        {
-            get { return oscilloscopeVoltageRangeValue; }
-            set 
-            { 
-                oscilloscopeVoltageRangeValue = value;
-                NotifyPropertyChanged("OscilloscopeVoltageRangeValue");
-            }
-        }
-
-        private int oscilloscopeVoltageRangeIndex;
-        public int OscilloscopeVoltageRangeIndex
-        {
-            get { return oscilloscopeVoltageRangeIndex; }
-            set
-            { 
-                oscilloscopeVoltageRangeIndex = value;
-                NotifyPropertyChanged("OscilloscopeVoltageRangeIndex");
-            }
-        }
-
-        private double oscilloscopeTimeRange;
-        public double OscilloscopeTimeRange
+        private ExtendedDoubleUpDownViewModel oscilloscopeTimeRange = new ExtendedDoubleUpDownViewModel() { Value = 1.0, MultiplierIndex = 0, UnitAlias = "s" };
+        public ExtendedDoubleUpDownViewModel OscilloscopeTimeRange
         {
             get { return oscilloscopeTimeRange; }
             set 
             {
-                oscilloscopeTimeRange = value;
-                NotifyPropertyChanged("OscilloscopeTimeRange");
+                SetField(ref oscilloscopeTimeRange, value, "OscilloscopeTimeRange");
             }
-        }
-
-        private double oscilloscopeTimeRangeValue = 1.0;
-        public double OscilloscopeTimeRangeValue
-        {
-            get { return oscilloscopeTimeRangeValue; }
-            set 
-            {
-                oscilloscopeTimeRangeValue = value;
-                NotifyPropertyChanged("OscilloscopeTimeRangeValue");
-            }
-        }
-
-        private int oscilloscopeTimeRangeIndex;
-        public int OscilloscopeTimeRangeIndex
-        {
-            get { return oscilloscopeTimeRangeIndex; }
-            set
-            {
-                oscilloscopeTimeRangeIndex = value;
-                NotifyPropertyChanged("OscilloscopeTimeRangeIndex");
-            }
-        }
+        }        
 
         private int oscilloscopePointsPerGraph = 1000;
         public int OscilloscopePointsPerGraph
@@ -119,8 +59,7 @@ namespace FET_Characterization
             get { return oscilloscopePointsPerGraph; }
             set 
             {
-                oscilloscopePointsPerGraph = value;
-                NotifyPropertyChanged("OscilloscopePointsPerGraph");
+                SetField(ref oscilloscopePointsPerGraph, value, "OscilloscopePointsPerGraph");
             }
         }
 
@@ -132,8 +71,7 @@ namespace FET_Characterization
             get { return useVoltageControl; }
             set 
             {
-                useVoltageControl = value;
-                NotifyPropertyChanged("UseVoltageControl");
+                SetField(ref useVoltageControl, value, "UseVoltageControl");
             }
         }
         
@@ -144,8 +82,7 @@ namespace FET_Characterization
             get { return isTransferCurveMode; }
             set 
             {
-                isTransferCurveMode = value;
-                NotifyPropertyChanged("IsTransferCurveMode");
+                SetField(ref isTransferCurveMode, value, "IsTransferCurveMode");
             }
         }
 
@@ -155,8 +92,7 @@ namespace FET_Characterization
             get { return isOutputCurveMode; }
             set
             {
-                isOutputCurveMode = value;
-                NotifyPropertyChanged("IsOutputCurveMode");
+                SetField(ref isOutputCurveMode, value, "IsOutputCurveMode");
             }
         }
 
@@ -166,8 +102,7 @@ namespace FET_Characterization
             get { return gateVoltageCollection; }
             set
             {
-                gateVoltageCollection = value;
-                NotifyPropertyChanged("GateVoltageCollection");
+                SetField(ref gateVoltageCollection, value, "GateVoltageCollection");
             }
         }
 
@@ -177,43 +112,19 @@ namespace FET_Characterization
             get { return dsVoltageCollection; }
             set
             {
-                dsVoltageCollection = value;
-                NotifyPropertyChanged("DSVoltageCollection");
+                SetField(ref dsVoltageCollection, value, "DSVoltageCollection");
             }
         }
 
-        private double voltageDeviation;
-        public double VoltageDeviation
+        private ExtendedDoubleUpDownViewModel voltageDeviation = new ExtendedDoubleUpDownViewModel() { Value = 1, MultiplierIndex = 1, UnitAlias = "V" };
+        public ExtendedDoubleUpDownViewModel VoltageDeviation
         {
             get { return voltageDeviation; }
             set
             {
-                voltageDeviation = value;
-                NotifyPropertyChanged("VoltageDeviation");
+                SetField(ref voltageDeviation, value, "VoltageDeviation");
             }
-        }
-
-        private double voltageDeviationValue = 1.0;
-        public double VoltageDeviationValue
-        {
-            get { return voltageDeviationValue; }
-            set 
-            {
-                voltageDeviationValue = value;
-                NotifyPropertyChanged("VoltageDeviationValue");
-            }
-        }
-        
-        private int voltageDeviationMultiplierIndex;
-        public int VoltageDeviationMultiplierIndex
-        {
-            get { return voltageDeviationMultiplierIndex; }
-            set 
-            {
-                voltageDeviationMultiplierIndex = value;
-                NotifyPropertyChanged("VoltageDeviationMultiplierIndex");
-            }
-        }
+        }        
         
 
         private int nAveragesFast = 2;
@@ -222,8 +133,7 @@ namespace FET_Characterization
             get { return nAveragesFast; }
             set
             {
-                nAveragesFast = value;
-                NotifyPropertyChanged("NAveragesFast");
+                SetField(ref nAveragesFast, value, "NAveragesFast");
             }
         }
 
@@ -233,8 +143,7 @@ namespace FET_Characterization
             get { return nAveragesSlow; }
             set
             {
-                nAveragesSlow = value;
-                NotifyPropertyChanged("NAveragesSlow");
+                SetField(ref nAveragesSlow, value, "NAveragesSlow");
             }
         }
 
@@ -249,7 +158,7 @@ namespace FET_Characterization
                 else
                     throw new ArgumentException("The stabilization time should have positive value.");
 
-                NotifyPropertyChanged("StabilizationTime");
+                SetField(ref stabilizationTime, value, "StabilizationTime");
             }
         }
 
@@ -259,8 +168,7 @@ namespace FET_Characterization
             get { return ampInputResistance;}
             set
             {
-                 ampInputResistance = value;
-                 NotifyPropertyChanged("AmpInputResistance");
+                 SetField(ref ampInputResistance, value, "AmpInputResistance");
             }
         }
 
@@ -270,8 +178,7 @@ namespace FET_Characterization
             get { return loadResistance; }
             set
             {
-                loadResistance = value;
-                NotifyPropertyChanged("LoadResistance");
+                SetField(ref loadResistance, value, "LoadResistance");
             }
         }
 
@@ -281,8 +188,7 @@ namespace FET_Characterization
             get { return samplingFrequency; }
             set
             {
-                samplingFrequency = value;
-                NotifyPropertyChanged("SamplingFrequency");
+                SetField(ref samplingFrequency, value, "SamplingFrequency");
             }
         }
 
@@ -292,8 +198,7 @@ namespace FET_Characterization
             get { return spectraAveraging; }
             set
             {
-                spectraAveraging = value;
-                NotifyPropertyChanged("SpectraAveraging");
+                SetField(ref spectraAveraging, value, "SpectraAveraging");
             }
         }
 
@@ -303,19 +208,17 @@ namespace FET_Characterization
             get { return updateNumber; }
             set
             {
-                updateNumber = value;
-                NotifyPropertyChanged("UpdateNumber");
+                SetField(ref updateNumber, value, "UpdateNumber");
             }
         }
 
-        private double kPreAmpl = 178.0;
+        private double kPreAmpl = 180.0;
         public double KPreAmpl
         {
             get { return kPreAmpl; }
             set
             {
-                kPreAmpl = value;
-                NotifyPropertyChanged("KPreAmpl");
+                SetField(ref kPreAmpl, value, "KPreAmpl");
             }
         }
 
@@ -325,30 +228,27 @@ namespace FET_Characterization
             get { return kAmpl; }
             set
             {
-                kAmpl = value;
-                NotifyPropertyChanged("KAmpl");
+                SetField(ref kAmpl, value, "KAmpl");
             }
         }
 
-        private double temperature0 = 277.0;
+        private double temperature0 = 297.0;
         public double Temperature0
         {
             get { return temperature0; }
             set
             {
-                temperature0 = value;
-                NotifyPropertyChanged("Temperature0");
+                SetField(ref temperature0, value, "Temperature0");
             }
         }
 
-        private double temperatureE = 277.0;
+        private double temperatureE = 297.0;
         public double TemperatureE
         {
             get { return temperatureE; }
             set
             {
-                temperatureE = value;
-                NotifyPropertyChanged("TemperatureE");
+                SetField(ref temperatureE, value, "TemperatureE");
             }
         }
 
@@ -358,8 +258,7 @@ namespace FET_Characterization
             get { return recordTimeTraces; }
             set
             {
-                recordTimeTraces = value;
-                NotifyPropertyChanged("RecordTimeTraces");
+                SetField(ref recordTimeTraces, value, "RecordTimeTraces");
             }
         }
 
@@ -382,10 +281,7 @@ namespace FET_Characterization
             get { return recordingFrequency; }
             set
             {
-                value = getClosestValueInArray(value, powersOfTwo);
-
-                recordingFrequency = value;
-                NotifyPropertyChanged("RecordingFrequency");
+                SetField(ref recordingFrequency, value, "RecordingFrequency");
             }
         }
 
@@ -396,8 +292,7 @@ namespace FET_Characterization
             get { return filePath; }
             set
             {
-                filePath = value;
-                NotifyPropertyChanged("FilePath");
+                SetField(ref filePath, value, "FilePath");
             }
         }
 
@@ -410,8 +305,7 @@ namespace FET_Characterization
                 if (!value.EndsWith(".dat"))
                     value += ".dat";
 
-                saveFileName = value;
-                NotifyPropertyChanged("SaveFileName");
+                SetField(ref saveFileName, value, "SaveFileName");
             }
         }
 
@@ -421,8 +315,7 @@ namespace FET_Characterization
             get { return noisePSDData; }
             set
             {
-                noisePSDData = value;
-                NotifyPropertyChanged("NoisePSDData");
+                SetField(ref noisePSDData, value, "NoisePSDData");
             }
         }
     }

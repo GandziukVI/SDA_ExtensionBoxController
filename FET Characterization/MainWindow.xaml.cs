@@ -405,7 +405,7 @@ namespace FET_Characterization
 
                     if (dataDequeuingSuccess.All(x => x))
                     {
-                        var nPointsToConsider = (int)(settings.SamplingFrequency * settings.OscilloscopeTimeRange);
+                        var nPointsToConsider = (int)(settings.SamplingFrequency * settings.OscilloscopeTimeRange.RealValue);
                         var nPointsRest = (int)(settings.SamplingFrequency - nPointsToConsider);
 
                         var N = (int)(nPointsToConsider / settings.OscilloscopePointsPerGraph);
