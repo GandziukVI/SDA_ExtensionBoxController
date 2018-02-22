@@ -48,8 +48,9 @@ namespace MCBJ.Experiments
             }
         }
 
-        private double voltageDeviation;
-        public double VoltageDeviation
+        private ExtendedDoubleUpDownViewModel voltageDeviation = new ExtendedDoubleUpDownViewModel() { Value = 0.5, MultiplierIndex = 1, UnitAlias = "V" };
+
+        public ExtendedDoubleUpDownViewModel VoltageDeviation
         {
             get { return voltageDeviation; }
             set
@@ -59,31 +60,9 @@ namespace MCBJ.Experiments
             }
         }
 
-        private double voltageDeviationValue = 0.0002;
-        public double VoltageDeviationValue
-        {
-            get { return voltageDeviationValue; }
-            set 
-            {
-                voltageDeviationValue = value;
-                onPropertyChanged("VoltageDeviationValue");
-            }
-        }
 
-        private int voltageDeviationIndex;
-        public int VoltageDeviationIndex
-        {
-            get { return voltageDeviationIndex; }
-            set 
-            {
-                voltageDeviationIndex = value;
-                onPropertyChanged("VoltageDeviationIndex");
-            }
-        }
-
-
-        private double minVoltageTreshold;
-        public double MinVoltageTreshold
+        private ExtendedDoubleUpDownViewModel minVoltageTreshold = new ExtendedDoubleUpDownViewModel() { Value = 5, MultiplierIndex = 1, UnitAlias = "V" };
+        public ExtendedDoubleUpDownViewModel MinVoltageTreshold
         {
             get { return minVoltageTreshold; }
             set
@@ -93,58 +72,14 @@ namespace MCBJ.Experiments
             }
         }
 
-        private double minVoltageTresholdValue = 0.005;
-        public double MinVoltageTresholdValue
-        {
-            get { return minVoltageTresholdValue; }
-            set
-            {
-                minVoltageTresholdValue = value;
-                onPropertyChanged("MinVoltageTresholdValue");
-            }
-        }
-
-        private int minVoltageTresholdIndex;
-        public int MinVoltageTresholdIndex
-        {
-            get { return minVoltageTresholdIndex; }
-            set 
-            {
-                minVoltageTresholdIndex = value;
-                onPropertyChanged("MinVoltageTresholdIndex");
-            }
-        }
-
-        private double voltageTreshold;
-        public double VoltageTreshold
+        private ExtendedDoubleUpDownViewModel voltageTreshold = new ExtendedDoubleUpDownViewModel() { Value = 100, MultiplierIndex = 1, UnitAlias = "V" };
+        public ExtendedDoubleUpDownViewModel VoltageTreshold
         {
             get { return voltageTreshold; }
             set
             {
                 voltageTreshold = value;
                 onPropertyChanged("VoltageTreshold");
-            }
-        }
-
-        private double voltageTresholdValue = 0.1;
-        public double VoltageTresholdValue
-        {
-            get { return voltageTresholdValue; }
-            set 
-            {
-                voltageTresholdValue = value;
-                onPropertyChanged("VoltageTresholdValue");
-            }
-        }
-
-        private int voltageTresholdIndex;        
-        public int VoltageTresholdIndex
-        {
-            get { return voltageTresholdIndex; }
-            set 
-            {
-                voltageTresholdIndex = value;
-                onPropertyChanged("VoltageTresholdIndex");
             }
         }
 

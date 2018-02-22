@@ -55,7 +55,6 @@
             <Setter Property="MaxWidth" Value="110" />
             <Setter Property="HorizontalAlignment" Value="Stretch" />
             <Setter Property="VerticalAlignment" Value="Stretch" />
-            <Setter Property="FormatString" Value="G4" />
         </Style>
         <Style TargetType="Button">
             <Setter Property="Margin" Value="2.5" />
@@ -163,9 +162,9 @@
 
                 <TextBox Height="100" MaxHeight="100" VerticalContentAlignment="Top" HorizontalContentAlignment="Left" VerticalScrollBarVisibility="Auto" MouseDoubleClick="SelectAddress" PreviewMouseRightButtonUp="SelectivelyIgnoreMouseButton" GotFocus="SelectAddress" PreviewMouseLeftButtonDown="SelectivelyIgnoreMouseButton" Grid.Column="1" Text="{Binding AgilentU2542AResName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" AcceptsReturn="True" TextWrapping="Wrap" />
                 <TextBox Text="{Binding ScanningVoltageCollection, Converter={StaticResource CollectionConverter}, Mode=TwoWay, UpdateSourceTrigger=LostFocus}" Grid.Column="1" TextWrapping="Wrap" Height="100" MaxHeight="100" VerticalContentAlignment="Top" VerticalScrollBarVisibility="Auto" MouseDoubleClick="SelectAddress" PreviewMouseRightButtonUp="SelectivelyIgnoreMouseButton" GotFocus="SelectAddress" PreviewMouseLeftButtonDown="SelectivelyIgnoreMouseButton" Grid.Row="1"/>
-                <local:ExtendedDoubleUpDown Grid.Row="2" Grid.Column="1" UnitAlias="V" RealValue="{Binding VoltageDeviation, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Value="{Binding VoltageDeviationValue, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" MultiplierIndex="{Binding VoltageDeviationIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                <local:ExtendedDoubleUpDown Grid.Row="3" Grid.Column="1" UnitAlias="V" RealValue="{Binding MinVoltageTreshold, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Value="{Binding MinVoltageTresholdValue, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" MultiplierIndex="{Binding MinVoltageTresholdIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                <local:ExtendedDoubleUpDown Grid.Row="4" Grid.Column="1" UnitAlias="V" RealValue="{Binding VoltageTreshold, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Value="{Binding VoltageTresholdValue, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" MultiplierIndex="{Binding VoltageTresholdIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                <local:ExtendedDoubleUpDown Grid.Row="2" Grid.Column="1" DataContext="{Binding VoltageDeviation}" />
+                <local:ExtendedDoubleUpDown Grid.Row="3" Grid.Column="1" DataContext="{Binding MinVoltageTreshold}"/>
+                <local:ExtendedDoubleUpDown Grid.Row="4" Grid.Column="1" DataContext="{Binding VoltageTreshold}" />
                 <TextBox Grid.Row="5" Grid.Column="1" Text="{Binding SetConductanceCollection, Converter={StaticResource CollectionConverter}, Mode=TwoWay, UpdateSourceTrigger=LostFocus}" TextWrapping="Wrap" Height="100" MaxHeight="100" VerticalContentAlignment="Top" VerticalScrollBarVisibility="Auto" PreviewMouseLeftButtonDown="SelectivelyIgnoreMouseButton" MouseDoubleClick="SelectAddress" GotFocus="SelectAddress"/>
                 <TextBox Grid.Row="6" Grid.Column="1" Text="{Binding SetResistanceCollection, Converter={StaticResource CollectionConverter}, Mode=TwoWay, UpdateSourceTrigger=LostFocus}" TextWrapping="Wrap" Height="100" MaxHeight="100" VerticalContentAlignment="Top" VerticalScrollBarVisibility="Auto" GotFocus="SelectAddress" MouseDoubleClick="SelectAddress" PreviewMouseLeftButtonDown="SelectivelyIgnoreMouseButton"/>
                 <wpfTool:DoubleUpDown Grid.Row="7" Grid.Column="1" Value="{Binding ConductanceDeviation, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>

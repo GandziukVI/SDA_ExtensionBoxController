@@ -1175,15 +1175,15 @@ namespace MCBJ.Experiments
 
                             onStatusChanged(new StatusEventArgs(string.Format("Setting sample voltage V -> {0} V", voltage.ToString("0.0000", NumberFormatInfo.InvariantInfo))));
 
-                            setDrainVoltage(voltage, experimentSettings.VoltageDeviation);
+                            setDrainVoltage(voltage, experimentSettings.VoltageDeviation.RealValue);
 
                             onStatusChanged(new StatusEventArgs(string.Format("Reaching resistance value R -> {0}", (1.0 / conductance).ToString("0.0000", NumberFormatInfo.InvariantInfo))));
 
                             resistanceStabilizationState = setJunctionResistance(
                                 voltage,
-                                experimentSettings.VoltageDeviation,
-                                experimentSettings.MinVoltageTreshold,
-                                experimentSettings.VoltageTreshold,
+                                experimentSettings.VoltageDeviation.RealValue,
+                                experimentSettings.MinVoltageTreshold.RealValue,
+                                experimentSettings.VoltageTreshold.RealValue,
                                 conductance,
                                 experimentSettings.ConductanceDeviation,
                                 experimentSettings.StabilizationTime,
@@ -1200,7 +1200,7 @@ namespace MCBJ.Experiments
                                 break;
                             }
 
-                            setDrainVoltage(voltage, experimentSettings.VoltageDeviation);
+                            setDrainVoltage(voltage, experimentSettings.VoltageDeviation.RealValue);
 
                             onStatusChanged(new StatusEventArgs("Measuring sample characteristics before noise spectra measurement."));
 
