@@ -1,45 +1,30 @@
-﻿using System;
+﻿using ControlAssist;
+using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MCBJ
+namespace CustomControls.ViewModels
 {
-    [Serializable]
-    public class ExtendedDoubleUpDownViewModel : INotifyPropertyChanged
+    public class ExtendedDoubleUpDownViewModel : NotifyPropertyChangedBase
     {
-        [field: NonSerializedAttribute()]
-        public event PropertyChangedEventHandler PropertyChanged;
-        private bool SetField<T>(ref T field, T value, string propertyName)
+        public ExtendedDoubleUpDownViewModel() { }
+        public ExtendedDoubleUpDownViewModel(string Unit)
         {
-            if (Comparer<T>.Default.Compare(field, value) == 0)
-                return false;
-            else
-            {
-                field = value;
-                var eventHandler = PropertyChanged;
-                if (eventHandler != null)
-                {
-                    eventHandler(this, new PropertyChangedEventArgs(propertyName));
-                }
-                return true;
-            }
+            this.UnitAlias = Unit;
+            this.RefreshUnits();
         }
 
-        private double m_value;
-
+        private double mValue;
         public double Value
         {
-            get { return m_value; }
+            get { return mValue; }
             set
             {
-                SetField(ref m_value, value, "Value");
+                SetField(ref mValue, value, "Value");
             }
         }
-
-
 
         public double RealValue
         {
@@ -53,7 +38,6 @@ namespace MCBJ
         {
             get { return m_multiplier_strings; }
         }
-
 
         public double Multiplier
         {
@@ -70,26 +54,24 @@ namespace MCBJ
             }
         }
 
-        private int m_multiplier_index;
-
+        private int mMultiplierIndex;
         public int MultiplierIndex
         {
-            get { return m_multiplier_index; }
+            get { return mMultiplierIndex; }
             set
             {
-                SetField(ref m_multiplier_index, value, "MultiplierIndex");
+                SetField(ref mMultiplierIndex, value, "MultiplierIndex");
             }
         }
 
 
-        private string m_unit;
-
+        private string mUnit;
         public string UnitAlias
         {
-            get { return m_unit; }
+            get { return mUnit; }
             set
             {
-                if (SetField(ref m_unit, value, "UnitAlias"))
+                if (SetField(ref mUnit, value, "UnitAlias"))
                     RefreshUnits();
             }
         }
@@ -99,23 +81,12 @@ namespace MCBJ
             for (int i = 0; i < m_multiplier_strings.Length; i++)
             {
                 var val = m_multiplier_strings[i];
-                
+
                 if (!string.IsNullOrEmpty(val))
                     m_multiplier_strings[i] = val.Substring(0, 1) + UnitAlias;
                 else
                     m_multiplier_strings[i] = UnitAlias;
             }
-        }
-
-        public ExtendedDoubleUpDownViewModel()
-        {
-
-        }
-
-        public ExtendedDoubleUpDownViewModel(string Unit)
-        {
-            this.UnitAlias = Unit;
-            this.RefreshUnits();
         }
     }
 }
