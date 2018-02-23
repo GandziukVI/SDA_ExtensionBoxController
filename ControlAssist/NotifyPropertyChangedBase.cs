@@ -19,12 +19,17 @@ namespace ControlAssist
                 return false;
 
             field = value;
+            NotifyPropertyChanged(propertyName);
+            return true;
+        }
+
+        public void NotifyPropertyChanged(string propertyName)
+        {
             var eventHandler = PropertyChanged;
             if (eventHandler != null)
             {
                 eventHandler(this, new PropertyChangedEventArgs(propertyName));
             }
-            return true;
         }
     }
 }

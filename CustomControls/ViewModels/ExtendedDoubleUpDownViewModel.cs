@@ -101,7 +101,7 @@ namespace CustomControls.ViewModels
                 newMultiplierStrings[i] += UnitAlias;
 
             var index = MultiplierIndex;
-            
+
             MultiplierStrings = newMultiplierStrings;
             MultiplierIndex = index;
         }
