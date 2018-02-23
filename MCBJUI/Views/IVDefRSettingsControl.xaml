@@ -4,69 +4,51 @@
 	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 	xmlns:wpfTool="clr-namespace:Xceed.Wpf.Toolkit;assembly=Xceed.Wpf.Toolkit"
-	xmlns:d3="http://research.microsoft.com/DynamicDataDisplay/1.0"
-	xmlns:Experiments="clr-namespace:MCBJ.Experiments"
 	mc:Ignorable="d"
-	x:Class="MCBJ.IV_at_DefinedResistance"
-	x:Name="UserControl"
-	d:DesignWidth="640" d:DesignHeight="480">
+	xmlns:local="clr-namespace:MCBJUI"
+	xmlns:converters="clr-namespace:MCBJUI.Converters"
+	x:Class="MCBJUI.IVDefRSettingsControl"
+	d:DesignWidth="250" d:DesignHeight="480">
+	
+	<UserControl.DataContext>
+		<local:IVDefRSettingsControlModel />
+	</UserControl.DataContext>
 
-    <UserControl.DataContext>
-        <Experiments:IV_DefinedResistanceModel x:Name="Settings" />
-    </UserControl.DataContext>
+	<UserControl.Resources>
+		<converters:SourceModeConverter x:Key="ModeConverter" />
 
-    <UserControl.Resources>
-        <Experiments:SourceModeConverter x:Key="ModeConverter" />
+		<Style TargetType="TextBlock">
+			<Setter Property="Margin" Value="2.5" />
+			<Setter Property="HorizontalAlignment" Value="Stretch" />
+			<Setter Property="VerticalAlignment" Value="Stretch" />
+		</Style>
+		<Style TargetType="wpfTool:DoubleUpDown">
+			<Setter Property="Margin" Value="2.5" />			
+			<Setter Property="HorizontalAlignment" Value="Stretch" />
+			<Setter Property="VerticalAlignment" Value="Stretch" />
+			<Setter Property="CultureInfo" Value="en-Us"/>
+			<Setter Property="FormatString" Value="G4" />
+		</Style>
+		<Style TargetType="wpfTool:IntegerUpDown">
+			<Setter Property="Margin" Value="2.5" />
+			<Setter Property="HorizontalAlignment" Value="Stretch" />
+			<Setter Property="VerticalAlignment" Value="Stretch" />
+		</Style>
+		<Style TargetType="Button">
+			<Setter Property="Margin" Value="2.5" />
+			<Setter Property="Height" Value="35" />
+			<Setter Property="HorizontalAlignment" Value="Stretch" />
+			<Setter Property="VerticalAlignment" Value="Bottom" />
+		</Style>
+		<Style TargetType="ComboBox">
+			<Setter Property="Margin" Value="2.5" />
+		</Style>
+		<Style TargetType="TextBox">
+			<Setter Property="Margin" Value="2.5" />
+		</Style>
+	</UserControl.Resources>
 
-        <Style TargetType="TextBlock">
-            <Setter Property="Margin" Value="2.5" />
-            <Setter Property="HorizontalAlignment" Value="Stretch" />
-            <Setter Property="VerticalAlignment" Value="Stretch" />
-        </Style>
-        <Style TargetType="wpfTool:DoubleUpDown">
-            <Setter Property="Margin" Value="2.5" />
-            <Setter Property="Width" Value="100" />
-            <Setter Property="MaxWidth" Value="100" />
-            <Setter Property="HorizontalAlignment" Value="Stretch" />
-            <Setter Property="VerticalAlignment" Value="Stretch" />
-            <Setter Property="CultureInfo" Value="en-Us"/>
-            <Setter Property="FormatString" Value="G4" />
-        </Style>
-        <Style TargetType="wpfTool:IntegerUpDown">
-            <Setter Property="Margin" Value="2.5" />
-            <Setter Property="Width" Value="100" />
-            <Setter Property="MaxWidth" Value="100" />
-            <Setter Property="HorizontalAlignment" Value="Stretch" />
-            <Setter Property="VerticalAlignment" Value="Stretch" />
-        </Style>
-        <Style TargetType="Button">
-            <Setter Property="Margin" Value="2.5" />
-            <Setter Property="Height" Value="35" />
-            <Setter Property="HorizontalAlignment" Value="Stretch" />
-            <Setter Property="VerticalAlignment" Value="Bottom" />
-        </Style>
-        <Style TargetType="ComboBox">
-            <Setter Property="Margin" Value="2.5" />
-        </Style>
-        <Style TargetType="TextBox">
-            <Setter Property="Margin" Value="2.5" />
-        </Style>
-    </UserControl.Resources>
-
-    <Grid x:Name="LayoutRoot" Margin="10,10,10,2">
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition/>
-            <ColumnDefinition Width="Auto"/>
-        </Grid.ColumnDefinitions>
-        <d3:ChartPlotter x:Name="chartIV" Margin="5" LegendVisibility="Collapsed" NewLegendVisible="False">
-            <d3:HorizontalAxis>
-                <d3:HorizontalAxisTitle Content="Voltage, V" />
-            </d3:HorizontalAxis>
-            <d3:VerticalAxis>
-                <d3:VerticalAxisTitle Content="Current, A" />
-            </d3:VerticalAxis>
-        </d3:ChartPlotter>
-        <ScrollViewer Grid.Column="1" VerticalScrollBarVisibility="Auto">
+	<ScrollViewer Grid.Column="1" VerticalScrollBarVisibility="Auto">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto"/>
@@ -120,8 +102,8 @@
                     <ComboBoxItem Content="Current"/>
                 </ComboBox>
                 <wpfTool:DoubleUpDown Grid.Row="5" Grid.Column="1" Value="{Binding Compliance, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
-                <wpfTool:DoubleUpDown Grid.Row="6" Grid.Column="1" Value="{Binding IVMinvalue, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
-                <wpfTool:DoubleUpDown Grid.Row="7" Grid.Column="1" Value="{Binding IVMaxvalue, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                <wpfTool:DoubleUpDown Grid.Row="6" Grid.Column="1" Value="{Binding IVMinValue, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                <wpfTool:DoubleUpDown Grid.Row="7" Grid.Column="1" Value="{Binding IVMaxValue, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
                 <wpfTool:DoubleUpDown Grid.Row="8" Grid.Column="1" Value="{Binding Epsilon, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
                 <wpfTool:IntegerUpDown Grid.Row="9" Grid.Column="1" Value="{Binding NPoints, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
                 <wpfTool:IntegerUpDown Grid.Row="10" Grid.Column="1" Value="{Binding NCycles, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
@@ -146,5 +128,4 @@
                 <Button x:Name="cmdStop" Content="STOP" Grid.Row="19" Grid.Column="2"/>
             </Grid>
         </ScrollViewer>
-    </Grid>
 </UserControl>
