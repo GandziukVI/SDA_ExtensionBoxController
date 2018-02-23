@@ -36,6 +36,7 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Core" />
@@ -57,6 +58,7 @@
     <Compile Include="Converters\ComplianceFunctionConverter.cs" />
     <Compile Include="Converters\SourceFunctionConverter.cs" />
     <Compile Include="Converters\SourceModeConverter.cs" />
+    <Compile Include="Converters\ValueCollectionConverter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -71,8 +73,12 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
     <Compile Include="ViewModels\IVDefRSettingsControlModel.cs" />
+    <Compile Include="ViewModels\NoiseDefRSettingsControlModel.cs" />
     <Compile Include="Views\IVDefRSettingsControl.xaml.cs">
       <DependentUpon>IVDefRSettingsControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\NoiseDefRSettingsControl.xaml.cs">
+      <DependentUpon>NoiseDefRSettingsControl.xaml</DependentUpon>
     </Compile>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -104,6 +110,10 @@
   </ItemGroup>
   <ItemGroup>
     <Page Include="Views\IVDefRSettingsControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\NoiseDefRSettingsControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
