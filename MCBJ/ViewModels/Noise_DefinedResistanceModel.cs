@@ -1,4 +1,6 @@
-﻿using System;
+﻿using ControlAssist;
+using CustomControls.ViewModels;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
@@ -9,30 +11,15 @@ using System.Threading.Tasks;
 namespace MCBJ.Experiments
 {
     [Serializable]
-    public class Noise_DefinedResistanceModel : INotifyPropertyChanged
+    public class Noise_DefinedResistanceModel : NotifyPropertyChangedBase
     {
-        #region INotifyPropertyChanged implementation
-
-        [field: NonSerializedAttribute()]
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        void onPropertyChanged(string PropertyName)
-        {
-            var handler = PropertyChanged;
-            if (handler != null)
-                handler(this, new PropertyChangedEventArgs(PropertyName));
-        }
-
-        #endregion
-
         private string agilentU2542Ares = "USB0::2391::5912::TW54334510::INSTR";
         public string AgilentU2542AResName
         {
             get { return agilentU2542Ares; }
             set
             {
-                agilentU2542Ares = value;
-                onPropertyChanged("AgilentU2542AResName");
+                SetField(ref agilentU2542Ares, value, "AgilentU2542AResName");
             }
         }
 
@@ -43,20 +30,17 @@ namespace MCBJ.Experiments
             get { return scanningVoltageCollection; }
             set
             {
-                scanningVoltageCollection = value;
-                onPropertyChanged("ScanningVoltageCollection");
+                SetField(ref scanningVoltageCollection, value, "ScanningVoltageCollection");
             }
         }
 
         private ExtendedDoubleUpDownViewModel voltageDeviation = new ExtendedDoubleUpDownViewModel() { Value = 0.5, MultiplierIndex = 1, UnitAlias = "V" };
-
         public ExtendedDoubleUpDownViewModel VoltageDeviation
         {
             get { return voltageDeviation; }
             set
             {
-                voltageDeviation = value;
-                onPropertyChanged("VoltageDeviation");
+                SetField(ref voltageDeviation, value, "VoltageDeviation");
             }
         }
 
@@ -67,8 +51,7 @@ namespace MCBJ.Experiments
             get { return minVoltageTreshold; }
             set
             {
-                minVoltageTreshold = value;
-                onPropertyChanged("MinVoltageTreshold");
+                SetField(ref minVoltageTreshold, value, "MinVoltageTreshold");
             }
         }
 
@@ -78,8 +61,7 @@ namespace MCBJ.Experiments
             get { return voltageTreshold; }
             set
             {
-                voltageTreshold = value;
-                onPropertyChanged("VoltageTreshold");
+                SetField(ref voltageTreshold, value, "VoltageTreshold");
             }
         }
 
@@ -91,23 +73,19 @@ namespace MCBJ.Experiments
             get { return setConductanceCollection; }
             set
             {
-                if (setResistanceCollection.Length != value.Length)
-                    setResistanceCollection = new double[value.Length];
+                var setResistanceCollectionValue = new double[value.Length];
 
                 for (int i = 0; i < value.Length; i++)
                     if (value[i] > 0)
-                        setResistanceCollection[i] = 1.0 / conductanceQuantum / value[i];
+                        setResistanceCollectionValue[i] = 1.0 / conductanceQuantum / value[i];
                     else
                         throw new ArgumentException("Conductance value should me greater than zero.");
 
-                setConductanceCollection = value;
-
-                onPropertyChanged("SetConductanceCollection");
-                onPropertyChanged("SetResistanceCollection");
+                SetField(ref setConductanceCollection, value, "SetConductanceCollection");
+                SetField(ref setResistanceCollection, setResistanceCollectionValue, "SetResistanceCollection");
             }
         }
 
-        [field: NonSerializedAttribute()]
         private static double[] setResistanceCollection = new double[] 
         {
             1.0 / (50.0 * conductanceQuantum), 
@@ -139,18 +117,16 @@ namespace MCBJ.Experiments
             get { return setResistanceCollection; }
             set
             {
-                if (setConductanceCollection.Length != value.Length)
-                    setConductanceCollection = new double[value.Length];
+                var setConductanceCollectionValue = new double[value.Length];
+
                 for (int i = 0; i < value.Length; i++)
                     if (value[i] > 0)
-                        setConductanceCollection[i] = 1.0 / conductanceQuantum / value[i];
+                        setConductanceCollectionValue[i] = 1.0 / conductanceQuantum / value[i];
                     else
                         throw new ArgumentException("Resistance value should me greater than zero.");
 
-                setResistanceCollection = value;
-
-                onPropertyChanged("SetResistanceCollection");
-                onPropertyChanged("SetConductanceCollection");
+                SetField(ref setResistanceCollection, value, "SetResistanceCollection");
+                SetField(ref setConductanceCollection, setConductanceCollectionValue, "SetConductanceCollection");
             }
         }
 
@@ -165,7 +141,7 @@ namespace MCBJ.Experiments
                 else
                     throw new ArgumentException("The deviation should have positive value.");
 
-                onPropertyChanged("ConductanceDeviation");
+                SetField(ref conductanceDeviation, value, "ConductanceDeviation");
             }
         }
 
@@ -180,7 +156,7 @@ namespace MCBJ.Experiments
                 else
                     throw new ArgumentException("The stabilization time should have positive value.");
 
-                onPropertyChanged("StabilizationTime");
+                SetField(ref stabilizationTime, value, "StabilizationTime");
             }
         }
 
@@ -195,7 +171,7 @@ namespace MCBJ.Experiments
                 else
                     throw new ArgumentException("The minimum speed should have positive value.");
 
-                onPropertyChanged("MotionMinSpeed");
+                SetField(ref motionMinSpeed, value, "MotionMinSpeed");
             }
         }
 
@@ -210,7 +186,7 @@ namespace MCBJ.Experiments
                 else
                     throw new ArgumentException("The maximum speed should have positive value.");
 
-                onPropertyChanged("MotionMaxSpeed");
+                SetField(ref motionMaxSpeed, value, "MotionMaxSpeed");
             }
         }
 
@@ -220,8 +196,7 @@ namespace MCBJ.Experiments
             get { return motorMinPos; }
             set
             {
-                motorMinPos = value;
-                onPropertyChanged("MotorMinPos");
+                SetField(ref motorMinPos, value, "MotorMinPos");
             }
         }
 
@@ -231,8 +206,7 @@ namespace MCBJ.Experiments
             get { return motorMaxPos; }
             set
             {
-                motorMaxPos = value;
-                onPropertyChanged("MotorMaxPos");
+                SetField(ref motorMaxPos, value, "MotorMaxPos");
             }
         }
 
@@ -242,8 +216,7 @@ namespace MCBJ.Experiments
             get { return loadResistance; }
             set
             {
-                loadResistance = value;
-                onPropertyChanged("LoadResistance");
+                SetField(ref loadResistance, value, "LoadResistance");
             }
         }
 
@@ -253,8 +226,7 @@ namespace MCBJ.Experiments
             get { return nAveragesFast; }
             set
             {
-                nAveragesFast = value;
-                onPropertyChanged("NAveragesFast");
+                SetField(ref nAveragesFast, value, "NAveragesFast");
             }
         }
 
@@ -264,8 +236,7 @@ namespace MCBJ.Experiments
             get { return nAveragesSlow; }
             set
             {
-                nAveragesSlow = value;
-                onPropertyChanged("NAveragesSlow");
+                SetField(ref nAveragesSlow, value, "NAveragesSlow");
             }
         }
 
@@ -275,19 +246,7 @@ namespace MCBJ.Experiments
             get { return samplingFrequency; }
             set
             {
-                samplingFrequency = value;
-                onPropertyChanged("SamplingFrequency");
-            }
-        }
-
-        private int nSubSamples = 1;
-        public int NSubSamples
-        {
-            get { return nSubSamples; }
-            set
-            {
-                nSubSamples = value;
-                onPropertyChanged("NSubSamples");
+                SetField(ref samplingFrequency, value, "SamplingFrequency");
             }
         }
 
@@ -297,8 +256,7 @@ namespace MCBJ.Experiments
             get { return spectraAveraging; }
             set
             {
-                spectraAveraging = value;
-                onPropertyChanged("SpectraAveraging");
+                SetField(ref spectraAveraging, value, "SpectraAveraging");
             }
         }
 
@@ -308,19 +266,17 @@ namespace MCBJ.Experiments
             get { return updateNumber; }
             set
             {
-                updateNumber = value;
-                onPropertyChanged("UpdateNumber");
+                SetField(ref updateNumber, value, "UpdateNumber");
             }
         }
 
-        private double kPreAmpl = 178.0;
+        private double kPreAmpl = 180.0;
         public double KPreAmpl
         {
             get { return kPreAmpl; }
             set
             {
-                kPreAmpl = value;
-                onPropertyChanged("KPreAmpl");
+                SetField(ref kPreAmpl, value, "KPreAmpl");
             }
         }
 
@@ -330,30 +286,27 @@ namespace MCBJ.Experiments
             get { return kAmpl; }
             set
             {
-                kAmpl = value;
-                onPropertyChanged("KAmpl");
+                SetField(ref kAmpl, value, "KAmpl");
             }
         }
 
-        private double temperature0 = 277.0;
+        private double temperature0 = 297.0;
         public double Temperature0
         {
             get { return temperature0; }
             set
             {
-                temperature0 = value;
-                onPropertyChanged("Temperature0");
+                SetField(ref temperature0, value, "Temperature0");
             }
         }
 
-        private double temperatureE = 277.0;
+        private double temperatureE = 297.0;
         public double TemperatureE
         {
             get { return temperatureE; }
             set
             {
-                temperatureE = value;
-                onPropertyChanged("TemperatureE");
+                SetField(ref temperatureE, value, "TemperatureE");
             }
         }
 
@@ -363,8 +316,7 @@ namespace MCBJ.Experiments
             get { return recordTimeTraces; }
             set
             {
-                recordTimeTraces = value;
-                onPropertyChanged("RecordTimeTraces");
+                SetField(ref recordTimeTraces, value, "RecordTimeTraces");
             }
         }
 
@@ -387,8 +339,7 @@ namespace MCBJ.Experiments
             get { return recordingFrequency; }
             set
             {
-                recordingFrequency = value;
-                onPropertyChanged("RecordingFrequency");
+                SetField(ref recordingFrequency, value, "RecordingFrequency");
             }
         }
 
@@ -400,8 +351,7 @@ namespace MCBJ.Experiments
             get { return filePath; }
             set
             {
-                filePath = value;
-                onPropertyChanged("FilePath");
+                SetField(ref filePath, value, FilePath);
             }
         }
 
@@ -414,8 +364,7 @@ namespace MCBJ.Experiments
                 if (!value.EndsWith(".dat"))
                     value += ".dat";
 
-                saveFileName = value;
-                onPropertyChanged("SaveFileName");
+                SetField(ref saveFileName, value, "SaveFileName");
             }
         }
     }

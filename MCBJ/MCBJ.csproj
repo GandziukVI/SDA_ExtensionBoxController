@@ -117,15 +117,11 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="ViewModels\ExtendedDoubleUpDownViewModel.cs" />
-    <Compile Include="Views\ExtendedDoubleUpDown.xaml.cs">
-      <DependentUpon>ExtendedDoubleUpDown.xaml</DependentUpon>
-    </Compile>
-    <Page Include="Experiments\IV_at_DefinedResistance.xaml">
+    <Page Include="Views\IV_at_DefinedResistance.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Experiments\Noise_at_DefinedResistance.xaml">
+    <Page Include="Views\Noise_at_DefinedResistance.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -139,17 +135,16 @@
     </Compile>
     <Compile Include="Experiments\DataHandling\NoiseMeasurementDataLog.cs" />
     <Compile Include="Experiments\DataHandling\SingleNoiseMeasurement.cs" />
-    <Compile Include="Experiments\IV_at_DefinedResistance.xaml.cs">
+    <Compile Include="Views\IV_at_DefinedResistance.xaml.cs">
       <DependentUpon>IV_at_DefinedResistance.xaml</DependentUpon>
     </Compile>
     <Compile Include="Experiments\IV_DefinedResistance.cs" />
-    <Compile Include="Experiments\IV_DefinedResistanceModel.cs" />
-    <Compile Include="Experiments\NoiseCalibration.cs" />
-    <Compile Include="Experiments\Noise_at_DefinedResistance.xaml.cs">
+    <Compile Include="ViewModels\IV_DefinedResistanceModel.cs" />
+    <Compile Include="Views\Noise_at_DefinedResistance.xaml.cs">
       <DependentUpon>Noise_at_DefinedResistance.xaml</DependentUpon>
     </Compile>
     <Compile Include="Experiments\Noise_DefinedResistance.cs" />
-    <Compile Include="Experiments\Noise_DefinedResistanceModel.cs" />
+    <Compile Include="ViewModels\Noise_DefinedResistanceModel.cs" />
     <Compile Include="Experiments\ParametersConverter.cs" />
     <Compile Include="Experiments\TT_SmartMode.cs" />
     <Compile Include="Experiments\TT_SmartModeInfo.cs" />
@@ -157,10 +152,6 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Page Include="Views\ExtendedDoubleUpDown.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs">
@@ -197,6 +188,14 @@
     <ProjectReference Include="..\Agilent_ExtensionBox\Agilent_ExtensionBox.csproj">
       <Project>{0d6daee4-591c-475c-84b8-91326698926f}</Project>
       <Name>Agilent_ExtensionBox</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ControlAssist\ControlAssist.csproj">
+      <Project>{4f265752-d0c3-408b-b26f-4a08bd13e24d}</Project>
+      <Name>ControlAssist</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\CustomControls\CustomControls.csproj">
+      <Project>{2afba55d-3f2e-469f-b299-c8e47373efc7}</Project>
+      <Name>CustomControls</Name>
     </ProjectReference>
     <ProjectReference Include="..\D3Helper\D3Helper.csproj">
       <Project>{08a28cf7-e060-48e3-bc2e-f9e29fe89358}</Project>

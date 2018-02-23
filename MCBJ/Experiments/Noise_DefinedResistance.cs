@@ -1225,7 +1225,7 @@ namespace MCBJ.Experiments
 
                                 // Noise spectra measurement
                                 onStatusChanged(new StatusEventArgs("Measuring noise spectra & time traces."));
-                                var noiseSpectraMeasurementState = measureNoiseSpectra(experimentSettings.SamplingFrequency, experimentSettings.NSubSamples, experimentSettings.SpectraAveraging, experimentSettings.UpdateNumber, experimentSettings.KPreAmpl * experimentSettings.KAmpl);
+                                var noiseSpectraMeasurementState = measureNoiseSpectra(experimentSettings.SamplingFrequency, 1, experimentSettings.SpectraAveraging, experimentSettings.UpdateNumber, experimentSettings.KPreAmpl * experimentSettings.KAmpl);
 
                                 // Enabling Vds DC measurement channel after measuring noise spectra
                                 // for measuring sample characteristics after noise measurement
