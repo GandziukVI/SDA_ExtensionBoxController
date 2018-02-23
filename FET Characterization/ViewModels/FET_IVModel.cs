@@ -89,7 +89,7 @@ namespace FET_Characterization
             }
         }
 
-        private ExtendedDoubleUpDownViewModel v_dsStart;
+        private ExtendedDoubleUpDownViewModel v_dsStart = new ExtendedDoubleUpDownViewModel() { Value = 0.0, MultiplierIndex = 0, UnitAlias = "V" };
         public ExtendedDoubleUpDownViewModel VdsStart
         {
             get { return v_dsStart; }
@@ -99,7 +99,7 @@ namespace FET_Characterization
             }
         }       
 
-        private ExtendedDoubleUpDownViewModel v_dsStop;
+        private ExtendedDoubleUpDownViewModel v_dsStop = new ExtendedDoubleUpDownViewModel() { Value = -1.0, MultiplierIndex = 0, UnitAlias = "V" };
         public ExtendedDoubleUpDownViewModel VdsStop
         {
             get { return v_dsStop; }
@@ -119,7 +119,7 @@ namespace FET_Characterization
             }
         }
 
-        private ExtendedDoubleUpDownViewModel dsCompliance;
+        private ExtendedDoubleUpDownViewModel dsCompliance = new ExtendedDoubleUpDownViewModel() { Value = 100.0, MultiplierIndex = 2, UnitAlias = "A" };
         public ExtendedDoubleUpDownViewModel DS_Complaince
         {
             get { return dsCompliance; }
@@ -129,7 +129,7 @@ namespace FET_Characterization
             }
         }
 
-        private ExtendedDoubleUpDownViewModel v_gStart;
+        private ExtendedDoubleUpDownViewModel v_gStart = new ExtendedDoubleUpDownViewModel() { Value = -1.5, MultiplierIndex = 0, UnitAlias = "V" };
         public ExtendedDoubleUpDownViewModel VgStart
         {
             get { return v_gStart; }
@@ -137,9 +137,9 @@ namespace FET_Characterization
             {
                 SetField(ref v_gStart, value, "VgStart");
             }
-        }        
+        }
 
-        private ExtendedDoubleUpDownViewModel v_gStop;
+        private ExtendedDoubleUpDownViewModel v_gStop = new ExtendedDoubleUpDownViewModel() { Value = -3.5, MultiplierIndex = 0, UnitAlias = "V" };
         public ExtendedDoubleUpDownViewModel VgStop
         {
             get { return v_gStop; }
@@ -159,7 +159,7 @@ namespace FET_Characterization
             }
         }
 
-        private ExtendedDoubleUpDownViewModel gateCompliance;
+        private ExtendedDoubleUpDownViewModel gateCompliance = new ExtendedDoubleUpDownViewModel() { Value = 10, MultiplierIndex = 2, UnitAlias = "A" };
         public ExtendedDoubleUpDownViewModel Gate_Complaince
         {
             get { return gateCompliance; }
@@ -169,7 +169,7 @@ namespace FET_Characterization
             }
         }        
 
-        private ExtendedDoubleUpDownViewModel pulseWidth;
+        private ExtendedDoubleUpDownViewModel pulseWidth = new ExtendedDoubleUpDownViewModel() { Value = 100, MultiplierIndex = 2, UnitAlias = "s" };
         public ExtendedDoubleUpDownViewModel PulseWidth
         {
             get { return pulseWidth; }
@@ -180,7 +180,7 @@ namespace FET_Characterization
         }       
 
 
-        private ExtendedDoubleUpDownViewModel delayTime;
+        private ExtendedDoubleUpDownViewModel delayTime = new ExtendedDoubleUpDownViewModel() { Value = 100, MultiplierIndex = 2, UnitAlias = "s" };
         public ExtendedDoubleUpDownViewModel DelayTime
         {
             get { return delayTime; }
@@ -244,7 +244,7 @@ namespace FET_Characterization
             }
         }
 
-        private ExtendedDoubleUpDownViewModel iv_FET_GateDelay;
+        private ExtendedDoubleUpDownViewModel iv_FET_GateDelay = new ExtendedDoubleUpDownViewModel() { Value = 2, MultiplierIndex = 0, UnitAlias = "s" };
         public ExtendedDoubleUpDownViewModel IV_FET_GateDelay
         {
             get { return iv_FET_GateDelay; }
@@ -326,7 +326,7 @@ namespace FET_Characterization
             }
         }
 
-        private ExtendedDoubleUpDownViewModel transfer_v_dsStart;
+        private ExtendedDoubleUpDownViewModel transfer_v_dsStart = new ExtendedDoubleUpDownViewModel() { Value = -0.1, MultiplierIndex = 0, UnitAlias = "V" };
         public ExtendedDoubleUpDownViewModel TransferVdsStart
         {
             get { return transfer_v_dsStart; }
@@ -336,7 +336,7 @@ namespace FET_Characterization
             }
         }
 
-        private ExtendedDoubleUpDownViewModel transfer_v_dsStop;
+        private ExtendedDoubleUpDownViewModel transfer_v_dsStop = new ExtendedDoubleUpDownViewModel() { Value = -1.0, MultiplierIndex = 0, UnitAlias = "V" };
         public ExtendedDoubleUpDownViewModel TransferVdsStop
         {
             get { return transfer_v_dsStop; }
@@ -356,7 +356,7 @@ namespace FET_Characterization
             }
         }
 
-        private ExtendedDoubleUpDownViewModel transfer_dsCompliance;
+        private ExtendedDoubleUpDownViewModel transfer_dsCompliance = new ExtendedDoubleUpDownViewModel() { Value = 100, MultiplierIndex = 2, UnitAlias = "A" };
         public ExtendedDoubleUpDownViewModel TransferDS_Complaince
         {
             get { return transfer_dsCompliance; }
@@ -364,9 +364,9 @@ namespace FET_Characterization
             {
                 SetField(ref transfer_dsCompliance, value, "TransferDS_Complaince");
             }
-        }        
+        }
 
-        private ExtendedDoubleUpDownViewModel transfer_v_gStart;
+        private ExtendedDoubleUpDownViewModel transfer_v_gStart = new ExtendedDoubleUpDownViewModel() { Value = 0.0, MultiplierIndex = 0, UnitAlias = "V" };
         public ExtendedDoubleUpDownViewModel TransferVgStart
         {
             get { return transfer_v_gStart; }
@@ -374,9 +374,9 @@ namespace FET_Characterization
             {
                 SetField(ref transfer_v_gStart, value, "TransferVgStart");
             }
-        }        
+        }
 
-        private ExtendedDoubleUpDownViewModel transfer_v_gStop;
+        private ExtendedDoubleUpDownViewModel transfer_v_gStop = new ExtendedDoubleUpDownViewModel() { Value = -3.5, MultiplierIndex = 0, UnitAlias = "V" };
         public ExtendedDoubleUpDownViewModel TransferVgStop
         {
             get { return transfer_v_gStop; }
@@ -397,7 +397,7 @@ namespace FET_Characterization
             }
         }
 
-        private ExtendedDoubleUpDownViewModel transfer_gateCompliance;
+        private ExtendedDoubleUpDownViewModel transfer_gateCompliance = new ExtendedDoubleUpDownViewModel() { Value = 10, MultiplierIndex = 2, UnitAlias = "A" };
         public ExtendedDoubleUpDownViewModel TransferGate_Complaince
         {
             get { return transfer_gateCompliance; }
@@ -407,7 +407,7 @@ namespace FET_Characterization
             }
         }
 
-        private ExtendedDoubleUpDownViewModel transfer_pulseWidth;
+        private ExtendedDoubleUpDownViewModel transfer_pulseWidth = new ExtendedDoubleUpDownViewModel() { Value = 100, MultiplierIndex = 2, UnitAlias = "s" };
         public ExtendedDoubleUpDownViewModel TransferPulseWidth
         {
             get { return transfer_pulseWidth; }
@@ -415,9 +415,9 @@ namespace FET_Characterization
             {
                 SetField(ref transfer_pulseWidth, value, "TransferPulseWidth");
             }
-        }       
+        }
 
-        private ExtendedDoubleUpDownViewModel transfer_delayTime;
+        private ExtendedDoubleUpDownViewModel transfer_delayTime = new ExtendedDoubleUpDownViewModel() { Value = 100, MultiplierIndex = 2, UnitAlias = "s" };
         public ExtendedDoubleUpDownViewModel TransferDelayTime
         {
             get { return transfer_delayTime; }
@@ -481,7 +481,7 @@ namespace FET_Characterization
             }
         }
 
-        private ExtendedDoubleUpDownViewModel transfer_VdsDelay;
+        private ExtendedDoubleUpDownViewModel transfer_VdsDelay = new ExtendedDoubleUpDownViewModel() { Value = 2, MultiplierIndex = 0, UnitAlias = "s" };
         public ExtendedDoubleUpDownViewModel Transfer_VdsDelay
         {
             get { return transfer_VdsDelay; }
