@@ -10,11 +10,24 @@ namespace CustomControls.ViewModels
     [Serializable]
     public class ExtendedDoubleUpDownViewModel : NotifyPropertyChangedBase
     {
-        public ExtendedDoubleUpDownViewModel() { }
+        public ExtendedDoubleUpDownViewModel() 
+        {
+            if (mMultiplierStrings == null)
+            {
+                mMultiplierStrings = new string[mDefaultMultiplierStrings.Length];
+                Array.Copy(mDefaultMultiplierStrings, mMultiplierStrings, mDefaultMultiplierStrings.Length);
+            }
+        }
         public ExtendedDoubleUpDownViewModel(string Unit)
         {
             this.UnitAlias = Unit;
             this.RefreshUnits();
+
+            if (mMultiplierStrings == null)
+            {
+                mMultiplierStrings = new string[mDefaultMultiplierStrings.Length];
+                Array.Copy(mDefaultMultiplierStrings, mMultiplierStrings, mDefaultMultiplierStrings.Length);
+            }
         }
 
         private double mValue;
@@ -32,12 +45,14 @@ namespace CustomControls.ViewModels
             get { return Value * Multiplier; }
         }
 
-        private string[] m_multiplier_strings = new string[] { "", "m", "µ", "n" };
-        private double[] m_multiplier_values = new double[] { 1, 1e-3, 1e-6, 1e-9 };
+        private readonly string[] mDefaultMultiplierStrings = new string[] { "", "m", "µ", "n" };
+        private string[] mMultiplierStrings;
+        private double[] mMultiplierValues = new double[] { 1, 1e-3, 1e-6, 1e-9 };
 
         public string[] MultiplierStrings
         {
-            get { return m_multiplier_strings; }
+            get { return mMultiplierStrings; }
+            private set { SetField(ref mMultiplierStrings, value, "MultiplierStrings"); }
         }
 
         public double Multiplier
@@ -46,11 +61,11 @@ namespace CustomControls.ViewModels
             {
                 if (MultiplierIndex < 0 || MultiplierIndex > MultiplierStrings.Length)
                 {
-                    return m_multiplier_values[0];
+                    return mMultiplierValues[0];
                 }
                 else
                 {
-                    return m_multiplier_values[MultiplierIndex];
+                    return mMultiplierValues[MultiplierIndex];
                 }
             }
         }
@@ -79,15 +94,16 @@ namespace CustomControls.ViewModels
 
         private void RefreshUnits()
         {
-            for (int i = 0; i < m_multiplier_strings.Length; i++)
-            {
-                var val = m_multiplier_strings[i];
+            var newMultiplierStrings = new string[mMultiplierStrings.Length];
+            Array.Copy(mDefaultMultiplierStrings, newMultiplierStrings, mDefaultMultiplierStrings.Length);
 
-                if (!string.IsNullOrEmpty(val))
-                    m_multiplier_strings[i] = val.Substring(0, 1) + UnitAlias;
-                else
-                    m_multiplier_strings[i] = UnitAlias;
-            }
+            for (int i = 0; i < mMultiplierStrings.Length; i++)
+                newMultiplierStrings[i] += UnitAlias;
+
+            var index = MultiplierIndex;
+            
+            MultiplierStrings = newMultiplierStrings;
+            MultiplierIndex = index;
         }
     }
 }

@@ -85,6 +85,36 @@ namespace FET_Characterization
             get { return smu_SourceMode; }
             set
             {
+                var vdsStartValue = VdsStart;
+                var vdsStopValue = VdsStop;
+
+                var dsComplianceValue = DS_Complaince;
+
+                switch (value)
+                {
+                    case SMUSourceMode.Voltage:
+                       {
+                            vdsStartValue.UnitAlias = "V";
+                            vdsStopValue.UnitAlias = "V";
+
+                            dsComplianceValue.UnitAlias = "A";
+                       }
+                    break;
+                    case SMUSourceMode.Current:
+                    {
+                        vdsStartValue.UnitAlias = "A";
+                        vdsStopValue.UnitAlias = "A";
+
+                        dsComplianceValue.UnitAlias = "V";
+                    }
+                    break;
+                }
+
+                SetField(ref v_dsStart, vdsStartValue, "VdsStart");
+                SetField(ref v_dsStop, vdsStopValue, "VdsStop");
+
+                SetField(ref dsCompliance, dsComplianceValue, "DS_Complaince");
+
                 SetField(ref smu_SourceMode, value, "SMU_SourceMode");
             }
         }
@@ -322,6 +352,29 @@ namespace FET_Characterization
             get { return transfer_smu_SourceMode; }
             set
             {
+                var transferVdsStartValue = TransferVdsStart;
+                var transferVdsStopValue = TransferVdsStop;
+
+                var transferDSComplianceValue = TransferDS_Complaince;
+
+                switch(value)
+                {
+                    case SMUSourceMode.Voltage:
+                    {
+                        transferVdsStartValue.UnitAlias = "V";
+                        transferVdsStopValue.UnitAlias = "V";
+
+                        transferDSComplianceValue.UnitAlias = "A";
+                    } break;
+                    case SMUSourceMode.Current:
+                    {
+                        transferVdsStartValue.UnitAlias = "A";
+                        transferVdsStopValue.UnitAlias = "A";
+
+                        transferDSComplianceValue.UnitAlias = "V";
+                    } break;
+                }
+
                 SetField(ref transfer_smu_SourceMode, value, "TransferSMU_SourceMode");
             }
         }

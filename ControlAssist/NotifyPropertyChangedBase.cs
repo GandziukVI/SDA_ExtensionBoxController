@@ -14,18 +14,17 @@ namespace ControlAssist
         public event PropertyChangedEventHandler PropertyChanged;
         public bool SetField<T>(ref T field, T value, string propertyName)
         {
+            if(field is IComparable || value is IComparable)
             if (Comparer<T>.Default.Compare(field, value) == 0)
                 return false;
-            else
+
+            field = value;
+            var eventHandler = PropertyChanged;
+            if (eventHandler != null)
             {
-                field = value;
-                var eventHandler = PropertyChanged;
-                if (eventHandler != null)
-                {
-                    eventHandler(this, new PropertyChangedEventArgs(propertyName));
-                }
-                return true;
+                eventHandler(this, new PropertyChangedEventArgs(propertyName));
             }
+            return true;
         }
     }
 }
