@@ -29,6 +29,7 @@ using Microsoft.Research.DynamicDataDisplay;
 using System.Threading;
 using System.Runtime.ExceptionServices;
 using System.IO.MemoryMappedFiles;
+using MCBJUI;
 
 namespace MCBJ
 {
@@ -95,9 +96,7 @@ namespace MCBJ
                 if (expParentGrid.Children.Contains(measurementInterface))
                     expParentGrid.Children.Remove(measurementInterface);
 
-            var control = new IV_at_DefinedResistance();
-
-            measurementInterface = control;
+            var control = new IV_at_DefinedResistance();            
 
             Grid.SetRow(control, 1);
             Grid.SetColumn(control, 0);
@@ -111,7 +110,9 @@ namespace MCBJ
             psdGraph.AddToPlotter(control.chartIV);
             control.chartIV.Viewport.FitToView();
 
-            expStartInfo = control.Settings;
+            expStartInfo = (control.DataContext as IV_DefinedResistanceModel).ExperimentSettigns;
+
+            measurementInterface = control;
         }
 
         void cmdStartIV_at_defR_Click(object sender, RoutedEventArgs e)
@@ -131,8 +132,9 @@ namespace MCBJ
             experiment.Status += experimentStatus;
             experiment.Progress += experimentProgress;
 
-            if (expStartInfo != null)
-                experiment.Start(expStartInfo);
+            if (measurementInterface != null)
+                if (measurementInterface is IV_at_DefinedResistance)
+                    experiment.Start(((measurementInterface as IV_at_DefinedResistance).DataContext as IV_DefinedResistanceModel).ExperimentSettigns);
         }
 
         void cmdStopIV_at_defR_Click(object sender, RoutedEventArgs e)
@@ -194,7 +196,7 @@ namespace MCBJ
             psdGraph.AddToPlotter(control.chartIV);
             control.chartIV.Viewport.FitToView();
 
-            expStartInfo = control.DataContext as Noise_DefinedResistanceModel;
+            expStartInfo = (control.DataContext as Noise_DefinedResistanceModel).ExperimentSettings;
         }
 
         Point[] ReadCalibrationFile(string fileName)
@@ -224,15 +226,14 @@ namespace MCBJ
             var amplifierNoiseFilePath = string.Format("{0}\\{1}", calPath, "AmplifierNoise.dat");
             var frequencyResponseFilePath = string.Format("{0}\\{1}", calPath, "FrequencyResponse.dat");
 
-            // var amplifierNoise = ReadCalibrationFile(amplifierNoiseFilePath);
-            // var frequencyResponse = ReadCalibrationFile(frequencyResponseFilePath);
+            var amplifierNoise = ReadCalibrationFile(amplifierNoiseFilePath);
+            var frequencyResponse = ReadCalibrationFile(frequencyResponseFilePath);
 
 
-            // var motorDriver = new SerialDevice("COM1", 115200, Parity.None, 8, StopBits.One);
-            // IMotionController1D motor = new SA_2036U012V(motorDriver) as IMotionController1D;
+            var motorDriver = new SerialDevice("COM1", 115200, Parity.None, 8, StopBits.One);
+            IMotionController1D motor = new SA_2036U012V(motorDriver) as IMotionController1D;
 
-            // experiment = new Noise_DefinedResistance((expStartInfo as Noise_DefinedResistanceModel).AgilentU2542AResName, motor, amplifierNoise, frequencyResponse);
-            experiment = new Noise_DefinedResistance((expStartInfo as Noise_DefinedResistanceModel).AgilentU2542AResName, null, null, null);
+            experiment = new Noise_DefinedResistance((expStartInfo as NoiseDefRSettingsControlModel).AgilentU2542AResName, motor, amplifierNoise, frequencyResponse);
 
             experiment.DataArrived += Noise_at_der_R_DataArrived;
 
@@ -241,7 +242,7 @@ namespace MCBJ
 
             if (measurementInterface != null)
                 if (measurementInterface is Noise_at_DefinedResistance)
-                    experiment.Start((measurementInterface as Noise_at_DefinedResistance).DataContext);
+                    experiment.Start(((measurementInterface as Noise_at_DefinedResistance).DataContext as Noise_DefinedResistanceModel).ExperimentSettings);
         }
 
         void on_cmd_stopNoiseDefR(object sender, RoutedEventArgs e)
@@ -300,10 +301,6 @@ namespace MCBJ
                     if (e.Data.StartsWith("NS"))
                     {
                         AddNoiseDataToPlot(e.Data);
-                        //var ts = new ParameterizedThreadStart(AddNoiseDataToPlot);
-                        //var th = new Thread(ts);
-
-                        //th.Start(e.Data);
                     }
                 }
                 catch { }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
@@ -17,16 +18,28 @@ namespace MCBJUI
 	/// </summary>
 	public partial class IVDefRSettingsControl : UserControl
 	{
+        System.Windows.Forms.FolderBrowserDialog dialog;
 		public IVDefRSettingsControl()
 		{
+            dialog = new System.Windows.Forms.FolderBrowserDialog();
 			this.InitializeComponent();
-			
-			// Insert code required on object creation below this point.
 		}
 
 		private void on_cmdOpenClick(object sender, System.Windows.RoutedEventArgs e)
 		{
-			// TODO: Add event handler implementation here.
+            dialog.SelectedPath = (DataContext as IVDefRSettingsControlModel).FilePath;
+            dialog.ShowDialog();
+            (DataContext as IVDefRSettingsControlModel).FilePath = dialog.SelectedPath;
 		}
-	}
+
+        private void on_MCBJ_OpenDataFolder_Click(object sender, RoutedEventArgs e)
+        {
+            var startInfo = new ProcessStartInfo() { UseShellExecute = true, Verb = "open" };
+
+            dialog.SelectedPath = (DataContext as IVDefRSettingsControlModel).FilePath;
+            startInfo.FileName = dialog.SelectedPath;
+
+            Process.Start(startInfo);
+        }     
+    }
 }

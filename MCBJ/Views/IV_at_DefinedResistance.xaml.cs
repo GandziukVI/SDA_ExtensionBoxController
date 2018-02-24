@@ -19,18 +19,9 @@ namespace MCBJ
 	/// </summary>
 	public partial class IV_at_DefinedResistance : UserControl
 	{
-        System.Windows.Forms.FolderBrowserDialog dialog;
-
 		public IV_at_DefinedResistance()
 		{
-            dialog = new System.Windows.Forms.FolderBrowserDialog();
             this.InitializeComponent();
 		}
-
-        private void on_cmdOpenClick(object sender, RoutedEventArgs e)
-        {
-            dialog.ShowDialog();
-            Settings.FilePath = dialog.SelectedPath;
-        }
 	}
 }

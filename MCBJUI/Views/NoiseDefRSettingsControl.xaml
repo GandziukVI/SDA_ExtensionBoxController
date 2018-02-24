@@ -120,7 +120,6 @@
                 <TextBlock TextWrapping="Wrap" Text="n Avg. (slow)" Grid.Row="14"/>
                 <TextBlock TextWrapping="Wrap" Text="Load resistance" Grid.Row="16"/>
                 <TextBlock TextWrapping="Wrap" Text="Sampling frequency" Grid.Row="17"/>
-                <TextBlock TextWrapping="Wrap" Text="N Sub-samples" Grid.Row="18"/>
                 <TextBlock TextWrapping="Wrap" Text="n Spectra avg." Grid.Row="19"/>
                 <TextBlock TextWrapping="Wrap" Text="Update freq." Grid.Row="20"/>
                 <TextBlock TextWrapping="Wrap" Text="k pre-Amp" Grid.Row="21"/>

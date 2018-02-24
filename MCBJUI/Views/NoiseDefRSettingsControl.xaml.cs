@@ -22,9 +22,8 @@ namespace MCBJUI
 		
 		public NoiseDefRSettingsControl()
 		{
-			this.InitializeComponent();
-			
-			// Insert code required on object creation below this point.
+            dialog = new System.Windows.Forms.FolderBrowserDialog();
+			this.InitializeComponent();            
 		}
 
 		private void SelectAddress(object sender, System.Windows.RoutedEventArgs e)
@@ -53,6 +52,7 @@ namespace MCBJUI
 
         private void on_cmdOpenFolderClick(object sender, System.Windows.RoutedEventArgs e)
         {
+            dialog.SelectedPath = (DataContext as NoiseDefRSettingsControlModel).FilePath;
             dialog.ShowDialog();
             (DataContext as NoiseDefRSettingsControlModel).FilePath = dialog.SelectedPath;
         }

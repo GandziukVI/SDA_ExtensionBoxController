@@ -217,6 +217,10 @@
       <Project>{61c7f3be-15b1-4445-8367-90331c7f47fd}</Project>
       <Name>Keithley26xx</Name>
     </ProjectReference>
+    <ProjectReference Include="..\MCBJUI\MCBJUI.csproj">
+      <Project>{0e46e2f1-3f41-4cb9-9e63-fbfd268b934e}</Project>
+      <Name>MCBJUI</Name>
+    </ProjectReference>
     <ProjectReference Include="..\MCS_Faulhaber\MCS_Faulhaber.csproj">
       <Project>{b6a1c81f-96bb-475e-908b-e9f0ae84aab2}</Project>
       <Name>MCS_Faulhaber</Name>

@@ -27,6 +27,7 @@ using System.Runtime.InteropServices;
 using System.Security.AccessControl;
 using System.Runtime.ExceptionServices;
 using System.Windows.Threading;
+using MCBJUI;
 
 namespace MCBJ.Experiments
 {
@@ -49,7 +50,7 @@ namespace MCBJ.Experiments
         private AutoResetEvent TT_AutoresetEvent = new AutoResetEvent(false);
         private FileStream TT_Stream;
 
-        private Noise_DefinedResistanceModel experimentSettings;
+        private NoiseDefRSettingsControlModel experimentSettings;
 
         private Point[] amplifierNoise;
         private Point[] frequencyResponse;
@@ -942,7 +943,7 @@ namespace MCBJ.Experiments
 
             foreach (var item in boxController.AI_ChannelCollection)
                 if (item.IsEnabled)
-                    item.Parameters.SetParams(FilterCutOffFrequencies.Freq_150kHz, FilterGain.gain1, PGA_GainsEnum.gain1);
+                    item.Parameters.SetParams(FilterCutOffFrequencies.Freq_130kHz, FilterGain.gain1, PGA_GainsEnum.gain1);
 
             boxController.AcquisitionInProgress = true;
 
@@ -1105,7 +1106,7 @@ namespace MCBJ.Experiments
             onStatusChanged(new StatusEventArgs("Measurement started."));
             onProgressChanged(new ProgressEventArgs(0.0));
 
-            experimentSettings = (Noise_DefinedResistanceModel)Arg;
+            experimentSettings = (NoiseDefRSettingsControlModel)Arg;
 
             #region Writing data to log files
 

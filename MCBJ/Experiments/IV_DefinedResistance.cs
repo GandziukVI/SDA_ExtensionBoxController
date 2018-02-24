@@ -1,4 +1,5 @@
 ﻿using ExperimentController;
+using MCBJUI;
 using MotionManager;
 using SourceMeterUnit;
 using System;
@@ -54,7 +55,7 @@ namespace MCBJ.Experiments
 
         public override void ToDo(object Arg)
         {
-            var settings = (IV_DefinedResistanceModel)Arg;
+            var settings = (IVDefRSettingsControlModel)Arg;
 
             var setVolt = settings.ScanningVoltage;
             var setCond = settings.SetConductance;
@@ -64,8 +65,8 @@ namespace MCBJ.Experiments
             var minSpeed = settings.MinSpeed;
             var maxSpeed = settings.MaxSpeed;
 
-            var minValue = settings.IVMinvalue;
-            var maxValue = settings.IVMaxvalue;
+            var minValue = settings.IVMinValue;
+            var maxValue = settings.IVMaxValue;
 
             var epsilon = settings.Epsilon;
             var nPoints = settings.NPoints;

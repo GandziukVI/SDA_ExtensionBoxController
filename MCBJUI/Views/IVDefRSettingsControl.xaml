@@ -9,123 +9,124 @@
 	xmlns:converters="clr-namespace:MCBJUI.Converters"
 	x:Class="MCBJUI.IVDefRSettingsControl"
 	d:DesignWidth="250" d:DesignHeight="480">
-	
-	<UserControl.DataContext>
-		<local:IVDefRSettingsControlModel />
-	</UserControl.DataContext>
 
-	<UserControl.Resources>
-		<converters:SourceModeConverter x:Key="ModeConverter" />
+    <UserControl.DataContext>
+        <local:IVDefRSettingsControlModel />
+    </UserControl.DataContext>
 
-		<Style TargetType="TextBlock">
-			<Setter Property="Margin" Value="2.5" />
-			<Setter Property="HorizontalAlignment" Value="Stretch" />
-			<Setter Property="VerticalAlignment" Value="Stretch" />
-		</Style>
-		<Style TargetType="wpfTool:DoubleUpDown">
-			<Setter Property="Margin" Value="2.5" />			
-			<Setter Property="HorizontalAlignment" Value="Stretch" />
-			<Setter Property="VerticalAlignment" Value="Stretch" />
-			<Setter Property="CultureInfo" Value="en-Us"/>
-			<Setter Property="FormatString" Value="G4" />
-		</Style>
-		<Style TargetType="wpfTool:IntegerUpDown">
-			<Setter Property="Margin" Value="2.5" />
-			<Setter Property="HorizontalAlignment" Value="Stretch" />
-			<Setter Property="VerticalAlignment" Value="Stretch" />
-		</Style>
-		<Style TargetType="Button">
-			<Setter Property="Margin" Value="2.5" />
-			<Setter Property="Height" Value="35" />
-			<Setter Property="HorizontalAlignment" Value="Stretch" />
-			<Setter Property="VerticalAlignment" Value="Bottom" />
-		</Style>
-		<Style TargetType="ComboBox">
-			<Setter Property="Margin" Value="2.5" />
-		</Style>
-		<Style TargetType="TextBox">
-			<Setter Property="Margin" Value="2.5" />
-		</Style>
-	</UserControl.Resources>
+    <UserControl.Resources>
+        <converters:SourceModeConverter x:Key="ModeConverter" />
 
-	<ScrollViewer Grid.Column="1" VerticalScrollBarVisibility="Auto">
-            <Grid>
+        <Style TargetType="TextBlock">
+            <Setter Property="Margin" Value="2.5" />
+            <Setter Property="HorizontalAlignment" Value="Stretch" />
+            <Setter Property="VerticalAlignment" Value="Stretch" />
+        </Style>
+        <Style TargetType="wpfTool:DoubleUpDown">
+            <Setter Property="Margin" Value="2.5" />
+            <Setter Property="HorizontalAlignment" Value="Stretch" />
+            <Setter Property="VerticalAlignment" Value="Stretch" />
+            <Setter Property="CultureInfo" Value="en-Us"/>
+            <Setter Property="FormatString" Value="G4" />
+        </Style>
+        <Style TargetType="wpfTool:IntegerUpDown">
+            <Setter Property="Margin" Value="2.5" />
+            <Setter Property="HorizontalAlignment" Value="Stretch" />
+            <Setter Property="VerticalAlignment" Value="Stretch" />
+        </Style>
+        <Style TargetType="Button">
+            <Setter Property="Margin" Value="2.5" />
+            <Setter Property="Height" Value="35" />
+            <Setter Property="HorizontalAlignment" Value="Stretch" />
+            <Setter Property="VerticalAlignment" Value="Bottom" />
+        </Style>
+        <Style TargetType="ComboBox">
+            <Setter Property="Margin" Value="2.5" />
+        </Style>
+        <Style TargetType="TextBox">
+            <Setter Property="Margin" Value="2.5" />
+        </Style>
+    </UserControl.Resources>
+
+    <ScrollViewer Grid.Column="1" VerticalScrollBarVisibility="Auto">
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <TextBlock TextWrapping="Wrap" Text="Scanning voltage" />
+            <TextBlock TextWrapping="Wrap" Text="Set conductance" Grid.Row="1" Margin="2.5,2.5,2.5,2"/>
+            <TextBlock TextWrapping="Wrap" Text="Set resistance" Grid.Row="2" Margin="2.5"/>
+            <TextBlock TextWrapping="Wrap" Text="Deviation" Grid.Row="3" ToolTip="The deviation value from the set one, given in"/>
+            <TextBlock TextWrapping="Wrap" Text="Source mode" Grid.Row="4"/>
+            <TextBlock TextWrapping="Wrap" Text="Compliance" Grid.Row="5"/>
+            <TextBlock TextWrapping="Wrap" Text="I-V min value" Grid.Row="6"/>
+            <TextBlock TextWrapping="Wrap" Text="I-V max value" Grid.Row="7"/>
+            <TextBlock TextWrapping="Wrap" Text="Epsilon" Grid.Row="8"/>
+            <TextBlock TextWrapping="Wrap" Text="NPoints" Grid.Row="9" ToolTip="The number of data points per branch."/>
+            <TextBlock TextWrapping="Wrap" Text="NCycles" ToolTip="Number of cycles for single I-V measurement." Grid.Row="10"/>
+            <TextBlock TextWrapping="Wrap" Text="Motor min speed" Grid.Row="11" ToolTip="Min speed of the motor movement in mm / min"/>
+            <TextBlock TextWrapping="Wrap" Text="Motor max speed" Grid.Row="12" ToolTip="Max speed of the motor movement in mm / min"/>
+            <TextBlock TextWrapping="Wrap" Text="Motor min pos." Grid.Row="13"/>
+            <TextBlock TextWrapping="Wrap" Text="Motor max pos." Grid.Row="14"/>
+            <TextBlock TextWrapping="Wrap" Text="Stabilization time" Grid.Row="15"/>
+
+            <wpfTool:DoubleUpDown Grid.Column="1" Value="{Binding ScanningVoltage, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"/>
+            <wpfTool:DoubleUpDown Grid.Row="1" Grid.Column="1" Value="{Binding SetConductance, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"/>
+            <wpfTool:DoubleUpDown Grid.Row="2" Grid.Column="1" Value="{Binding SetResistance, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"/>
+            <wpfTool:DoubleUpDown Grid.Row="3" Grid.Column="1" Value="{Binding Deviation, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"/>
+            <ComboBox Grid.Row="4" Grid.Column="1" SelectedIndex="{Binding SourceMode, Converter={StaticResource ModeConverter}, Mode=TwoWay, UpdateSourceTrigger=LostFocus}">
+                <ComboBoxItem Content="Voltage"/>
+                <ComboBoxItem Content="Current"/>
+            </ComboBox>
+            <wpfTool:DoubleUpDown Grid.Row="5" Grid.Column="1" Value="{Binding Compliance, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"/>
+            <wpfTool:DoubleUpDown Grid.Row="6" Grid.Column="1" Value="{Binding IVMinValue, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"/>
+            <wpfTool:DoubleUpDown Grid.Row="7" Grid.Column="1" Value="{Binding IVMaxValue, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"/>
+            <wpfTool:DoubleUpDown Grid.Row="8" Grid.Column="1" Value="{Binding Epsilon, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"/>
+            <wpfTool:IntegerUpDown Grid.Row="9" Grid.Column="1" Value="{Binding NPoints, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"/>
+            <wpfTool:IntegerUpDown Grid.Row="10" Grid.Column="1" Value="{Binding NCycles, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"/>
+            <wpfTool:DoubleUpDown Grid.Row="11" Grid.Column="1" Value="{Binding MinSpeed, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"/>
+            <wpfTool:DoubleUpDown Grid.Row="12" Grid.Column="1" Value="{Binding MaxSpeed, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"/>
+            <wpfTool:DoubleUpDown Grid.Row="13" Grid.Column="1" Value="{Binding MotorMinPos, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"/>
+            <wpfTool:DoubleUpDown Grid.Row="14" Grid.Column="1" Value="{Binding MotorMaxPos, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"/>
+            <wpfTool:DoubleUpDown Grid.Row="15" Grid.Column="1" Value="{Binding StabilizationTime, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"/>
+
+            <Separator BorderThickness="1,2" Height="1" Grid.Row="16" Grid.ColumnSpan="2" Margin="2.5,5,2.5,20" Background="Black" BorderBrush="#FFAAAAAA" />
+            <Grid Grid.Row="17" Grid.ColumnSpan="2">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition/>
+                    <ColumnDefinition />
                 </Grid.ColumnDefinitions>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition/>
-                    <RowDefinition Height="Auto"/>
-                </Grid.RowDefinitions>
-                <TextBlock TextWrapping="Wrap" Text="Scanning voltage" />
-                <TextBlock TextWrapping="Wrap" Text="Set conductance" Grid.Row="1" Margin="2.5,2.5,2.5,2"/>
-                <TextBlock TextWrapping="Wrap" Text="Set resistance" Grid.Row="2" Margin="2.5"/>
-                <TextBlock TextWrapping="Wrap" Text="Deviation" Grid.Row="3" ToolTip="The deviation value from the set one, given in"/>
-                <TextBlock TextWrapping="Wrap" Text="Source mode" Grid.Row="4"/>
-                <TextBlock TextWrapping="Wrap" Text="Compliance" Grid.Row="5"/>
-                <TextBlock TextWrapping="Wrap" Text="I-V min value" Grid.Row="6"/>
-                <TextBlock TextWrapping="Wrap" Text="I-V max value" Grid.Row="7"/>
-                <TextBlock TextWrapping="Wrap" Text="Epsilon" Grid.Row="8"/>
-                <TextBlock TextWrapping="Wrap" Text="NPoints" Grid.Row="9" ToolTip="The number of data points per branch."/>
-                <TextBlock TextWrapping="Wrap" Text="NCycles" ToolTip="Number of cycles for single I-V measurement." Grid.Row="10"/>
-                <TextBlock TextWrapping="Wrap" Text="Motor min speed" Grid.Row="11" ToolTip="Min speed of the motor movement in mm / min"/>
-                <TextBlock TextWrapping="Wrap" Text="Motor max speed" Grid.Row="12" ToolTip="Max speed of the motor movement in mm / min"/>
-                <TextBlock TextWrapping="Wrap" Text="Motor min pos." Grid.Row="13"/>
-                <TextBlock TextWrapping="Wrap" Text="Motor max pos." Grid.Row="14"/>
-                <TextBlock TextWrapping="Wrap" Text="Stabilization time" Grid.Row="15"/>
-
-                <wpfTool:DoubleUpDown Grid.Column="1" Value="{Binding ScanningVoltage, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
-                <wpfTool:DoubleUpDown Grid.Row="1" Grid.Column="1" Value="{Binding SetConductance, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
-                <wpfTool:DoubleUpDown Grid.Row="2" Grid.Column="1" Value="{Binding SetResistance, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
-                <wpfTool:DoubleUpDown Grid.Row="3" Grid.Column="1" Value="{Binding Deviation, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
-                <ComboBox Grid.Row="4" Grid.Column="1" SelectedIndex="{Binding SourceMode, Converter={StaticResource ModeConverter}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
-                    <ComboBoxItem Content="Voltage"/>
-                    <ComboBoxItem Content="Current"/>
-                </ComboBox>
-                <wpfTool:DoubleUpDown Grid.Row="5" Grid.Column="1" Value="{Binding Compliance, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
-                <wpfTool:DoubleUpDown Grid.Row="6" Grid.Column="1" Value="{Binding IVMinValue, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
-                <wpfTool:DoubleUpDown Grid.Row="7" Grid.Column="1" Value="{Binding IVMaxValue, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
-                <wpfTool:DoubleUpDown Grid.Row="8" Grid.Column="1" Value="{Binding Epsilon, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
-                <wpfTool:IntegerUpDown Grid.Row="9" Grid.Column="1" Value="{Binding NPoints, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
-                <wpfTool:IntegerUpDown Grid.Row="10" Grid.Column="1" Value="{Binding NCycles, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
-                <wpfTool:DoubleUpDown Grid.Row="11" Grid.Column="1" Value="{Binding MinSpeed, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
-                <wpfTool:DoubleUpDown Grid.Row="12" Grid.Column="1" Value="{Binding MaxSpeed, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
-                <wpfTool:DoubleUpDown Grid.Row="13" Grid.Column="1" Value="{Binding MotorMinPos, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
-                <wpfTool:DoubleUpDown Grid.Row="14" Grid.Column="1" Value="{Binding MotorMaxPos, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
-                <wpfTool:DoubleUpDown Grid.Row="15" Grid.Column="1" Value="{Binding StabilizationTime, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
-
-                <Separator BorderThickness="1,2" Height="1" Grid.Row="16" Grid.ColumnSpan="2" Margin="2.5,5,2.5,20" Background="Black" BorderBrush="#FFAAAAAA" />
-                <Grid Grid.Row="17" Grid.ColumnSpan="2">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition />
-                    </Grid.ColumnDefinitions>
-                    <Button x:Name="cmdOpenFolder" Content="..." HorizontalAlignment="Left" VerticalAlignment="Top" Width="35" Click="on_cmdOpenClick"/>
-                    <TextBox TextWrapping="Wrap" Grid.Column="1" Margin="10,2.5,2.5,2" VerticalContentAlignment="Center" Height="35" Text="{Binding SaveFileName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
-
-                </Grid>
-
-                <Button x:Name="cmdStart" Content="START" Grid.Row="19" Height="35"/>
-                <Button x:Name="cmdStop" Content="STOP" Grid.Row="19" Grid.Column="2"/>
+                <Button x:Name="cmdOpenFolder" Content="..." HorizontalAlignment="Left" VerticalAlignment="Top" Width="35" Click="on_cmdOpenClick">
+                    <Button.ContextMenu>
+                        <ContextMenu>
+                            <MenuItem Header="Open data folder" Click="on_MCBJ_OpenDataFolder_Click" />
+                        </ContextMenu>
+                    </Button.ContextMenu>
+                </Button>
+                <TextBox TextWrapping="Wrap" Grid.Column="1" Margin="10,2.5,2.5,2" VerticalContentAlignment="Center" Height="35" Text="{Binding SaveFileName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
             </Grid>
-        </ScrollViewer>
+        </Grid>
+    </ScrollViewer>
 </UserControl>
