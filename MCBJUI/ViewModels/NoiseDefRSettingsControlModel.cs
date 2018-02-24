@@ -91,7 +91,7 @@ namespace MCBJUI
             }
         }
 
-        private static double[] setResistanceCollection = new double[] 
+        private double[] setResistanceCollection = new double[]
         {
             1.0 / (50.0 * conductanceQuantum), 
             1.0 / (45.0 * conductanceQuantum),

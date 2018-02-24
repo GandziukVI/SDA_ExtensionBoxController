@@ -1,5 +1,6 @@
 ﻿using ControlAssist;
 using MCBJ.Experiments;
+using MCBJUI;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -65,7 +66,7 @@ namespace MCBJ
 
             using (var stream = new FileStream(filePath, FileMode.Create, FileAccess.Write))
             {
-                formatter.Serialize(stream, DataContext);
+                formatter.Serialize(stream, (DataContext as Noise_DefinedResistanceModel).ExperimentSettings);
             }
         }
 
@@ -76,7 +77,8 @@ namespace MCBJ
             {
                 using (var stream = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.Read))
                 {
-                    DataContext = formatter.Deserialize(stream);
+                    var context = formatter.Deserialize(stream) as NoiseDefRSettingsControlModel;
+                    (DataContext as Noise_DefinedResistanceModel).ExperimentSettings = context;
                 }
             }
         }        

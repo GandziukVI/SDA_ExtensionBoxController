@@ -61,7 +61,7 @@ namespace MCBJNoiseStarter
             {
                 var context = DeserializeDataContext(fileName);
                 DataContext = context;
-                dialog.SelectedPath = context.FilePath;
+                dialog.SelectedPath = context.ExperimentSettings.FilePath;
             }
         }
 
@@ -97,7 +97,7 @@ namespace MCBJNoiseStarter
         private void on_cmdOpenFolderClick(object sender, RoutedEventArgs e)
         {
             dialog.ShowDialog();
-            (DataContext as Noise_DefinedResistanceModel).FilePath = dialog.SelectedPath;
+            (DataContext as MainWindowViewModel).ExperimentSettings.FilePath = dialog.SelectedPath;
         }
 
         private void on_MCBJ_OpenDataFolder_Click(object sender, RoutedEventArgs e)
@@ -122,8 +122,8 @@ namespace MCBJNoiseStarter
             {
                 var Settings = DeserializeDataContext(filePath);
 
-                var innerLoopCollection = Settings.ScanningVoltageCollection;
-                var outerLoopCollection = Settings.SetConductanceCollection;
+                var innerLoopCollection = Settings.ExperimentSettings.ScanningVoltageCollection;
+                var outerLoopCollection = Settings.ExperimentSettings.SetConductanceCollection;
 
                 var innerLoopSelectionList = new List<double[]>();
 
@@ -147,8 +147,8 @@ namespace MCBJNoiseStarter
                         
                         var innerLoopSelection = innerLoopSelectionList[j];
 
-                        Settings.SetConductanceCollection = new double[]{ outerLoopCollection[i] };
-                        Settings.ScanningVoltageCollection = innerLoopSelection;
+                        Settings.ExperimentSettings.SetConductanceCollection = new double[]{ outerLoopCollection[i] };
+                        Settings.ExperimentSettings.ScanningVoltageCollection = innerLoopSelection;
 
                         var noiseFilePath = GetNoiseSerializationFilePath();
                         var noiseFileDir = System.IO.Path.GetDirectoryName(noiseFilePath);
@@ -156,7 +156,7 @@ namespace MCBJNoiseStarter
                         if (!Directory.Exists(noiseFileDir))
                             Directory.CreateDirectory(noiseFileDir);
 
-                        SerializeDataContext(noiseFilePath, Settings);
+                        SerializeDataContext(noiseFilePath, Settings.ExperimentSettings);
 
                         using (var process = Process.Start("MCBJ.exe", "MCBJNoise"))
                         {
@@ -202,13 +202,13 @@ namespace MCBJNoiseStarter
             }
         }
 
-        Noise_DefinedResistanceModel DeserializeDataContext(string filePath)
+        MainWindowViewModel DeserializeDataContext(string filePath)
         {
-            Noise_DefinedResistanceModel result;
+            MainWindowViewModel result;
             var formatter = new BinaryFormatter();
             using (var stream = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.Read))
             {
-                result = formatter.Deserialize(stream) as Noise_DefinedResistanceModel;
+                result = formatter.Deserialize(stream) as MainWindowViewModel;
             }
 
             return result;
