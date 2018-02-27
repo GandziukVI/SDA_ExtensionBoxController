@@ -339,23 +339,26 @@ namespace FET_Characterization
         {
             try
             {
-                var dataPoints = NoiseDataString.Substring(2)
+                Dispatcher.InvokeAsync(new Action(() => 
+                {
+                    var dataPoints = NoiseDataString.Substring(2)
                     .Split(delim, StringSplitOptions.RemoveEmptyEntries)
                     .Select(v => v.Split(sep, StringSplitOptions.RemoveEmptyEntries))
                     .Select(v => Array.ConvertAll(v, x => double.Parse(x, NumberFormatInfo.InvariantInfo)))
                     .Select(v => new Point(v[0], v[1])).ToArray();
 
-                var toPlot = (from item in D3Helper.PointSelector.SelectNPointsPerDecade(ref dataPoints, 100)
-                             where item.Y > 0
-                             select item).ToArray();
+                    var toPlot = (from item in D3Helper.PointSelector.SelectNPointsPerDecade(ref dataPoints, 100)
+                                  where item.Y > 0
+                                  select item);
 
-                var control = measurementInterface as FET_Noise;
-                var settings = (control.DataContext as FET_NoiseModel).ExperimentSettings;
+                    var control = measurementInterface as FET_Noise;
+                    var settings = (control.DataContext as FET_NoiseModel).ExperimentSettings;
 
-                if (settings.NoisePSDData.Count != 0)
-                    settings.NoisePSDData.Clear();
+                    if (settings.NoisePSDData.Count != 0)
+                        settings.NoisePSDData.Clear();
 
-                settings.NoisePSDData.AddMany(toPlot);
+                    settings.NoisePSDData.AddMany(toPlot);
+                }));
 
             //    FETNoiseDataList.Clear();
 

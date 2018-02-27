@@ -308,7 +308,7 @@ namespace FETUI
             }
         }
 
-        private ObservableCollection<System.Windows.Point> noisePSDData;
+        private ObservableCollection<System.Windows.Point> noisePSDData = new ObservableCollection<System.Windows.Point>();
         public ObservableCollection<System.Windows.Point> NoisePSDData
         {
             get { return noisePSDData; }

@@ -95,7 +95,7 @@
                 <RowDefinition />
             </Grid.RowDefinitions>
 
-            <ni:Graph x:Name="chartFETOscilloscope" DataSource="{Binding ExperimentSettings.NoisePSDData}" Margin="5">
+            <ni:Graph x:Name="chartFETOscilloscope" Margin="5">
                 <ni:Graph.Plots>
                     <ni:Plot x:Name="timeTracePlot" />
                 </ni:Graph.Plots>
@@ -112,8 +112,8 @@
                     <ni:Plot Name="noiseSpectrumPlot" />
                 </ni:Graph.Plots>
                 <ni:Graph.Axes>
-                    <ni:AxisDouble Orientation="Horizontal" Adjuster="FitExactly" Label="Frequency, Hz" Range="0.5, 250000" ScaleKind="LogarithmBase10"/>
-                    <ni:AxisDouble Orientation="Vertical" Adjuster="FitLoosely" Label="Noise PSD, V^2 / Hz" Range="1e-19, 1e-4" ScaleKind="LogarithmBase10" />
+                    <ni:AxisDouble Orientation="Horizontal" Adjuster="None"  Label="Frequency, Hz" Range="0.5, 250000" ScaleKind="LogarithmBase10"/>
+                    <ni:AxisDouble Orientation="Vertical" Adjuster="None"  Label="Noise PSD, V^2 / Hz" Range="1e-19, 1e-4" ScaleKind="LogarithmBase10" />
                 </ni:Graph.Axes>
             </ni:Graph>          
         </Grid>
