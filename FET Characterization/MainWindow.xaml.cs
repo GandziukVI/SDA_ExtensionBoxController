@@ -352,7 +352,10 @@ namespace FET_Characterization
                 var control = measurementInterface as FET_Noise;
                 var settings = (control.DataContext as FET_NoiseModel).ExperimentSettings;
 
-                settings.NoisePSDData = toPlot;
+                if (settings.NoisePSDData.Count != 0)
+                    settings.NoisePSDData.Clear();
+
+                settings.NoisePSDData.AddMany(toPlot);
 
             //    FETNoiseDataList.Clear();
 

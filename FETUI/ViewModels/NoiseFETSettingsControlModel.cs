@@ -8,6 +8,7 @@ using System.ComponentModel;
 using ControlAssist;
 using CustomControls.ViewModels;
 using System.IO;
+using System.Collections.ObjectModel;
 
 namespace FETUI
 {
@@ -307,8 +308,8 @@ namespace FETUI
             }
         }
 
-        private System.Windows.Point[] noisePSDData;
-        public System.Windows.Point[] NoisePSDData
+        private ObservableCollection<System.Windows.Point> noisePSDData;
+        public ObservableCollection<System.Windows.Point> NoisePSDData
         {
             get { return noisePSDData; }
             set
