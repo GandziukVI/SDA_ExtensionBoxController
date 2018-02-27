@@ -7,6 +7,7 @@ using System.ComponentModel;
 using System.IO;
 using ControlAssist;
 using CustomControls.ViewModels;
+using System.Collections.ObjectModel;
 
 namespace MCBJUI
 {
@@ -372,5 +373,16 @@ namespace MCBJUI
                 SetField(ref saveFileName, value, "SaveFileName");
             }
         }
+
+        private ObservableCollection<System.Windows.Point> noisePSDData = new ObservableCollection<System.Windows.Point>();
+        public ObservableCollection<System.Windows.Point> NoisePSDData
+        {
+            get { return noisePSDData; }
+            set 
+            {
+                SetField(ref noisePSDData, value, "NoisePSDData");
+            }
+        }
+
 	}
 }

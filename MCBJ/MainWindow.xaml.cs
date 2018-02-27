@@ -192,10 +192,6 @@ namespace MCBJ
 
             this.expParentGrid.Children.Add(measurementInterface);
 
-            var psdGraph = new LineGraph(ds);
-            psdGraph.AddToPlotter(control.chartIV);
-            control.chartIV.Viewport.FitToView();
-
             expStartInfo = (control.DataContext as Noise_DefinedResistanceModel).ExperimentSettings;
         }
 
@@ -255,34 +251,33 @@ namespace MCBJ
         char[] sep = "\t".ToCharArray();
 
         private static object addDataToPlotLocker = new object();
-
-        [HandleProcessCorruptedStateExceptions]
         void AddNoiseDataToPlot(string NoiseDataString)
         {
             lock (addDataToPlotLocker)
             {
                 try
-                {
-                    dList.Clear();
-
-                    var noiseDataString = NoiseDataString;
-
-                    var dataPoints = noiseDataString.Substring(2)
-                        .Split(delim, StringSplitOptions.RemoveEmptyEntries)
-                        .Select(v => v.Split(sep, StringSplitOptions.RemoveEmptyEntries))
-                        .Select(v => Array.ConvertAll(v, x => double.Parse(x, NumberFormatInfo.InvariantInfo)))
-                        .Select(v => new Point(v[0], v[1])).ToArray();
-
-                    var toPlot = from item in D3Helper.PointSelector.SelectNPointsPerDecade(ref dataPoints, 100)
-                                 where item.Y > 0
-                                 select item;
-
-                    foreach (var item in toPlot)
-                        dList.AddLast(item);
-
+                {                    
                     Dispatcher.InvokeAsync(new Action(() =>
                     {
-                        ds.RaiseDataChanged();
+                        var noiseDataString = NoiseDataString;
+
+                        var dataPoints = noiseDataString.Substring(2)
+                            .Split(delim, StringSplitOptions.RemoveEmptyEntries)
+                            .Select(v => v.Split(sep, StringSplitOptions.RemoveEmptyEntries))
+                            .Select(v => Array.ConvertAll(v, x => double.Parse(x, NumberFormatInfo.InvariantInfo)))
+                            .Select(v => new Point(v[0], v[1])).ToArray();
+
+                        var toPlot = from item in D3Helper.PointSelector.SelectNPointsPerDecade(ref dataPoints, 100)
+                                     where item.Y > 0
+                                     select item;
+
+                        var control = measurementInterface as Noise_at_DefinedResistance;
+                        var settings = (control.DataContext as Noise_DefinedResistanceModel).ExperimentSettings;
+
+                        if (settings.NoisePSDData.Count != 0)
+                            settings.NoisePSDData.Clear();
+
+                        settings.NoisePSDData.AddMany(toPlot);
                     }));
                 }
                 catch { }
@@ -290,8 +285,6 @@ namespace MCBJ
         }
 
         private static object noiseDefinedRDataArrivedLock = new object();
-
-        [HandleProcessCorruptedStateExceptions]
         void Noise_at_der_R_DataArrived(object sender, ExpDataArrivedEventArgs e)
         {
             lock (noiseDefinedRDataArrivedLock)
@@ -312,8 +305,6 @@ namespace MCBJ
         #region Status and progress for all experiments
 
         private static object experimentStatusLocker = new object();
-
-        [HandleProcessCorruptedStateExceptions]
         private void experimentStatus(object sender, StatusEventArgs e)
         {
             lock (experimentStatusLocker)
@@ -330,8 +321,6 @@ namespace MCBJ
         }
 
         private static object experimentProgressLocker = new object();
-
-        [HandleProcessCorruptedStateExceptions]
         void experimentProgress(object sender, ProgressEventArgs e)
         {
             lock (experimentProgressLocker)

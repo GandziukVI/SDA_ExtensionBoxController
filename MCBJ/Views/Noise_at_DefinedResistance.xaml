@@ -4,7 +4,7 @@
 	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 	xmlns:wpfTool="clr-namespace:Xceed.Wpf.Toolkit;assembly=Xceed.Wpf.Toolkit"
-	xmlns:d3="http://research.microsoft.com/DynamicDataDisplay/1.0"
+    xmlns:ni="http://schemas.ni.com/controls/2009/xaml/presentation"
     xmlns:customControls="clr-namespace:CustomControls;assembly=CustomControls"
     xmlns:mcbjUI="clr-namespace:MCBJUI;assembly=MCBJUI"
     xmlns:local="clr-namespace:MCBJ"
@@ -18,11 +18,7 @@
         <Experiments:Noise_DefinedResistanceModel />
     </UserControl.DataContext>
 
-    <UserControl.Resources>
-        <d3:Log10Transform x:Key="SpectraDataTransform" />
-        <d3:LogarithmNumericTicksProvider x:Key="Log10XTicksProvider" />
-        <d3:LogarithmNumericTicksProvider x:Key="Log10YTicksProvider" />
-        
+    <UserControl.Resources>        
         <Style TargetType="Button">
             <Setter Property="Margin" Value="2.5" />
             <Setter Property="Height" Value="35" />
@@ -40,16 +36,16 @@
             <RowDefinition />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
-        <d3:ChartPlotter x:Name="chartIV" Margin="5" LegendVisibility="Collapsed" NewLegendVisible="False" DataTransform="{StaticResource SpectraDataTransform}" Grid.RowSpan="2">
-            <d3:HorizontalAxis TicksProvider="{StaticResource Log10XTicksProvider}">
-                <d3:HorizontalAxisTitle Content="Frequency (Hz)" />
-            </d3:HorizontalAxis>
-            <d3:VerticalAxis TicksProvider="{StaticResource Log10YTicksProvider}">
-                <d3:VerticalAxisTitle>
-                    <TextBlock>S<Run FontSize="9" BaselineAlignment="Subscript">V</Run> (V<Run FontSize="9" BaselineAlignment="Superscript">2</Run> / Hz)</TextBlock>
-                </d3:VerticalAxisTitle>
-            </d3:VerticalAxis>
-        </d3:ChartPlotter>
+
+        <ni:Graph x:Name="graphNoiseIV" Margin="5" Grid.RowSpan="2" DataSource="{Binding ExperimentSettings.NoisePSDData, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" >
+            <ni:Graph.Plots>
+                <ni:Plot Name="noiseSpectrumPlot" />
+            </ni:Graph.Plots>
+            <ni:Graph.Axes>
+                <ni:AxisDouble Orientation="Horizontal" Adjuster="None"  Label="Frequency, Hz" Range="0.5, 250000" ScaleKind="LogarithmBase10"/>
+                <ni:AxisDouble Orientation="Vertical" Adjuster="None"  Label="Noise PSD, V^2 / Hz" Range="1e-19, 1e-4" ScaleKind="LogarithmBase10" />
+            </ni:Graph.Axes>
+        </ni:Graph>       
 
         <mcbjUI:NoiseDefRSettingsControl DataContext="{Binding ExperimentSettings}" Width="250" MaxWidth="250" Grid.Column="1" />
         
