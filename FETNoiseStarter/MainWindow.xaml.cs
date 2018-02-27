@@ -1,5 +1,4 @@
-﻿using FETNoiseStarter.Experiments;
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -64,7 +63,7 @@ namespace FETNoiseStarter
             {
                 var context = DeserializeDataContext(fileName);
                 DataContext = context;
-                dialog.SelectedPath = context.FilePath;
+                dialog.SelectedPath = context.ExperimentSettings.FilePath;
             }
         }
 
@@ -82,20 +81,21 @@ namespace FETNoiseStarter
 
             Task.Factory.StartNew(new Action(() =>
             {
-                var Settings = DeserializeDataContext(filePath);                
+                var Settings = DeserializeDataContext(filePath);
+                var experimentSettings = Settings.ExperimentSettings;
 
                 double[] outerLoopCollection;
                 double[] innerLoopCollection;
 
-                if (Settings.IsTransferCurveMode == true)
+                if (experimentSettings.IsTransferCurveMode == true)
                 {
-                    outerLoopCollection = Settings.DSVoltageCollection;
-                    innerLoopCollection = Settings.GateVoltageCollection;
+                    outerLoopCollection = experimentSettings.DSVoltageCollection;
+                    innerLoopCollection = experimentSettings.GateVoltageCollection;
                 }
                 else
                 {
-                    outerLoopCollection = Settings.GateVoltageCollection;
-                    innerLoopCollection = Settings.DSVoltageCollection;
+                    outerLoopCollection = experimentSettings.GateVoltageCollection;
+                    innerLoopCollection = experimentSettings.DSVoltageCollection;
                 }
 
                 var innerLoopSelectionList = new List<double[]>();
@@ -117,17 +117,17 @@ namespace FETNoiseStarter
                     {
                         if (!IsInProgress)
                             break;
-                        var innerLoopSelection = innerLoopSelectionList[j];                        
+                        var innerLoopSelection = innerLoopSelectionList[j];
 
-                        if (Settings.IsTransferCurveMode == true)
+                        if (experimentSettings.IsTransferCurveMode == true)
                         {
-                            Settings.DSVoltageCollection = new double[] { outerLoopCollection[i] };
-                            Settings.GateVoltageCollection = innerLoopSelection;
+                            experimentSettings.DSVoltageCollection = new double[] { outerLoopCollection[i] };
+                            experimentSettings.GateVoltageCollection = innerLoopSelection;
                         }
-                        else if (Settings.IsOutputCurveMode == true)
+                        else if (experimentSettings.IsOutputCurveMode == true)
                         {
-                            Settings.DSVoltageCollection = innerLoopSelection;
-                            Settings.GateVoltageCollection = new double[] { outerLoopCollection[i] };
+                            experimentSettings.DSVoltageCollection = innerLoopSelection;
+                            experimentSettings.GateVoltageCollection = new double[] { outerLoopCollection[i] };
                         }
 
                         var noiseFilePath = GetNoiseSerializationFilePath(); ;
@@ -135,8 +135,8 @@ namespace FETNoiseStarter
 
                         if (!Directory.Exists(noiseFileDir))
                             Directory.CreateDirectory(noiseFileDir);
-                        
-                        SerializeDataContext(noiseFilePath, Settings);
+
+                        SerializeDataContext(noiseFilePath, experimentSettings);
 
                         using (var process = Process.Start("FET Characterization.exe", "FETNoise"))
                         {
@@ -157,7 +157,7 @@ namespace FETNoiseStarter
         private void on_cmdOpenFolderClick(object sender, RoutedEventArgs e)
         {
             dialog.ShowDialog();
-            (DataContext as FET_NoiseModel).FilePath = dialog.SelectedPath;
+            (DataContext as FET_NoiseModel).ExperimentSettings.FilePath = dialog.SelectedPath;
         }
 
         private void on_OpenDataFolderClick(object sender, RoutedEventArgs e)
@@ -172,30 +172,6 @@ namespace FETNoiseStarter
             Process.Start(startInfo);
         }             
 
-        private void SelectAddress(object sender, System.Windows.RoutedEventArgs e)
-        {
-            TextBox tb = (sender as TextBox);
-
-            if (tb != null)
-            {
-                tb.SelectAll();
-            }
-        }
-
-        private void SelectivelyIgnoreMouseButton(object sender, System.Windows.Input.MouseButtonEventArgs e)
-        {
-            TextBox tb = (sender as TextBox);
-
-            if (tb != null)
-            {
-                if (!tb.IsKeyboardFocusWithin)
-                {
-                    e.Handled = true;
-                    tb.Focus();
-                }
-            }
-        }
-
         string GetSerializationFilePath()
         {
             return Directory.GetCurrentDirectory() + "\\NoiseFETStarter.bin";
@@ -203,7 +179,7 @@ namespace FETNoiseStarter
 
         string GetNoiseSerializationFilePath()
         {
-            return Directory.GetCurrentDirectory() + "\\FET Characterization\\FETNoiseSettings.bin";
+            return Directory.GetCurrentDirectory() + "\\FETCharacterization\\FETNoiseSettings.bin";
         }
 
         void SerializeDataContext(string filePath)
