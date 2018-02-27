@@ -24,7 +24,6 @@ namespace MCBJ.Experiments
             get { return experimentSettings; }
             set
             {
-                experimentSettings = value;
                 SetField(ref experimentSettings, value, "ExperimentSettings");
             }
         }

@@ -13,7 +13,7 @@
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <WarningLevel>4</WarningLevel>
-    <ExpressionBlendVersion>12.0.41002.1</ExpressionBlendVersion>
+    <ExpressionBlendVersion>12.0.60617.0</ExpressionBlendVersion>
     <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -164,6 +164,10 @@
     <ProjectReference Include="..\ExperimentController\ExperimentController.csproj">
       <Project>{811a09b5-6590-46af-bfa6-6a1616fe3f51}</Project>
       <Name>ExperimentController</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\FETUI\FETUI.csproj">
+      <Project>{0A642A08-707C-4937-975C-DC1B17667190}</Project>
+      <Name>FETUI</Name>
     </ProjectReference>
     <ProjectReference Include="..\FileIOController\FileIOController.csproj">
       <Project>{dad1749f-3633-45e8-bc7d-d56a63450f65}</Project>

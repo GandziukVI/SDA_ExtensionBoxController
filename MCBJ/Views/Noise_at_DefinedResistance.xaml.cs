@@ -47,9 +47,7 @@ namespace MCBJ
         public void Load(string filePath)
         {            
             if (File.Exists(filePath))
-            {
                 DeserializeDataContext(filePath);
-            }
         }
 
         string GetNoiseSerializationFilePath()

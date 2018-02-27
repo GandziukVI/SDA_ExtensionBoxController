@@ -291,7 +291,7 @@ namespace FET_Characterization
         void cmdStartNoise_Click(object sender, RoutedEventArgs e)
         {
             var control = measurementInterface as FET_Noise;
-            var settings = control.DataContext as FET_NoiseModel;                        
+            var settings = (control.DataContext as FET_NoiseModel).ExperimentSettings;                        
 
             //control.chartFETOscilloscope.Children.RemoveAll(typeof(LineGraph));
             //control.chartFETOscilloscope.Legend.Visibility = System.Windows.Visibility.Collapsed;
@@ -325,7 +325,8 @@ namespace FET_Characterization
             experiment.Progress += experimentProgress;
 
             if (expStartInfo != null)
-                experiment.Start(expStartInfo);
+                if (measurementInterface is FET_Noise)
+                    experiment.Start(((measurementInterface as FET_Noise).DataContext as FET_NoiseModel).ExperimentSettings);
         }
 
         void cmdStopNoise_Click(object sender, RoutedEventArgs e)
@@ -349,7 +350,7 @@ namespace FET_Characterization
                              select item).ToArray();
 
                 var control = measurementInterface as FET_Noise;
-                var settings = control.DataContext as FET_NoiseModel;
+                var settings = (control.DataContext as FET_NoiseModel).ExperimentSettings;
 
                 settings.NoisePSDData = toPlot;
 
@@ -382,7 +383,7 @@ namespace FET_Characterization
 
         void AddTimeTraceDataToPlotContiniously()
         {
-            var settings = expStartInfo as FET_NoiseModel;
+            var settings = (expStartInfo as FET_NoiseModel).ExperimentSettings;
             var exp = experiment as FET_Noise_Experiment;
 
             while (exp.IsRunning)

@@ -39,7 +39,7 @@ namespace FET_Characterization.Experiments
         FileStream TT_Stream;
         AutoResetEvent TT_AutoresetEvent = new AutoResetEvent(false);
 
-        FET_NoiseModel experimentSettings;
+        FETUI.NoiseFETSettingsControlModel experimentSettings;
 
         Point[] amplifierNoise;
         Point[] frequencyResponse;
@@ -685,7 +685,7 @@ namespace FET_Characterization.Experiments
             onStatusChanged(new StatusEventArgs("Measurement started."));
             onProgressChanged(new ProgressEventArgs(0.0));
 
-            experimentSettings = (FET_NoiseModel)Arg;
+            experimentSettings = (FETUI.NoiseFETSettingsControlModel)Arg;
 
             #region Writing data to log files
 

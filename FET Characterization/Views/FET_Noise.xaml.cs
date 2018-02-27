@@ -15,104 +15,74 @@ using Microsoft.Research.DynamicDataDisplay.Charts.Axes.Numeric;
 using System.Diagnostics;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
+using ControlAssist;
 
 namespace FET_Characterization
 {
     /// <summary>
     /// Interaction ligic for FET_Noise.xaml
     /// </summary>
-    public partial class FET_Noise : UserControl
+    public partial class FET_Noise : UserControl, ISavable
     {
-        System.Windows.Forms.FolderBrowserDialog dialog;
-
         public FET_Noise()
         {
-            dialog = new System.Windows.Forms.FolderBrowserDialog();
             this.InitializeComponent();
         }
-
-        private void on_cmdOpenFolderClick(object sender, System.Windows.RoutedEventArgs e)
-        {
-            dialog.SelectedPath = (DataContext as FET_NoiseModel).FilePath;
-            dialog.ShowDialog();
-            (DataContext as FET_NoiseModel).FilePath = dialog.SelectedPath;
-        }
-
-        private void on_FET_OpenDataFolder_Click(object sender, System.Windows.RoutedEventArgs e)
-        {
-            var startInfo = new ProcessStartInfo() { UseShellExecute = true, Verb = "open" };
-
-            dialog.SelectedPath = (DataContext as FET_NoiseModel).FilePath;
-            startInfo.FileName = dialog.SelectedPath;
-
-            Process.Start(startInfo);
-        }
-
-        private void SelectAddress(object sender, System.Windows.RoutedEventArgs e)
-        {
-            TextBox tb = (sender as TextBox);
-
-            if (tb != null)
-            {
-                tb.SelectAll();
-            }
-        }
-
-        private void SelectivelyIgnoreMouseButton(object sender, System.Windows.Input.MouseButtonEventArgs e)
-        {
-            TextBox tb = (sender as TextBox);
-
-            if (tb != null)
-            {
-                if (!tb.IsKeyboardFocusWithin)
-                {
-                    e.Handled = true;
-                    tb.Focus();
-                }
-            }
-        }
-
-        private void cmdStart_Click(object sender, RoutedEventArgs e)
-        {
-            SerializeNoiseExperimentDataContext();
-        }
-
+       
         #region Saving / loading last experiment settings
 
         private void onFETNoiseControlLoaded(object sender, RoutedEventArgs e)
         {
-            DeserializeNoiseExperimentDataContext();
+            Load(GetNoiseSerializationFilePath());
         }
 
-        private void SerializeNoiseExperimentDataContext()
+        private void cmdStart_Click(object sender, System.Windows.RoutedEventArgs e)
         {
-            var path = Directory.GetCurrentDirectory() + "\\FET Characterization";
-            if (!Directory.Exists(path))
-                Directory.CreateDirectory(path);
+            Save(GetNoiseSerializationFilePath());
+        } 
 
-            var filePath = path + "\\FETNoiseSettings.bin";
+        public void Save(string filePath)
+        {
+            SerializeDataContext(filePath);
+        }
+
+        public void Load(string filePath)
+        {
+            if (File.Exists(filePath))
+                DeserializeDataContext(filePath);
+        }
+
+        string GetNoiseSerializationFilePath()
+        {
+            return Directory.GetCurrentDirectory() + "\\FETCharacterization\\FETNoiseSettings.bin";
+        }
+
+        void SerializeDataContext(string filePath)
+        {
             var formatter = new BinaryFormatter();
+            var dir = System.IO.Path.GetDirectoryName(filePath);
+            if (!Directory.Exists(dir))
+                Directory.CreateDirectory(dir);
 
             using (var stream = new FileStream(filePath, FileMode.Create, FileAccess.Write))
             {
-                formatter.Serialize(stream, DataContext);
+                formatter.Serialize(stream, (DataContext as FET_NoiseModel).ExperimentSettings);
             }
         }
 
-        private void DeserializeNoiseExperimentDataContext()
+        void DeserializeDataContext(string filePath)
         {
-            var path = Directory.GetCurrentDirectory() + "\\FET Characterization\\FETNoiseSettings.bin";
-
             var formatter = new BinaryFormatter();
-            if (File.Exists(path))
+            if (File.Exists(filePath))
             {
-                using (var stream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read))
+                using (var stream = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.Read))
                 {
-                    DataContext = formatter.Deserialize(stream);
+                    var context = formatter.Deserialize(stream) as FETUI.NoiseFETSettingsControlModel;
+                    (DataContext as FET_NoiseModel).ExperimentSettings = context;
                 }
             }
-        }
+        }       
 
-        #endregion             
+        #endregion                    
     }
 }
