@@ -95,9 +95,9 @@
                 <RowDefinition />
             </Grid.RowDefinitions>
 
-            <ni:Graph x:Name="chartFETOscilloscope" Margin="5">
+            <ni:Graph x:Name="chartFETOscilloscope" DataSource="{Binding ExperimentSettings.NoisePSDData}" Margin="5">
                 <ni:Graph.Plots>
-                    <ni:Plot x:Name="timeTracePlot"/>
+                    <ni:Plot x:Name="timeTracePlot" />
                 </ni:Graph.Plots>
                 <ni:Graph.Axes>
                     <ni:AxisDouble Orientation="Horizontal" Adjuster="ContinuousChart"  Label="Time, s" ScaleKind="Linear" Range="{Binding ExperimentSettings.OscilloscopeTimeRange.RealValue, Converter={StaticResource OscTimeAxisConverter}, Mode=Default}"/>
