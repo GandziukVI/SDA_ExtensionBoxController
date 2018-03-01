@@ -1325,7 +1325,7 @@ namespace MCBJ.Experiments
                 motor.Disable();
 
             onStatusChanged(new StatusEventArgs("The measurement is done!"));
-            Dispose();
+            //Dispose();
             onExpFinished(new FinishedEventArgs());
         }
 

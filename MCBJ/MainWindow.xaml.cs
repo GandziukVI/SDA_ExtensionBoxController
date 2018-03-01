@@ -75,7 +75,7 @@ namespace MCBJ
         // for automatic experiment restart
         private void mcbj_NoiseExpFinished(object sender, FinishedEventArgs e)
         {
-            Dispatcher.BeginInvoke(new Action(() =>
+            Dispatcher.InvokeAsync(new Action(() =>
             {
                 Application.Current.Shutdown(0);
             }));
