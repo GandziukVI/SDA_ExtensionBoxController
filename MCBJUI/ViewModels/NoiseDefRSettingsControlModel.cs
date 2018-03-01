@@ -166,6 +166,18 @@ namespace MCBJUI
             }
         }
 
+        private double ampInputResistance = 1e6;
+        public double AmpInputResistance
+        {
+            get { return ampInputResistance; }
+            set 
+            {
+                SetField(ref ampInputResistance, value, "AmpInputResistance");
+            }
+        }
+
+
+
         private double motionMinSpeed = 0.02;
         public double MotionMinSpeed
         {

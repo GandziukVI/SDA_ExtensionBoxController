@@ -1258,7 +1258,7 @@ namespace MCBJ.Experiments
                                     noiseMeasLog.U0Gate = voltagesBeforeNoiseMeasurement[2];
                                     noiseMeasLog.R0sample = noiseMeasLog.U0sample / (noiseMeasLog.U0Rload / noiseMeasLog.Rload);
                                     noiseMeasLog.REsample = noiseMeasLog.SampleVoltage / (noiseMeasLog.URload / noiseMeasLog.Rload);
-                                    noiseMeasLog.EquivalentResistance = 1.0 / (1.0 / experimentSettings.LoadResistance + 1.0 / noiseMeasLog.REsample);
+                                    noiseMeasLog.EquivalentResistance = 1.0 / (1.0 / experimentSettings.LoadResistance + 1.0 / noiseMeasLog.REsample + 1.0 / experimentSettings.AmpInputResistance);
                                     noiseMeasLog.Temperature0 = experimentSettings.Temperature0;
                                     noiseMeasLog.TemperatureE = experimentSettings.TemperatureE;
                                     noiseMeasLog.kAmpl = experimentSettings.KAmpl;
