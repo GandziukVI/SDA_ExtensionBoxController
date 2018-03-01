@@ -289,7 +289,7 @@ namespace MCBJ.Experiments
                 if (absVoltVal > absDeviationVal)
                     divider = voltSet - intervalCoarse(voltSet, varVoltDev);
                 else
-                    divider = Math.Abs(voltSet + intervalCoarse(voltSet, varVoltDev)) / 1;
+                    divider = Math.Abs(voltSet + intervalCoarse(voltSet, varVoltDev));
 
                 return (1.0 - Math.Tanh(-1.0 * Math.Abs(voltSet - varVoltCurr) / divider * Math.PI + Math.PI)) / 2.0;
             };
@@ -435,6 +435,51 @@ namespace MCBJ.Experiments
             }
 
             motorPotentiometer.StopMotion();
+        }
+
+        void preciseSetVoltage(BS350_MotorPotentiometer motorPotentiometer, int voltNumber, double voltage, double voltageDeviation, int avgNum)
+        {
+            while (true)
+            {                
+                Func<double, double, double> intervalCoarse = (varVoltVal, varVoltDev) =>
+                {
+                    var absVoltVal = Math.Abs(varVoltVal);
+                    var absDeviationVal = Math.Abs(varVoltDev);
+
+                    if (absVoltVal > absDeviationVal)
+                        return voltSign * Math.Abs(varVoltVal - varVoltDev);
+                    else
+                        return voltSign * varVoltDev;
+                };
+
+                Func<double, double, double, double> multFactor = (varVoltDest, varVoltCurr, varVoltDev) =>
+                {
+                    var absVoltVal = Math.Abs(varVoltDest);
+                    var absDeviationVal = Math.Abs(varVoltDev);
+
+                    var divider = 1.0;
+
+                    if (absVoltVal > absDeviationVal)
+                        divider = voltSet - intervalCoarse(voltSet, varVoltDev);
+                    else
+                        divider = Math.Abs(voltSet + intervalCoarse(voltSet, varVoltDev));
+
+                    return (1.0 - Math.Tanh(-1.0 * Math.Abs(voltSet - varVoltCurr) / divider * Math.PI + Math.PI)) / 2.0;
+                };
+
+                var isCoarse = true;
+                var isFine = false;
+                
+                while (isCoarse)
+                {
+                    var voltages = boxController.VoltageMeasurement_AllChannels(avgNum);
+
+                    while (isFine)
+                    {
+                        
+                    }
+                }                
+            }                        
         }
 
         //void setDrainVoltage(double voltage, double voltageDev)

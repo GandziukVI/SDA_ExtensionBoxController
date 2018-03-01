@@ -21,7 +21,7 @@ namespace IneltaMotorPotentiometer
         }
 
         private readonly double stopMotorVoltage = 0.0;
-        private readonly double minMotorVoltage = 1.5;
+        private readonly double minMotorVoltage = 0.7;
         private readonly double maxMotorVoltage = 6.0;
 
         public void StartMotion(byte speed, MotionDirection direction)
