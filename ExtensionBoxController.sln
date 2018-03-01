@@ -65,6 +65,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ExperimentsAutomation", "Ex
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{732896E0-C420-455C-A3D1-38DC8A18FEF5}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CustomExperimentControls", "CustomExperimentControls\CustomExperimentControls.csproj", "{CAC0DEA3-050E-4AE6-A0A6-62BBC63F74D9}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -426,6 +428,18 @@ Global
 		{0A642A08-707C-4937-975C-DC1B17667190}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{0A642A08-707C-4937-975C-DC1B17667190}.Release|x64.ActiveCfg = Release|Any CPU
 		{0A642A08-707C-4937-975C-DC1B17667190}.Release|x86.ActiveCfg = Release|Any CPU
+		{CAC0DEA3-050E-4AE6-A0A6-62BBC63F74D9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CAC0DEA3-050E-4AE6-A0A6-62BBC63F74D9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CAC0DEA3-050E-4AE6-A0A6-62BBC63F74D9}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{CAC0DEA3-050E-4AE6-A0A6-62BBC63F74D9}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{CAC0DEA3-050E-4AE6-A0A6-62BBC63F74D9}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{CAC0DEA3-050E-4AE6-A0A6-62BBC63F74D9}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{CAC0DEA3-050E-4AE6-A0A6-62BBC63F74D9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CAC0DEA3-050E-4AE6-A0A6-62BBC63F74D9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CAC0DEA3-050E-4AE6-A0A6-62BBC63F74D9}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{CAC0DEA3-050E-4AE6-A0A6-62BBC63F74D9}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{CAC0DEA3-050E-4AE6-A0A6-62BBC63F74D9}.Release|x64.ActiveCfg = Release|Any CPU
+		{CAC0DEA3-050E-4AE6-A0A6-62BBC63F74D9}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -455,5 +469,6 @@ Global
 		{2AFBA55D-3F2E-469F-B299-C8E47373EFC7} = {C97C7A42-DEF1-469A-9B57-C2DE42BCD133}
 		{0E46E2F1-3F41-4CB9-9E63-FBFD268B934E} = {C97C7A42-DEF1-469A-9B57-C2DE42BCD133}
 		{0A642A08-707C-4937-975C-DC1B17667190} = {C97C7A42-DEF1-469A-9B57-C2DE42BCD133}
+		{CAC0DEA3-050E-4AE6-A0A6-62BBC63F74D9} = {C97C7A42-DEF1-469A-9B57-C2DE42BCD133}
 	EndGlobalSection
 EndGlobal

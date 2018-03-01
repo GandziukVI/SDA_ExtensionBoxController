@@ -44,7 +44,7 @@ namespace FET_Characterization
         {
             var startInfo = new ProcessStartInfo() { UseShellExecute = true, Verb = "open" };
 
-            dialogTransferMeasurement.SelectedPath = (DataContext as FET_IVModel).IV_FET_DataFilePath;
+            dialogIVMeasurement.SelectedPath = (DataContext as FET_IVModel).IV_FET_DataFilePath;
             startInfo.FileName = dialogIVMeasurement.SelectedPath;
 
             Process.Start(startInfo);

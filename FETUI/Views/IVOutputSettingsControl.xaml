@@ -1,0 +1,214 @@
+﻿<UserControl
+	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	xmlns:wpfTool="clr-namespace:Xceed.Wpf.Toolkit;assembly=Xceed.Wpf.Toolkit"
+	xmlns:customControls="clr-namespace:CustomControls;assembly=CustomControls"
+	mc:Ignorable="d"
+	xmlns:local="clr-namespace:FETUI"
+	xmlns:converters="clr-namespace:FETUI.Converters"
+	x:Class="FETUI.NoiseIVSettingsControl"
+	d:DesignWidth="275" d:DesignHeight="480">
+
+    <UserControl.Resources>
+        <converters:Ke26xxBChannelConverter x:Key="Keithley26xxBChannelConverter" />
+        <converters:InverseBooleanConverter x:Key="InvBooleanConverter" />
+        <converters:SourceFunctionConverter x:Key="SrcFunctionConverter" />
+        <converters:ComplianceFunctionConverter x:Key="ComplFunctionConverter" />
+        <converters:SourceModeConverter x:Key="SrcModeConverter" />
+        <converters:ChannelNameConverter x:Key="ChNameConverter" />
+
+        <Style TargetType="TextBlock">
+            <Setter Property="Margin" Value="2.5" />
+            <Setter Property="HorizontalAlignment" Value="Stretch" />
+            <Setter Property="VerticalAlignment" Value="Stretch" />
+        </Style>
+        <Style TargetType="CheckBox">
+            <Setter Property="Margin" Value="2.5" />
+            <Setter Property="HorizontalAlignment" Value="Stretch" />
+            <Setter Property="VerticalAlignment" Value="Stretch" />
+            <Setter Property="VerticalContentAlignment" Value="Center" />
+        </Style>
+        <Style TargetType="wpfTool:DoubleUpDown">
+            <Setter Property="Margin" Value="2.5" />
+            <Setter Property="MaxWidth" Value="130" />
+            <Setter Property="HorizontalAlignment" Value="Stretch" />
+            <Setter Property="VerticalAlignment" Value="Stretch" />
+            <Setter Property="CultureInfo" Value="en-Us"/>
+            <Setter Property="FormatString" Value="G4" />
+        </Style>
+        <Style TargetType="wpfTool:IntegerUpDown">
+            <Setter Property="Margin" Value="2.5" />
+            <Setter Property="Width" Value="130" />
+            <Setter Property="MaxWidth" Value="130" />
+            <Setter Property="HorizontalAlignment" Value="Stretch" />
+            <Setter Property="VerticalAlignment" Value="Stretch" />
+        </Style>
+        <Style TargetType="customControls:ExtendedDoubleUpDown">
+            <Setter Property="Width" Value="130" />
+            <Setter Property="MaxWidth" Value="130" />
+            <Setter Property="Margin" Value="2.5" />
+        </Style>
+        <Style TargetType="Button">
+            <Setter Property="Margin" Value="2.5" />
+            <Setter Property="Height" Value="35" />
+            <Setter Property="HorizontalAlignment" Value="Stretch" />
+            <Setter Property="VerticalAlignment" Value="Bottom" />
+        </Style>
+        <Style TargetType="ComboBox">
+            <Setter Property="Margin" Value="2.5" />
+        </Style>
+        <Style TargetType="TextBox">
+            <Setter Property="Margin" Value="2.5" />
+            <Setter Property="Width" Value="130" />
+            <Setter Property="MaxWidth" Value="130" />
+            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+            <Setter Property="VerticalAlignment" Value="Stretch" />
+            <Setter Property="HorizontalContentAlignment" Value="Right" />
+            <Setter Property="VerticalContentAlignment" Value="Center" />
+            <Setter Property="TextWrapping" Value="NoWrap" />
+        </Style>
+    </UserControl.Resources>
+
+    <UserControl.DataContext>
+        <local:IVOutputSettingsControlModel />
+    </UserControl.DataContext>
+
+    <ScrollViewer HorizontalAlignment="Left" VerticalScrollBarVisibility="Auto">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition />
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+
+            <TextBlock Text="Ke2602 res." />
+            <TextBox Grid.Column="1" Text="{Binding KeithleyRscName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"></TextBox>
+
+            <TextBlock Grid.Row="1">V<Run FontSize="9" BaselineAlignment="Subscript">DS</Run> Channel</TextBlock>
+            <ComboBox Grid.Row="1" Grid.Column="1" SelectedIndex="{Binding VdsChannel, Converter={StaticResource ChNameConverter}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                <ComboBoxItem>Channel A</ComboBoxItem>
+                <ComboBoxItem>Channel B</ComboBoxItem>
+            </ComboBox>
+
+            <TextBlock Grid.Row="2">V<Run FontSize="9" BaselineAlignment="Subscript">G</Run> Channel</TextBlock>
+            <ComboBox Grid.Row="2" Grid.Column="1" SelectedIndex="{Binding VgChannel, Converter={StaticResource ChNameConverter}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                <ComboBoxItem>Channel A</ComboBoxItem>
+                <ComboBoxItem>Channel B</ComboBoxItem>
+            </ComboBox>
+
+            <TextBlock Grid.Row="3">Source mode</TextBlock>
+            <ComboBox x:Name="comboBox" Grid.Row="3" Grid.Column="1" SelectedIndex="{Binding SMU_SourceMode, Converter={StaticResource SrcModeConverter}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                <ComboBoxItem>Voltage</ComboBoxItem>
+                <ComboBoxItem>Current</ComboBoxItem>
+            </ComboBox>
+
+            <TextBlock Grid.Row="4" Text="Averaging" />
+            <wpfTool:IntegerUpDown Grid.Row="4" Grid.Column="1" Value="{Binding Ke_IV_FET_Averaging, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+            <TextBlock Grid.Row="5" Text="NPLC"/>
+            <wpfTool:DoubleUpDown Grid.Row="5" Grid.Column="1" Value="{Binding Ke_IV_FET_NPLC, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+
+            <TextBlock TextWrapping="Wrap" Grid.Row="6">V<Run FontSize="9" BaselineAlignment="Subscript">DS</Run> Start</TextBlock>
+            <customControls:ExtendedDoubleUpDown Grid.Row="6" Grid.Column="1" DataContext="{Binding VdsStart}"/>
+
+            <TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" VerticalAlignment="Top" Grid.Row="7">V<Run FontSize="9" BaselineAlignment="Subscript">DS</Run> Stop</TextBlock>
+            <customControls:ExtendedDoubleUpDown Grid.Row="7" Grid.Column="1" DataContext="{Binding VdsStop}" />
+
+            <TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" VerticalAlignment="Top" Grid.Row="8">N (V<Run FontSize="9" BaselineAlignment="Subscript">DS</Run>) SWEEP</TextBlock>
+            <wpfTool:IntegerUpDown Grid.Row="8" Grid.Column="1" Value="{Binding N_VdsSweep, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+
+            <TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" VerticalAlignment="Top" Grid.Row="9">I<Run FontSize="9" BaselineAlignment="Subscript">DS</Run> compliance</TextBlock>
+            <customControls:ExtendedDoubleUpDown Grid.Row="9" Grid.Column="1" DataContext="{Binding DS_Complaince}"/>
+
+            <TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" VerticalAlignment="Top" Grid.Row="10">V<Run FontSize="9" BaselineAlignment="Subscript">G</Run> Start</TextBlock>
+            <customControls:ExtendedDoubleUpDown Grid.Row="10" Grid.Column="1" DataContext="{Binding VgStart}" />
+
+            <TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" VerticalAlignment="Top" Grid.Row="11">V<Run FontSize="9" BaselineAlignment="Subscript">G</Run> Stop</TextBlock>
+            <customControls:ExtendedDoubleUpDown Grid.Row="11" Grid.Column="1" DataContext="{Binding VgStop}" />
+
+            <TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" VerticalAlignment="Top" Grid.Row="12">N (V<Run FontSize="9" BaselineAlignment="Subscript">G</Run>) Step</TextBlock>
+            <wpfTool:IntegerUpDown Grid.Row="12" Grid.Column="1" Value="{Binding N_VgStep, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+
+            <TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" VerticalAlignment="Top" Grid.Row="13">I<Run FontSize="9" BaselineAlignment="Subscript">G</Run> complaince</TextBlock>
+            <customControls:ExtendedDoubleUpDown Grid.Row="13" Grid.Column="1" DataContext="{Binding Gate_Complaince}"/>
+
+            <TextBlock Grid.Row="14">V<Run FontSize="9" BaselineAlignment="Subscript">G</Run> delay</TextBlock>
+            <customControls:ExtendedDoubleUpDown Grid.Row="14" Grid.Column="1" DataContext="{Binding IV_FET_GateDelay}" />
+
+            <CheckBox HorizontalAlignment="Left" Grid.Row="15" Grid.ColumnSpan="2" HorizontalContentAlignment="Center" VerticalAlignment="Center" IsChecked="{Binding MeasureLeakage, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                <TextBlock>Measure leakage current</TextBlock>
+            </CheckBox>
+
+            <GroupBox Grid.Row="16" Grid.ColumnSpan="2">
+                <GroupBox.Header>
+                    <CheckBox x:Name="chkPulseEnabled">Pulse measurements</CheckBox>
+                </GroupBox.Header>
+
+                <Grid IsEnabled="{Binding IsChecked, ElementName=chkPulseEnabled}">
+                    <Grid.RowDefinitions>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition />
+                        <ColumnDefinition Width="132"/>
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock>Pulse width</TextBlock>
+                    <customControls:ExtendedDoubleUpDown Grid.Column="1" DataContext="{Binding PulseWidth}"/>
+
+                    <TextBlock Grid.Row="1">Delay time</TextBlock>
+                    <customControls:ExtendedDoubleUpDown Grid.Row="1" Grid.Column="1" DataContext="{Binding DelayTime}"/>
+                </Grid>
+            </GroupBox>
+
+            <Grid Grid.Row="17" Grid.ColumnSpan="2">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+                <Button x:Name="cmdOpenFolderIV" Content="..." HorizontalAlignment="Left" VerticalAlignment="Top" Width="35" Height="35" Click="on_cmdOpenFolderIV_Click">
+                    <Button.ContextMenu>
+                        <ContextMenu>
+                            <MenuItem Header="Open data folder" Click="on_IV_FET_OpenDataFolder_Click" />
+                            <MenuItem Header="Same as for Transfer" Click="on_IV_FET_SameAsForTransfer_Click" />
+                        </ContextMenu>
+                    </Button.ContextMenu>
+                </Button>
+                <TextBox TextWrapping="Wrap" Grid.Column="1" Margin="10,2.5,2.5,2" VerticalContentAlignment="Center" Height="35" Text="{Binding IV_FileName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" MaxWidth="162"/>
+            </Grid>
+
+            <Grid Grid.Row="18" Grid.ColumnSpan="2" Margin="0,50,0,0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+
+                <Button x:Name="cmdStartIV" Content="START" Height="35" VerticalAlignment="Bottom" Click="cmdStartIV_Click"/>
+                <Button x:Name="cmdStopIV" Content="STOP" Grid.Column="1" Height="35" VerticalAlignment="Bottom"/>
+            </Grid>
+        </Grid>
+    </ScrollViewer>
+</UserControl>
