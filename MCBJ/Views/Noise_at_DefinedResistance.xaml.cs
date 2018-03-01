@@ -27,11 +27,12 @@ namespace MCBJ
         public Noise_at_DefinedResistance()
         {
             this.InitializeComponent();
+            Load(GetNoiseSerializationFilePath());
         }        
 
         private void onMCBJNoiseLoaded(object sender, RoutedEventArgs e)
         {
-            Load(GetNoiseSerializationFilePath());
+            //Load(GetNoiseSerializationFilePath());
         }
 
         private void cmdStart_Click(object sender, RoutedEventArgs e)
