@@ -135,6 +135,7 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Experiments\AdvancedValueSetter.cs" />
     <Compile Include="Experiments\DataHandling\NoiseMeasurementDataLog.cs" />
     <Compile Include="Experiments\DataHandling\SingleNoiseMeasurement.cs" />
     <Compile Include="Views\IV_at_DefinedResistance.xaml.cs">

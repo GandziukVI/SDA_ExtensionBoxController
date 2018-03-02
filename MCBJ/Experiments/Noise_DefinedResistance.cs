@@ -439,47 +439,65 @@ namespace MCBJ.Experiments
 
         void preciseSetVoltage(BS350_MotorPotentiometer motorPotentiometer, int voltNumber, double voltage, double voltageDeviation, int avgNum)
         {
-            while (true)
-            {                
-                Func<double, double, double> intervalCoarse = (varVoltVal, varVoltDev) =>
-                {
-                    var absVoltVal = Math.Abs(varVoltVal);
-                    var absDeviationVal = Math.Abs(varVoltDev);
+            var voltSign = voltage < 0 ? -1.0 : 1.0;
+            var voltSet = Math.Abs(voltage);
 
-                    if (absVoltVal > absDeviationVal)
-                        return voltSign * Math.Abs(varVoltVal - varVoltDev);
-                    else
-                        return voltSign * varVoltDev;
+            Func<double, double, double> intervalCoarse = (varVoltVal, varVoltDev) =>
+            {
+                var absVoltVal = Math.Abs(varVoltVal);
+                var absDeviationVal = Math.Abs(varVoltDev);
+
+                if (absVoltVal > absDeviationVal)
+                    return voltSign * Math.Abs(varVoltVal - varVoltDev);
+                else
+                    return voltSign * varVoltDev;
+            };
+
+            Func<double, double, double, double> multFactor = (varVoltDest, varVoltCurr, varVoltDev) =>
+            {
+                var absVoltVal = Math.Abs(varVoltDest);
+                var absDeviationVal = Math.Abs(varVoltDev);
+
+                var divider = 1.0;
+
+                if (absVoltVal > absDeviationVal)
+                    divider = voltSet - intervalCoarse(voltSet, varVoltDev);
+                else
+                    divider = Math.Abs(voltSet + intervalCoarse(voltSet, varVoltDev));
+
+                return (1.0 - Math.Tanh(-1.0 * Math.Abs(voltSet - varVoltCurr) / divider * Math.PI + Math.PI)) / 2.0;
+            };
+
+            byte PotentiometerSpeed;
+            byte PotentiometerMaxSpeed = 0;
+            byte PotentiometerMinSpeed = 255;
+
+            Func<bool> superCoarseStep = () =>
+                {
+                    PotentiometerSpeed = PotentiometerMaxSpeed;
+                    return true;
                 };
 
-                Func<double, double, double, double> multFactor = (varVoltDest, varVoltCurr, varVoltDev) =>
+            Func<bool> coarseStep = () =>
                 {
-                    var absVoltVal = Math.Abs(varVoltDest);
-                    var absDeviationVal = Math.Abs(varVoltDev);
-
-                    var divider = 1.0;
-
-                    if (absVoltVal > absDeviationVal)
-                        divider = voltSet - intervalCoarse(voltSet, varVoltDev);
-                    else
-                        divider = Math.Abs(voltSet + intervalCoarse(voltSet, varVoltDev));
-
-                    return (1.0 - Math.Tanh(-1.0 * Math.Abs(voltSet - varVoltCurr) / divider * Math.PI + Math.PI)) / 2.0;
+                    var currentVoltage = boxController.VoltageMeasurement_AllChannels(1)[voltNumber];
+                    PotentiometerSpeed = (byte)(PotentiometerMinSpeed + (PotentiometerMaxSpeed - PotentiometerMinSpeed) * multFactor(voltage, currentVoltage, voltageDeviation));
+                    return true;
                 };
 
-                var isCoarse = true;
-                var isFine = false;
-                
-                while (isCoarse)
+            Func<bool> fineStep = () =>
                 {
-                    var voltages = boxController.VoltageMeasurement_AllChannels(avgNum);
+                    PotentiometerSpeed = PotentiometerMinSpeed;
+                    return true;
+                };
 
-                    while (isFine)
-                    {
-                        
-                    }
-                }                
-            }                        
+            var setter = new AdvancedValueSetter();
+
+            setter.RegisterStep(ref superCoarseStep);
+            setter.RegisterStep(ref coarseStep);
+            setter.RegisterStep(ref fineStep);
+
+            setter.SetValue();                      
         }
 
         //void setDrainVoltage(double voltage, double voltageDev)
