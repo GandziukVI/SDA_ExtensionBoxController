@@ -58,10 +58,10 @@ namespace MCBJ.Experiments
             if (HasPrev())
             {
                 --performingIndex;
-                performingCollection[performingIndex].PerformIndicator = true;
-                for (int i = 0; i < performingCollection.Count; i++)
-                    if (i != performingIndex)
-                        performingCollection[i].PerformIndicator = false;
+                //performingCollection[performingIndex].PerformIndicator = true;
+                //for (int i = 0; i < performingCollection.Count; i++)
+                //    if (i != performingIndex)
+                //        performingCollection[i].PerformIndicator = false;
             }
         }
 
@@ -75,10 +75,10 @@ namespace MCBJ.Experiments
             if(HasNext())
             {
                 ++performingIndex;
-                performingCollection[performingIndex].PerformIndicator = true;
-                for (int i = 0; i < performingCollection.Count; i++)
-                    if (i != performingIndex)
-                        performingCollection[i].PerformIndicator = false;
+                //performingCollection[performingIndex].PerformIndicator = true;
+                //for (int i = 0; i < performingCollection.Count; i++)
+                //    if (i != performingIndex)
+                //        performingCollection[i].PerformIndicator = false;
             }
         }
 
