@@ -864,30 +864,31 @@ namespace MCBJ.Experiments
 
                             preciseSetVoltage(VdsMotorPotentiometer, 3, voltage, experimentSettings.VoltageDeviation.RealValue, experimentSettings.NAveragesFast);
 
-                            //onStatusChanged(new StatusEventArgs(string.Format("Reaching resistance value R -> {0}", (1.0 / conductance).ToString("0.0000", NumberFormatInfo.InvariantInfo))));
+                            onStatusChanged(new StatusEventArgs(string.Format("Reaching resistance value R -> {0}", (1.0 / conductance).ToString("0.0000", NumberFormatInfo.InvariantInfo))));
 
-                            //resistanceStabilizationState = setJunctionResistance(
-                            //    voltage,
-                            //    experimentSettings.VoltageDeviation.RealValue,
-                            //    experimentSettings.MinVoltageTreshold.RealValue,
-                            //    experimentSettings.VoltageTreshold.RealValue,
-                            //    conductance,
-                            //    experimentSettings.ConductanceDeviation,
-                            //    experimentSettings.StabilizationTime,
-                            //    experimentSettings.MotionMinSpeed,
-                            //    experimentSettings.MotionMaxSpeed,
-                            //    experimentSettings.MotorMinPos,
-                            //    experimentSettings.MotorMaxPos,
-                            //    experimentSettings.NAveragesFast,
-                            //    experimentSettings.LoadResistance);
+                            resistanceStabilizationState = setJunctionResistance(
+                                VdsMotorPotentiometer,
+                                voltage,
+                                experimentSettings.VoltageDeviation.RealValue,
+                                experimentSettings.MinVoltageTreshold.RealValue,
+                                experimentSettings.VoltageTreshold.RealValue,
+                                conductance,
+                                experimentSettings.ConductanceDeviation,
+                                experimentSettings.StabilizationTime,
+                                experimentSettings.MotionMinSpeed,
+                                experimentSettings.MotionMaxSpeed,
+                                experimentSettings.MotorMinPos,
+                                experimentSettings.MotorMaxPos,
+                                experimentSettings.NAveragesFast,
+                                experimentSettings.LoadResistance);
 
-                            //if (resistanceStabilizationState == false)
-                            //{
-                            //    IsRunning = false;
-                            //    break;
-                            //}
+                            if (resistanceStabilizationState == false)
+                            {
+                                IsRunning = false;
+                                break;
+                            }
 
-                            //preciseSetVoltage(VdsMotorPotentiometer, 3, voltage, experimentSettings.VoltageDeviation.RealValue, experimentSettings.NAveragesFast);
+                            preciseSetVoltage(VdsMotorPotentiometer, 3, voltage, experimentSettings.VoltageDeviation.RealValue, experimentSettings.NAveragesFast);
 
                             onStatusChanged(new StatusEventArgs("Measuring sample characteristics before noise spectra measurement."));
 
