@@ -1,10 +1,14 @@
-﻿using MCBJNoiseStarter.Experiments;
+﻿using DeviceIO;
+using MCBJNoiseStarter.Experiments;
+using MCS_Faulhaber;
+using MotionManager;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.IO.MemoryMappedFiles;
+using System.IO.Ports;
 using System.Linq;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
@@ -92,7 +96,7 @@ namespace MCBJNoiseStarter
         private void onWindowClosing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             SerializeDataContext(GetSerializationFilePath());
-        }       
+        }
 
         private void on_cmdOpenFolderClick(object sender, RoutedEventArgs e)
         {
@@ -144,10 +148,10 @@ namespace MCBJNoiseStarter
                     {
                         if (!IsInProgress)
                             break;
-                        
+
                         var innerLoopSelection = innerLoopSelectionList[j];
 
-                        Settings.ExperimentSettings.SetConductanceCollection = new double[]{ outerLoopCollection[i] };
+                        Settings.ExperimentSettings.SetConductanceCollection = new double[] { outerLoopCollection[i] };
                         Settings.ExperimentSettings.ScanningVoltageCollection = innerLoopSelection;
 
                         var noiseFilePath = GetNoiseSerializationFilePath();
@@ -166,6 +170,16 @@ namespace MCBJNoiseStarter
                         }
                     }
                 }
+
+                var driver = new SerialDevice("COM1", 115200, Parity.None, 8, StopBits.One) as IDeviceIO;
+                var motionController = new SA_2036U012V(driver) as IMotionController1D;
+
+                motionController.Enabled = true;
+                motionController.SetVelosity(4.8);
+                motionController.SetPosition(0.0);
+                motionController.Enabled = false;
+
+                MessageBox.Show("The measurement is done!", "Measurement Info", MessageBoxButton.OK, MessageBoxImage.Information);
             }));
         }
 
@@ -212,6 +226,6 @@ namespace MCBJNoiseStarter
             }
 
             return result;
-        }       
+        }
     }
 }
