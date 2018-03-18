@@ -951,11 +951,11 @@ namespace MCBJ.Experiments
                                     SaveToFile(dataFileName);
 
                                     noiseMeasLog.SampleVoltage = voltagesAfterNoiseMeasurement[3];
-                                    noiseMeasLog.SampleCurrent = (voltagesAfterNoiseMeasurement[1] - voltagesBeforeNoiseMeasurement[3]) / experimentSettings.LoadResistance;
+                                    noiseMeasLog.SampleCurrent = (voltagesAfterNoiseMeasurement[1] - voltagesAfterNoiseMeasurement[3]) / experimentSettings.LoadResistance;
                                     noiseMeasLog.FileName = (new FileInfo(dataFileName)).Name;
                                     noiseMeasLog.Rload = experimentSettings.LoadResistance;
                                     noiseMeasLog.Uwhole = voltagesAfterNoiseMeasurement[1];
-                                    noiseMeasLog.URload = voltagesAfterNoiseMeasurement[1] - voltagesBeforeNoiseMeasurement[3];
+                                    noiseMeasLog.URload = voltagesAfterNoiseMeasurement[1] - voltagesAfterNoiseMeasurement[3];
                                     noiseMeasLog.U0sample = voltagesBeforeNoiseMeasurement[3];
                                     noiseMeasLog.U0whole = voltagesBeforeNoiseMeasurement[1];
                                     noiseMeasLog.U0Rload = voltagesBeforeNoiseMeasurement[1] - voltagesBeforeNoiseMeasurement[3];
