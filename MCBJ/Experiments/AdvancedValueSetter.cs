@@ -21,6 +21,18 @@ namespace MCBJ.Experiments
             performingCollection.Add(workingFunction);
         }
 
+        public void SetPrev()
+        {
+            if (HasPrev())
+                --performingIndex;
+        }
+
+        public void SetNext()
+        {
+            if(HasNext())
+                ++performingIndex;
+        }
+
         public void Reset()
         {
             performingCollection.Clear();
@@ -53,33 +65,9 @@ namespace MCBJ.Experiments
             return performingIndex > 0;
         }
 
-        private void SetPrev()
-        {
-            if (HasPrev())
-            {
-                --performingIndex;
-                //performingCollection[performingIndex].PerformIndicator = true;
-                //for (int i = 0; i < performingCollection.Count; i++)
-                //    if (i != performingIndex)
-                //        performingCollection[i].PerformIndicator = false;
-            }
-        }
-
         private bool HasNext()
         {
             return (performingIndex < performingCollection.Count - 1) && (performingCollection.Count > 0);
-        }
-
-        private void SetNext()
-        {
-            if(HasNext())
-            {
-                ++performingIndex;
-                //performingCollection[performingIndex].PerformIndicator = true;
-                //for (int i = 0; i < performingCollection.Count; i++)
-                //    if (i != performingIndex)
-                //        performingCollection[i].PerformIndicator = false;
-            }
         }
 
         #endregion
