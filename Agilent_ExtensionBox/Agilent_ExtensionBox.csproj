@@ -59,12 +59,12 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Agilent.AgilentU254x.Interop, Version=1.0.16.0, Culture=neutral, PublicKeyToken=ced78d295d1e0f2b">
+    <Reference Include="Agilent.AgilentU254x.Interop, Version=1.0.17.0, Culture=neutral, PublicKeyToken=ced78d295d1e0f2b, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
       <EmbedInteropTypes>True</EmbedInteropTypes>
       <HintPath>..\Third_Part_Libraries\Agilent.AgilentU254x.Interop.dll</HintPath>
     </Reference>
-    <Reference Include="Ivi.Driver.Interop, Version=1.0.0.0, Culture=neutral, PublicKeyToken=a128c98f1d7717c1, processorArchitecture=AMD64">
+    <Reference Include="Ivi.Driver.Interop, Version=1.0.0.0, Culture=neutral, PublicKeyToken=a128c98f1d7717c1, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
       <EmbedInteropTypes>True</EmbedInteropTypes>
       <HintPath>..\Third_Part_Libraries\Ivi.Driver.Interop.dll</HintPath>

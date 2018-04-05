@@ -1,1140 +1,1094 @@
-<?xml version="1.0" encoding="us-ascii"?>
 <doc>
-  <assembly>
-    <name>Agilent.AgilentU254x.Interop</name>
-  </assembly>
-  <members>
-    <member name="T:Agilent.AgilentU254x.Interop.IAgilentU254x">
-      <summary>AgilentU254x root interface.</summary>
-    </member>
-    <member name="M:Agilent.AgilentU254x.Interop.IAgilentU254x.Close">
-      <summary>Closes the I/O session to the instrument.  Driver methods and properties that access the instrument are not accessible after Close is called.</summary>
-    </member>
-    <member name="M:Agilent.AgilentU254x.Interop.IAgilentU254x.Initialize(System.String,System.Boolean,System.Boolean,System.String)">
-      <summary>Opens the I/O session to the instrument.  Driver methods and properties that access the instrument are only accessible after Initialize is called.  Initialize optionally performs a Reset and queries the instrument to validate the instrument model.</summary>
-      <param name="ResourceName">An IVI logical name or an instrument specific string that identifies the address of the instrument, such as a VISA resource descriptor string.</param>
-      <param name="IdQuery">Specifies whether to verify the ID of the instrument.</param>
-      <param name="Reset">Specifies whether to reset the instrument.</param>
-      <param name="OptionString">The user can use the OptionsString parameter to specify the initial values of certain IVI inherent attributes for the session. The format of an assignment in the OptionsString parameteris 'Name=Value', where Name is one of: RangeCheck, QuerytInstrStatus, Cache, Simulate, RecordCoercions, InterchangeCheck,or DriverSetup. Value is either true or false except for DriverSetup. If the Options String parameter contains an assignment for the Driver Setup attribute, the Initialize function assumes that everything following 'DriverSetup=' is part of the assignment.</param>
-    </member>
-    <member name="P:Agilent.AgilentU254x.Interop.IAgilentU254x.DriverOperation">
-      <summary>Pointer to the IIviDriverOperation interface</summary>
-    </member>
-    <member name="P:Agilent.AgilentU254x.Interop.IAgilentU254x.Identity">
-      <summary>Pointer to the IIviDriverIdentity interface</summary>
-    </member>
-    <member name="P:Agilent.AgilentU254x.Interop.IAgilentU254x.Utility">
-      <summary>Pointer to the IIviDriverUtility interface</summary>
-    </member>
-    <member name="P:Agilent.AgilentU254x.Interop.IAgilentU254x.Initialized">
-      <summary>Initialized is True between a successful call to the Initialize method and a successful call to the Close method, and False at all other times.</summary>
-    </member>
-    <member name="P:Agilent.AgilentU254x.Interop.IAgilentU254x.AnalogIn">
-      <summary>Return a reference to the IAgilentU254xAnalogIn interface, which hold the major analog input capabilities, like analog waveform acquisition, analog measurement reading, and etc.</summary>
-    </member>
-    <member name="P:Agilent.AgilentU254x.Interop.IAgilentU254x.AnalogOut">
-      <summary>Return a reference to the IAgilentU254xAnalogOut interface, which hold the major analog output capabilities, like arbitrary waveform, standard waveform, and DC voltage generation.</summary>
-    </member>
-    <member name="P:Agilent.AgilentU254x.Interop.IAgilentU254x.Counters">
-      <summary>Return a reference to the IAgilentU254xCounters interface.</summary>
-    </member>
-    <member name="P:Agilent.AgilentU254x.Interop.IAgilentU254x.Status">
-      <summary>Return a reference to the IAgilentU254xStatus interface.</summary>
-    </member>
-    <member name="P:Agilent.AgilentU254x.Interop.IAgilentU254x.System">
-      <summary>Return a reference to the IAgilentU254xSystem interface.</summary>
-    </member>
-    <member name="P:Agilent.AgilentU254x.Interop.IAgilentU254x.Digital">
-      <summary>Return a reference to the IAgilentU254xDigital interface, which hold the simple read and write on digital channels.</summary>
-    </member>
-    <member name="T:Agilent.AgilentU254x.Interop.IAgilentU254xStatus">
-      <summary>AgilentU254xStatus interface</summary>
-    </member>
-    <member name="M:Agilent.AgilentU254x.Interop.IAgilentU254xStatus.Clear">
-      <summary>Clears all event registers and error queue. The enable registers are unaffected.</summary>
-    </member>
-    <member name="M:Agilent.AgilentU254x.Interop.IAgilentU254xStatus.ConfigureServiceRequest(Agilent.AgilentU254x.Interop.AgilentU254xSRQReasonEnum)">
-      <summary>Clears all the enable registers. It then sets the appropriate transition filters and enable registers so when the specified event(s) occur(s) the instrument requests service. All other events are disabled from generating a service request.  To detect a service request the client application must poll the status byte using the Status.SerialPoll method or Status.Register property and test the request service bit.</summary>
-      <param name="Reason">The defined values are powers of two, 1, 2, 4, etc. The client can OR several reasons together so multiple events can generate a service request.</param>
-    </member>
-    <member name="P:Agilent.AgilentU254x.Interop.IAgilentU254xStatus.Register">
-      <summary>Insturment status registers.</summary>
-    </member>
-    <member name="P:Agilent.AgilentU254x.Interop.IAgilentU254xStatus.Register(Agilent.AgilentU254x.Interop.AgilentU254xStatusRegisterEnum,Agilent.AgilentU254x.Interop.AgilentU254xStatusSubRegisterEnum)">
-      <summary>Insturment status registers.</summary>
-      <param name="Register">The status register to access.  See StatusRegisterEnums for available registers.</param>
-      <param name="SubRegister">The status sub register to access.  See StatusSubRegisterEnums for available sub registers.</param>
-    </member>
-    <member name="M:Agilent.AgilentU254x.Interop.IAgilentU254xStatus.get_Register(Agilent.AgilentU254x.Interop.AgilentU254xStatusRegisterEnum,Agilent.AgilentU254x.Interop.AgilentU254xStatusSubRegisterEnum)">
-      <summary>Insturment status registers.</summary>
-      <param name="Register">The status register to access.  See StatusRegisterEnums for available registers.</param>
-      <param name="SubRegister">The status sub register to access.  See StatusSubRegisterEnums for available sub registers.</param>
-      <returns>Insturment status registers.</returns>
-    </member>
-    <member name="M:Agilent.AgilentU254x.Interop.IAgilentU254xStatus.set_Register(Agilent.AgilentU254x.Interop.AgilentU254xStatusRegisterEnum,Agilent.AgilentU254x.Interop.AgilentU254xStatusSubRegisterEnum,System.Int32)">
-      <summary>Insturment status registers.</summary>
-      <param name="Register">The status register to access.  See StatusRegisterEnums for available registers.</param>
-      <param name="SubRegister">The status sub register to access.  See StatusSubRegisterEnums for available sub registers.</param>
-      <param name="val">Insturment status registers.</param>
-    </member>
-    <member name="P:Agilent.AgilentU254x.Interop.IAgilentU254xStatus.SerialPoll">
-      <summary>Serial poll the instrument status byte.</summary>
-    </member>
-    <member name="T:Agilent.AgilentU254x.Interop.IAgilentU254xSystem">
-      <summary>AgilentU254x System interface</summary>
-    </member>
-    <member name="M:Agilent.AgilentU254x.Interop.IAgilentU254xSystem.RecallState(System.String)">
-      <summary>Restore the instrument to a state previously stored in the instrument's internal memory.</summary>
-      <param name="Identifier">A string which identifies which one of many internal memory locations was used to store the instrument's state.</param>
-    </member>
-    <member name="M:Agilent.AgilentU254x.Interop.IAgilentU254xSystem.SaveState(System.String)">
-      <summary>Save the instrument's state the instrument's internal memory.</summary>
-      <param name="Identifier">A string which identifies which one of many internal memory locations is to be used to store the instrument's state.</param>
-    </member>
-    <member name="M:Agilent.AgilentU254x.Interop.IAgilentU254xSystem.WaitForOperationComplete(System.Int32)">
-      <summary>Does not return until previously started operations complete or more MaxTimeMilliseconds milliseconds of time have expired.</summary>
-      <param name="MaxTimeMilliseconds">How long to waint, in milliseconds, for all the operations                     started in the instrument to complete.</param>
-    </member>
-    <member name="P:Agilent.AgilentU254x.Interop.IAgilentU254xSystem.SerialNumber">
-      <summary>Instrument serial number.</summary>
-    </member>
-    <member name="P:Agilent.AgilentU254x.Interop.IAgilentU254xSystem.TimeoutMilliseconds">
-      <summary>The value, in milliseconds, of the default timeout used by I/O operations. This property provides access to the driver's Visa Session Timeout. &lt;p&gt;Only in rare, unusual circumstances should the client set this property. Driver methods and properties with operations which take a significant time to perform are responsible for adjusting the I/O timeout to an appropriate value. Some methods provide a MaxTimeMilliseconds parameter which gives the client direct control over the timeout value for that method. Sometimes, however, increasing the timeout value can work around an obscure driver defect.</summary>
-    </member>
-    <member name="P:Agilent.AgilentU254x.Interop.IAgilentU254xSystem.DirectIO">
-      <summary>References a pointer to the IFormattedIO488 interface associated with the I/O object used by the driver. The client can use this interface to communicate directly to the instrument using all the capabilities of the I/O interface.</summary>
-    </member>
-    <member name="P:Agilent.AgilentU254x.Interop.IAgilentU254xSystem.SynchronizationStatus">
-      <summary>Check the synchronization status.</summary>
-    </member>
-    <member name="T:Agilent.AgilentU254x.Interop.IAgilentU254xAnalogIn">
-      <summary>AgilentU254x root interface.  This interface provides access to additianol interface references of the AgilentU254x different capabilities.</summary>
-    </member>
-    <member name="P:Agilent.AgilentU254x.Interop.IAgilentU254xAnalogIn.Acquisition">
-      <summary>Pointer to the IAgilentU254xAnalogInAcquisition interface, which hold the control to different acquisition methods.</summary>
-    </member>
-    <member name="P:Agilent.AgilentU254x.Interop.IAgilentU254xAnalogIn.DataAlignment">
-      <summary>The data alignment format for analog input sub system.</summary>
-    </member>
-    <member name="P:Agilent.AgilentU254x.Interop.IAgilentU254xAnalogIn.DataResolution">
-      <summary>The data resolution for analog input sub system.</summary>
-    </member>
-    <member name="P:Agilent.AgilentU254x.Interop.IAgilentU254xAnalogIn.DataType">
-      <summary>The data type for analog input sub system.</summary>
-    </member>
-    <member name="P:Agilent.AgilentU254x.Interop.IAgilentU254xAnalogIn.Measurement">
-      <summary>Pointer to the IAgilentU254xAnalogInMeasurement interface, which provide the methods to read single measurement or multiple measurements.</summary>
-    </member>
-    <member name="P:Agilent.AgilentU254x.Interop.IAgilentU254xAnalogIn.MultiScan">
-      <summary>Pointer to the IAgilentU254xAnalogInMultiScan interface, which control the multiple scan settings, like scan rate, number of scan to acquire, and etc.</summary>
-    </member>
-    <member name="P:Agilent.AgilentU254x.Interop.IAgilentU254xAnalogIn.Channels">
-      <summary>Pointer to the IAgilentU254xAnalogInChannels interface.</summary>
-    </member>
-    <member name="P:Agilent.AgilentU254x.Interop.IAgilentU254xAnalogIn.Trigger">
-      <summary>Pointer to the IAgilentU254xAnalogInTrigger interface, which provide trigger source, trigger polarity, trigger reaction and etc.</summary>
-    </member>
-    <member name="T:Agilent.AgilentU254x.Interop.IAgilentU254xAnalogInAcquisition">
-      <summary>AgilentU254x analog acquisition interface.  Start() and Stop() hold the control to start or stop the  acquisition.  It also provide the property, Status and BuferStatus, to get the status of limit multiple scan acquisition and the buffer status for data capture of continuous multiple scan operation.  The Read() and Fetch() provide the capability to read the acquired data from the DAQ.  The TriggerMode let you set the trigger mode for acquisition.</summary>
-    </member>
-    <member name="M:Agilent.AgilentU254x.Interop.IAgilentU254xAnalogInAcquisition.Fetch(System.Int16[]@)">
-      <summary>Retrieve the acquired data.  This method will retrieve the data that are available at that moment and  clear the retrieved data from the analog input buffer, then it return immediately; it do not wait for the completion of multiple scan operation.</summary>
-      <param name="Results">Return an array for acquired data.</param>
-    </member>
-    <member name="M:Agilent.AgilentU254x.Interop.IAgilentU254xAnalogInAcquisition.Start">
-      <summary>Start the analog acquisition process.</summary>
-    </member>
-    <member name="M:Agilent.AgilentU254x.Interop.IAgilentU254xAnalogInAcquisition.Stop">
-      <summary>Stop the analog acquisition process.</summary>
-    </member>
-    <member name="M:Agilent.AgilentU254x.Interop.IAgilentU254xAnalogInAcquisition.FetchScale(System.Double[]@)">
-      <summary>Retrieve the scale value which converts from raw value.</summary>
-      <param name="Results">Return an array for acquired data.</param>
-    </member>
-    <member name="P:Agilent.AgilentU254x.Interop.IAgilentU254xAnalogInAcquisition.BufferSize">
-      <summary>The data block's buffer size for the captured data from continuous multiple scan acquisition.</summary>
-    </member>
-    <member name="P:Agilent.AgilentU254x.Interop.IAgilentU254xAnalogInAcquisition.BufferStatus">
-      <summary>Read the status for current buffer.</summary>
-    </member>
-    <member name="P:Agilent.AgilentU254x.Interop.IAgilentU254xAnalogInAcquisition.Completed">
-      <summary>Check the analog acquisition status.</summary>
-    </member>
-    <member name="T:Agilent.AgilentU254x.Interop.IAgilentU254xAnalogInMeasurement">
-      <summary>AgilentU254x analog measurement interface.  Provide the methods to read single measurement or multiple measurements.</summary>
-    </member>
-    <member name="M:Agilent.AgilentU254x.Interop.IAgilentU254xAnalogInMeasurement.ReadMultiple(System.String,System.Double[]@)">
-      <summary>Read multiple points of record from a list of channels.</summary>
-      <param name="ChannelsList">A string that contains single or multiple analog input channel name that separated by coma</param>
-      <param name="Results">The array of results.</param>
-    </member>
-    <member name="M:Agilent.AgilentU254x.Interop.IAgilentU254xAnalogInMeasurement.ReadSingle(System.String,System.Double@)">
-      <summary>Read a single point of record from a channel.</summary>
-      <param name="ChannelName">The name of channel.</param>
-      <param name="Result">The read result.</param>
-    </member>
-    <member name="P:Agilent.AgilentU254x.Interop.IAgilentU254xAnalogInMeasurement.AutoScaleEnabled">
-      <summary>Enable the auto scale capabilities when reading the measurement.</summary>
-    </member>
-    <member name="P:Agilent.AgilentU254x.Interop.IAgilentU254xAnalogInMeasurement.Iteration">
-      <summary>Return an average value for polling mode.</summary>
-    </member>
-    <member name="T:Agilent.AgilentU254x.Interop.IAgilentU254xAnalogInMultiScan">
-      <summary>AgilentU254x analog input multiple scan interface.  This holds the configuration settings for multiple scan like sample rate, total count, and etc.  There are two multiple scans acquisition mode, limit (also call one-shoot) and continuous, can be configure from the NumberOfScans property.  Select the TriggerReaction and set CountDelay can change the beginning situation for multiple scans acquisition.  The TimePerScan and TimePerPoint provide a quick referene for user calculation.</summary>
-    </member>
-    <member name="M:Agilent.AgilentU254x.Interop.IAgilentU254xAnalogInMultiScan.Configure(System.Int32,System.Int32)">
-      <summary>Configure the multiple scan general settings.</summary>
-      <param name="SampleRate">The sample rate (scan rate) for the multiple scan operation.</param>
-      <param name="NumberOfScans">The total number of scan process to be read in each multiple scan acquisition.  Set to -1 for continuous multiple scan acquisition.</param>
-    </member>
-    <member name="P:Agilent.AgilentU254x.Interop.IAgilentU254xAnalogInMultiScan.NumberOfScans">
-      <summary>The total number of scan process to be read in each multiple scan operation.  Set to -1 for continuous multiple scans acquisition.</summary>
-    </member>
-    <member name="P:Agilent.AgilentU254x.Interop.IAgilentU254xAnalogInMultiScan.SampleRate">
-      <summary>The sample rate (scan rate) for the multiple scan operation.  The unit are number of scans per second.</summary>
-    </member>
-    <member name="P:Agilent.AgilentU254x.Interop.IAgilentU254xAnalogInMultiScan.TimePerScan">
-      <summary>The time took for a scan process, unit is second.</summary>
-    </member>
-    <member name="T:Agilent.AgilentU254x.Interop.IAgilentU254xAnalogOut">
-      <summary>AgilentU254x analog output interface.   Major interface for analog output, anable or configure analog output channels voltage reference, polarity.  And also provide internal data resolution, data type, and data alignment.  This contains reference to other interface that related to analog output capabilities, like generation, waveform, and arbitrary.</summary>
-    </member>
-    <member name="P:Agilent.AgilentU254x.Interop.IAgilentU254xAnalogOut.Arbitrary">
-      <summary>Pointer to the IAgilentU254xAnalogOutArbitrary interface, which control the generation of arbitrary waveform.</summary>
-    </member>
-    <member name="P:Agilent.AgilentU254x.Interop.IAgilentU254xAnalogOut.ChannelCount">
-      <summary>The number of analog output channel supported by the instrument.</summary>
-    </member>
-    <member name="P:Agilent.AgilentU254x.Interop.IAgilentU254xAnalogOut.ChannelName">
-      <summary>Return the analog output channel name for the specify index.</summary>
-    </member>
-    <member name="P:Agilent.AgilentU254x.Interop.IAgilentU254xAnalogOut.ChannelName(System.Int32)">
-      <summary>Return the analog output channel name for the specify index.</summary>
-      <param name="Index">One based index into the collection of analog output channels.</param>
-    </member>
-    <member name="M:Agilent.AgilentU254x.Interop.IAgilentU254xAnalogOut.get_ChannelName(System.Int32)">
-      <summary>Return the analog output channel name for the specify index.</summary>
-      <param name="Index">One based index into the collection of analog output channels.</param>
-      <returns>Return the analog output channel name for the specify index.</returns>
-    </member>
-    <member name="P:Agilent.AgilentU254x.Interop.IAgilentU254xAnalogOut.DataAlignment">
-      <summary>The data alignment format for analog output sub system.</summary>
-    </member>
-    <member name="P:Agilent.AgilentU254x.Interop.IAgilentU254xAnalogOut.DataResolution">
-      <summary>The data resolution for analog output sub system.</summary>
-    </member>
-    <member name="P:Agilent.AgilentU254x.Interop.IAgilentU254xAnalogOut.DataType">
-      <summary>The data type for analog output sub system.</summary>
-    </member>
-    <member name="P:Agilent.AgilentU254x.Interop.IAgilentU254xAnalogOut.Enabled">
-      <summary>Enable or disable the output channel.</summary>
-    </member>
-    <member name="P:Agilent.AgilentU254x.Interop.IAgilentU254xAnalogOut.Enabled(System.String)">
-      <summary>Enable or disable the output channel.</summary>
-      <param name="ChannelsList">A string that contains single or multiple analog output channel name that separated by coma</param>
-    </member>
-    <member name="M:Agilent.AgilentU254x.Interop.IAgilentU254xAnalogOut.get_Enabled(System.String)">
-      <summary>Enable or disable the output channel.</summary>
-      <param name="ChannelsList">A string that contains single or multiple analog output channel name that separated by coma</param>
-      <returns>Enable or disable the output channel.</returns>
-    </member>
-    <member name="M:Agilent.AgilentU254x.Interop.IAgilentU254xAnalogOut.set_Enabled(System.String,System.Boolean)">
-      <summary>Enable or disable the output channel.</summary>
-      <param name="ChannelsList">A string that contains single or multiple analog output channel name that separated by coma</param>
-      <param name="val">Enable or disable the output channel.</param>
-    </member>
-    <member name="P:Agilent.AgilentU254x.Interop.IAgilentU254xAnalogOut.ExternalReferenceVoltage">
-      <summary>The voltage of the external reference source.</summary>
-    </member>
-    <member name="P:Agilent.AgilentU254x.Interop.IAgilentU254xAnalogOut.Generation">
-      <summary>Pointer to the IAgilentU254xAnalogOutGeneration interface, which control the analog generation.</summary>
-    </member>
-    <member name="P:Agilent.AgilentU254x.Interop.IAgilentU254xAnalogOut.Polarity">
-      <summary>The polarity of the analog output channel.</summary>
-    </member>
-    <member name="P:Agilent.AgilentU254x.Interop.IAgilentU254xAnalogOut.Polarity(System.String)">
-      <summary>The polarity of the analog output channel.</summary>
-      <param name="ChannelsList">A string that contains single or multiple analog input channel name that separated by coma,</param>
-    </member>
-    <member name="M:Agilent.AgilentU254x.Interop.IAgilentU254xAnalogOut.get_Polarity(System.String)">
-      <summary>The polarity of the analog output channel.</summary>
-      <param name="ChannelsList">A string that contains single or multiple analog input channel name that separated by coma,</param>
-      <returns>The polarity of the analog output channel.</returns>
-    </member>
-    <member name="M:Agilent.AgilentU254x.Interop.IAgilentU254xAnalogOut.set_Polarity(System.String,Agilent.AgilentU254x.Interop.AgilentU254xAnalogPolarityEnum)">
-      <summary>The polarity of the analog output channel.</summary>
-      <param name="ChannelsList">A string that contains single or multiple analog input channel name that separated by coma,</param>
-      <param name="val">The polarity of the analog output channel.</param>
-    </member>
-    <member name="P:Agilent.AgilentU254x.Interop.IAgilentU254xAnalogOut.ReferenceSource">
-      <summary>The reference source of this channel. either internal or external.</summary>
-    </member>
-    <member name="P:Agilent.AgilentU254x.Interop.IAgilentU254xAnalogOut.ReferenceSource(System.String)">
-      <summary>The reference source of this channel. either internal or external.</summary>
-      <param name="ChannelsList">A string that contains single or multiple analog input channel name that separated by coma</param>
-    </member>
-    <member name="M:Agilent.AgilentU254x.Interop.IAgilentU254xAnalogOut.get_ReferenceSource(System.String)">
-      <summary>The reference source of this channel. either internal or external.</summary>
-      <param name="ChannelsList">A string that contains single or multiple analog input channel name that separated by coma</param>
-      <returns>The reference source of this channel. either internal or external.</returns>
-    </member>
-    <member name="M:Agilent.AgilentU254x.Interop.IAgilentU254xAnalogOut.set_ReferenceSource(System.String,Agilent.AgilentU254x.Interop.AgilentU254xOutputReferenceEnum)">
-      <summary>The reference source of this channel. either internal or external.</summary>
-      <param name="ChannelsList">A string that contains single or multiple analog input channel name that separated by coma</param>
-      <param name="val">The reference source of this channel. either internal or external.</param>
-    </member>
-    <member name="P:Agilent.AgilentU254x.Interop.IAgilentU254xAnalogOut.Waveform">
-      <summary>Pointer to the IAgilentU254xAnalogOutWaveform interface, that contain the configuration settings for standard waveform generation.</summary>
-    </member>
-    <member name="P:Agilent.AgilentU254x.Interop.IAgilentU254xAnalogOut.Trigger">
-      <summary>Pointer to the IAgilentU254xAnalogOutTrigger interface</summary>
-    </member>
-    <member name="T:Agilent.AgilentU254x.Interop.IAgilentU254xAnalogOutArbitrary">
-      <summary>AgilentU254x arbitrary interface.  Contain the configuration settings for arbitrary waveform generation.</summary>
-    </member>
-    <member name="M:Agilent.AgilentU254x.Interop.IAgilentU254xAnalogOutArbitrary.Configure(System.Double,System.Int32)">
-      <summary>Configure general settings for arbitrary generation.</summary>
-      <param name="SampleRate">The sample rate for the arbitrary generation.</param>
-      <param name="NumberOfStreams">The total number of streams generated for one shoot arbitrary generation.  Set to -1 for continuous generation.</param>
-    </member>
-    <member name="M:Agilent.AgilentU254x.Interop.IAgilentU254xAnalogOutArbitrary.CreateBlock(System.Int16[])">
-      <summary>Create a block of data for the arbitrary waveform.</summary>
-      <param name="Data">Arrary of data, integer 16 bit format.</param>
-    </member>
-    <member name="P:Agilent.AgilentU254x.Interop.IAgilentU254xAnalogOutArbitrary.NumberOfStreams">
-      <summary>The total number of streams generated for one shoot arbitrary generation.  Set to -1 for continuous generation.</summary>
-    </member>
-    <member name="P:Agilent.AgilentU254x.Interop.IAgilentU254xAnalogOutArbitrary.SampleRate">
-      <summary>The sample rate for the arbitrary generation.  The unit are number of streams generated per second.</summary>
-    </member>
-    <member name="T:Agilent.AgilentU254x.Interop.IAgilentU254xAnalogOutGeneration">
-      <summary>AgilentU254x analog generation interface.  Hold the control for the analog generation include the attribute to determine the output mode of arbitrary or standard waveform, the start and stop method for generation, the re-trigger count attribute for limit arbitrary generation, and also the DC voltage for single output generation.</summary>
-    </member>
-    <member name="M:Agilent.AgilentU254x.Interop.IAgilentU254xAnalogOutGeneration.Start">
-      <summary>Start the analog output generation.</summary>
-    </member>
-    <member name="M:Agilent.AgilentU254x.Interop.IAgilentU254xAnalogOutGeneration.Stop">
-      <summary>Stop the analog output generation.</summary>
-    </member>
-    <member name="P:Agilent.AgilentU254x.Interop.IAgilentU254xAnalogOutGeneration.DelayCount">
-      <summary>The number of waveform patterns will be delay after a trigger event.</summary>
-    </member>
-    <member name="P:Agilent.AgilentU254x.Interop.IAgilentU254xAnalogOutGeneration.Mode">
-      <summary>The generation mode, either standard waveform or arbitrary waveform.</summary>
-    </member>
-    <member name="P:Agilent.AgilentU254x.Interop.IAgilentU254xAnalogOutGeneration.Voltage">
-      <summary>Generate single output DC voltage to the channel immediately. Do not need to enable the channel or start the generation.</summary>
-    </member>
-    <member name="P:Agilent.AgilentU254x.Interop.IAgilentU254xAnalogOutGeneration.Voltage(System.String)">
-      <summary>Generate single output DC voltage to the channel immediately. Do not need to enable the channel or start the generation.</summary>
-      <param name="ChannelName">The name of the analog output channel</param>
-    </member>
-    <member name="M:Agilent.AgilentU254x.Interop.IAgilentU254xAnalogOutGeneration.get_Voltage(System.String)">
-      <summary>Generate single output DC voltage to the channel immediately. Do not need to enable the channel or start the generation.</summary>
-      <param name="ChannelName">The name of the analog output channel</param>
-      <returns>Generate single output DC voltage to the channel immediately. Do not need to enable the channel or start the generation.</returns>
-    </member>
-    <member name="M:Agilent.AgilentU254x.Interop.IAgilentU254xAnalogOutGeneration.set_Voltage(System.String,System.Double)">
-      <summary>Generate single output DC voltage to the channel immediately. Do not need to enable the channel or start the generation.</summary>
-      <param name="ChannelName">The name of the analog output channel</param>
-      <param name="val">Generate single output DC voltage to the channel immediately. Do not need to enable the channel or start the generation.</param>
-    </member>
-    <member name="T:Agilent.AgilentU254x.Interop.IAgilentU254xAnalogOutWaveform">
-      <summary>AgilentU254xstandard waveform interface.  This interface contain the configuration settings for  standard waveform generation like frequency, amplitude, and voltage offset.  Some of this attributes can apply different value to different channels.  You can choose different waveform for different output channel.</summary>
-    </member>
-    <member name="M:Agilent.AgilentU254x.Interop.IAgilentU254xAnalogOutWaveform.Configure(System.String,Agilent.AgilentU254x.Interop.AgilentU254xWaveformEnum,System.Double,System.Double,System.Double)">
-      <summary>Configure the general settings for the standard waveform generation.</summary>
-      <param name="ChannelName">The name of the channel.</param>
-      <param name="Waveform">The waveform to be generated, can be sine wave, square wave, triangular wave, and etc.</param>
-      <param name="Frequency">The frequency  of waveform.</param>
-      <param name="Amplitude">The amplitude of the waveform.</param>
-      <param name="Offset">The offset of the waveform.</param>
-    </member>
-    <member name="P:Agilent.AgilentU254x.Interop.IAgilentU254xAnalogOutWaveform.Amplitude">
-      <summary>The amplitude for the standard waveform.  This attribute can be different from channel to channel.</summary>
-    </member>
-    <member name="P:Agilent.AgilentU254x.Interop.IAgilentU254xAnalogOutWaveform.Amplitude(System.String)">
-      <summary>The amplitude for the standard waveform.  This attribute can be different from channel to channel.</summary>
-      <param name="ChannelName">The name of the channel.</param>
-    </member>
-    <member name="M:Agilent.AgilentU254x.Interop.IAgilentU254xAnalogOutWaveform.get_Amplitude(System.String)">
-      <summary>The amplitude for the standard waveform.  This attribute can be different from channel to channel.</summary>
-      <param name="ChannelName">The name of the channel.</param>
-      <returns>The amplitude for the standard waveform.  This attribute can be different from channel to channel.</returns>
-    </member>
-    <member name="M:Agilent.AgilentU254x.Interop.IAgilentU254xAnalogOutWaveform.set_Amplitude(System.String,System.Double)">
-      <summary>The amplitude for the standard waveform.  This attribute can be different from channel to channel.</summary>
-      <param name="ChannelName">The name of the channel.</param>
-      <param name="val">The amplitude for the standard waveform.  This attribute can be different from channel to channel.</param>
-    </member>
-    <member name="P:Agilent.AgilentU254x.Interop.IAgilentU254xAnalogOutWaveform.Frequency">
-      <summary>The frequency of the waveform.  Share among all enabled channels for standard waveform generation.</summary>
-    </member>
-    <member name="P:Agilent.AgilentU254x.Interop.IAgilentU254xAnalogOutWaveform.Offset">
-      <summary>The offset for the waveform. This attribute can be different from channel to channel.</summary>
-    </member>
-    <member name="P:Agilent.AgilentU254x.Interop.IAgilentU254xAnalogOutWaveform.Offset(System.String)">
-      <summary>The offset for the waveform. This attribute can be different from channel to channel.</summary>
-      <param name="ChannelName">The name of the channel.</param>
-    </member>
-    <member name="M:Agilent.AgilentU254x.Interop.IAgilentU254xAnalogOutWaveform.get_Offset(System.String)">
-      <summary>The offset for the waveform. This attribute can be different from channel to channel.</summary>
-      <param name="ChannelName">The name of the channel.</param>
-      <returns>The offset for the waveform. This attribute can be different from channel to channel.</returns>
-    </member>
-    <member name="M:Agilent.AgilentU254x.Interop.IAgilentU254xAnalogOutWaveform.set_Offset(System.String,System.Double)">
-      <summary>The offset for the waveform. This attribute can be different from channel to channel.</summary>
-      <param name="ChannelName">The name of the channel.</param>
-      <param name="val">The offset for the waveform. This attribute can be different from channel to channel.</param>
-    </member>
-    <member name="P:Agilent.AgilentU254x.Interop.IAgilentU254xAnalogOutWaveform.Pattern">
-      <summary>The waveform patern to be generated, can be sine wave, square wave, triangular wave, and etc.  This attribute can be different from channel to channel.</summary>
-    </member>
-    <member name="P:Agilent.AgilentU254x.Interop.IAgilentU254xAnalogOutWaveform.Pattern(System.String)">
-      <summary>The waveform patern to be generated, can be sine wave, square wave, triangular wave, and etc.  This attribute can be different from channel to channel.</summary>
-      <param name="ChannelName">The name of the channel.</param>
-    </member>
-    <member name="M:Agilent.AgilentU254x.Interop.IAgilentU254xAnalogOutWaveform.get_Pattern(System.String)">
-      <summary>The waveform patern to be generated, can be sine wave, square wave, triangular wave, and etc.  This attribute can be different from channel to channel.</summary>
-      <param name="ChannelName">The name of the channel.</param>
-      <returns>The waveform patern to be generated, can be sine wave, square wave, triangular wave, and etc.  This attribute can be different from channel to channel.</returns>
-    </member>
-    <member name="M:Agilent.AgilentU254x.Interop.IAgilentU254xAnalogOutWaveform.set_Pattern(System.String,Agilent.AgilentU254x.Interop.AgilentU254xWaveformEnum)">
-      <summary>The waveform patern to be generated, can be sine wave, square wave, triangular wave, and etc.  This attribute can be different from channel to channel.</summary>
-      <param name="ChannelName">The name of the channel.</param>
-      <param name="val">The waveform patern to be generated, can be sine wave, square wave, triangular wave, and etc.  This attribute can be different from channel to channel.</param>
-    </member>
-    <member name="T:Agilent.AgilentU254x.Interop.IAgilentU254xAnalogInExternalTrigger">
-      <summary>AgilentU254x external analog trigger interface</summary>
-    </member>
-    <member name="M:Agilent.AgilentU254x.Interop.IAgilentU254xAnalogInExternalTrigger.ConfigureEdge(Agilent.AgilentU254x.Interop.AgilentU254xAnalogInExternalTriggerTypeEnum,Agilent.AgilentU254x.Interop.AgilentU254xAnalogInExternalTriggerSourceEnum,System.Double)">
-      <summary>Configure edge triggering.</summary>
-      <param name="Type">Select the edge trigger type, either below edge or above edge triggering, set to other will return error.  Set to above edge triggering, the Level will apply to LevelHigh.  Set to below edge triggering, the Level will apply to LevelLow.</param>
-      <param name="Source">Select the trigger source.</param>
-      <param name="Level">The triggering level, depend on the trigger type, may apply to LevelLow or LevelHigh.</param>
-    </member>
-    <member name="M:Agilent.AgilentU254x.Interop.IAgilentU254xAnalogInExternalTrigger.ConfigureHysteresis(Agilent.AgilentU254x.Interop.AgilentU254xAnalogInExternalTriggerTypeEnum,Agilent.AgilentU254x.Interop.AgilentU254xAnalogInExternalTriggerSourceEnum,System.Double,System.Double)">
-      <summary>Configure analog hysteresis triggering.</summary>
-      <param name="Type">Select the edge trigger type, either below edge or above edge triggering.
+	<assembly>
+		<name>Agilent.AgilentU254x.Interop</name>
+	</assembly>
+	<members>
+		<member name="T:Agilent.AgilentU254x.Interop.AgilentU254x">
+			<summary>IVI AgilentU254x Instrument Driver.</summary>
+		</member>
+		<member name="T:Agilent.AgilentU254x.Interop.AgilentU254xCounter">
+			<summary>AgilentU254xCounter repeated capability class.</summary>
+		</member>
+		<member name="T:Agilent.AgilentU254x.Interop.AgilentU254xDigitalChannel">
+			<summary>AgilentU254xDigitalChannel repeated capability class.</summary>
+		</member>
+		<member name="T:Agilent.AgilentU254x.Interop.AgilentU254xAnalogInChannel">
+			<summary>AgilentU254xAnalogInChannel repeated capability class.</summary>
+		</member>
+		<member name="T:Agilent.AgilentU254x.Interop.IAgilentU254x">
+			<summary>AgilentU254x root interface.</summary>
+		</member>
+		<member name="M:Agilent.AgilentU254x.Interop.IAgilentU254x.Initialize(System.String,System.Boolean,System.Boolean,System.String)">
+			<summary>Opens the I/O session to the instrument.  Driver methods and properties that access the instrument are only accessible after Initialize is called.  Initialize optionally performs a Reset and queries the instrument to validate the instrument model.</summary>
+			<param name="ResourceName">An IVI logical name or an instrument specific string that identifies the address of the instrument, such as a VISA resource descriptor string.</param>
+			<param name="IdQuery">Specifies whether to verify the ID of the instrument.</param>
+			<param name="Reset">Specifies whether to reset the instrument.</param>
+			<param name="OptionString">The user can use the OptionsString parameter to specify the initial values of certain IVI inherent attributes for the session. The format of an assignment in the OptionsString parameteris "Name=Value", where Name is one of: RangeCheck, QuerytInstrStatus, Cache, Simulate, RecordCoercions, InterchangeCheck,or DriverSetup. Value is either true or false except for DriverSetup. If the Options String parameter contains an assignment for the Driver Setup attribute, the Initialize function assumes that everything following "DriverSetup=" is part of the assignment.</param>
+		</member>
+		<member name="M:Agilent.AgilentU254x.Interop.IAgilentU254x.Close">
+			<summary>Closes the I/O session to the instrument.  Driver methods and properties that access the instrument are not accessible after Close is called.</summary>
+		</member>
+		<member name="P:Agilent.AgilentU254x.Interop.IAgilentU254x.DriverOperation">
+			<summary>Pointer to the IIviDriverOperation interface</summary>
+		</member>
+		<member name="P:Agilent.AgilentU254x.Interop.IAgilentU254x.Identity">
+			<summary>Pointer to the IIviDriverIdentity interface</summary>
+		</member>
+		<member name="P:Agilent.AgilentU254x.Interop.IAgilentU254x.Utility">
+			<summary>Pointer to the IIviDriverUtility interface</summary>
+		</member>
+		<member name="P:Agilent.AgilentU254x.Interop.IAgilentU254x.Initialized">
+			<summary>Initialized is True between a successful call to the Initialize method and a successful call to the Close method, and False at all other times.</summary>
+		</member>
+		<member name="P:Agilent.AgilentU254x.Interop.IAgilentU254x.AnalogIn">
+			<summary>Return a reference to the IAgilentU254xAnalogIn interface, which hold the major analog input capabilities, like analog waveform acquisition, analog measurement reading, and etc.</summary>
+		</member>
+		<member name="P:Agilent.AgilentU254x.Interop.IAgilentU254x.AnalogOut">
+			<summary>Return a reference to the IAgilentU254xAnalogOut interface, which hold the major analog output capabilities, like arbitrary waveform, standard waveform, and DC voltage generation.</summary>
+		</member>
+		<member name="P:Agilent.AgilentU254x.Interop.IAgilentU254x.Counters">
+			<summary>Return a reference to the IAgilentU254xCounters interface.</summary>
+		</member>
+		<member name="P:Agilent.AgilentU254x.Interop.IAgilentU254x.Status">
+			<summary>Return a reference to the IAgilentU254xStatus interface.</summary>
+		</member>
+		<member name="P:Agilent.AgilentU254x.Interop.IAgilentU254x.System">
+			<summary>Return a reference to the IAgilentU254xSystem interface.</summary>
+		</member>
+		<member name="P:Agilent.AgilentU254x.Interop.IAgilentU254x.Digital">
+			<summary>Return a reference to the IAgilentU254xDigital interface, which hold the simple read and write on digital channels.</summary>
+		</member>
+		<member name="T:Agilent.AgilentU254x.Interop.IAgilentU254xStatus">
+			<summary>AgilentU254xStatus interface</summary>
+		</member>
+		<member name="M:Agilent.AgilentU254x.Interop.IAgilentU254xStatus.Clear">
+			<summary>Clears all event registers and error queue. The enable registers are unaffected.</summary>
+		</member>
+		<member name="M:Agilent.AgilentU254x.Interop.IAgilentU254xStatus.ConfigureServiceRequest(Agilent.AgilentU254x.Interop.AgilentU254xSRQReasonEnum)">
+			<summary>Clears all the enable registers. It then sets the appropriate transition filters and enable registers so when the specified event(s) occur(s) the instrument requests service. All other events are disabled from generating a service request.  To detect a service request the client application must poll the status byte using the Status.SerialPoll method or Status.Register property and test the request service bit.</summary>
+			<param name="Reason">The defined values are powers of two, 1, 2, 4, etc. The client can OR several reasons together so multiple events can generate a service request.</param>
+		</member>
+		<member name="P:Agilent.AgilentU254x.Interop.IAgilentU254xStatus.Register(Agilent.AgilentU254x.Interop.AgilentU254xStatusRegisterEnum,Agilent.AgilentU254x.Interop.AgilentU254xStatusSubRegisterEnum)">
+			<summary>Insturment status registers.</summary>
+			<param name="Register">The status register to access.  See StatusRegisterEnums for available registers.</param>
+			<param name="SubRegister">The status sub register to access.  See StatusSubRegisterEnums for available sub registers.</param>
+		</member>
+		<member name="M:Agilent.AgilentU254x.Interop.IAgilentU254xStatus.get_Register(Agilent.AgilentU254x.Interop.AgilentU254xStatusRegisterEnum,Agilent.AgilentU254x.Interop.AgilentU254xStatusSubRegisterEnum)">
+			<summary>Insturment status registers.</summary>
+			<param name="Register">The status register to access.  See StatusRegisterEnums for available registers.</param>
+			<param name="SubRegister">The status sub register to access.  See StatusSubRegisterEnums for available sub registers.</param>
+			<returns>Insturment status registers.</returns>
+		</member>
+		<member name="M:Agilent.AgilentU254x.Interop.IAgilentU254xStatus.set_Register(Agilent.AgilentU254x.Interop.AgilentU254xStatusRegisterEnum,Agilent.AgilentU254x.Interop.AgilentU254xStatusSubRegisterEnum,System.Int32)">
+			<summary>Insturment status registers.</summary>
+			<param name="Register">The status register to access.  See StatusRegisterEnums for available registers.</param>
+			<param name="SubRegister">The status sub register to access.  See StatusSubRegisterEnums for available sub registers.</param>
+			<param name="Val">Insturment status registers.</param>
+		</member>
+		<member name="P:Agilent.AgilentU254x.Interop.IAgilentU254xStatus.SerialPoll">
+			<summary>Serial poll the instrument status byte.</summary>
+		</member>
+		<member name="T:Agilent.AgilentU254x.Interop.IAgilentU254xSystem">
+			<summary>AgilentU254x System interface</summary>
+		</member>
+		<member name="M:Agilent.AgilentU254x.Interop.IAgilentU254xSystem.RecallState(System.String)">
+			<summary>Restore the instrument to a state previously stored in the instrument's internal memory.</summary>
+			<param name="Identifier">A string which identifies which one of many internal memory locations was used to store the instrument's state.</param>
+		</member>
+		<member name="M:Agilent.AgilentU254x.Interop.IAgilentU254xSystem.SaveState(System.String)">
+			<summary>Save the instrument's state the instrument's internal memory.</summary>
+			<param name="Identifier">A string which identifies which one of many internal memory locations is to be used to store the instrument's state.</param>
+		</member>
+		<member name="M:Agilent.AgilentU254x.Interop.IAgilentU254xSystem.WaitForOperationComplete(System.Int32)">
+			<summary>Does not return until previously started operations complete or more MaxTimeMilliseconds milliseconds of time have expired.</summary>
+			<param name="MaxTimeMilliseconds">How long to waint, in milliseconds, for all the operations                     started in the instrument to complete.</param>
+		</member>
+		<member name="P:Agilent.AgilentU254x.Interop.IAgilentU254xSystem.SerialNumber">
+			<summary>Instrument serial number.</summary>
+		</member>
+		<member name="P:Agilent.AgilentU254x.Interop.IAgilentU254xSystem.TimeoutMilliseconds">
+			<summary>The value, in milliseconds, of the default timeout used by I/O operations. This property provides access to the driver's Visa Session Timeout. &lt;p&gt;Only in rare, unusual circumstances should the client set this property. Driver methods and properties with operations which take a significant time to perform are responsible for adjusting the I/O timeout to an appropriate value. Some methods provide a MaxTimeMilliseconds parameter which gives the client direct control over the timeout value for that method. Sometimes, however, increasing the timeout value can work around an obscure driver defect.</summary>
+		</member>
+		<member name="P:Agilent.AgilentU254x.Interop.IAgilentU254xSystem.DirectIO">
+			<summary>References a pointer to the IFormattedIO488 interface associated with the I/O object used by the driver. The client can use this interface to communicate directly to the instrument using all the capabilities of the I/O interface.</summary>
+		</member>
+		<member name="P:Agilent.AgilentU254x.Interop.IAgilentU254xSystem.SynchronizationStatus">
+			<summary>Check the synchronization status.</summary>
+		</member>
+		<member name="T:Agilent.AgilentU254x.Interop.IAgilentU254xAnalogIn">
+			<summary>AgilentU254x root interface.  This interface provides access to additianol interface references of the AgilentU254x different capabilities.</summary>
+		</member>
+		<member name="P:Agilent.AgilentU254x.Interop.IAgilentU254xAnalogIn.Acquisition">
+			<summary>Pointer to the IAgilentU254xAnalogInAcquisition interface, which hold the control to different acquisition methods.</summary>
+		</member>
+		<member name="P:Agilent.AgilentU254x.Interop.IAgilentU254xAnalogIn.DataAlignment">
+			<summary>The data alignment format for analog input sub system.</summary>
+		</member>
+		<member name="P:Agilent.AgilentU254x.Interop.IAgilentU254xAnalogIn.DataResolution">
+			<summary>The data resolution for analog input sub system.</summary>
+		</member>
+		<member name="P:Agilent.AgilentU254x.Interop.IAgilentU254xAnalogIn.DataType">
+			<summary>The data type for analog input sub system.</summary>
+		</member>
+		<member name="P:Agilent.AgilentU254x.Interop.IAgilentU254xAnalogIn.Measurement">
+			<summary>Pointer to the IAgilentU254xAnalogInMeasurement interface, which provide the methods to read single measurement or multiple measurements.</summary>
+		</member>
+		<member name="P:Agilent.AgilentU254x.Interop.IAgilentU254xAnalogIn.MultiScan">
+			<summary>Pointer to the IAgilentU254xAnalogInMultiScan interface, which control the multiple scan settings, like scan rate, number of scan to acquire, and etc.</summary>
+		</member>
+		<member name="P:Agilent.AgilentU254x.Interop.IAgilentU254xAnalogIn.Channels">
+			<summary>Pointer to the IAgilentU254xAnalogInChannels interface.</summary>
+		</member>
+		<member name="P:Agilent.AgilentU254x.Interop.IAgilentU254xAnalogIn.Trigger">
+			<summary>Pointer to the IAgilentU254xAnalogInTrigger interface, which provide trigger source, trigger polarity, trigger reaction and etc.</summary>
+		</member>
+		<member name="T:Agilent.AgilentU254x.Interop.IAgilentU254xAnalogInAcquisition">
+			<summary>AgilentU254x analog acquisition interface.  Start() and Stop() hold the control to start or stop the  acquisition.  It also provide the property, Status and BuferStatus, to get the status of limit multiple scan acquisition and the buffer status for data capture of continuous multiple scan operation.  The Read() and Fetch() provide the capability to read the acquired data from the DAQ.  The TriggerMode let you set the trigger mode for acquisition.</summary>
+		</member>
+		<member name="M:Agilent.AgilentU254x.Interop.IAgilentU254xAnalogInAcquisition.Fetch(System.Int16[]@)">
+			<summary>Retrieve the acquired data.  This method will retrieve the data that are available at that moment and  clear the retrieved data from the analog input buffer, then it return immediately; it do not wait for the completion of multiple scan operation.</summary>
+			<param name="Results">Return an array for acquired data.</param>
+		</member>
+		<member name="M:Agilent.AgilentU254x.Interop.IAgilentU254xAnalogInAcquisition.Start">
+			<summary>Start the analog acquisition process.</summary>
+		</member>
+		<member name="M:Agilent.AgilentU254x.Interop.IAgilentU254xAnalogInAcquisition.Stop">
+			<summary>Stop the analog acquisition process.</summary>
+		</member>
+		<member name="M:Agilent.AgilentU254x.Interop.IAgilentU254xAnalogInAcquisition.FetchScale(System.Double[]@)">
+			<summary>Retrieve the scale value which converts from raw value.</summary>
+			<param name="Results">Return an array for acquired data.</param>
+		</member>
+		<member name="P:Agilent.AgilentU254x.Interop.IAgilentU254xAnalogInAcquisition.BufferSize">
+			<summary>The data block's buffer size for the captured data from continuous multiple scan acquisition.</summary>
+		</member>
+		<member name="P:Agilent.AgilentU254x.Interop.IAgilentU254xAnalogInAcquisition.BufferStatus">
+			<summary>Read the status for current buffer.</summary>
+		</member>
+		<member name="P:Agilent.AgilentU254x.Interop.IAgilentU254xAnalogInAcquisition.Completed">
+			<summary>Check the analog acquisition status.</summary>
+		</member>
+		<member name="T:Agilent.AgilentU254x.Interop.IAgilentU254xAnalogInMeasurement">
+			<summary>AgilentU254x analog measurement interface.  Provide the methods to read single measurement or multiple measurements.</summary>
+		</member>
+		<member name="M:Agilent.AgilentU254x.Interop.IAgilentU254xAnalogInMeasurement.ReadMultiple(System.String,System.Double[]@)">
+			<summary>Read multiple points of record from a list of channels.</summary>
+			<param name="ChannelsList">A string that contains single or multiple analog input channel name that separated by coma</param>
+			<param name="Results">The array of results.</param>
+		</member>
+		<member name="M:Agilent.AgilentU254x.Interop.IAgilentU254xAnalogInMeasurement.ReadSingle(System.String,System.Double@)">
+			<summary>Read a single point of record from a channel.</summary>
+			<param name="ChannelName">The name of channel.</param>
+			<param name="Result">The read result.</param>
+		</member>
+		<member name="P:Agilent.AgilentU254x.Interop.IAgilentU254xAnalogInMeasurement.AutoScaleEnabled">
+			<summary>Enable the auto scale capabilities when reading the measurement.</summary>
+		</member>
+		<member name="P:Agilent.AgilentU254x.Interop.IAgilentU254xAnalogInMeasurement.Iteration">
+			<summary>Return an average value for polling mode.</summary>
+		</member>
+		<member name="T:Agilent.AgilentU254x.Interop.IAgilentU254xAnalogInMultiScan">
+			<summary>AgilentU254x analog input multiple scan interface.  This holds the configuration settings for multiple scan like sample rate, total count, and etc.  There are two multiple scans acquisition mode, limit (also call one-shoot) and continuous, can be configure from the NumberOfScans property.  Select the TriggerReaction and set CountDelay can change the beginning situation for multiple scans acquisition.  The TimePerScan and TimePerPoint provide a quick referene for user calculation.</summary>
+		</member>
+		<member name="M:Agilent.AgilentU254x.Interop.IAgilentU254xAnalogInMultiScan.Configure(System.Int32,System.Int32)">
+			<summary>Configure the multiple scan general settings.</summary>
+			<param name="SampleRate">The sample rate (scan rate) for the multiple scan operation.</param>
+			<param name="NumberOfScans">The total number of scan process to be read in each multiple scan acquisition.  Set to -1 for continuous multiple scan acquisition.</param>
+		</member>
+		<member name="P:Agilent.AgilentU254x.Interop.IAgilentU254xAnalogInMultiScan.NumberOfScans">
+			<summary>The total number of scan process to be read in each multiple scan operation.  Set to -1 for continuous multiple scans acquisition.</summary>
+		</member>
+		<member name="P:Agilent.AgilentU254x.Interop.IAgilentU254xAnalogInMultiScan.SampleRate">
+			<summary>The sample rate (scan rate) for the multiple scan operation.  The unit are number of scans per second.</summary>
+		</member>
+		<member name="P:Agilent.AgilentU254x.Interop.IAgilentU254xAnalogInMultiScan.TimePerScan">
+			<summary>The time took for a scan process, unit is second.</summary>
+		</member>
+		<member name="T:Agilent.AgilentU254x.Interop.IAgilentU254xAnalogOut">
+			<summary>AgilentU254x analog output interface.   Major interface for analog output, anable or configure analog output channels voltage reference, polarity.  And also provide internal data resolution, data type, and data alignment.  This contains reference to other interface that related to analog output capabilities, like generation, waveform, and arbitrary.</summary>
+		</member>
+		<member name="P:Agilent.AgilentU254x.Interop.IAgilentU254xAnalogOut.Arbitrary">
+			<summary>Pointer to the IAgilentU254xAnalogOutArbitrary interface, which control the generation of arbitrary waveform.</summary>
+		</member>
+		<member name="P:Agilent.AgilentU254x.Interop.IAgilentU254xAnalogOut.ChannelCount">
+			<summary>The number of analog output channel supported by the instrument.</summary>
+		</member>
+		<member name="P:Agilent.AgilentU254x.Interop.IAgilentU254xAnalogOut.ChannelName(System.Int32)">
+			<summary>Return the analog output channel name for the specify index.</summary>
+			<param name="Index">One based index into the collection of analog output channels.</param>
+		</member>
+		<member name="M:Agilent.AgilentU254x.Interop.IAgilentU254xAnalogOut.get_ChannelName(System.Int32)">
+			<summary>Return the analog output channel name for the specify index.</summary>
+			<param name="Index">One based index into the collection of analog output channels.</param>
+			<returns>Return the analog output channel name for the specify index.</returns>
+		</member>
+		<member name="P:Agilent.AgilentU254x.Interop.IAgilentU254xAnalogOut.DataAlignment">
+			<summary>The data alignment format for analog output sub system.</summary>
+		</member>
+		<member name="P:Agilent.AgilentU254x.Interop.IAgilentU254xAnalogOut.DataResolution">
+			<summary>The data resolution for analog output sub system.</summary>
+		</member>
+		<member name="P:Agilent.AgilentU254x.Interop.IAgilentU254xAnalogOut.DataType">
+			<summary>The data type for analog output sub system.</summary>
+		</member>
+		<member name="P:Agilent.AgilentU254x.Interop.IAgilentU254xAnalogOut.Enabled(System.String)">
+			<summary>Enable or disable the output channel.</summary>
+			<param name="ChannelsList">A string that contains single or multiple analog output channel name that separated by coma</param>
+		</member>
+		<member name="M:Agilent.AgilentU254x.Interop.IAgilentU254xAnalogOut.get_Enabled(System.String)">
+			<summary>Enable or disable the output channel.</summary>
+			<param name="ChannelsList">A string that contains single or multiple analog output channel name that separated by coma</param>
+			<returns>Enable or disable the output channel.</returns>
+		</member>
+		<member name="M:Agilent.AgilentU254x.Interop.IAgilentU254xAnalogOut.set_Enabled(System.String,System.Boolean)">
+			<summary>Enable or disable the output channel.</summary>
+			<param name="ChannelsList">A string that contains single or multiple analog output channel name that separated by coma</param>
+			<param name="Val">Enable or disable the output channel.</param>
+		</member>
+		<member name="P:Agilent.AgilentU254x.Interop.IAgilentU254xAnalogOut.ExternalReferenceVoltage">
+			<summary>The voltage of the external reference source.</summary>
+		</member>
+		<member name="P:Agilent.AgilentU254x.Interop.IAgilentU254xAnalogOut.Generation">
+			<summary>Pointer to the IAgilentU254xAnalogOutGeneration interface, which control the analog generation.</summary>
+		</member>
+		<member name="P:Agilent.AgilentU254x.Interop.IAgilentU254xAnalogOut.Polarity(System.String)">
+			<summary>The polarity of the analog output channel.</summary>
+			<param name="ChannelsList">A string that contains single or multiple analog input channel name that separated by coma,</param>
+		</member>
+		<member name="M:Agilent.AgilentU254x.Interop.IAgilentU254xAnalogOut.get_Polarity(System.String)">
+			<summary>The polarity of the analog output channel.</summary>
+			<param name="ChannelsList">A string that contains single or multiple analog input channel name that separated by coma,</param>
+			<returns>The polarity of the analog output channel.</returns>
+		</member>
+		<member name="M:Agilent.AgilentU254x.Interop.IAgilentU254xAnalogOut.set_Polarity(System.String,Agilent.AgilentU254x.Interop.AgilentU254xAnalogPolarityEnum)">
+			<summary>The polarity of the analog output channel.</summary>
+			<param name="ChannelsList">A string that contains single or multiple analog input channel name that separated by coma,</param>
+			<param name="Val">The polarity of the analog output channel.</param>
+		</member>
+		<member name="P:Agilent.AgilentU254x.Interop.IAgilentU254xAnalogOut.ReferenceSource(System.String)">
+			<summary>The reference source of this channel. either internal or external.</summary>
+			<param name="ChannelsList">A string that contains single or multiple analog input channel name that separated by coma</param>
+		</member>
+		<member name="M:Agilent.AgilentU254x.Interop.IAgilentU254xAnalogOut.get_ReferenceSource(System.String)">
+			<summary>The reference source of this channel. either internal or external.</summary>
+			<param name="ChannelsList">A string that contains single or multiple analog input channel name that separated by coma</param>
+			<returns>The reference source of this channel. either internal or external.</returns>
+		</member>
+		<member name="M:Agilent.AgilentU254x.Interop.IAgilentU254xAnalogOut.set_ReferenceSource(System.String,Agilent.AgilentU254x.Interop.AgilentU254xOutputReferenceEnum)">
+			<summary>The reference source of this channel. either internal or external.</summary>
+			<param name="ChannelsList">A string that contains single or multiple analog input channel name that separated by coma</param>
+			<param name="Val">The reference source of this channel. either internal or external.</param>
+		</member>
+		<member name="P:Agilent.AgilentU254x.Interop.IAgilentU254xAnalogOut.Waveform">
+			<summary>Pointer to the IAgilentU254xAnalogOutWaveform interface, that contain the configuration settings for standard waveform generation.</summary>
+		</member>
+		<member name="P:Agilent.AgilentU254x.Interop.IAgilentU254xAnalogOut.Trigger">
+			<summary>Pointer to the IAgilentU254xAnalogOutTrigger interface</summary>
+		</member>
+		<member name="T:Agilent.AgilentU254x.Interop.IAgilentU254xAnalogOutArbitrary">
+			<summary>AgilentU254x arbitrary interface.  Contain the configuration settings for arbitrary waveform generation.</summary>
+		</member>
+		<member name="M:Agilent.AgilentU254x.Interop.IAgilentU254xAnalogOutArbitrary.Configure(System.Double,System.Int32)">
+			<summary>Configure general settings for arbitrary generation.</summary>
+			<param name="SampleRate">The sample rate for the arbitrary generation.</param>
+			<param name="NumberOfStreams">The total number of streams generated for one shoot arbitrary generation.  Set to -1 for continuous generation.</param>
+		</member>
+		<member name="M:Agilent.AgilentU254x.Interop.IAgilentU254xAnalogOutArbitrary.CreateBlock(System.Int16[]@)">
+			<summary>Create a block of data for the arbitrary waveform.</summary>
+			<param name="Data">Arrary of data, integer 16 bit format.</param>
+		</member>
+		<member name="P:Agilent.AgilentU254x.Interop.IAgilentU254xAnalogOutArbitrary.NumberOfStreams">
+			<summary>The total number of streams generated for one shoot arbitrary generation.  Set to -1 for continuous generation.</summary>
+		</member>
+		<member name="P:Agilent.AgilentU254x.Interop.IAgilentU254xAnalogOutArbitrary.SampleRate">
+			<summary>The sample rate for the arbitrary generation.  The unit are number of streams generated per second.</summary>
+		</member>
+		<member name="T:Agilent.AgilentU254x.Interop.IAgilentU254xAnalogOutGeneration">
+			<summary>AgilentU254x analog generation interface.  Hold the control for the analog generation include the attribute to determine the output mode of arbitrary or standard waveform, the start and stop method for generation, the re-trigger count attribute for limit arbitrary generation, and also the DC voltage for single output generation.</summary>
+		</member>
+		<member name="M:Agilent.AgilentU254x.Interop.IAgilentU254xAnalogOutGeneration.Start">
+			<summary>Start the analog output generation.</summary>
+		</member>
+		<member name="M:Agilent.AgilentU254x.Interop.IAgilentU254xAnalogOutGeneration.Stop">
+			<summary>Stop the analog output generation.</summary>
+		</member>
+		<member name="P:Agilent.AgilentU254x.Interop.IAgilentU254xAnalogOutGeneration.DelayCount">
+			<summary>The number of waveform patterns will be delay after a trigger event.</summary>
+		</member>
+		<member name="P:Agilent.AgilentU254x.Interop.IAgilentU254xAnalogOutGeneration.Mode">
+			<summary>The generation mode, either standard waveform or arbitrary waveform.</summary>
+		</member>
+		<member name="P:Agilent.AgilentU254x.Interop.IAgilentU254xAnalogOutGeneration.Voltage(System.String)">
+			<summary>Generate single output DC voltage to the channel immediately. Do not need to enable the channel or start the generation.</summary>
+			<param name="ChannelName">The name of the analog output channel</param>
+		</member>
+		<member name="M:Agilent.AgilentU254x.Interop.IAgilentU254xAnalogOutGeneration.get_Voltage(System.String)">
+			<summary>Generate single output DC voltage to the channel immediately. Do not need to enable the channel or start the generation.</summary>
+			<param name="ChannelName">The name of the analog output channel</param>
+			<returns>Generate single output DC voltage to the channel immediately. Do not need to enable the channel or start the generation.</returns>
+		</member>
+		<member name="M:Agilent.AgilentU254x.Interop.IAgilentU254xAnalogOutGeneration.set_Voltage(System.String,System.Double)">
+			<summary>Generate single output DC voltage to the channel immediately. Do not need to enable the channel or start the generation.</summary>
+			<param name="ChannelName">The name of the analog output channel</param>
+			<param name="Val">Generate single output DC voltage to the channel immediately. Do not need to enable the channel or start the generation.</param>
+		</member>
+		<member name="T:Agilent.AgilentU254x.Interop.IAgilentU254xAnalogOutWaveform">
+			<summary>AgilentU254xstandard waveform interface.  This interface contain the configuration settings for  standard waveform generation like frequency, amplitude, and voltage offset.  Some of this attributes can apply different value to different channels.  You can choose different waveform for different output channel.</summary>
+		</member>
+		<member name="M:Agilent.AgilentU254x.Interop.IAgilentU254xAnalogOutWaveform.Configure(System.String,Agilent.AgilentU254x.Interop.AgilentU254xWaveformEnum,System.Double,System.Double,System.Double)">
+			<summary>Configure the general settings for the standard waveform generation.</summary>
+			<param name="ChannelName">The name of the channel.</param>
+			<param name="Waveform">The waveform to be generated, can be sine wave, square wave, triangular wave, and etc.</param>
+			<param name="Frequency">The frequency  of waveform.</param>
+			<param name="Amplitude">The amplitude of the waveform.</param>
+			<param name="Offset">The offset of the waveform.</param>
+		</member>
+		<member name="P:Agilent.AgilentU254x.Interop.IAgilentU254xAnalogOutWaveform.Amplitude(System.String)">
+			<summary>The amplitude for the standard waveform.  This attribute can be different from channel to channel.</summary>
+			<param name="ChannelName">The name of the channel.</param>
+		</member>
+		<member name="M:Agilent.AgilentU254x.Interop.IAgilentU254xAnalogOutWaveform.get_Amplitude(System.String)">
+			<summary>The amplitude for the standard waveform.  This attribute can be different from channel to channel.</summary>
+			<param name="ChannelName">The name of the channel.</param>
+			<returns>The amplitude for the standard waveform.  This attribute can be different from channel to channel.</returns>
+		</member>
+		<member name="M:Agilent.AgilentU254x.Interop.IAgilentU254xAnalogOutWaveform.set_Amplitude(System.String,System.Double)">
+			<summary>The amplitude for the standard waveform.  This attribute can be different from channel to channel.</summary>
+			<param name="ChannelName">The name of the channel.</param>
+			<param name="Val">The amplitude for the standard waveform.  This attribute can be different from channel to channel.</param>
+		</member>
+		<member name="P:Agilent.AgilentU254x.Interop.IAgilentU254xAnalogOutWaveform.Frequency">
+			<summary>The frequency of the waveform.  Share among all enabled channels for standard waveform generation.</summary>
+		</member>
+		<member name="P:Agilent.AgilentU254x.Interop.IAgilentU254xAnalogOutWaveform.Offset(System.String)">
+			<summary>The offset for the waveform. This attribute can be different from channel to channel.</summary>
+			<param name="ChannelName">The name of the channel.</param>
+		</member>
+		<member name="M:Agilent.AgilentU254x.Interop.IAgilentU254xAnalogOutWaveform.get_Offset(System.String)">
+			<summary>The offset for the waveform. This attribute can be different from channel to channel.</summary>
+			<param name="ChannelName">The name of the channel.</param>
+			<returns>The offset for the waveform. This attribute can be different from channel to channel.</returns>
+		</member>
+		<member name="M:Agilent.AgilentU254x.Interop.IAgilentU254xAnalogOutWaveform.set_Offset(System.String,System.Double)">
+			<summary>The offset for the waveform. This attribute can be different from channel to channel.</summary>
+			<param name="ChannelName">The name of the channel.</param>
+			<param name="Val">The offset for the waveform. This attribute can be different from channel to channel.</param>
+		</member>
+		<member name="P:Agilent.AgilentU254x.Interop.IAgilentU254xAnalogOutWaveform.Pattern(System.String)">
+			<summary>The waveform patern to be generated, can be sine wave, square wave, triangular wave, and etc.  This attribute can be different from channel to channel.</summary>
+			<param name="ChannelName">The name of the channel.</param>
+		</member>
+		<member name="M:Agilent.AgilentU254x.Interop.IAgilentU254xAnalogOutWaveform.get_Pattern(System.String)">
+			<summary>The waveform patern to be generated, can be sine wave, square wave, triangular wave, and etc.  This attribute can be different from channel to channel.</summary>
+			<param name="ChannelName">The name of the channel.</param>
+			<returns>The waveform patern to be generated, can be sine wave, square wave, triangular wave, and etc.  This attribute can be different from channel to channel.</returns>
+		</member>
+		<member name="M:Agilent.AgilentU254x.Interop.IAgilentU254xAnalogOutWaveform.set_Pattern(System.String,Agilent.AgilentU254x.Interop.AgilentU254xWaveformEnum)">
+			<summary>The waveform patern to be generated, can be sine wave, square wave, triangular wave, and etc.  This attribute can be different from channel to channel.</summary>
+			<param name="ChannelName">The name of the channel.</param>
+			<param name="Val">The waveform patern to be generated, can be sine wave, square wave, triangular wave, and etc.  This attribute can be different from channel to channel.</param>
+		</member>
+		<member name="T:Agilent.AgilentU254x.Interop.IAgilentU254xAnalogInExternalTrigger">
+			<summary>AgilentU254x external analog trigger interface</summary>
+		</member>
+		<member name="M:Agilent.AgilentU254x.Interop.IAgilentU254xAnalogInExternalTrigger.ConfigureEdge(Agilent.AgilentU254x.Interop.AgilentU254xAnalogInExternalTriggerTypeEnum,Agilent.AgilentU254x.Interop.AgilentU254xAnalogInExternalTriggerSourceEnum,System.Double)">
+			<summary>Configure edge triggering.</summary>
+			<param name="Type">Select the edge trigger type, either below edge or above edge triggering, set to other will return error.  Set to above edge triggering, the Level will apply to LevelHigh.  Set to below edge triggering, the Level will apply to LevelLow.</param>
+			<param name="Source">Select the trigger source.</param>
+			<param name="Level">The triggering level, depend on the trigger type, may apply to LevelLow or LevelHigh.</param>
+		</member>
+		<member name="M:Agilent.AgilentU254x.Interop.IAgilentU254xAnalogInExternalTrigger.ConfigureHysteresis(Agilent.AgilentU254x.Interop.AgilentU254xAnalogInExternalTriggerTypeEnum,Agilent.AgilentU254x.Interop.AgilentU254xAnalogInExternalTriggerSourceEnum,System.Double,System.Double)">
+			<summary>Configure analog hysteresis triggering.</summary>
+			<param name="Type">Select the edge trigger type, either below edge or above edge triggering.
       AgilentU254xAnalogTriggerTypeHighHysteresis
             Set to high hysteresis triggering.
       AgilentU254xAnalogTriggerTypeLowHysteresis
             Set to low hysteresis triggering.</param>
-      <param name="Source">Select the trigger source.</param>
-      <param name="LevelLow">The low level for hysteresis triggering.</param>
-      <param name="LevelHigh">The high level for hysteresis triggering.</param>
-    </member>
-    <member name="M:Agilent.AgilentU254x.Interop.IAgilentU254xAnalogInExternalTrigger.ConfigureRegion(Agilent.AgilentU254x.Interop.AgilentU254xAnalogInExternalTriggerSourceEnum,System.Double,System.Double)">
-      <summary>Configure analog region triggering.</summary>
-      <param name="Source">Select the trigger source.</param>
-      <param name="LevelLow">The low level of the region.</param>
-      <param name="LevelHigh">The high level of the region.</param>
-    </member>
-    <member name="P:Agilent.AgilentU254x.Interop.IAgilentU254xAnalogInExternalTrigger.LevelHigh">
-      <summary>The high level.</summary>
-    </member>
-    <member name="P:Agilent.AgilentU254x.Interop.IAgilentU254xAnalogInExternalTrigger.LevelLow">
-      <summary>The low level.</summary>
-    </member>
-    <member name="P:Agilent.AgilentU254x.Interop.IAgilentU254xAnalogInExternalTrigger.Source">
-      <summary>The source of the analog trigger.</summary>
-    </member>
-    <member name="P:Agilent.AgilentU254x.Interop.IAgilentU254xAnalogInExternalTrigger.Type">
-      <summary>Selection of the analog trigger type, either below edge, above edge, region, low hysteresis, and high hysteresis.</summary>
-    </member>
-    <member name="T:Agilent.AgilentU254x.Interop.IAgilentU254xCounter">
-      <summary>AgilentU254x counter interface.</summary>
-    </member>
-    <member name="P:Agilent.AgilentU254x.Interop.IAgilentU254xCounter.ClockPolarity">
-      <summary>The polarity of clock.</summary>
-    </member>
-    <member name="P:Agilent.AgilentU254x.Interop.IAgilentU254xCounter.ClockSource">
-      <summary>The source of clock, either internal or external.</summary>
-    </member>
-    <member name="P:Agilent.AgilentU254x.Interop.IAgilentU254xCounter.ExternalClockFrequency">
-      <summary>The external clock frequency for the counter.  The instrument need this value for calculation of measurement.</summary>
-    </member>
-    <member name="P:Agilent.AgilentU254x.Interop.IAgilentU254xCounter.GatePolarity">
-      <summary>The polarity of the gate.</summary>
-    </member>
-    <member name="P:Agilent.AgilentU254x.Interop.IAgilentU254xCounter.GateSource">
-      <summary>The source of the gate, either internal or external.</summary>
-    </member>
-    <member name="P:Agilent.AgilentU254x.Interop.IAgilentU254xCounter.InternalGateEnabled">
-      <summary>Enable or disable internal gate source</summary>
-    </member>
-    <member name="P:Agilent.AgilentU254x.Interop.IAgilentU254xCounter.Totalizer">
-      <summary>Pointer to the IAgilentU254xCounterTotalizer interface, which hold totalizer functionalities for counter.</summary>
-    </member>
-    <member name="P:Agilent.AgilentU254x.Interop.IAgilentU254xCounter.Measurement">
-      <summary>Pointer to the IAgilentU254xCounterMeasurement interface, which hold measurement functionalities for counter.</summary>
-    </member>
-    <member name="T:Agilent.AgilentU254x.Interop.IAgilentU254xCounters">
-      <summary>AgilentU254x counter collection interface.</summary>
-    </member>
-    <member name="P:Agilent.AgilentU254x.Interop.IAgilentU254xCounters.Count">
-      <summary>The number of counters.</summary>
-    </member>
-    <member name="P:Agilent.AgilentU254x.Interop.IAgilentU254xCounters.Item">
-      <summary>An interface reference pointer to the IAgilentU254xCounter interface which is selected by the counter name.</summary>
-    </member>
-    <member name="P:Agilent.AgilentU254x.Interop.IAgilentU254xCounters.Item(System.String)">
-      <summary>An interface reference pointer to the IAgilentU254xCounter interface which is selected by the counter name.</summary>
-      <param name="Name">The name of a counter. It may be either a name returned by the Name property or a name mapped to a particular repeated capability in the session in the configuration store.</param>
-    </member>
-    <member name="M:Agilent.AgilentU254x.Interop.IAgilentU254xCounters.get_Item(System.String)">
-      <summary>An interface reference pointer to the IAgilentU254xCounter interface which is selected by the counter name.</summary>
-      <param name="Name">The name of a counter. It may be either a name returned by the Name property or a name mapped to a particular repeated capability in the session in the configuration store.</param>
-      <returns>An interface reference pointer to the IAgilentU254xCounter interface which is selected by the counter name.</returns>
-    </member>
-    <member name="P:Agilent.AgilentU254x.Interop.IAgilentU254xCounters.Name">
-      <summary>The counter name for a given index.</summary>
-    </member>
-    <member name="P:Agilent.AgilentU254x.Interop.IAgilentU254xCounters.Name(System.Int32)">
-      <summary>The counter name for a given index.</summary>
-      <param name="Index">One based index into the collection of counters.</param>
-    </member>
-    <member name="M:Agilent.AgilentU254x.Interop.IAgilentU254xCounters.get_Name(System.Int32)">
-      <summary>The counter name for a given index.</summary>
-      <param name="Index">One based index into the collection of counters.</param>
-      <returns>The counter name for a given index.</returns>
-    </member>
-    <member name="P:Agilent.AgilentU254x.Interop.IAgilentU254xCounters.InternalClockFrequency">
-      <summary>This is a read only attribute.  To get the internal clock frequency for counter.</summary>
-    </member>
-    <member name="T:Agilent.AgilentU254x.Interop.IAgilentU254xCounterTotalizer">
-      <summary>AgilentU254x counter totalizer interface.  This interface contains the general totalizer settings for counter.</summary>
-    </member>
-    <member name="M:Agilent.AgilentU254x.Interop.IAgilentU254xCounterTotalizer.Clear">
-      <summary>Clears the totalizer. Reset the value to zero.</summary>
-    </member>
-    <member name="M:Agilent.AgilentU254x.Interop.IAgilentU254xCounterTotalizer.Configure(Agilent.AgilentU254x.Interop.AgilentU254xTotalizerDirectionEnum,Agilent.AgilentU254x.Interop.AgilentU254xTotalizerSourceEnum)">
-      <summary>Configure general settings for totalizer.</summary>
-      <param name="Direction">Direction for counter's totalizer, either increment or decrement.</param>
-      <param name="ControlSource">The source that control the direction of the totalizer, either internal or external.</param>
-    </member>
-    <member name="P:Agilent.AgilentU254x.Interop.IAgilentU254xCounterTotalizer.ControlSource">
-      <summary>The source that control the direction of the totalizer, either internal or external.</summary>
-    </member>
-    <member name="P:Agilent.AgilentU254x.Interop.IAgilentU254xCounterTotalizer.Direction">
-      <summary>Direction for counter's totalizer, either increment or decrement.</summary>
-    </member>
-    <member name="P:Agilent.AgilentU254x.Interop.IAgilentU254xCounterTotalizer.InitialValue">
-      <summary>Initial value for counter's totalizer.</summary>
-    </member>
-    <member name="T:Agilent.AgilentU254x.Interop.IAgilentU254xCounterMeasurement">
-      <summary>AgilentU254xCounterMeasurement interface.  This hold measurement functionalities for counter, like period, band width, frequency, and etc.</summary>
-    </member>
-    <member name="M:Agilent.AgilentU254x.Interop.IAgilentU254xCounterMeasurement.Abort">
-      <summary>Abort the measurement.</summary>
-    </member>
-    <member name="M:Agilent.AgilentU254x.Interop.IAgilentU254xCounterMeasurement.Initiate">
-      <summary>Initiate the measurement.</summary>
-    </member>
-    <member name="P:Agilent.AgilentU254x.Interop.IAgilentU254xCounterMeasurement.Frequency">
-      <summary>Get the measurement value for frequency.</summary>
-    </member>
-    <member name="P:Agilent.AgilentU254x.Interop.IAgilentU254xCounterMeasurement.Function">
-      <summary>Selection of the measurement function for counter.</summary>
-    </member>
-    <member name="P:Agilent.AgilentU254x.Interop.IAgilentU254xCounterMeasurement.Period">
-      <summary>Get the measurement value for period.</summary>
-    </member>
-    <member name="P:Agilent.AgilentU254x.Interop.IAgilentU254xCounterMeasurement.PulseWidth">
-      <summary>Get the measurement value for pulse width.</summary>
-    </member>
-    <member name="P:Agilent.AgilentU254x.Interop.IAgilentU254xCounterMeasurement.TotalizeCount">
-      <summary>Get the measurement value for totalizer's count.</summary>
-    </member>
-    <member name="T:Agilent.AgilentU254x.Interop.IAgilentU254xDigital">
-      <summary>AgilentU254x digital I/O interface.  For simple read and write on digital channels.</summary>
-    </member>
-    <member name="M:Agilent.AgilentU254x.Interop.IAgilentU254xDigital.ReadBit(System.String,System.Int32,System.Boolean@)">
-      <summary>Read back a bit of value of a digital channel from the instrument.</summary>
-      <param name="ChannelName">The name of the digital channel.  The phisical names for this repeated capability are 'DIOA', 'DIOB', 'DIOC', 'DIOD'.</param>
-      <param name="BitIndex">One based index for the bit of the digital channel.</param>
-      <param name="Result">The result that to be read back.  This is a boolean.</param>
-    </member>
-    <member name="M:Agilent.AgilentU254x.Interop.IAgilentU254xDigital.ReadByte(System.String,System.Int32@)">
-      <summary>Read back a byte of value of a digital channel from the instrument.</summary>
-      <param name="ChannelName">The name of the digital channel.  The phisical names for this repeated capability are 'DIOA', 'DIOB', 'DIOC', 'DIOD'.</param>
-      <param name="Result">The result that to be read back.  This is a integer 32 bit size, but only the first few bits will be used.</param>
-    </member>
-    <member name="M:Agilent.AgilentU254x.Interop.IAgilentU254xDigital.WriteBit(System.String,System.Int32,System.Boolean)">
-      <summary>Write a bit of value of a digital channel to the instrument.</summary>
-      <param name="ChannelName">The name of the digital channel.  The phisical names for this repeated capability are 'DIOA', 'DIOB', 'DIOC', 'DIOD'.</param>
-      <param name="BitIndex">One based index for the bit of the digital channel.</param>
-      <param name="Value">The value to be write.  This is a boolean.</param>
-    </member>
-    <member name="M:Agilent.AgilentU254x.Interop.IAgilentU254xDigital.WriteByte(System.String,System.Int32)">
-      <summary>Write a byte of value of a digital channel to the instrument.</summary>
-      <param name="ChannelName">The name of the digital channel.  The phisical names for this repeated capability are 'DIOA', 'DIOB', 'DIOC', 'DIOD'.</param>
-      <param name="Value">The value to be write.  This is a integer 32 bit size, but only the first few bits will be used.</param>
-    </member>
-    <member name="P:Agilent.AgilentU254x.Interop.IAgilentU254xDigital.Channels">
-      <summary>Pointer to the IAgilentU254xDigitalChannels interface.</summary>
-    </member>
-    <member name="T:Agilent.AgilentU254x.Interop.IAgilentU254xDigitalChannel">
-      <summary>AgilentU254x digitalchannel interface.</summary>
-    </member>
-    <member name="P:Agilent.AgilentU254x.Interop.IAgilentU254xDigitalChannel.Direction">
-      <summary>Specify the direction for the digital channel, either input or output.</summary>
-    </member>
-    <member name="P:Agilent.AgilentU254x.Interop.IAgilentU254xDigitalChannel.Width">
-      <summary>The digital channel's width.</summary>
-    </member>
-    <member name="T:Agilent.AgilentU254x.Interop.IAgilentU254xDigitalChannels">
-      <summary>AgilentU254x digitalchannel collection interface.</summary>
-    </member>
-    <member name="P:Agilent.AgilentU254x.Interop.IAgilentU254xDigitalChannels.Count">
-      <summary>The number of digital channels.</summary>
-    </member>
-    <member name="P:Agilent.AgilentU254x.Interop.IAgilentU254xDigitalChannels.Item">
-      <summary>An interface reference pointer to the IAgilentU254xDigitalChannel interface which is selected by the digital channel name.</summary>
-    </member>
-    <member name="P:Agilent.AgilentU254x.Interop.IAgilentU254xDigitalChannels.Item(System.String)">
-      <summary>An interface reference pointer to the IAgilentU254xDigitalChannel interface which is selected by the digital channel name.</summary>
-      <param name="Name">The name of a digital channel. It may be either a name returned by the name property or a name mapped to a particular repeated capability in the session in the configuration store.</param>
-    </member>
-    <member name="M:Agilent.AgilentU254x.Interop.IAgilentU254xDigitalChannels.get_Item(System.String)">
-      <summary>An interface reference pointer to the IAgilentU254xDigitalChannel interface which is selected by the digital channel name.</summary>
-      <param name="Name">The name of a digital channel. It may be either a name returned by the name property or a name mapped to a particular repeated capability in the session in the configuration store.</param>
-      <returns>An interface reference pointer to the IAgilentU254xDigitalChannel interface which is selected by the digital channel name.</returns>
-    </member>
-    <member name="P:Agilent.AgilentU254x.Interop.IAgilentU254xDigitalChannels.Name">
-      <summary>The digital channel name for a given index.</summary>
-    </member>
-    <member name="P:Agilent.AgilentU254x.Interop.IAgilentU254xDigitalChannels.Name(System.Int32)">
-      <summary>The digital channel name for a given index.</summary>
-      <param name="Index">One based index into the collection of digital channels.</param>
-    </member>
-    <member name="M:Agilent.AgilentU254x.Interop.IAgilentU254xDigitalChannels.get_Name(System.Int32)">
-      <summary>The digital channel name for a given index.</summary>
-      <param name="Index">One based index into the collection of digital channels.</param>
-      <returns>The digital channel name for a given index.</returns>
-    </member>
-    <member name="T:Agilent.AgilentU254x.Interop.IAgilentU254xAnalogInChannel">
-      <summary>AgilentU254x channel interface.</summary>
-    </member>
-    <member name="M:Agilent.AgilentU254x.Interop.IAgilentU254xAnalogInChannel.Configure(Agilent.AgilentU254x.Interop.AgilentU254xAnalogPolarityEnum,System.Double,System.Boolean)">
-      <summary>The configuration method for analog input channel settings.</summary>
-      <param name="Polarity">The polarity of the analog input channel.</param>
-      <param name="Range">The range of the analog input channel.</param>
-      <param name="Enabled" />
-    </member>
-    <member name="P:Agilent.AgilentU254x.Interop.IAgilentU254xAnalogInChannel.Range">
-      <summary>The range of the analog input channel.  
+			<param name="Source">Select the trigger source.</param>
+			<param name="LevelLow">The low level for hysteresis triggering.</param>
+			<param name="LevelHigh">The high level for hysteresis triggering.</param>
+		</member>
+		<member name="M:Agilent.AgilentU254x.Interop.IAgilentU254xAnalogInExternalTrigger.ConfigureRegion(Agilent.AgilentU254x.Interop.AgilentU254xAnalogInExternalTriggerSourceEnum,System.Double,System.Double)">
+			<summary>Configure analog region triggering.</summary>
+			<param name="Source">Select the trigger source.</param>
+			<param name="LevelLow">The low level of the region.</param>
+			<param name="LevelHigh">The high level of the region.</param>
+		</member>
+		<member name="P:Agilent.AgilentU254x.Interop.IAgilentU254xAnalogInExternalTrigger.LevelHigh">
+			<summary>The high level.</summary>
+		</member>
+		<member name="P:Agilent.AgilentU254x.Interop.IAgilentU254xAnalogInExternalTrigger.LevelLow">
+			<summary>The low level.</summary>
+		</member>
+		<member name="P:Agilent.AgilentU254x.Interop.IAgilentU254xAnalogInExternalTrigger.Source">
+			<summary>The source of the analog trigger.</summary>
+		</member>
+		<member name="P:Agilent.AgilentU254x.Interop.IAgilentU254xAnalogInExternalTrigger.Type">
+			<summary>Selection of the analog trigger type, either below edge, above edge, region, low hysteresis, and high hysteresis.</summary>
+		</member>
+		<member name="T:Agilent.AgilentU254x.Interop.IAgilentU254xCounter">
+			<summary>AgilentU254x counter interface.</summary>
+		</member>
+		<member name="P:Agilent.AgilentU254x.Interop.IAgilentU254xCounter.ClockPolarity">
+			<summary>The polarity of clock.</summary>
+		</member>
+		<member name="P:Agilent.AgilentU254x.Interop.IAgilentU254xCounter.ClockSource">
+			<summary>The source of clock, either internal or external.</summary>
+		</member>
+		<member name="P:Agilent.AgilentU254x.Interop.IAgilentU254xCounter.ExternalClockFrequency">
+			<summary>The external clock frequency for the counter.  The instrument need this value for calculation of measurement.</summary>
+		</member>
+		<member name="P:Agilent.AgilentU254x.Interop.IAgilentU254xCounter.GatePolarity">
+			<summary>The polarity of the gate.</summary>
+		</member>
+		<member name="P:Agilent.AgilentU254x.Interop.IAgilentU254xCounter.GateSource">
+			<summary>The source of the gate, either internal or external.</summary>
+		</member>
+		<member name="P:Agilent.AgilentU254x.Interop.IAgilentU254xCounter.InternalGateEnabled">
+			<summary>Enable or disable internal gate source</summary>
+		</member>
+		<member name="P:Agilent.AgilentU254x.Interop.IAgilentU254xCounter.Totalizer">
+			<summary>Pointer to the IAgilentU254xCounterTotalizer interface, which hold totalizer functionalities for counter.</summary>
+		</member>
+		<member name="P:Agilent.AgilentU254x.Interop.IAgilentU254xCounter.Measurement">
+			<summary>Pointer to the IAgilentU254xCounterMeasurement interface, which hold measurement functionalities for counter.</summary>
+		</member>
+		<member name="T:Agilent.AgilentU254x.Interop.IAgilentU254xCounters">
+			<summary>AgilentU254x counter collection interface.</summary>
+		</member>
+		<member name="P:Agilent.AgilentU254x.Interop.IAgilentU254xCounters.Count">
+			<summary>The number of counters.</summary>
+		</member>
+		<member name="P:Agilent.AgilentU254x.Interop.IAgilentU254xCounters.Item(System.String)">
+			<summary>An interface reference pointer to the IAgilentU254xCounter interface which is selected by the counter name.</summary>
+			<param name="Name">The name of a counter. It may be either a name returned by the Name property or a name mapped to a particular repeated capability in the session in the configuration store.</param>
+		</member>
+		<member name="M:Agilent.AgilentU254x.Interop.IAgilentU254xCounters.get_Item(System.String)">
+			<summary>An interface reference pointer to the IAgilentU254xCounter interface which is selected by the counter name.</summary>
+			<param name="Name">The name of a counter. It may be either a name returned by the Name property or a name mapped to a particular repeated capability in the session in the configuration store.</param>
+			<returns>An interface reference pointer to the IAgilentU254xCounter interface which is selected by the counter name.</returns>
+		</member>
+		<member name="P:Agilent.AgilentU254x.Interop.IAgilentU254xCounters.Name(System.Int32)">
+			<summary>The counter name for a given index.</summary>
+			<param name="Index">One based index into the collection of counters.</param>
+		</member>
+		<member name="M:Agilent.AgilentU254x.Interop.IAgilentU254xCounters.get_Name(System.Int32)">
+			<summary>The counter name for a given index.</summary>
+			<param name="Index">One based index into the collection of counters.</param>
+			<returns>The counter name for a given index.</returns>
+		</member>
+		<member name="P:Agilent.AgilentU254x.Interop.IAgilentU254xCounters.InternalClockFrequency">
+			<summary>This is a read only attribute.  To get the internal clock frequency for counter.</summary>
+		</member>
+		<member name="T:Agilent.AgilentU254x.Interop.IAgilentU254xCounterTotalizer">
+			<summary>AgilentU254x counter totalizer interface.  This interface contains the general totalizer settings for counter.</summary>
+		</member>
+		<member name="M:Agilent.AgilentU254x.Interop.IAgilentU254xCounterTotalizer.Clear">
+			<summary>Clears the totalizer. Reset the value to zero.</summary>
+		</member>
+		<member name="M:Agilent.AgilentU254x.Interop.IAgilentU254xCounterTotalizer.Configure(Agilent.AgilentU254x.Interop.AgilentU254xTotalizerDirectionEnum,Agilent.AgilentU254x.Interop.AgilentU254xTotalizerSourceEnum)">
+			<summary>Configure general settings for totalizer.</summary>
+			<param name="Direction">Direction for counter's totalizer, either increment or decrement.</param>
+			<param name="ControlSource">The source that control the direction of the totalizer, either internal or external.</param>
+		</member>
+		<member name="P:Agilent.AgilentU254x.Interop.IAgilentU254xCounterTotalizer.ControlSource">
+			<summary>The source that control the direction of the totalizer, either internal or external.</summary>
+		</member>
+		<member name="P:Agilent.AgilentU254x.Interop.IAgilentU254xCounterTotalizer.Direction">
+			<summary>Direction for counter's totalizer, either increment or decrement.</summary>
+		</member>
+		<member name="P:Agilent.AgilentU254x.Interop.IAgilentU254xCounterTotalizer.InitialValue">
+			<summary>Initial value for counter's totalizer.</summary>
+		</member>
+		<member name="T:Agilent.AgilentU254x.Interop.IAgilentU254xCounterMeasurement">
+			<summary>AgilentU254xCounterMeasurement interface.  This hold measurement functionalities for counter, like period, band width, frequency, and etc.</summary>
+		</member>
+		<member name="M:Agilent.AgilentU254x.Interop.IAgilentU254xCounterMeasurement.Abort">
+			<summary>Abort the measurement.</summary>
+		</member>
+		<member name="M:Agilent.AgilentU254x.Interop.IAgilentU254xCounterMeasurement.Initiate">
+			<summary>Initiate the measurement.</summary>
+		</member>
+		<member name="P:Agilent.AgilentU254x.Interop.IAgilentU254xCounterMeasurement.Frequency">
+			<summary>Get the measurement value for frequency.</summary>
+		</member>
+		<member name="P:Agilent.AgilentU254x.Interop.IAgilentU254xCounterMeasurement.Function">
+			<summary>Selection of the measurement function for counter.</summary>
+		</member>
+		<member name="P:Agilent.AgilentU254x.Interop.IAgilentU254xCounterMeasurement.Period">
+			<summary>Get the measurement value for period.</summary>
+		</member>
+		<member name="P:Agilent.AgilentU254x.Interop.IAgilentU254xCounterMeasurement.PulseWidth">
+			<summary>Get the measurement value for pulse width.</summary>
+		</member>
+		<member name="P:Agilent.AgilentU254x.Interop.IAgilentU254xCounterMeasurement.TotalizeCount">
+			<summary>Get the measurement value for totalizer's count.</summary>
+		</member>
+		<member name="T:Agilent.AgilentU254x.Interop.IAgilentU254xDigital">
+			<summary>AgilentU254x digital I/O interface.  For simple read and write on digital channels.</summary>
+		</member>
+		<member name="M:Agilent.AgilentU254x.Interop.IAgilentU254xDigital.ReadBit(System.String,System.Int32,System.Boolean@)">
+			<summary>Read back a bit of value of a digital channel from the instrument.</summary>
+			<param name="ChannelName">The name of the digital channel.  The phisical names for this repeated capability are 'DIOA', 'DIOB', 'DIOC', 'DIOD'.</param>
+			<param name="BitIndex">One based index for the bit of the digital channel.</param>
+			<param name="Result">The result that to be read back.  This is a boolean.</param>
+		</member>
+		<member name="M:Agilent.AgilentU254x.Interop.IAgilentU254xDigital.ReadByte(System.String,System.Int32@)">
+			<summary>Read back a byte of value of a digital channel from the instrument.</summary>
+			<param name="ChannelName">The name of the digital channel.  The phisical names for this repeated capability are 'DIOA', 'DIOB', 'DIOC', 'DIOD'.</param>
+			<param name="Result">The result that to be read back.  This is a integer 32 bit size, but only the first few bits will be used.</param>
+		</member>
+		<member name="M:Agilent.AgilentU254x.Interop.IAgilentU254xDigital.WriteBit(System.String,System.Int32,System.Boolean)">
+			<summary>Write a bit of value of a digital channel to the instrument.</summary>
+			<param name="ChannelName">The name of the digital channel.  The phisical names for this repeated capability are 'DIOA', 'DIOB', 'DIOC', 'DIOD'.</param>
+			<param name="BitIndex">One based index for the bit of the digital channel.</param>
+			<param name="Value">The value to be write.  This is a boolean.</param>
+		</member>
+		<member name="M:Agilent.AgilentU254x.Interop.IAgilentU254xDigital.WriteByte(System.String,System.Int32)">
+			<summary>Write a byte of value of a digital channel to the instrument.</summary>
+			<param name="ChannelName">The name of the digital channel.  The phisical names for this repeated capability are 'DIOA', 'DIOB', 'DIOC', 'DIOD'.</param>
+			<param name="Value">The value to be write.  This is a integer 32 bit size, but only the first few bits will be used.</param>
+		</member>
+		<member name="P:Agilent.AgilentU254x.Interop.IAgilentU254xDigital.Channels">
+			<summary>Pointer to the IAgilentU254xDigitalChannels interface.</summary>
+		</member>
+		<member name="T:Agilent.AgilentU254x.Interop.IAgilentU254xDigitalChannel">
+			<summary>AgilentU254x digitalchannel interface.</summary>
+		</member>
+		<member name="P:Agilent.AgilentU254x.Interop.IAgilentU254xDigitalChannel.Direction">
+			<summary>Specify the direction for the digital channel, either input or output.</summary>
+		</member>
+		<member name="P:Agilent.AgilentU254x.Interop.IAgilentU254xDigitalChannel.Width">
+			<summary>The digital channel's width.</summary>
+		</member>
+		<member name="T:Agilent.AgilentU254x.Interop.IAgilentU254xDigitalChannels">
+			<summary>AgilentU254x digitalchannel collection interface.</summary>
+		</member>
+		<member name="P:Agilent.AgilentU254x.Interop.IAgilentU254xDigitalChannels.Count">
+			<summary>The number of digital channels.</summary>
+		</member>
+		<member name="P:Agilent.AgilentU254x.Interop.IAgilentU254xDigitalChannels.Item(System.String)">
+			<summary>An interface reference pointer to the IAgilentU254xDigitalChannel interface which is selected by the digital channel name.</summary>
+			<param name="Name">The name of a digital channel. It may be either a name returned by the name property or a name mapped to a particular repeated capability in the session in the configuration store.</param>
+		</member>
+		<member name="M:Agilent.AgilentU254x.Interop.IAgilentU254xDigitalChannels.get_Item(System.String)">
+			<summary>An interface reference pointer to the IAgilentU254xDigitalChannel interface which is selected by the digital channel name.</summary>
+			<param name="Name">The name of a digital channel. It may be either a name returned by the name property or a name mapped to a particular repeated capability in the session in the configuration store.</param>
+			<returns>An interface reference pointer to the IAgilentU254xDigitalChannel interface which is selected by the digital channel name.</returns>
+		</member>
+		<member name="P:Agilent.AgilentU254x.Interop.IAgilentU254xDigitalChannels.Name(System.Int32)">
+			<summary>The digital channel name for a given index.</summary>
+			<param name="Index">One based index into the collection of digital channels.</param>
+		</member>
+		<member name="M:Agilent.AgilentU254x.Interop.IAgilentU254xDigitalChannels.get_Name(System.Int32)">
+			<summary>The digital channel name for a given index.</summary>
+			<param name="Index">One based index into the collection of digital channels.</param>
+			<returns>The digital channel name for a given index.</returns>
+		</member>
+		<member name="T:Agilent.AgilentU254x.Interop.IAgilentU254xAnalogInChannel">
+			<summary>AgilentU254x channel interface.</summary>
+		</member>
+		<member name="M:Agilent.AgilentU254x.Interop.IAgilentU254xAnalogInChannel.Configure(Agilent.AgilentU254x.Interop.AgilentU254xAnalogPolarityEnum,System.Double,System.Boolean)">
+			<summary>The configuration method for analog input channel settings.</summary>
+			<param name="Polarity">The polarity of the analog input channel.</param>
+			<param name="Range">The range of the analog input channel.</param>
+			<param name="Enabled"></param>
+		</member>
+		<member name="P:Agilent.AgilentU254x.Interop.IAgilentU254xAnalogInChannel.Range">
+			<summary>The range of the analog input channel.  
 The available range that supported by different models are:
 U2541A, U2542A, U2531A unipolar/bipolar mode: 10.0, 5.0, 2.5, 1.25</summary>
-    </member>
-    <member name="P:Agilent.AgilentU254x.Interop.IAgilentU254xAnalogInChannel.Polarity">
-      <summary>The polarity of the analog input channel, either unipolar or bipolar.</summary>
-    </member>
-    <member name="P:Agilent.AgilentU254x.Interop.IAgilentU254xAnalogInChannel.Enabled">
-      <summary>Enabled or disabled input channel.</summary>
-    </member>
-    <member name="T:Agilent.AgilentU254x.Interop.IAgilentU254xAnalogInChannels">
-      <summary>AgilentU254x channel collection interface.</summary>
-    </member>
-    <member name="P:Agilent.AgilentU254x.Interop.IAgilentU254xAnalogInChannels.Count">
-      <summary>The number of channels.</summary>
-    </member>
-    <member name="P:Agilent.AgilentU254x.Interop.IAgilentU254xAnalogInChannels.Item">
-      <summary>An interface reference pointer to the IAgilentU254xAnalogInChannel interface which is selected by the channel name.</summary>
-    </member>
-    <member name="P:Agilent.AgilentU254x.Interop.IAgilentU254xAnalogInChannels.Item(System.String)">
-      <summary>An interface reference pointer to the IAgilentU254xAnalogInChannel interface which is selected by the channel name.</summary>
-      <param name="Name">The name of a channel. It may be either a name returned by the Name property or a name mapped to a particular repeated capability in the session in the configuration store.</param>
-    </member>
-    <member name="M:Agilent.AgilentU254x.Interop.IAgilentU254xAnalogInChannels.get_Item(System.String)">
-      <summary>An interface reference pointer to the IAgilentU254xAnalogInChannel interface which is selected by the channel name.</summary>
-      <param name="Name">The name of a channel. It may be either a name returned by the Name property or a name mapped to a particular repeated capability in the session in the configuration store.</param>
-      <returns>An interface reference pointer to the IAgilentU254xAnalogInChannel interface which is selected by the channel name.</returns>
-    </member>
-    <member name="P:Agilent.AgilentU254x.Interop.IAgilentU254xAnalogInChannels.Name">
-      <summary>The channel name for a given index.</summary>
-    </member>
-    <member name="P:Agilent.AgilentU254x.Interop.IAgilentU254xAnalogInChannels.Name(System.Int32)">
-      <summary>The channel name for a given index.</summary>
-      <param name="Index">One based index into the collection of channels.</param>
-    </member>
-    <member name="M:Agilent.AgilentU254x.Interop.IAgilentU254xAnalogInChannels.get_Name(System.Int32)">
-      <summary>The channel name for a given index.</summary>
-      <param name="Index">One based index into the collection of channels.</param>
-      <returns>The channel name for a given index.</returns>
-    </member>
-    <member name="T:Agilent.AgilentU254x.Interop.IAgilentU254xAnalogInTrigger">
-      <summary>Agilent Analog trigger interface</summary>
-    </member>
-    <member name="P:Agilent.AgilentU254x.Interop.IAgilentU254xAnalogInTrigger.Mode">
-      <summary>trigger source for analog input.</summary>
-    </member>
-    <member name="P:Agilent.AgilentU254x.Interop.IAgilentU254xAnalogInTrigger.Reaction">
-      <summary>The reaction base on a trigger event.</summary>
-    </member>
-    <member name="P:Agilent.AgilentU254x.Interop.IAgilentU254xAnalogInTrigger.Edge">
-      <summary>The polarity for analog input.</summary>
-    </member>
-    <member name="P:Agilent.AgilentU254x.Interop.IAgilentU254xAnalogInTrigger.DelayCount">
-      <summary>The number of scan process to be delay after the trigger event.</summary>
-    </member>
-    <member name="P:Agilent.AgilentU254x.Interop.IAgilentU254xAnalogInTrigger.External">
-      <summary>Return a reference to the IAgilentU254xAnalogInExternalTrigger interface, which hold the external trigger capabilities, like high level, low level, source, type and etc.</summary>
-    </member>
-    <member name="T:Agilent.AgilentU254x.Interop.IAgilentU254xAnalogOutTrigger">
-      <summary>Agilent Analog output trigger interface</summary>
-    </member>
-    <member name="P:Agilent.AgilentU254x.Interop.IAgilentU254xAnalogOutTrigger.DelayCount">
-      <summary>The number of scan process to be delay after the trigger event.</summary>
-    </member>
-    <member name="P:Agilent.AgilentU254x.Interop.IAgilentU254xAnalogOutTrigger.External">
-      <summary>Return a reference to the IAgilentU254xAnalogOutExternalTrigger interface, which hold the external trigger capabilities, like high level, low level, source, type and etc.</summary>
-    </member>
-    <member name="P:Agilent.AgilentU254x.Interop.IAgilentU254xAnalogOutTrigger.Edge">
-      <summary>The polarity for analog output.</summary>
-    </member>
-    <member name="P:Agilent.AgilentU254x.Interop.IAgilentU254xAnalogOutTrigger.Reaction">
-      <summary>The reaction base on a trigger event.</summary>
-    </member>
-    <member name="P:Agilent.AgilentU254x.Interop.IAgilentU254xAnalogOutTrigger.Mode">
-      <summary>trigger source for analog output.</summary>
-    </member>
-    <member name="T:Agilent.AgilentU254x.Interop.IAgilentU254xAnalogOutExternalTrigger">
-      <summary>AgilentU254x external analog trigger interface</summary>
-    </member>
-    <member name="M:Agilent.AgilentU254x.Interop.IAgilentU254xAnalogOutExternalTrigger.ConfigureEdge(Agilent.AgilentU254x.Interop.AgilentU254xAnalogOutExternalTriggerTypeEnum,Agilent.AgilentU254x.Interop.AgilentU254xAnalogOutExternalTriggerSourceEnum,System.Double)">
-      <summary>Configure edge triggering.</summary>
-      <param name="Type">Select the edge trigger type, either below edge or above edge triggering, set to othe will return error.  Set to above edge triggering, the Level will apply to LevelHigh.  Set to below edge triggering, the Level will apply to LevelLow.</param>
-      <param name="Source">Select the trigger source.</param>
-      <param name="Level">The triggering level, depend on the trigger type, may apply to LevelLow or LevelHigh.</param>
-    </member>
-    <member name="M:Agilent.AgilentU254x.Interop.IAgilentU254xAnalogOutExternalTrigger.ConfigureHysteresis(Agilent.AgilentU254x.Interop.AgilentU254xAnalogOutExternalTriggerTypeEnum,Agilent.AgilentU254x.Interop.AgilentU254xAnalogOutExternalTriggerSourceEnum,System.Double,System.Double)">
-      <summary>Configure analog hysteresis triggering.</summary>
-      <param name="Type">Select the edge trigger type, either delow edge or above edge triggering.
+		</member>
+		<member name="P:Agilent.AgilentU254x.Interop.IAgilentU254xAnalogInChannel.Polarity">
+			<summary>The polarity of the analog input channel, either unipolar or bipolar.</summary>
+		</member>
+		<member name="P:Agilent.AgilentU254x.Interop.IAgilentU254xAnalogInChannel.Enabled">
+			<summary>Enabled or disabled input channel.</summary>
+		</member>
+		<member name="T:Agilent.AgilentU254x.Interop.IAgilentU254xAnalogInChannels">
+			<summary>AgilentU254x channel collection interface.</summary>
+		</member>
+		<member name="P:Agilent.AgilentU254x.Interop.IAgilentU254xAnalogInChannels.Count">
+			<summary>The number of channels.</summary>
+		</member>
+		<member name="P:Agilent.AgilentU254x.Interop.IAgilentU254xAnalogInChannels.Item(System.String)">
+			<summary>An interface reference pointer to the IAgilentU254xAnalogInChannel interface which is selected by the channel name.</summary>
+			<param name="Name">The name of a channel. It may be either a name returned by the Name property or a name mapped to a particular repeated capability in the session in the configuration store.</param>
+		</member>
+		<member name="M:Agilent.AgilentU254x.Interop.IAgilentU254xAnalogInChannels.get_Item(System.String)">
+			<summary>An interface reference pointer to the IAgilentU254xAnalogInChannel interface which is selected by the channel name.</summary>
+			<param name="Name">The name of a channel. It may be either a name returned by the Name property or a name mapped to a particular repeated capability in the session in the configuration store.</param>
+			<returns>An interface reference pointer to the IAgilentU254xAnalogInChannel interface which is selected by the channel name.</returns>
+		</member>
+		<member name="P:Agilent.AgilentU254x.Interop.IAgilentU254xAnalogInChannels.Name(System.Int32)">
+			<summary>The channel name for a given index.</summary>
+			<param name="Index">One based index into the collection of channels.</param>
+		</member>
+		<member name="M:Agilent.AgilentU254x.Interop.IAgilentU254xAnalogInChannels.get_Name(System.Int32)">
+			<summary>The channel name for a given index.</summary>
+			<param name="Index">One based index into the collection of channels.</param>
+			<returns>The channel name for a given index.</returns>
+		</member>
+		<member name="T:Agilent.AgilentU254x.Interop.IAgilentU254xAnalogInTrigger">
+			<summary>Agilent Analog trigger interface</summary>
+		</member>
+		<member name="P:Agilent.AgilentU254x.Interop.IAgilentU254xAnalogInTrigger.Mode">
+			<summary>trigger source for analog input.</summary>
+		</member>
+		<member name="P:Agilent.AgilentU254x.Interop.IAgilentU254xAnalogInTrigger.Reaction">
+			<summary>The reaction base on a trigger event.</summary>
+		</member>
+		<member name="P:Agilent.AgilentU254x.Interop.IAgilentU254xAnalogInTrigger.Edge">
+			<summary>The polarity for analog input.</summary>
+		</member>
+		<member name="P:Agilent.AgilentU254x.Interop.IAgilentU254xAnalogInTrigger.DelayCount">
+			<summary>The number of scan process to be delay after the trigger event.</summary>
+		</member>
+		<member name="P:Agilent.AgilentU254x.Interop.IAgilentU254xAnalogInTrigger.External">
+			<summary>Return a reference to the IAgilentU254xAnalogInExternalTrigger interface, which hold the external trigger capabilities, like high level, low level, source, type and etc.</summary>
+		</member>
+		<member name="T:Agilent.AgilentU254x.Interop.IAgilentU254xAnalogOutTrigger">
+			<summary>Agilent Analog output trigger interface</summary>
+		</member>
+		<member name="P:Agilent.AgilentU254x.Interop.IAgilentU254xAnalogOutTrigger.DelayCount">
+			<summary>The number of scan process to be delay after the trigger event.</summary>
+		</member>
+		<member name="P:Agilent.AgilentU254x.Interop.IAgilentU254xAnalogOutTrigger.External">
+			<summary>Return a reference to the IAgilentU254xAnalogOutExternalTrigger interface, which hold the external trigger capabilities, like high level, low level, source, type and etc.</summary>
+		</member>
+		<member name="P:Agilent.AgilentU254x.Interop.IAgilentU254xAnalogOutTrigger.Edge">
+			<summary>The polarity for analog output.</summary>
+		</member>
+		<member name="P:Agilent.AgilentU254x.Interop.IAgilentU254xAnalogOutTrigger.Reaction">
+			<summary>The reaction base on a trigger event.</summary>
+		</member>
+		<member name="P:Agilent.AgilentU254x.Interop.IAgilentU254xAnalogOutTrigger.Mode">
+			<summary>trigger source for analog output.</summary>
+		</member>
+		<member name="T:Agilent.AgilentU254x.Interop.IAgilentU254xAnalogOutExternalTrigger">
+			<summary>AgilentU254x external analog trigger interface</summary>
+		</member>
+		<member name="M:Agilent.AgilentU254x.Interop.IAgilentU254xAnalogOutExternalTrigger.ConfigureEdge(Agilent.AgilentU254x.Interop.AgilentU254xAnalogOutExternalTriggerTypeEnum,Agilent.AgilentU254x.Interop.AgilentU254xAnalogOutExternalTriggerSourceEnum,System.Double)">
+			<summary>Configure edge triggering.</summary>
+			<param name="Type">Select the edge trigger type, either below edge or above edge triggering, set to othe will return error.  Set to above edge triggering, the Level will apply to LevelHigh.  Set to below edge triggering, the Level will apply to LevelLow.</param>
+			<param name="Source">Select the trigger source.</param>
+			<param name="Level">The triggering level, depend on the trigger type, may apply to LevelLow or LevelHigh.</param>
+		</member>
+		<member name="M:Agilent.AgilentU254x.Interop.IAgilentU254xAnalogOutExternalTrigger.ConfigureHysteresis(Agilent.AgilentU254x.Interop.AgilentU254xAnalogOutExternalTriggerTypeEnum,Agilent.AgilentU254x.Interop.AgilentU254xAnalogOutExternalTriggerSourceEnum,System.Double,System.Double)">
+			<summary>Configure analog hysteresis triggering.</summary>
+			<param name="Type">Select the edge trigger type, either delow edge or above edge triggering.
       AgilentU254xAnalogTriggerTypeHighHysteresis
             Set to high hysteresis triggering.
       AgilentU254xAnalogTriggerTypeLowHysteresis
             Set to low hysteresis triggering.</param>
-      <param name="Source">Select the trigger source.</param>
-      <param name="LevelLow">The low level for hysteresis triggering.</param>
-      <param name="LevelHigh">The high level for hysteresis triggering.</param>
-    </member>
-    <member name="M:Agilent.AgilentU254x.Interop.IAgilentU254xAnalogOutExternalTrigger.ConfigureRegion(Agilent.AgilentU254x.Interop.AgilentU254xAnalogOutExternalTriggerSourceEnum,System.Double,System.Double)">
-      <summary>Configure analog region triggering.</summary>
-      <param name="Source">Select the trigger source.</param>
-      <param name="LevelLow">The low level of the region.</param>
-      <param name="LevelHigh">The high level of the region.</param>
-    </member>
-    <member name="P:Agilent.AgilentU254x.Interop.IAgilentU254xAnalogOutExternalTrigger.LevelHigh">
-      <summary>The high level.</summary>
-    </member>
-    <member name="P:Agilent.AgilentU254x.Interop.IAgilentU254xAnalogOutExternalTrigger.LevelLow">
-      <summary>The low level.</summary>
-    </member>
-    <member name="P:Agilent.AgilentU254x.Interop.IAgilentU254xAnalogOutExternalTrigger.Source">
-      <summary>The source of the analog trigger.</summary>
-    </member>
-    <member name="P:Agilent.AgilentU254x.Interop.IAgilentU254xAnalogOutExternalTrigger.Type">
-      <summary>Selection of the analog trigger type, either below edge, above edge, region, low hysteresis, and high hysteresis.</summary>
-    </member>
-    <member name="T:Agilent.AgilentU254x.Interop.AgilentU254x">
-      <summary>IVI AgilentU254x Instrument Driver.</summary>
-    </member>
-    <member name="T:Agilent.AgilentU254x.Interop.AgilentU254xCounter">
-      <summary>AgilentU254xCounter repeated capability class.</summary>
-    </member>
-    <member name="T:Agilent.AgilentU254x.Interop.AgilentU254xDigitalChannel">
-      <summary>AgilentU254xDigitalChannel repeated capability class.</summary>
-    </member>
-    <member name="T:Agilent.AgilentU254x.Interop.AgilentU254xAnalogInChannel">
-      <summary>AgilentU254xAnalogInChannel repeated capability class.</summary>
-    </member>
-    <member name="T:Agilent.AgilentU254x.Interop.AgilentU254xSRQReasonEnum">
-      <summary>Enumeration for the Reason parameter of the ConfigureServiceRequest method in the Status interface.</summary>
-    </member>
-    <member name="F:Agilent.AgilentU254x.Interop.AgilentU254xSRQReasonEnum.AgilentU254xSRQReasonStbMAV">
-      <summary>Message Available. Bit 4 in the status byte.</summary>
-    </member>
-    <member name="F:Agilent.AgilentU254x.Interop.AgilentU254xSRQReasonEnum.AgilentU254xSRQReasonStbErrorQueue">
-      <summary>Error/Event Queue Message Available. Bit 2 in the status byte.  The Error/Event queue may be read by the Utility.ErrorQuery method</summary>
-    </member>
-    <member name="F:Agilent.AgilentU254x.Interop.AgilentU254xSRQReasonEnum.AgilentU254xSRQReasonEsrOPC">
-      <summary>Operation Complete. Bit 0 of the standard event status register.</summary>
-    </member>
-    <member name="F:Agilent.AgilentU254x.Interop.AgilentU254xSRQReasonEnum.AgilentU254xSRQReasonEsrQueryError">
-      <summary>Query Error. Bit 2 of the standard event status register.</summary>
-    </member>
-    <member name="F:Agilent.AgilentU254x.Interop.AgilentU254xSRQReasonEnum.AgilentU254xSRQReasonEsrDeviceError">
-      <summary>Device Dependent Error.  Bit 3 of the standard event status register.</summary>
-    </member>
-    <member name="F:Agilent.AgilentU254x.Interop.AgilentU254xSRQReasonEnum.AgilentU254xSRQReasonEsrExecutionError">
-      <summary>Execution Error.  Bit 4 of the standard event status register.</summary>
-    </member>
-    <member name="F:Agilent.AgilentU254x.Interop.AgilentU254xSRQReasonEnum.AgilentU254xSRQReasonEsrCommandError">
-      <summary>Command Error.  Bit 5 of the standard event status register.</summary>
-    </member>
-    <member name="F:Agilent.AgilentU254x.Interop.AgilentU254xSRQReasonEnum.AgilentU254xSRQReasonEsrUserRequest">
-      <summary>User Request.  Bit 6 of the standard event status register.</summary>
-    </member>
-    <member name="F:Agilent.AgilentU254x.Interop.AgilentU254xSRQReasonEnum.AgilentU254xSRQReasonQuesVoltage">
-      <summary>Questionable Voltage. Bit 0 of the Questionable status register.</summary>
-    </member>
-    <member name="F:Agilent.AgilentU254x.Interop.AgilentU254xSRQReasonEnum.AgilentU254xSRQReasonQuesCurrent">
-      <summary>Questionable Current. Bit 1 of the Questionable status register.</summary>
-    </member>
-    <member name="F:Agilent.AgilentU254x.Interop.AgilentU254xSRQReasonEnum.AgilentU254xSRQReasonQuesTime">
-      <summary>Questionable Time. Bit 2 of the Questionable status register.</summary>
-    </member>
-    <member name="F:Agilent.AgilentU254x.Interop.AgilentU254xSRQReasonEnum.AgilentU254xSRQReasonQuesPower">
-      <summary>Questionable Power. Bit 3 of the Questionable status register.</summary>
-    </member>
-    <member name="F:Agilent.AgilentU254x.Interop.AgilentU254xSRQReasonEnum.AgilentU254xSRQReasonQuesTemperature">
-      <summary>Questionable Temperature. Bit 4 of the Questionable status register.</summary>
-    </member>
-    <member name="F:Agilent.AgilentU254x.Interop.AgilentU254xSRQReasonEnum.AgilentU254xSRQReasonQuesFrequency">
-      <summary>Questionable Frequency. Bit 5 of the Questionable status register.</summary>
-    </member>
-    <member name="F:Agilent.AgilentU254x.Interop.AgilentU254xSRQReasonEnum.AgilentU254xSRQReasonQuesPhase">
-      <summary>Questionable Phase. Bit 6 of the Questionable status register.</summary>
-    </member>
-    <member name="F:Agilent.AgilentU254x.Interop.AgilentU254xSRQReasonEnum.AgilentU254xSRQReasonQuesModulation">
-      <summary>Questionable Modulation. Bit 7 of the Questionable status register.</summary>
-    </member>
-    <member name="F:Agilent.AgilentU254x.Interop.AgilentU254xSRQReasonEnum.AgilentU254xSRQReasonQuesCalibration">
-      <summary>Questionable Calibration. Bit 8 of the Questionable status register.</summary>
-    </member>
-    <member name="F:Agilent.AgilentU254x.Interop.AgilentU254xSRQReasonEnum.AgilentU254xSRQReasonQuesInstrument">
-      <summary>Questionable Insturment Summary. Bit 13 of the Questionable status register.</summary>
-    </member>
-    <member name="T:Agilent.AgilentU254x.Interop.AgilentU254xStatusRegisterEnum">
-      <summary>Enumeration for the Register parameter of the Register property in the Status interface.</summary>
-    </member>
-    <member name="F:Agilent.AgilentU254x.Interop.AgilentU254xStatusRegisterEnum.AgilentU254xStatusRegisterStatusByte">
-      <summary>Status Byte register.  Conditions defined by IEEE 488.2.</summary>
-    </member>
-    <member name="F:Agilent.AgilentU254x.Interop.AgilentU254xStatusRegisterEnum.AgilentU254xStatusRegisterStandardEvent">
-      <summary>Standard Event Status register. Conditions defined by IEEE 488.2.</summary>
-    </member>
-    <member name="T:Agilent.AgilentU254x.Interop.AgilentU254xStatusSubRegisterEnum">
-      <summary>Enumeration for the SubRegister parameter of the Register property in the Status interface.</summary>
-    </member>
-    <member name="F:Agilent.AgilentU254x.Interop.AgilentU254xStatusSubRegisterEnum.AgilentU254xStatusSubRegisterCondition">
-      <summary>Conditions Register. Read only and not available with the Standard Event Status register.  Condition bits represent the current instrument state. Reading a condition register does not change the value of the bits.</summary>
-    </member>
-    <member name="F:Agilent.AgilentU254x.Interop.AgilentU254xStatusSubRegisterEnum.AgilentU254xStatusSubRegisterEnable">
-      <summary>Enable Register. Can be read or written and is available for all registers. Enable bits select whether an event bit causes a register summary bit, a kind of condition bit, to become true. Thus, an event can propagated to the status byte and finally to request service.  Though the bits in the status byte are not technically event bits, the status byte enable register selects which bits in the status byte cause a service request.</summary>
-    </member>
-    <member name="T:Agilent.AgilentU254x.Interop.AgilentU254xAnalogPolarityEnum">
-      <summary>AgilenU254x instrument-specific values for the analog channel polarity setting.</summary>
-    </member>
-    <member name="F:Agilent.AgilentU254x.Interop.AgilentU254xAnalogPolarityEnum.AgilentU254xAnalogPolarityUnipolar">
-      <summary>The analog channel range is from 0 until the positive value.</summary>
-    </member>
-    <member name="F:Agilent.AgilentU254x.Interop.AgilentU254xAnalogPolarityEnum.AgilentU254xAnalogPolarityBipolar">
-      <summary>The channel range is between positive and negative of the value.</summary>
-    </member>
-    <member name="T:Agilent.AgilentU254x.Interop.AgilentU254xDataAlignmentEnum">
-      <summary>AgilentU254x instrument-specific values for the internal data alignment.</summary>
-    </member>
-    <member name="F:Agilent.AgilentU254x.Interop.AgilentU254xDataAlignmentEnum.AgilentU254xDataAlignmentLittleEndianLSB">
-      <summary>Align the data in the format of little endian and least significant bit.</summary>
-    </member>
-    <member name="F:Agilent.AgilentU254x.Interop.AgilentU254xDataAlignmentEnum.AgilentU254xDataAlignmentLittleEndianMSB">
-      <summary>Align the data in the format of little endian and most significant bit.</summary>
-    </member>
-    <member name="F:Agilent.AgilentU254x.Interop.AgilentU254xDataAlignmentEnum.AgilentU254xDataAlignmentBigEndianLSB">
-      <summary>Align the data in the format of big endian and least significant bit.</summary>
-    </member>
-    <member name="F:Agilent.AgilentU254x.Interop.AgilentU254xDataAlignmentEnum.AgilentU254xDataAlignmentBigEndianMSB">
-      <summary>Align the data in the format of big endian and most significant bit.</summary>
-    </member>
-    <member name="T:Agilent.AgilentU254x.Interop.AgilentU254xDataTypeEnum">
-      <summary>AgilentU254x instrument-specific values for the internal data type.</summary>
-    </member>
-    <member name="F:Agilent.AgilentU254x.Interop.AgilentU254xDataTypeEnum.AgilentU254xDataTypeSignedInteger">
-      <summary>Signed integer data type.</summary>
-    </member>
-    <member name="F:Agilent.AgilentU254x.Interop.AgilentU254xDataTypeEnum.AgilentU254xDataTypeUnsignedInteger">
-      <summary>Unsigned integer data type.</summary>
-    </member>
-    <member name="F:Agilent.AgilentU254x.Interop.AgilentU254xDataTypeEnum.AgilentU254xDataTypeFloat">
-      <summary>Float data type.</summary>
-    </member>
-    <member name="T:Agilent.AgilentU254x.Interop.AgilentU254xBufferStatusEnum">
-      <summary>AgilentU254x instrument-specific values for the buffer status parameter of analog continuous acquisition .</summary>
-    </member>
-    <member name="F:Agilent.AgilentU254x.Interop.AgilentU254xBufferStatusEnum.AgilentU254xBufferStatusEmpty">
-      <summary>Sample data buffer is empty.</summary>
-    </member>
-    <member name="F:Agilent.AgilentU254x.Interop.AgilentU254xBufferStatusEnum.AgilentU254xBufferStatusDataReady">
-      <summary>Sample data is ready.</summary>
-    </member>
-    <member name="F:Agilent.AgilentU254x.Interop.AgilentU254xBufferStatusEnum.AgilentU254xBufferStatusOverRun">
-      <summary>Sample data buffer is over run.</summary>
-    </member>
-    <member name="F:Agilent.AgilentU254x.Interop.AgilentU254xBufferStatusEnum.AgilentU254xBufferStatusFragment">
-      <summary>Data capturing, not a complete block unit.</summary>
-    </member>
-    <member name="T:Agilent.AgilentU254x.Interop.AgilentU254xAnalogInTriggerModeEnum">
-      <summary>AgilentU254x instrument-specific values for the analog input triger mode.</summary>
-    </member>
-    <member name="F:Agilent.AgilentU254x.Interop.AgilentU254xAnalogInTriggerModeEnum.AgilentU254xAnalogInTriggerModeNone">
-      <summary>No triggering.  The operation start immediately.</summary>
-    </member>
-    <member name="F:Agilent.AgilentU254x.Interop.AgilentU254xAnalogInTriggerModeEnum.AgilentU254xAnalogInTriggerModeDigital">
-      <summary>Trigger once the digital source is chosen.</summary>
-    </member>
-    <member name="F:Agilent.AgilentU254x.Interop.AgilentU254xAnalogInTriggerModeEnum.AgilentU254xAnalogInTriggerModeAnalog">
-      <summary>Use the analog trigger.</summary>
-    </member>
-    <member name="F:Agilent.AgilentU254x.Interop.AgilentU254xAnalogInTriggerModeEnum.AgilentU254xAnalogInTriggerModeCardCage">
-      <summary>Use external trigger from cardcage.</summary>
-    </member>
-    <member name="T:Agilent.AgilentU254x.Interop.AgilentU254xAnalogInTriggerReactionEnum">
-      <summary>AgilentU254x instrument-specific values for the trigger reaction for the operation of analog input and analog output.</summary>
-    </member>
-    <member name="F:Agilent.AgilentU254x.Interop.AgilentU254xAnalogInTriggerReactionEnum.AgilentU254xAnalogInTriggerReactionPostStart">
-      <summary>Configure the operation to start imediately when a trigger event happen.</summary>
-    </member>
-    <member name="F:Agilent.AgilentU254x.Interop.AgilentU254xAnalogInTriggerReactionEnum.AgilentU254xAnalogInTriggerReactionPreStart">
-      <summary>Configure the operation to begin before the triggering happen, which will performs the processes before the trigger event.  Only apply to analog input.</summary>
-    </member>
-    <member name="F:Agilent.AgilentU254x.Interop.AgilentU254xAnalogInTriggerReactionEnum.AgilentU254xAnalogInTriggerReactionDelayStart">
-      <summary>Configure the operation to delay for a specified number of processes (CountDelay) after the triggering happen.</summary>
-    </member>
-    <member name="F:Agilent.AgilentU254x.Interop.AgilentU254xAnalogInTriggerReactionEnum.AgilentU254xAnalogInTriggerReactionMiddleStart">
-      <summary>Configure the operation to begin before the triggering happen and finish after the trigger event, which will performs the acquisition before the trigger event.  Only apply to analog input.</summary>
-    </member>
-    <member name="T:Agilent.AgilentU254x.Interop.AgilentU254xOutputReferenceEnum">
-      <summary>AgilentU254x instrument-specific values for the analog output channel voltage reference source.</summary>
-    </member>
-    <member name="F:Agilent.AgilentU254x.Interop.AgilentU254xOutputReferenceEnum.AgilentU254xOutputReferenceInternal">
-      <summary>Use internal reference source (10V).</summary>
-    </member>
-    <member name="F:Agilent.AgilentU254x.Interop.AgilentU254xOutputReferenceEnum.AgilentU254xOutputReferenceExternal">
-      <summary>Use external reference source.</summary>
-    </member>
-    <member name="T:Agilent.AgilentU254x.Interop.AgilentU254xAnalogOutModeEnum">
-      <summary>AgilentU254x instrument-specific values for the mode of analog output generation.</summary>
-    </member>
-    <member name="F:Agilent.AgilentU254x.Interop.AgilentU254xAnalogOutModeEnum.AgilentU254xAnalogOutModeArbitrary">
-      <summary>Analog output generate arbitrary waveform.</summary>
-    </member>
-    <member name="F:Agilent.AgilentU254x.Interop.AgilentU254xAnalogOutModeEnum.AgilentU254xAnalogOutModeWaveform">
-      <summary>Analog output generate standard waveform.</summary>
-    </member>
-    <member name="T:Agilent.AgilentU254x.Interop.AgilentU254xWaveformEnum">
-      <summary>AgilentU254x instrument-specific values for the analog output standard waveform.</summary>
-    </member>
-    <member name="F:Agilent.AgilentU254x.Interop.AgilentU254xWaveformEnum.AgilentU254xWaveformSine">
-      <summary>Configures the DAQ to produce a sinusoid waveform.</summary>
-    </member>
-    <member name="F:Agilent.AgilentU254x.Interop.AgilentU254xWaveformEnum.AgilentU254xWaveformSquare">
-      <summary>Configures the DAQ to produce a square waveform</summary>
-    </member>
-    <member name="F:Agilent.AgilentU254x.Interop.AgilentU254xWaveformEnum.AgilentU254xWaveformSawtooth">
-      <summary>Configures the DAQ to produce a sawtooth waveform</summary>
-    </member>
-    <member name="F:Agilent.AgilentU254x.Interop.AgilentU254xWaveformEnum.AgilentU254xWaveformTriangle">
-      <summary>Configures the DAQ to produce a triangular waveform</summary>
-    </member>
-    <member name="F:Agilent.AgilentU254x.Interop.AgilentU254xWaveformEnum.AgilentU254xWaveformNoise">
-      <summary>Configures the DAQ to produce a noise waveform</summary>
-    </member>
-    <member name="T:Agilent.AgilentU254x.Interop.AgilentU254xAnalogInExternalTriggerTypeEnum">
-      <summary>AgilentU254x instrument-specific values for the analog triger type.</summary>
-    </member>
-    <member name="F:Agilent.AgilentU254x.Interop.AgilentU254xAnalogInExternalTriggerTypeEnum.AgilentU254xAnalogInExternalTriggerTypeAboveEdge">
-      <summary>Analog above edge triggerreing.</summary>
-    </member>
-    <member name="F:Agilent.AgilentU254x.Interop.AgilentU254xAnalogInExternalTriggerTypeEnum.AgilentU254xAnalogInExternalTriggerTypeBelowEdge">
-      <summary>Analog below edge triggerreing.</summary>
-    </member>
-    <member name="F:Agilent.AgilentU254x.Interop.AgilentU254xAnalogInExternalTriggerTypeEnum.AgilentU254xAnalogInExternalTriggerTypeRegion">
-      <summary>Analog region triggerreing.</summary>
-    </member>
-    <member name="F:Agilent.AgilentU254x.Interop.AgilentU254xAnalogInExternalTriggerTypeEnum.AgilentU254xAnalogInExternalTriggerTypeHighHysteresis">
-      <summary>Analog high hysteresis triggerreing.</summary>
-    </member>
-    <member name="F:Agilent.AgilentU254x.Interop.AgilentU254xAnalogInExternalTriggerTypeEnum.AgilentU254xAnalogInExternalTriggerTypeLowHysteresis">
-      <summary>Analog low hysteresis triggerreing.</summary>
-    </member>
-    <member name="T:Agilent.AgilentU254x.Interop.AgilentU254xAnalogInExternalTriggerSourceEnum">
-      <summary>AgilentU254x instrument-specific values for the analog trigger source setting.</summary>
-    </member>
-    <member name="F:Agilent.AgilentU254x.Interop.AgilentU254xAnalogInExternalTriggerSourceEnum.AgilentU254xAnalogInExternalTriggerSourceExternal">
-      <summary>Use the external analog pin as trigger source.</summary>
-    </member>
-    <member name="F:Agilent.AgilentU254x.Interop.AgilentU254xAnalogInExternalTriggerSourceEnum.AgilentU254xAnalogInExternalTriggerSourceChannel1">
-      <summary>use Channel 101 as trigger source.</summary>
-    </member>
-    <member name="F:Agilent.AgilentU254x.Interop.AgilentU254xAnalogInExternalTriggerSourceEnum.AgilentU254xAnalogInExternalTriggerSourceChannel2">
-      <summary>use Channel 102 as trigger source.</summary>
-    </member>
-    <member name="F:Agilent.AgilentU254x.Interop.AgilentU254xAnalogInExternalTriggerSourceEnum.AgilentU254xAnalogInExternalTriggerSourceChannel3">
-      <summary>use Channel 103 as trigger source.</summary>
-    </member>
-    <member name="F:Agilent.AgilentU254x.Interop.AgilentU254xAnalogInExternalTriggerSourceEnum.AgilentU254xAnalogInExternalTriggerSourceChannel4">
-      <summary>use Channel 104 as trigger source.</summary>
-    </member>
-    <member name="T:Agilent.AgilentU254x.Interop.AgilentU254xCounterGatePolarityEnum">
-      <summary>AgilentU254x instrument-specific values for the digital signal polarity setting.</summary>
-    </member>
-    <member name="F:Agilent.AgilentU254x.Interop.AgilentU254xCounterGatePolarityEnum.AgilentU254xCounterGatePolarityActiveHigh">
-      <summary>Positive or active high.</summary>
-    </member>
-    <member name="F:Agilent.AgilentU254x.Interop.AgilentU254xCounterGatePolarityEnum.AgilentU254xCounterGatePolarityActiveLow">
-      <summary>Negative or active low.</summary>
-    </member>
-    <member name="T:Agilent.AgilentU254x.Interop.AgilentU254xDigitalChannelDirectionEnum">
-      <summary>AgilentU254x instrument-specific values for the digital channel direction.</summary>
-    </member>
-    <member name="F:Agilent.AgilentU254x.Interop.AgilentU254xDigitalChannelDirectionEnum.AgilentU254xDigitalChannelDirectionIn">
-      <summary>Set the digital channel for input.</summary>
-    </member>
-    <member name="F:Agilent.AgilentU254x.Interop.AgilentU254xDigitalChannelDirectionEnum.AgilentU254xDigitalChannelDirectionOut">
-      <summary>Specify the digital channel for output.</summary>
-    </member>
-    <member name="T:Agilent.AgilentU254x.Interop.AgilentU254xClockSourceEnum">
-      <summary>AgilentU254x instrument-specific values for which the clock source that the instrument subsystem should use.</summary>
-    </member>
-    <member name="F:Agilent.AgilentU254x.Interop.AgilentU254xClockSourceEnum.AgilentU254xClockSourceInternal">
-      <summary>Use internal clock source.</summary>
-    </member>
-    <member name="F:Agilent.AgilentU254x.Interop.AgilentU254xClockSourceEnum.AgilentU254xClockSourceExternal">
-      <summary>Use external clock source.</summary>
-    </member>
-    <member name="T:Agilent.AgilentU254x.Interop.AgilentU254xCounterGateSourceEnum">
-      <summary>AgilentDAQ instrument-specific values for the counter's gate source.</summary>
-    </member>
-    <member name="F:Agilent.AgilentU254x.Interop.AgilentU254xCounterGateSourceEnum.AgilentU254xCounterGateSourceInternal">
-      <summary>Use internal gate source.</summary>
-    </member>
-    <member name="F:Agilent.AgilentU254x.Interop.AgilentU254xCounterGateSourceEnum.AgilentU254xCounterGateSourceExternal">
-      <summary>Use external gate source.</summary>
-    </member>
-    <member name="T:Agilent.AgilentU254x.Interop.AgilentU254xCounterMeasurementEnum">
-      <summary>AgilentU254x instrument-specific values for the counter's measurement functions.</summary>
-    </member>
-    <member name="F:Agilent.AgilentU254x.Interop.AgilentU254xCounterMeasurementEnum.AgilentU254xCounterMeasurementFrequency">
-      <summary>Measure the frequency.</summary>
-    </member>
-    <member name="F:Agilent.AgilentU254x.Interop.AgilentU254xCounterMeasurementEnum.AgilentU254xCounterMeasurementPeriod">
-      <summary>Measure the period.</summary>
-    </member>
-    <member name="F:Agilent.AgilentU254x.Interop.AgilentU254xCounterMeasurementEnum.AgilentU254xCounterMeasurementPulseWidth">
-      <summary>Measure the pulse width.</summary>
-    </member>
-    <member name="F:Agilent.AgilentU254x.Interop.AgilentU254xCounterMeasurementEnum.AgilentU254xCounterMeasurementCount">
-      <summary>Measure the totalizer's count.</summary>
-    </member>
-    <member name="T:Agilent.AgilentU254x.Interop.AgilentU254xTotalizerDirectionEnum">
-      <summary>AgilentU254x instrument-specific values for the counter's totalizer direction.</summary>
-    </member>
-    <member name="F:Agilent.AgilentU254x.Interop.AgilentU254xTotalizerDirectionEnum.AgilentU254xTotalizerDirectionIncrement">
-      <summary>Increase the totalizer's count.</summary>
-    </member>
-    <member name="F:Agilent.AgilentU254x.Interop.AgilentU254xTotalizerDirectionEnum.AgilentU254xTotalizerDirectionDecrement">
-      <summary>Decrease the totalizer's count.</summary>
-    </member>
-    <member name="T:Agilent.AgilentU254x.Interop.AgilentU254xTotalizerSourceEnum">
-      <summary>AgilentU254x instrument-specific values for the counter's totalizer source.</summary>
-    </member>
-    <member name="F:Agilent.AgilentU254x.Interop.AgilentU254xTotalizerSourceEnum.AgilentU254xTotalizerSourceInternal">
-      <summary>Use internal source.</summary>
-    </member>
-    <member name="F:Agilent.AgilentU254x.Interop.AgilentU254xTotalizerSourceEnum.AgilentU254xTotalizerSourceExternal">
-      <summary>Use external source.</summary>
-    </member>
-    <member name="T:Agilent.AgilentU254x.Interop.AgilentU254xAnalogInTriggerEdgeEnum">
-      <summary>AgilentU254x instrument-specific values for the analog triger polarity.</summary>
-    </member>
-    <member name="F:Agilent.AgilentU254x.Interop.AgilentU254xAnalogInTriggerEdgeEnum.AgilentU254xAnalogInTriggerEdgePositive">
-      <summary>Trigger once the digital source signal turn to positive.</summary>
-    </member>
-    <member name="F:Agilent.AgilentU254x.Interop.AgilentU254xAnalogInTriggerEdgeEnum.AgilentU254xAnalogInTriggerEdgeNegative">
-      <summary>Trigger once the digital source signal turn to negative.</summary>
-    </member>
-    <member name="T:Agilent.AgilentU254x.Interop.AgilentU254xAnalogOutExternalTriggerSourceEnum">
-      <summary>AgilentU254x instrument-specific values for the analog trigger source setting.</summary>
-    </member>
-    <member name="F:Agilent.AgilentU254x.Interop.AgilentU254xAnalogOutExternalTriggerSourceEnum.AgilentU254xAnalogOutExternalTriggerSourceExternal">
-      <summary>Use the external analog pin as trigger source.</summary>
-    </member>
-    <member name="F:Agilent.AgilentU254x.Interop.AgilentU254xAnalogOutExternalTriggerSourceEnum.AgilentU254xAnalogOutExternalTriggerSourceChannel1">
-      <summary>use Channel 101 as trigger source.</summary>
-    </member>
-    <member name="F:Agilent.AgilentU254x.Interop.AgilentU254xAnalogOutExternalTriggerSourceEnum.AgilentU254xAnalogOutExternalTriggerSourceChannel2">
-      <summary>use Channel 102 as trigger source.</summary>
-    </member>
-    <member name="F:Agilent.AgilentU254x.Interop.AgilentU254xAnalogOutExternalTriggerSourceEnum.AgilentU254xAnalogOutExternalTriggerSourceChannel3">
-      <summary>use Channel 103 as trigger source.</summary>
-    </member>
-    <member name="F:Agilent.AgilentU254x.Interop.AgilentU254xAnalogOutExternalTriggerSourceEnum.AgilentU254xAnalogOutExternalTriggerSourceChannel4">
-      <summary>use Channel 104 as trigger source.</summary>
-    </member>
-    <member name="T:Agilent.AgilentU254x.Interop.AgilentU254xAnalogOutExternalTriggerTypeEnum">
-      <summary>AgilentU254x instrument-specific values for the analog triger type.</summary>
-    </member>
-    <member name="F:Agilent.AgilentU254x.Interop.AgilentU254xAnalogOutExternalTriggerTypeEnum.AgilentU254xAnalogOutExternalTriggerTypeAboveEdge">
-      <summary>Analog above edge triggerreing.</summary>
-    </member>
-    <member name="F:Agilent.AgilentU254x.Interop.AgilentU254xAnalogOutExternalTriggerTypeEnum.AgilentU254xAnalogOutExternalTriggerTypeBelowEdge">
-      <summary>Analog below edge triggerreing.</summary>
-    </member>
-    <member name="F:Agilent.AgilentU254x.Interop.AgilentU254xAnalogOutExternalTriggerTypeEnum.AgilentU254xAnalogOutExternalTriggerTypeRegion">
-      <summary>Analog region triggerreing.</summary>
-    </member>
-    <member name="F:Agilent.AgilentU254x.Interop.AgilentU254xAnalogOutExternalTriggerTypeEnum.AgilentU254xAnalogOutExternalTriggerTypeHighHysteresis">
-      <summary>Analog high hysteresis triggerreing.</summary>
-    </member>
-    <member name="F:Agilent.AgilentU254x.Interop.AgilentU254xAnalogOutExternalTriggerTypeEnum.AgilentU254xAnalogOutExternalTriggerTypeLowHysteresis">
-      <summary>Analog low hysteresis triggerreing.</summary>
-    </member>
-    <member name="T:Agilent.AgilentU254x.Interop.AgilentU254xAnalogOutTriggerEdgeEnum">
-      <summary>AgilentU254x instrument-specific values for the analog triger polarity.</summary>
-    </member>
-    <member name="F:Agilent.AgilentU254x.Interop.AgilentU254xAnalogOutTriggerEdgeEnum.AgilentU254xAnalogOutTriggerEdgePositive">
-      <summary>Trigger once the digital source signal turn to positive.</summary>
-    </member>
-    <member name="F:Agilent.AgilentU254x.Interop.AgilentU254xAnalogOutTriggerEdgeEnum.AgilentU254xAnalogOutTriggerEdgeNegative">
-      <summary>Trigger once the digital source signal turn to negative.</summary>
-    </member>
-    <member name="T:Agilent.AgilentU254x.Interop.AgilentU254xAnalogOutTriggerReactionEnum">
-      <summary>AgilentU254x instrument-specific values for the trigger reaction for the operation of analog output.</summary>
-    </member>
-    <member name="F:Agilent.AgilentU254x.Interop.AgilentU254xAnalogOutTriggerReactionEnum.AgilentU254xAnalogOutTriggerReactionPostStart">
-      <summary>Configure the operation to start imediately when a trigger event happen.</summary>
-    </member>
-    <member name="F:Agilent.AgilentU254x.Interop.AgilentU254xAnalogOutTriggerReactionEnum.AgilentU254xAnalogOutTriggerReactionDelayStart">
-      <summary>Configure the operation to delay for a specified number of processes (CountDelay) after the triggering happen.</summary>
-    </member>
-    <member name="T:Agilent.AgilentU254x.Interop.AgilentU254xAnalogOutTriggerModeEnum">
-      <summary>AgilentU254x instrument-specific values for the analog output triger mode.</summary>
-    </member>
-    <member name="F:Agilent.AgilentU254x.Interop.AgilentU254xAnalogOutTriggerModeEnum.AgilentU254xAnalogOutTriggerModeNone">
-      <summary>No triggering.  The operation start immediately.</summary>
-    </member>
-    <member name="F:Agilent.AgilentU254x.Interop.AgilentU254xAnalogOutTriggerModeEnum.AgilentU254xAnalogOutTriggerModeDigital">
-      <summary>Trigger once the digital source is chosen.</summary>
-    </member>
-    <member name="F:Agilent.AgilentU254x.Interop.AgilentU254xAnalogOutTriggerModeEnum.AgilentU254xAnalogOutTriggerModeAnalog">
-      <summary>Use the analog trigger.</summary>
-    </member>
-    <member name="F:Agilent.AgilentU254x.Interop.AgilentU254xAnalogOutTriggerModeEnum.AgilentU254xAnalogOutTriggerModeCardcage">
-      <summary>Use external trigger from cardcage.</summary>
-    </member>
-    <member name="T:Agilent.AgilentU254x.Interop.AgilentU254xSynchronizationStatusEnum">
-      <summary>AgilentU254x instrument-specific values for the system synchoronization interface (SSI) mode.</summary>
-    </member>
-    <member name="F:Agilent.AgilentU254x.Interop.AgilentU254xSynchronizationStatusEnum.AgilentU254xSynchronizationStatusNone">
-      <summary>No triggering happen.</summary>
-    </member>
-    <member name="F:Agilent.AgilentU254x.Interop.AgilentU254xSynchronizationStatusEnum.AgilentU254xSynchronizationStatusMaster">
-      <summary>To function as SSI master triggering source.</summary>
-    </member>
-    <member name="F:Agilent.AgilentU254x.Interop.AgilentU254xSynchronizationStatusEnum.AgilentU254xSynchronizationStatusSlave">
-      <summary>to receive trigger source from master.</summary>
-    </member>
-  </members>
+			<param name="Source">Select the trigger source.</param>
+			<param name="LevelLow">The low level for hysteresis triggering.</param>
+			<param name="LevelHigh">The high level for hysteresis triggering.</param>
+		</member>
+		<member name="M:Agilent.AgilentU254x.Interop.IAgilentU254xAnalogOutExternalTrigger.ConfigureRegion(Agilent.AgilentU254x.Interop.AgilentU254xAnalogOutExternalTriggerSourceEnum,System.Double,System.Double)">
+			<summary>Configure analog region triggering.</summary>
+			<param name="Source">Select the trigger source.</param>
+			<param name="LevelLow">The low level of the region.</param>
+			<param name="LevelHigh">The high level of the region.</param>
+		</member>
+		<member name="P:Agilent.AgilentU254x.Interop.IAgilentU254xAnalogOutExternalTrigger.LevelHigh">
+			<summary>The high level.</summary>
+		</member>
+		<member name="P:Agilent.AgilentU254x.Interop.IAgilentU254xAnalogOutExternalTrigger.LevelLow">
+			<summary>The low level.</summary>
+		</member>
+		<member name="P:Agilent.AgilentU254x.Interop.IAgilentU254xAnalogOutExternalTrigger.Source">
+			<summary>The source of the analog trigger.</summary>
+		</member>
+		<member name="P:Agilent.AgilentU254x.Interop.IAgilentU254xAnalogOutExternalTrigger.Type">
+			<summary>Selection of the analog trigger type, either below edge, above edge, region, low hysteresis, and high hysteresis.</summary>
+		</member>
+		<member name="T:Agilent.AgilentU254x.Interop.AgilentU254xSRQReasonEnum">
+			<summary>Enumeration for the Reason parameter of the ConfigureServiceRequest method in the Status interface.</summary>
+		</member>
+		<member name="F:Agilent.AgilentU254x.Interop.AgilentU254xSRQReasonEnum.AgilentU254xSRQReasonStbMAV">
+			<summary>Message Available. Bit 4 in the status byte.</summary>
+		</member>
+		<member name="F:Agilent.AgilentU254x.Interop.AgilentU254xSRQReasonEnum.AgilentU254xSRQReasonStbErrorQueue">
+			<summary>Error/Event Queue Message Available. Bit 2 in the status byte.  The Error/Event queue may be read by the Utility.ErrorQuery method</summary>
+		</member>
+		<member name="F:Agilent.AgilentU254x.Interop.AgilentU254xSRQReasonEnum.AgilentU254xSRQReasonEsrOPC">
+			<summary>Operation Complete. Bit 0 of the standard event status register.</summary>
+		</member>
+		<member name="F:Agilent.AgilentU254x.Interop.AgilentU254xSRQReasonEnum.AgilentU254xSRQReasonEsrQueryError">
+			<summary>Query Error. Bit 2 of the standard event status register.</summary>
+		</member>
+		<member name="F:Agilent.AgilentU254x.Interop.AgilentU254xSRQReasonEnum.AgilentU254xSRQReasonEsrDeviceError">
+			<summary>Device Dependent Error.  Bit 3 of the standard event status register.</summary>
+		</member>
+		<member name="F:Agilent.AgilentU254x.Interop.AgilentU254xSRQReasonEnum.AgilentU254xSRQReasonEsrExecutionError">
+			<summary>Execution Error.  Bit 4 of the standard event status register.</summary>
+		</member>
+		<member name="F:Agilent.AgilentU254x.Interop.AgilentU254xSRQReasonEnum.AgilentU254xSRQReasonEsrCommandError">
+			<summary>Command Error.  Bit 5 of the standard event status register.</summary>
+		</member>
+		<member name="F:Agilent.AgilentU254x.Interop.AgilentU254xSRQReasonEnum.AgilentU254xSRQReasonEsrUserRequest">
+			<summary>User Request.  Bit 6 of the standard event status register.</summary>
+		</member>
+		<member name="F:Agilent.AgilentU254x.Interop.AgilentU254xSRQReasonEnum.AgilentU254xSRQReasonQuesVoltage">
+			<summary>Questionable Voltage. Bit 0 of the Questionable status register.</summary>
+		</member>
+		<member name="F:Agilent.AgilentU254x.Interop.AgilentU254xSRQReasonEnum.AgilentU254xSRQReasonQuesCurrent">
+			<summary>Questionable Current. Bit 1 of the Questionable status register.</summary>
+		</member>
+		<member name="F:Agilent.AgilentU254x.Interop.AgilentU254xSRQReasonEnum.AgilentU254xSRQReasonQuesTime">
+			<summary>Questionable Time. Bit 2 of the Questionable status register.</summary>
+		</member>
+		<member name="F:Agilent.AgilentU254x.Interop.AgilentU254xSRQReasonEnum.AgilentU254xSRQReasonQuesPower">
+			<summary>Questionable Power. Bit 3 of the Questionable status register.</summary>
+		</member>
+		<member name="F:Agilent.AgilentU254x.Interop.AgilentU254xSRQReasonEnum.AgilentU254xSRQReasonQuesTemperature">
+			<summary>Questionable Temperature. Bit 4 of the Questionable status register.</summary>
+		</member>
+		<member name="F:Agilent.AgilentU254x.Interop.AgilentU254xSRQReasonEnum.AgilentU254xSRQReasonQuesFrequency">
+			<summary>Questionable Frequency. Bit 5 of the Questionable status register.</summary>
+		</member>
+		<member name="F:Agilent.AgilentU254x.Interop.AgilentU254xSRQReasonEnum.AgilentU254xSRQReasonQuesPhase">
+			<summary>Questionable Phase. Bit 6 of the Questionable status register.</summary>
+		</member>
+		<member name="F:Agilent.AgilentU254x.Interop.AgilentU254xSRQReasonEnum.AgilentU254xSRQReasonQuesModulation">
+			<summary>Questionable Modulation. Bit 7 of the Questionable status register.</summary>
+		</member>
+		<member name="F:Agilent.AgilentU254x.Interop.AgilentU254xSRQReasonEnum.AgilentU254xSRQReasonQuesCalibration">
+			<summary>Questionable Calibration. Bit 8 of the Questionable status register.</summary>
+		</member>
+		<member name="F:Agilent.AgilentU254x.Interop.AgilentU254xSRQReasonEnum.AgilentU254xSRQReasonQuesInstrument">
+			<summary>Questionable Insturment Summary. Bit 13 of the Questionable status register.</summary>
+		</member>
+		<member name="T:Agilent.AgilentU254x.Interop.AgilentU254xStatusRegisterEnum">
+			<summary>Enumeration for the Register parameter of the Register property in the Status interface.</summary>
+		</member>
+		<member name="F:Agilent.AgilentU254x.Interop.AgilentU254xStatusRegisterEnum.AgilentU254xStatusRegisterStatusByte">
+			<summary>Status Byte register.  Conditions defined by IEEE 488.2.</summary>
+		</member>
+		<member name="F:Agilent.AgilentU254x.Interop.AgilentU254xStatusRegisterEnum.AgilentU254xStatusRegisterStandardEvent">
+			<summary>Standard Event Status register. Conditions defined by IEEE 488.2.</summary>
+		</member>
+		<member name="T:Agilent.AgilentU254x.Interop.AgilentU254xStatusSubRegisterEnum">
+			<summary>Enumeration for the SubRegister parameter of the Register property in the Status interface.</summary>
+		</member>
+		<member name="F:Agilent.AgilentU254x.Interop.AgilentU254xStatusSubRegisterEnum.AgilentU254xStatusSubRegisterCondition">
+			<summary>Conditions Register. Read only and not available with the Standard Event Status register.  Condition bits represent the current instrument state. Reading a condition register does not change the value of the bits.</summary>
+		</member>
+		<member name="F:Agilent.AgilentU254x.Interop.AgilentU254xStatusSubRegisterEnum.AgilentU254xStatusSubRegisterEnable">
+			<summary>Enable Register. Can be read or written and is available for all registers. Enable bits select whether an event bit causes a register summary bit, a kind of condition bit, to become true. Thus, an event can propagated to the status byte and finally to request service.  Though the bits in the status byte are not technically event bits, the status byte enable register selects which bits in the status byte cause a service request.</summary>
+		</member>
+		<member name="T:Agilent.AgilentU254x.Interop.AgilentU254xAnalogPolarityEnum">
+			<summary>AgilenU254x instrument-specific values for the analog channel polarity setting.</summary>
+		</member>
+		<member name="F:Agilent.AgilentU254x.Interop.AgilentU254xAnalogPolarityEnum.AgilentU254xAnalogPolarityUnipolar">
+			<summary>The analog channel range is from 0 until the positive value.</summary>
+		</member>
+		<member name="F:Agilent.AgilentU254x.Interop.AgilentU254xAnalogPolarityEnum.AgilentU254xAnalogPolarityBipolar">
+			<summary>The channel range is between positive and negative of the value.</summary>
+		</member>
+		<member name="T:Agilent.AgilentU254x.Interop.AgilentU254xDataAlignmentEnum">
+			<summary>AgilentU254x instrument-specific values for the internal data alignment.</summary>
+		</member>
+		<member name="F:Agilent.AgilentU254x.Interop.AgilentU254xDataAlignmentEnum.AgilentU254xDataAlignmentLittleEndianLSB">
+			<summary>Align the data in the format of little endian and least significant bit.</summary>
+		</member>
+		<member name="F:Agilent.AgilentU254x.Interop.AgilentU254xDataAlignmentEnum.AgilentU254xDataAlignmentLittleEndianMSB">
+			<summary>Align the data in the format of little endian and most significant bit.</summary>
+		</member>
+		<member name="F:Agilent.AgilentU254x.Interop.AgilentU254xDataAlignmentEnum.AgilentU254xDataAlignmentBigEndianLSB">
+			<summary>Align the data in the format of big endian and least significant bit.</summary>
+		</member>
+		<member name="F:Agilent.AgilentU254x.Interop.AgilentU254xDataAlignmentEnum.AgilentU254xDataAlignmentBigEndianMSB">
+			<summary>Align the data in the format of big endian and most significant bit.</summary>
+		</member>
+		<member name="T:Agilent.AgilentU254x.Interop.AgilentU254xDataTypeEnum">
+			<summary>AgilentU254x instrument-specific values for the internal data type.</summary>
+		</member>
+		<member name="F:Agilent.AgilentU254x.Interop.AgilentU254xDataTypeEnum.AgilentU254xDataTypeSignedInteger">
+			<summary>Signed integer data type.</summary>
+		</member>
+		<member name="F:Agilent.AgilentU254x.Interop.AgilentU254xDataTypeEnum.AgilentU254xDataTypeUnsignedInteger">
+			<summary>Unsigned integer data type.</summary>
+		</member>
+		<member name="F:Agilent.AgilentU254x.Interop.AgilentU254xDataTypeEnum.AgilentU254xDataTypeFloat">
+			<summary>Float data type.</summary>
+		</member>
+		<member name="T:Agilent.AgilentU254x.Interop.AgilentU254xBufferStatusEnum">
+			<summary>AgilentU254x instrument-specific values for the buffer status parameter of analog continuous acquisition .</summary>
+		</member>
+		<member name="F:Agilent.AgilentU254x.Interop.AgilentU254xBufferStatusEnum.AgilentU254xBufferStatusEmpty">
+			<summary>Sample data buffer is empty.</summary>
+		</member>
+		<member name="F:Agilent.AgilentU254x.Interop.AgilentU254xBufferStatusEnum.AgilentU254xBufferStatusDataReady">
+			<summary>Sample data is ready.</summary>
+		</member>
+		<member name="F:Agilent.AgilentU254x.Interop.AgilentU254xBufferStatusEnum.AgilentU254xBufferStatusOverRun">
+			<summary>Sample data buffer is over run.</summary>
+		</member>
+		<member name="F:Agilent.AgilentU254x.Interop.AgilentU254xBufferStatusEnum.AgilentU254xBufferStatusFragment">
+			<summary>Data capturing, not a complete block unit.</summary>
+		</member>
+		<member name="T:Agilent.AgilentU254x.Interop.AgilentU254xAnalogInTriggerModeEnum">
+			<summary>AgilentU254x instrument-specific values for the analog input triger mode.</summary>
+		</member>
+		<member name="F:Agilent.AgilentU254x.Interop.AgilentU254xAnalogInTriggerModeEnum.AgilentU254xAnalogInTriggerModeNone">
+			<summary>No triggering.  The operation start immediately.</summary>
+		</member>
+		<member name="F:Agilent.AgilentU254x.Interop.AgilentU254xAnalogInTriggerModeEnum.AgilentU254xAnalogInTriggerModeDigital">
+			<summary>Trigger once the digital source is chosen.</summary>
+		</member>
+		<member name="F:Agilent.AgilentU254x.Interop.AgilentU254xAnalogInTriggerModeEnum.AgilentU254xAnalogInTriggerModeAnalog">
+			<summary>Use the analog trigger.</summary>
+		</member>
+		<member name="F:Agilent.AgilentU254x.Interop.AgilentU254xAnalogInTriggerModeEnum.AgilentU254xAnalogInTriggerModeCardCage">
+			<summary>Use external trigger from cardcage.</summary>
+		</member>
+		<member name="T:Agilent.AgilentU254x.Interop.AgilentU254xAnalogInTriggerReactionEnum">
+			<summary>AgilentU254x instrument-specific values for the trigger reaction for the operation of analog input and analog output.</summary>
+		</member>
+		<member name="F:Agilent.AgilentU254x.Interop.AgilentU254xAnalogInTriggerReactionEnum.AgilentU254xAnalogInTriggerReactionPostStart">
+			<summary>Configure the operation to start imediately when a trigger event happen.</summary>
+		</member>
+		<member name="F:Agilent.AgilentU254x.Interop.AgilentU254xAnalogInTriggerReactionEnum.AgilentU254xAnalogInTriggerReactionPreStart">
+			<summary>Configure the operation to begin before the triggering happen, which will performs the processes before the trigger event.  Only apply to analog input.</summary>
+		</member>
+		<member name="F:Agilent.AgilentU254x.Interop.AgilentU254xAnalogInTriggerReactionEnum.AgilentU254xAnalogInTriggerReactionDelayStart">
+			<summary>Configure the operation to delay for a specified number of processes (CountDelay) after the triggering happen.</summary>
+		</member>
+		<member name="F:Agilent.AgilentU254x.Interop.AgilentU254xAnalogInTriggerReactionEnum.AgilentU254xAnalogInTriggerReactionMiddleStart">
+			<summary>Configure the operation to begin before the triggering happen and finish after the trigger event, which will performs the acquisition before the trigger event.  Only apply to analog input.</summary>
+		</member>
+		<member name="T:Agilent.AgilentU254x.Interop.AgilentU254xOutputReferenceEnum">
+			<summary>AgilentU254x instrument-specific values for the analog output channel voltage reference source.</summary>
+		</member>
+		<member name="F:Agilent.AgilentU254x.Interop.AgilentU254xOutputReferenceEnum.AgilentU254xOutputReferenceInternal">
+			<summary>Use internal reference source (10V).</summary>
+		</member>
+		<member name="F:Agilent.AgilentU254x.Interop.AgilentU254xOutputReferenceEnum.AgilentU254xOutputReferenceExternal">
+			<summary>Use external reference source.</summary>
+		</member>
+		<member name="T:Agilent.AgilentU254x.Interop.AgilentU254xAnalogOutModeEnum">
+			<summary>AgilentU254x instrument-specific values for the mode of analog output generation.</summary>
+		</member>
+		<member name="F:Agilent.AgilentU254x.Interop.AgilentU254xAnalogOutModeEnum.AgilentU254xAnalogOutModeArbitrary">
+			<summary>Analog output generate arbitrary waveform.</summary>
+		</member>
+		<member name="F:Agilent.AgilentU254x.Interop.AgilentU254xAnalogOutModeEnum.AgilentU254xAnalogOutModeWaveform">
+			<summary>Analog output generate standard waveform.</summary>
+		</member>
+		<member name="T:Agilent.AgilentU254x.Interop.AgilentU254xWaveformEnum">
+			<summary>AgilentU254x instrument-specific values for the analog output standard waveform.</summary>
+		</member>
+		<member name="F:Agilent.AgilentU254x.Interop.AgilentU254xWaveformEnum.AgilentU254xWaveformSine">
+			<summary>Configures the DAQ to produce a sinusoid waveform.</summary>
+		</member>
+		<member name="F:Agilent.AgilentU254x.Interop.AgilentU254xWaveformEnum.AgilentU254xWaveformSquare">
+			<summary>Configures the DAQ to produce a square waveform</summary>
+		</member>
+		<member name="F:Agilent.AgilentU254x.Interop.AgilentU254xWaveformEnum.AgilentU254xWaveformSawtooth">
+			<summary>Configures the DAQ to produce a sawtooth waveform</summary>
+		</member>
+		<member name="F:Agilent.AgilentU254x.Interop.AgilentU254xWaveformEnum.AgilentU254xWaveformTriangle">
+			<summary>Configures the DAQ to produce a triangular waveform</summary>
+		</member>
+		<member name="F:Agilent.AgilentU254x.Interop.AgilentU254xWaveformEnum.AgilentU254xWaveformNoise">
+			<summary>Configures the DAQ to produce a noise waveform</summary>
+		</member>
+		<member name="T:Agilent.AgilentU254x.Interop.AgilentU254xAnalogInExternalTriggerTypeEnum">
+			<summary>AgilentU254x instrument-specific values for the analog triger type.</summary>
+		</member>
+		<member name="F:Agilent.AgilentU254x.Interop.AgilentU254xAnalogInExternalTriggerTypeEnum.AgilentU254xAnalogInExternalTriggerTypeAboveEdge">
+			<summary>Analog above edge triggerreing.</summary>
+		</member>
+		<member name="F:Agilent.AgilentU254x.Interop.AgilentU254xAnalogInExternalTriggerTypeEnum.AgilentU254xAnalogInExternalTriggerTypeBelowEdge">
+			<summary>Analog below edge triggerreing.</summary>
+		</member>
+		<member name="F:Agilent.AgilentU254x.Interop.AgilentU254xAnalogInExternalTriggerTypeEnum.AgilentU254xAnalogInExternalTriggerTypeRegion">
+			<summary>Analog region triggerreing.</summary>
+		</member>
+		<member name="F:Agilent.AgilentU254x.Interop.AgilentU254xAnalogInExternalTriggerTypeEnum.AgilentU254xAnalogInExternalTriggerTypeHighHysteresis">
+			<summary>Analog high hysteresis triggerreing.</summary>
+		</member>
+		<member name="F:Agilent.AgilentU254x.Interop.AgilentU254xAnalogInExternalTriggerTypeEnum.AgilentU254xAnalogInExternalTriggerTypeLowHysteresis">
+			<summary>Analog low hysteresis triggerreing.</summary>
+		</member>
+		<member name="T:Agilent.AgilentU254x.Interop.AgilentU254xAnalogInExternalTriggerSourceEnum">
+			<summary>AgilentU254x instrument-specific values for the analog trigger source setting.</summary>
+		</member>
+		<member name="F:Agilent.AgilentU254x.Interop.AgilentU254xAnalogInExternalTriggerSourceEnum.AgilentU254xAnalogInExternalTriggerSourceExternal">
+			<summary>Use the external analog pin as trigger source.</summary>
+		</member>
+		<member name="F:Agilent.AgilentU254x.Interop.AgilentU254xAnalogInExternalTriggerSourceEnum.AgilentU254xAnalogInExternalTriggerSourceChannel1">
+			<summary>use Channel 101 as trigger source.</summary>
+		</member>
+		<member name="F:Agilent.AgilentU254x.Interop.AgilentU254xAnalogInExternalTriggerSourceEnum.AgilentU254xAnalogInExternalTriggerSourceChannel2">
+			<summary>use Channel 102 as trigger source.</summary>
+		</member>
+		<member name="F:Agilent.AgilentU254x.Interop.AgilentU254xAnalogInExternalTriggerSourceEnum.AgilentU254xAnalogInExternalTriggerSourceChannel3">
+			<summary>use Channel 103 as trigger source.</summary>
+		</member>
+		<member name="F:Agilent.AgilentU254x.Interop.AgilentU254xAnalogInExternalTriggerSourceEnum.AgilentU254xAnalogInExternalTriggerSourceChannel4">
+			<summary>use Channel 104 as trigger source.</summary>
+		</member>
+		<member name="T:Agilent.AgilentU254x.Interop.AgilentU254xCounterGatePolarityEnum">
+			<summary>AgilentU254x instrument-specific values for the digital signal polarity setting.</summary>
+		</member>
+		<member name="F:Agilent.AgilentU254x.Interop.AgilentU254xCounterGatePolarityEnum.AgilentU254xCounterGatePolarityActiveHigh">
+			<summary>Positive or active high.</summary>
+		</member>
+		<member name="F:Agilent.AgilentU254x.Interop.AgilentU254xCounterGatePolarityEnum.AgilentU254xCounterGatePolarityActiveLow">
+			<summary>Negative or active low.</summary>
+		</member>
+		<member name="T:Agilent.AgilentU254x.Interop.AgilentU254xDigitalChannelDirectionEnum">
+			<summary>AgilentU254x instrument-specific values for the digital channel direction.</summary>
+		</member>
+		<member name="F:Agilent.AgilentU254x.Interop.AgilentU254xDigitalChannelDirectionEnum.AgilentU254xDigitalChannelDirectionIn">
+			<summary>Set the digital channel for input.</summary>
+		</member>
+		<member name="F:Agilent.AgilentU254x.Interop.AgilentU254xDigitalChannelDirectionEnum.AgilentU254xDigitalChannelDirectionOut">
+			<summary>Specify the digital channel for output.</summary>
+		</member>
+		<member name="T:Agilent.AgilentU254x.Interop.AgilentU254xClockSourceEnum">
+			<summary>AgilentU254x instrument-specific values for which the clock source that the instrument subsystem should use.</summary>
+		</member>
+		<member name="F:Agilent.AgilentU254x.Interop.AgilentU254xClockSourceEnum.AgilentU254xClockSourceInternal">
+			<summary>Use internal clock source.</summary>
+		</member>
+		<member name="F:Agilent.AgilentU254x.Interop.AgilentU254xClockSourceEnum.AgilentU254xClockSourceExternal">
+			<summary>Use external clock source.</summary>
+		</member>
+		<member name="T:Agilent.AgilentU254x.Interop.AgilentU254xCounterGateSourceEnum">
+			<summary>AgilentDAQ instrument-specific values for the counter's gate source.</summary>
+		</member>
+		<member name="F:Agilent.AgilentU254x.Interop.AgilentU254xCounterGateSourceEnum.AgilentU254xCounterGateSourceInternal">
+			<summary>Use internal gate source.</summary>
+		</member>
+		<member name="F:Agilent.AgilentU254x.Interop.AgilentU254xCounterGateSourceEnum.AgilentU254xCounterGateSourceExternal">
+			<summary>Use external gate source.</summary>
+		</member>
+		<member name="T:Agilent.AgilentU254x.Interop.AgilentU254xCounterMeasurementEnum">
+			<summary>AgilentU254x instrument-specific values for the counter's measurement functions.</summary>
+		</member>
+		<member name="F:Agilent.AgilentU254x.Interop.AgilentU254xCounterMeasurementEnum.AgilentU254xCounterMeasurementFrequency">
+			<summary>Measure the frequency.</summary>
+		</member>
+		<member name="F:Agilent.AgilentU254x.Interop.AgilentU254xCounterMeasurementEnum.AgilentU254xCounterMeasurementPeriod">
+			<summary>Measure the period.</summary>
+		</member>
+		<member name="F:Agilent.AgilentU254x.Interop.AgilentU254xCounterMeasurementEnum.AgilentU254xCounterMeasurementPulseWidth">
+			<summary>Measure the pulse width.</summary>
+		</member>
+		<member name="F:Agilent.AgilentU254x.Interop.AgilentU254xCounterMeasurementEnum.AgilentU254xCounterMeasurementCount">
+			<summary>Measure the totalizer's count.</summary>
+		</member>
+		<member name="T:Agilent.AgilentU254x.Interop.AgilentU254xTotalizerDirectionEnum">
+			<summary>AgilentU254x instrument-specific values for the counter's totalizer direction.</summary>
+		</member>
+		<member name="F:Agilent.AgilentU254x.Interop.AgilentU254xTotalizerDirectionEnum.AgilentU254xTotalizerDirectionIncrement">
+			<summary>Increase the totalizer's count.</summary>
+		</member>
+		<member name="F:Agilent.AgilentU254x.Interop.AgilentU254xTotalizerDirectionEnum.AgilentU254xTotalizerDirectionDecrement">
+			<summary>Decrease the totalizer's count.</summary>
+		</member>
+		<member name="T:Agilent.AgilentU254x.Interop.AgilentU254xTotalizerSourceEnum">
+			<summary>AgilentU254x instrument-specific values for the counter's totalizer source.</summary>
+		</member>
+		<member name="F:Agilent.AgilentU254x.Interop.AgilentU254xTotalizerSourceEnum.AgilentU254xTotalizerSourceInternal">
+			<summary>Use internal source.</summary>
+		</member>
+		<member name="F:Agilent.AgilentU254x.Interop.AgilentU254xTotalizerSourceEnum.AgilentU254xTotalizerSourceExternal">
+			<summary>Use external source.</summary>
+		</member>
+		<member name="T:Agilent.AgilentU254x.Interop.AgilentU254xAnalogInTriggerEdgeEnum">
+			<summary>AgilentU254x instrument-specific values for the analog triger polarity.</summary>
+		</member>
+		<member name="F:Agilent.AgilentU254x.Interop.AgilentU254xAnalogInTriggerEdgeEnum.AgilentU254xAnalogInTriggerEdgePositive">
+			<summary>Trigger once the digital source signal turn to positive.</summary>
+		</member>
+		<member name="F:Agilent.AgilentU254x.Interop.AgilentU254xAnalogInTriggerEdgeEnum.AgilentU254xAnalogInTriggerEdgeNegative">
+			<summary>Trigger once the digital source signal turn to negative.</summary>
+		</member>
+		<member name="T:Agilent.AgilentU254x.Interop.AgilentU254xAnalogOutExternalTriggerSourceEnum">
+			<summary>AgilentU254x instrument-specific values for the analog trigger source setting.</summary>
+		</member>
+		<member name="F:Agilent.AgilentU254x.Interop.AgilentU254xAnalogOutExternalTriggerSourceEnum.AgilentU254xAnalogOutExternalTriggerSourceExternal">
+			<summary>Use the external analog pin as trigger source.</summary>
+		</member>
+		<member name="F:Agilent.AgilentU254x.Interop.AgilentU254xAnalogOutExternalTriggerSourceEnum.AgilentU254xAnalogOutExternalTriggerSourceChannel1">
+			<summary>use Channel 101 as trigger source.</summary>
+		</member>
+		<member name="F:Agilent.AgilentU254x.Interop.AgilentU254xAnalogOutExternalTriggerSourceEnum.AgilentU254xAnalogOutExternalTriggerSourceChannel2">
+			<summary>use Channel 102 as trigger source.</summary>
+		</member>
+		<member name="F:Agilent.AgilentU254x.Interop.AgilentU254xAnalogOutExternalTriggerSourceEnum.AgilentU254xAnalogOutExternalTriggerSourceChannel3">
+			<summary>use Channel 103 as trigger source.</summary>
+		</member>
+		<member name="F:Agilent.AgilentU254x.Interop.AgilentU254xAnalogOutExternalTriggerSourceEnum.AgilentU254xAnalogOutExternalTriggerSourceChannel4">
+			<summary>use Channel 104 as trigger source.</summary>
+		</member>
+		<member name="T:Agilent.AgilentU254x.Interop.AgilentU254xAnalogOutExternalTriggerTypeEnum">
+			<summary>AgilentU254x instrument-specific values for the analog triger type.</summary>
+		</member>
+		<member name="F:Agilent.AgilentU254x.Interop.AgilentU254xAnalogOutExternalTriggerTypeEnum.AgilentU254xAnalogOutExternalTriggerTypeAboveEdge">
+			<summary>Analog above edge triggerreing.</summary>
+		</member>
+		<member name="F:Agilent.AgilentU254x.Interop.AgilentU254xAnalogOutExternalTriggerTypeEnum.AgilentU254xAnalogOutExternalTriggerTypeBelowEdge">
+			<summary>Analog below edge triggerreing.</summary>
+		</member>
+		<member name="F:Agilent.AgilentU254x.Interop.AgilentU254xAnalogOutExternalTriggerTypeEnum.AgilentU254xAnalogOutExternalTriggerTypeRegion">
+			<summary>Analog region triggerreing.</summary>
+		</member>
+		<member name="F:Agilent.AgilentU254x.Interop.AgilentU254xAnalogOutExternalTriggerTypeEnum.AgilentU254xAnalogOutExternalTriggerTypeHighHysteresis">
+			<summary>Analog high hysteresis triggerreing.</summary>
+		</member>
+		<member name="F:Agilent.AgilentU254x.Interop.AgilentU254xAnalogOutExternalTriggerTypeEnum.AgilentU254xAnalogOutExternalTriggerTypeLowHysteresis">
+			<summary>Analog low hysteresis triggerreing.</summary>
+		</member>
+		<member name="T:Agilent.AgilentU254x.Interop.AgilentU254xAnalogOutTriggerEdgeEnum">
+			<summary>AgilentU254x instrument-specific values for the analog triger polarity.</summary>
+		</member>
+		<member name="F:Agilent.AgilentU254x.Interop.AgilentU254xAnalogOutTriggerEdgeEnum.AgilentU254xAnalogOutTriggerEdgePositive">
+			<summary>Trigger once the digital source signal turn to positive.</summary>
+		</member>
+		<member name="F:Agilent.AgilentU254x.Interop.AgilentU254xAnalogOutTriggerEdgeEnum.AgilentU254xAnalogOutTriggerEdgeNegative">
+			<summary>Trigger once the digital source signal turn to negative.</summary>
+		</member>
+		<member name="T:Agilent.AgilentU254x.Interop.AgilentU254xAnalogOutTriggerReactionEnum">
+			<summary>AgilentU254x instrument-specific values for the trigger reaction for the operation of analog output.</summary>
+		</member>
+		<member name="F:Agilent.AgilentU254x.Interop.AgilentU254xAnalogOutTriggerReactionEnum.AgilentU254xAnalogOutTriggerReactionPostStart">
+			<summary>Configure the operation to start imediately when a trigger event happen.</summary>
+		</member>
+		<member name="F:Agilent.AgilentU254x.Interop.AgilentU254xAnalogOutTriggerReactionEnum.AgilentU254xAnalogOutTriggerReactionDelayStart">
+			<summary>Configure the operation to delay for a specified number of processes (CountDelay) after the triggering happen.</summary>
+		</member>
+		<member name="T:Agilent.AgilentU254x.Interop.AgilentU254xAnalogOutTriggerModeEnum">
+			<summary>AgilentU254x instrument-specific values for the analog output triger mode.</summary>
+		</member>
+		<member name="F:Agilent.AgilentU254x.Interop.AgilentU254xAnalogOutTriggerModeEnum.AgilentU254xAnalogOutTriggerModeNone">
+			<summary>No triggering.  The operation start immediately.</summary>
+		</member>
+		<member name="F:Agilent.AgilentU254x.Interop.AgilentU254xAnalogOutTriggerModeEnum.AgilentU254xAnalogOutTriggerModeDigital">
+			<summary>Trigger once the digital source is chosen.</summary>
+		</member>
+		<member name="F:Agilent.AgilentU254x.Interop.AgilentU254xAnalogOutTriggerModeEnum.AgilentU254xAnalogOutTriggerModeAnalog">
+			<summary>Use the analog trigger.</summary>
+		</member>
+		<member name="F:Agilent.AgilentU254x.Interop.AgilentU254xAnalogOutTriggerModeEnum.AgilentU254xAnalogOutTriggerModeCardcage">
+			<summary>Use external trigger from cardcage.</summary>
+		</member>
+		<member name="T:Agilent.AgilentU254x.Interop.AgilentU254xSynchronizationStatusEnum">
+			<summary>AgilentU254x instrument-specific values for the system synchoronization interface (SSI) mode.</summary>
+		</member>
+		<member name="F:Agilent.AgilentU254x.Interop.AgilentU254xSynchronizationStatusEnum.AgilentU254xSynchronizationStatusNone">
+			<summary>No triggering happen.</summary>
+		</member>
+		<member name="F:Agilent.AgilentU254x.Interop.AgilentU254xSynchronizationStatusEnum.AgilentU254xSynchronizationStatusMaster">
+			<summary>To function as SSI master triggering source.</summary>
+		</member>
+		<member name="F:Agilent.AgilentU254x.Interop.AgilentU254xSynchronizationStatusEnum.AgilentU254xSynchronizationStatusSlave">
+			<summary>to receive trigger source from master.</summary>
+		</member>
+	</members>
 </doc>

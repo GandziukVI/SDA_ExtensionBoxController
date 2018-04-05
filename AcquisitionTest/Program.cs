@@ -54,7 +54,7 @@ namespace AcquisitionTest
             #region Initializing COM objects
 
             driver = new AgilentU254x();
-            driver.Initialize(ResourceID, false, true, Options);
+            driver.Initialize(ResourceID, false, true);
 
             driver.DriverOperation.QueryInstrumentStatus = false;
             driver.DriverOperation.Cache = false;
@@ -101,7 +101,7 @@ namespace AcquisitionTest
                 }
             }));
 
-            int numOfSeconds = 500;
+            int numOfSeconds = 10;
             Thread.Sleep(numOfSeconds * 1000);
 
             driver.AnalogIn.Acquisition.Stop();
