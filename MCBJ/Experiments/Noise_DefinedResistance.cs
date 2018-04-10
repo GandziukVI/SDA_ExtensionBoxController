@@ -1022,8 +1022,12 @@ namespace MCBJ.Experiments
                 }
             }
 
+            //onStatusChanged(new StatusEventArgs("Moving to start position."));
+
             //motor.Enabled = true;
+            //motor.Velosity = 4.8;
             //motor.Position = experimentSettings.MotorMinPos;
+            //motor.Enabled = false;
 
             if (motor != null)
                 motor.Disable();
