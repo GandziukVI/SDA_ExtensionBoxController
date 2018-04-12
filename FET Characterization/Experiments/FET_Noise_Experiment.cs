@@ -669,7 +669,7 @@ namespace FET_Characterization.Experiments
             var voltages = confAIChannelsForDC_Measurement();
             confAIChannelsForDC_Measurement(voltages[3], voltages[1], voltage);
 
-            preciseSetVoltage(VdsMotorPotentiometer, 3, voltage, voltageDev, experimentSettings.NAveragesFast);
+            preciseSetVoltage(VgMotorPotentiometer, 2, voltage, voltageDev, experimentSettings.NAveragesFast);
         }
 
         static string TTSaveFileName = "TT.dat";
