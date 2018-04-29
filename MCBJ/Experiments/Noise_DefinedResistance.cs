@@ -1029,10 +1029,10 @@ namespace MCBJ.Experiments
             //motor.Position = experimentSettings.MotorMinPos;
             //motor.Enabled = false;
 
-            if (motor != null)
-                motor.Disable();
+            //if (motor != null)
+            //    motor.Disable();
 
-            Thread.Sleep(5000);
+            //Thread.Sleep(5000);
             onStatusChanged(new StatusEventArgs("The measurement is done!"));
             onExpFinished(new FinishedEventArgs());
         }
