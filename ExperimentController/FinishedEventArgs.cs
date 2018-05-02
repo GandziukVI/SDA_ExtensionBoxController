@@ -8,9 +8,17 @@ namespace ExperimentController
 {
     public class FinishedEventArgs : EventArgs
     {
-        public FinishedEventArgs()
+        private int statusCode = 0;
+        public int StatusCode
+        {
+            get { return statusCode; }
+            set { statusCode = value; }
+        }
+
+        public FinishedEventArgs(int status)
             : base()
         {
+            statusCode = status;
         }
     }
 }

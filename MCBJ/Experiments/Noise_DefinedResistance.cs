@@ -973,11 +973,18 @@ namespace MCBJ.Experiments
                                     SaveDataToLog(logFileNameNewFormat, noiseMeasLog.ToStringNewFormat());
 
                                     if (experimentSettings.RecordTimeTraces == true)
-                                    {
                                         SaveDataToLog(logFileCaptureName, noiseMeasLog.ToString());
-                                        if (TT_Stream != null)
-                                            TT_Stream.Dispose();
-                                    }
+
+                                    // Calculating the deviation between the start and end values of the sample resistance.
+                                    // Basing on the results of this measure ending the Experiment with appropriate status code.
+                                    // Code 0 states correct measurement, status -1 means failure.
+
+                                    var estimationVal = noiseMeasLog.REsample / noiseMeasLog.R0sample;
+
+                                    if(estimationVal < 0.9 || estimationVal > 1.1)
+                                        onExpFinished(new FinishedEventArgs(-1));
+                                    else
+                                        onExpFinished(new FinishedEventArgs(0));
                                 }
                                 else
                                 {
@@ -1034,7 +1041,6 @@ namespace MCBJ.Experiments
 
             //Thread.Sleep(5000);
             onStatusChanged(new StatusEventArgs("The measurement is done!"));
-            onExpFinished(new FinishedEventArgs());
         }
 
         private void DefResistanceNoise_DataReady(object sender, EventArgs e)
