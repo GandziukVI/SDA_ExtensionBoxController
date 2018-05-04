@@ -144,7 +144,7 @@ namespace MCBJNoiseStarter
                 {
                     if (!IsInProgress)
                         break;
-                    for (int j = 0; j < innerLoopSelectionList.Count; j++)
+                    for (int j = 0; j < innerLoopSelectionList.Count; )
                     {
                         if (!IsInProgress)
                             break;
@@ -162,6 +162,8 @@ namespace MCBJNoiseStarter
 
                         SerializeDataContext(noiseFilePath, Settings.ExperimentSettings);
 
+                        ++j;
+
                         using (var process = Process.Start("MCBJ.exe", "MCBJNoise"))
                         {
                             process.WaitForExit();
@@ -171,13 +173,15 @@ namespace MCBJNoiseStarter
                     }
                 }
 
-                var driver = new SerialDevice("COM1", 115200, Parity.None, 8, StopBits.One) as IDeviceIO;
-                var motionController = new SA_2036U012V(driver) as IMotionController1D;
+                using (var driver = new SerialDevice("COM1", 115200, Parity.None, 8, StopBits.One) as IDeviceIO)
+                {
+                    var motionController = new SA_2036U012V(driver) as IMotionController1D;
 
-                motionController.Enabled = true;
-                motionController.SetVelosity(4.8);
-                motionController.SetPosition(0.0);
-                motionController.Enabled = false;
+                    motionController.Enabled = true;
+                    motionController.SetVelosity(4.8);
+                    motionController.SetPosition(0.0);
+                    motionController.Enabled = false;
+                }
 
                 MessageBox.Show("The measurement is done!", "Measurement Info", MessageBoxButton.OK, MessageBoxImage.Information);
             }));

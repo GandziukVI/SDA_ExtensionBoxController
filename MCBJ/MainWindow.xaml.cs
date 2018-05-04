@@ -77,7 +77,7 @@ namespace MCBJ
         {
             Dispatcher.InvokeAsync(new Action(() =>
             {
-                Application.Current.Shutdown(0);
+                Application.Current.Shutdown(e.StatusCode);
             }));
         }
 
