@@ -1111,9 +1111,9 @@ namespace FET_Characterization.Experiments
                 VgMotorPotentiometer = new BS350_MotorPotentiometer(boxController, VgMotorOutChannel);
 
                 onStatusChanged(new StatusEventArgs(string.Format("Setting gate voltage V -> {0} V", (0.01).ToString("0.0000", NumberFormatInfo.InvariantInfo))));
-                SetGateVoltage(0.01, experimentSettings.VoltageDeviation.RealValue);
+                SetGateVoltage(Math.Sign(experimentSettings.GateVoltageCollection.Last()) * 0.01, experimentSettings.VoltageDeviation.RealValue);
                 onStatusChanged(new StatusEventArgs(string.Format("Setting drain-source voltage V -> {0} V", (0.01).ToString("0.0000", NumberFormatInfo.InvariantInfo))));
-                SetDrainSourceVoltage(0.01, experimentSettings.VoltageDeviation.RealValue);
+                SetDrainSourceVoltage(Math.Sign(experimentSettings.DSVoltageCollection.Last()) * 0.01, experimentSettings.VoltageDeviation.RealValue);
             }
 
             onExpFinished(new FinishedEventArgs(0));
