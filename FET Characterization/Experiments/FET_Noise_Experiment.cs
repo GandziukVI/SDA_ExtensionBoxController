@@ -1116,7 +1116,7 @@ namespace FET_Characterization.Experiments
                 SetDrainSourceVoltage(0.01, experimentSettings.VoltageDeviation.RealValue);
             }
 
-            onExpFinished(new FinishedEventArgs());
+            onExpFinished(new FinishedEventArgs(0));
             onStatusChanged(new StatusEventArgs("The measurement is done!"));            
         }
 

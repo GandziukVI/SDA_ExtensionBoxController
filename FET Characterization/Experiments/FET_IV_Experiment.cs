@@ -318,7 +318,7 @@ namespace FET_Characterization.Experiments
 
             SaveToFile(string.Format("{0}\\{1}", settings.IV_FET_DataFilePath, settings.IV_FileName));
 
-            onExpFinished(new FinishedEventArgs());
+            onExpFinished(new FinishedEventArgs(0));
             onStatusChanged(new StatusEventArgs("Measurement completed!"));            
         }
 
