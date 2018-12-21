@@ -981,7 +981,7 @@ namespace MCBJ.Experiments
 
                                     var estimationVal = noiseMeasLog.REsample / noiseMeasLog.R0sample;
 
-                                    if(estimationVal < 0.9 || estimationVal > 1.1)
+                                    if (estimationVal < 0.9 || estimationVal > 1.1)
                                         onExpFinished(new FinishedEventArgs(-1));
                                     else
                                         onExpFinished(new FinishedEventArgs(0));
@@ -1165,8 +1165,6 @@ namespace MCBJ.Experiments
         {
             if (TT_Stream != null)
                 TT_Stream.Dispose();
-
-            File.Delete(TTSaveFileName);
 
             onStatusChanged(new StatusEventArgs("Measurement is aborted."));
             onProgressChanged(new ProgressEventArgs(0.0));
