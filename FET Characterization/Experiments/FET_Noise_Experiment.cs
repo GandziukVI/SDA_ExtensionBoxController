@@ -72,7 +72,8 @@ namespace FET_Characterization.Experiments
             else if (Math.Abs(Voltage) >= 5.0 && Math.Abs(Voltage) < 10)
                 range = RangesEnum.Range_10;
             else
-                throw new ArgumentException("The drain voltage is out of range.");
+                range = RangesEnum.Range_10;
+                //throw new ArgumentException("The drain voltage is out of range.");
 
             return range;
         }
@@ -1086,34 +1087,37 @@ namespace FET_Characterization.Experiments
                 }
             }
 
-            using (boxController = new BoxController())
+            if (experimentSettings.UseVoltageControl)
             {
-                var boxInit = boxController.Init(experimentSettings.AgilentU2542AResName);
+                using (boxController = new BoxController())
+                {
+                    var boxInit = boxController.Init(experimentSettings.AgilentU2542AResName);
 
-                if (!boxInit)
-                    throw new Exception("Cannot connect the box.");
+                    if (!boxInit)
+                        throw new Exception("Cannot connect the box.");
 
-                // Implementing voltage control for automatic applying
-                // Gate and Drain-Source voltages, as well as for automatic
-                // disabling of the Vs DC measurement channel for the
-                // period of noise measurement
+                    // Implementing voltage control for automatic applying
+                    // Gate and Drain-Source voltages, as well as for automatic
+                    // disabling of the Vs DC measurement channel for the
+                    // period of noise measurement
 
-                var VdsMotorOutChannel = BOX_AnalogOutChannelsEnum.BOX_AOut_01;
-                var VdsEnableChannel = BOX_AnalogOutChannelsEnum.BOX_AOut_09;
+                    var VdsMotorOutChannel = BOX_AnalogOutChannelsEnum.BOX_AOut_01;
+                    var VdsEnableChannel = BOX_AnalogOutChannelsEnum.BOX_AOut_09;
 
-                var VgMotorOutChannel = BOX_AnalogOutChannelsEnum.BOX_AOut_02;
+                    var VgMotorOutChannel = BOX_AnalogOutChannelsEnum.BOX_AOut_02;
 
-                // Enabling Vds DC measurement channel before measuring noise spectra
-                // for measuring sample characteristics before noise measurement
-                boxController.AO_ChannelCollection.ApplyVoltageToChannel(VdsEnableChannel, -6.2);
+                    // Enabling Vds DC measurement channel before measuring noise spectra
+                    // for measuring sample characteristics before noise measurement
+                    boxController.AO_ChannelCollection.ApplyVoltageToChannel(VdsEnableChannel, -6.2);
 
-                VdsMotorPotentiometer = new BS350_MotorPotentiometer(boxController, VdsMotorOutChannel);
-                VgMotorPotentiometer = new BS350_MotorPotentiometer(boxController, VgMotorOutChannel);
+                    VdsMotorPotentiometer = new BS350_MotorPotentiometer(boxController, VdsMotorOutChannel);
+                    VgMotorPotentiometer = new BS350_MotorPotentiometer(boxController, VgMotorOutChannel);
 
-                onStatusChanged(new StatusEventArgs(string.Format("Setting gate voltage V -> {0} V", (0.01).ToString("0.0000", NumberFormatInfo.InvariantInfo))));
-                SetGateVoltage(Math.Sign(experimentSettings.GateVoltageCollection.Last()) * 0.01, experimentSettings.VoltageDeviation.RealValue);
-                onStatusChanged(new StatusEventArgs(string.Format("Setting drain-source voltage V -> {0} V", (0.01).ToString("0.0000", NumberFormatInfo.InvariantInfo))));
-                SetDrainSourceVoltage(Math.Sign(experimentSettings.DSVoltageCollection.Last()) * 0.01, experimentSettings.VoltageDeviation.RealValue);
+                    onStatusChanged(new StatusEventArgs(string.Format("Setting gate voltage V -> {0} V", (0.01).ToString("0.0000", NumberFormatInfo.InvariantInfo))));
+                    SetGateVoltage(Math.Sign(experimentSettings.GateVoltageCollection.Last()) * 0.01, experimentSettings.VoltageDeviation.RealValue);
+                    onStatusChanged(new StatusEventArgs(string.Format("Setting drain-source voltage V -> {0} V", (0.01).ToString("0.0000", NumberFormatInfo.InvariantInfo))));
+                    SetDrainSourceVoltage(Math.Sign(experimentSettings.DSVoltageCollection.Last()) * 0.01, experimentSettings.VoltageDeviation.RealValue);
+                }
             }
 
             onExpFinished(new FinishedEventArgs(0));
