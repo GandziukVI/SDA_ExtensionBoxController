@@ -1014,8 +1014,10 @@ namespace MCBJ.Experiments
 
                         ++j;
                     }
-                    catch
+                    catch(Exception ex)
                     {
+                        MessageBox.Show(ex.Message, "Error!", MessageBoxButton.OK, MessageBoxImage.Error);
+
                         if (experimentSettings.RecordTimeTraces == true)
                         {
                             if (TT_Stream != null)
