@@ -806,22 +806,20 @@ namespace MCBJ.Experiments
         [HandleProcessCorruptedStateExceptions]
         public override void ToDo(object Arg)
         {
+            experimentSettings = (NoiseDefRSettingsControlModel)Arg;
+
             var experimentLog = new ExperimentLog();
 
             experimentLog.FilePath = experimentSettings.FilePath;
             experimentLog.FileName = "ExperimentLog.txt";
 
-            experimentLog.WriteToLog("Action", "Measurement started event: Status change.");
+            experimentLog.WriteToLog("Event", "Status change: Measurement started");
             onStatusChanged(new StatusEventArgs("Measurement started."));
-            experimentLog.WriteToLog("Action", "Progress set to 0: Progress change.");
-            onProgressChanged(new ProgressEventArgs(0.0));            
+            experimentLog.WriteToLog("Event", "Progress change: Progress set to 0.0");
+            onProgressChanged(new ProgressEventArgs(0.0));
 
-            experimentLog.WriteToLog("Action", "Reading experiment settings: Type conversion.");
-            experimentSettings = (NoiseDefRSettingsControlModel)Arg;
+            #region Writing data to log files
 
-            #region Writing data to log files            
-
-            experimentLog.WriteToLog("Action", "Initializing noise measurement data log file: Variable init.");
             var noiseMeasLog = new NoiseMeasurementDataLog();
 
             var logFileName = string.Join("\\", experimentSettings.FilePath, "Noise", noiseMeasLog.DataLogFileName);
@@ -846,18 +844,18 @@ namespace MCBJ.Experiments
                 var conductance = experimentSettings.SetConductanceCollection[i];
                 if (!IsRunning)
                 {
-                    experimentLog.WriteToLog("Status", "Experiment is no longer running.");
+                    experimentLog.WriteToLog("Status", "Experiment is no longer running");
                     break;
                 }
                 for (int j = 0; j < experimentSettings.ScanningVoltageCollection.Length; )
                 {
-                    experimentLog.WriteToLog("Action", "Getting next scanning voltage from collection.");
+                    experimentLog.WriteToLog("Action", "Getting next scanning voltage from collection");
                     var voltage = experimentSettings.ScanningVoltageCollection[j];
                     if (!IsRunning)
                     {
-                        experimentLog.WriteToLog("Status", "Experiment is no longer running.");
+                        experimentLog.WriteToLog("Status", "Experiment is no longer running");
                         break;
-                    }                        
+                    }
 
                     #region Saving time traces to files
 
@@ -874,6 +872,7 @@ namespace MCBJ.Experiments
                     {
                         using (boxController = new BoxController())
                         {
+                            experimentLog.WriteToLog("Action", "Agilent U2542A initialization");
                             var initResult = boxController.Init(experimentSettings.AgilentU2542AResName);
                             if (!initResult)
                                 throw new Exception("Cannot connect to the box");
@@ -887,19 +886,31 @@ namespace MCBJ.Experiments
                             var VdsEnableChannel = BOX_AnalogOutChannelsEnum.BOX_AOut_09;
                             var VdsRelayVlotage = -6.25;
 
+                            experimentLog.WriteToLog("Action", "Initialization of the Vds motor potentiometer");
                             vdsMotorPotentiometer = new BS350_MotorPotentiometer(boxController, VdsMotorOutChannel);
 
                             // Enabling Vds DC measurement channel before measuring noise spectra
                             // for measuring sample characteristics before noise measurement
+                            experimentLog.WriteToLog("Action", "Enabling Vds DC measurement channel for measuring sample characteristics before noise measurement");
                             boxController.AO_ChannelCollection.ApplyVoltageToChannel(VdsEnableChannel, VdsRelayVlotage);
+                            experimentLog.WriteToLog("Action", "Configuring Agilent U2542A extension box input channels for DC measurement");
                             confAIChannelsForDC_Measurement(experimentSettings.NAveragesFast);
 
+                            experimentLog.WriteToLog("Event", string.Format("Status change: Setting sample voltage V -> {0} V", voltage.ToString("0.0000", NumberFormatInfo.InvariantInfo)));
                             onStatusChanged(new StatusEventArgs(string.Format("Setting sample voltage V -> {0} V", voltage.ToString("0.0000", NumberFormatInfo.InvariantInfo))));
+                            experimentLog.WriteToLog("Action", string.Format("Setting sample voltage V -> {0} V", voltage.ToString("0.0000", NumberFormatInfo.InvariantInfo)));
+                            preciseSetVoltage(
+                                vdsMotorPotentiometer,
+                                3,
+                                voltage,
+                                experimentSettings.VoltageDeviation.RealValue,
+                                experimentSettings.NAveragesFast
+                            );
 
-                            preciseSetVoltage(vdsMotorPotentiometer, 3, voltage, experimentSettings.VoltageDeviation.RealValue, experimentSettings.NAveragesFast);
-
+                            experimentLog.WriteToLog("Event", string.Format("Status change: Setting R -> {0}", (1.0 / conductance).ToString("0.0000", NumberFormatInfo.InvariantInfo)));
                             onStatusChanged(new StatusEventArgs(string.Format("Reaching resistance value R -> {0}", (1.0 / conductance).ToString("0.0000", NumberFormatInfo.InvariantInfo))));
 
+                            experimentLog.WriteToLog("Action", string.Format("Setting sample resistance: Setting R -> {0}", (1.0 / conductance).ToString("0.0000", NumberFormatInfo.InvariantInfo)));
                             resistanceStabilizationState = setJunctionResistance(
                                 vdsMotorPotentiometer,
                                 voltage,
@@ -918,45 +929,67 @@ namespace MCBJ.Experiments
 
                             if (resistanceStabilizationState == false)
                             {
+                                experimentLog.WriteToLog("MeasError", "Unable to set sample resistance");
                                 IsRunning = false;
                                 break;
                             }
 
+                            experimentLog.WriteToLog("Action", string.Format("Setting sample voltage V = {0} after the resistance stabillization", voltage.ToString("0.0000", NumberFormatInfo.InvariantInfo)));
                             preciseSetVoltage(vdsMotorPotentiometer, 3, voltage, experimentSettings.VoltageDeviation.RealValue, experimentSettings.NAveragesFast);
 
+                            experimentLog.WriteToLog("Event", "Status change: Measuring sample DC characteristics before noise spectra measurement");
                             onStatusChanged(new StatusEventArgs("Measuring sample characteristics before noise spectra measurement."));
 
+                            experimentLog.WriteToLog("Action", "Measuring sample characteristics before noise spectra measurement");
                             var voltagesBeforeNoiseMeasurement = boxController.VoltageMeasurement_AllChannels(experimentSettings.NAveragesSlow);
 
                             // Disabling motor controller in order to avoid huge noise
                             // coming from the motor controller through the connecting wires
+                            experimentLog.WriteToLog("Action", "Disabling motor controller in order to avoid huge noise pickups");
                             motor.Enabled = false;
 
                             // Disabling Vds DC measurement channel for measuring noise spectra
                             // to reduce the noise influence of the box controller on the measurement
+                            experimentLog.WriteToLog("Action", "Disabling Vds DC measurement channel for reducing instrumental noise level");
                             boxController.AO_ChannelCollection.DisableAllVoltages();
 
+                            experimentLog.WriteToLog("Action", "Configuring Agilent U2542A extension box input channels for AC measurement");
                             var ACConfStatus = confAIChannelsForAC_Measurement();
                             if (ACConfStatus == true)
                             {
                                 // Stabilization before noise spectra measurements
+                                experimentLog.WriteToLog("Event", "Progress change: Setting current progress to zero");
                                 onProgressChanged(new ProgressEventArgs(0.0));
+                                experimentLog.WriteToLog("Event", "Status change: Waiting for stabilization");
                                 onStatusChanged(new StatusEventArgs("Waiting for stabilization..."));
+                                experimentLog.WriteToLog("Action", "Waiting for stabillization using Thread.Sleep");
                                 Thread.Sleep((int)(experimentSettings.StabilizationTime * 1000));
 
                                 // Noise spectra measurement
+                                experimentLog.WriteToLog("Event", "Status change: Measuring noise spectra & time traces");
                                 onStatusChanged(new StatusEventArgs("Measuring noise spectra & time traces."));
-                                var noiseSpectraMeasurementState = measureNoiseSpectra(experimentSettings.SamplingFrequency, 1, experimentSettings.SpectraAveraging, experimentSettings.UpdateNumber, experimentSettings.KPreAmpl * experimentSettings.KAmpl);
+                                experimentLog.WriteToLog("Action", "Measuring noise spectra (and time traces)");
+                                var noiseSpectraMeasurementState = measureNoiseSpectra(
+                                    experimentSettings.SamplingFrequency,
+                                    1,
+                                    experimentSettings.SpectraAveraging,
+                                    experimentSettings.UpdateNumber,
+                                    experimentSettings.KPreAmpl * experimentSettings.KAmpl
+                                );
 
                                 // Enabling Vds DC measurement channel after measuring noise spectra
                                 // for measuring sample characteristics after noise measurement
+                                experimentLog.WriteToLog("Action", "Enabling Vds DC measurement channel after measuring noise spectra for measuring sample characteristics after noise measurement");
                                 boxController.AO_ChannelCollection.ApplyVoltageToChannel(VdsEnableChannel, VdsRelayVlotage);
 
                                 if (noiseSpectraMeasurementState)
                                 {
-                                    onStatusChanged(new StatusEventArgs("Measuring sample characteristics after noise spectra measurement."));
+                                    experimentLog.WriteToLog("Event", "Status change: Measuring sample DC characteristics after noise spectra measurement");
+                                    onStatusChanged(new StatusEventArgs("Measuring sample DC characteristics after noise spectra measurement."));
 
+                                    experimentLog.WriteToLog("Action", "Configuring Agilent U2542A extension box input channels for DC measurement");
                                     confAIChannelsForDC_Measurement(experimentSettings.NAveragesFast);
+                                    experimentLog.WriteToLog("Action", "Measuring sample DC characteristics after noise spectra measurement");
                                     var voltagesAfterNoiseMeasurement = boxController.VoltageMeasurement_AllChannels(experimentSettings.NAveragesSlow);
 
                                     //Saving to log file all the parameters of the measurement
@@ -998,12 +1031,20 @@ namespace MCBJ.Experiments
                                     var estimationVal = noiseMeasLog.REsample / noiseMeasLog.R0sample;
 
                                     if (estimationVal < 0.9 || estimationVal > 1.1)
+                                    {
                                         onExpFinished(new FinishedEventArgs(-1));
+                                        experimentLog.WriteToLog("Action", "Sample resistance was not stable during the measurement -> restarting");
+                                        if (j > 0)
+                                            --j;
+                                    }
                                     else
+                                    {
                                         onExpFinished(new FinishedEventArgs(0));
+                                    }
                                 }
                                 else
                                 {
+                                    experimentLog.WriteToLog("Action", "Spectra acquisition was not successful -> restarting");
                                     if (experimentSettings.RecordTimeTraces == true)
                                     {
                                         if (TT_Stream != null)
@@ -1011,11 +1052,13 @@ namespace MCBJ.Experiments
 
                                         File.Delete(TTSaveFileName);
                                     }
-                                    --j;
+                                    if (j > 0)
+                                        --j;
                                 }
                             }
                             else
                             {
+                                experimentLog.WriteToLog("Action", "Failure when trying to set Agilent U2542A extension box AC measurement configuration -> restarting");
                                 if (experimentSettings.RecordTimeTraces == true)
                                 {
                                     if (TT_Stream != null)
@@ -1024,13 +1067,14 @@ namespace MCBJ.Experiments
                                     File.Delete(TTSaveFileName);
                                 }
 
-                                --j;
+                                if (j > 0)
+                                    --j;
                             }
                         }
 
                         ++j;
                     }
-                    catch(Exception ex)
+                    catch (Exception ex)
                     {
                         experimentLog.WriteToLog("Error", ex.Message);
                         MessageBox.Show(ex.Message, "Error!", MessageBoxButton.OK, MessageBoxImage.Error);
@@ -1048,17 +1092,19 @@ namespace MCBJ.Experiments
                 }
             }
 
-            //onStatusChanged(new StatusEventArgs("Moving to start position."));
+            experimentLog.WriteToLog("Event", "Status change: Moving bending stage to zero");
+            onStatusChanged(new StatusEventArgs("Moving bending stage to zero."));
 
-            //motor.Enabled = true;
-            //motor.Velosity = 4.8;
-            //motor.Position = experimentSettings.MotorMinPos;
-            //motor.Enabled = false;
+            experimentLog.WriteToLog("Action", "Enabling the motor");
+            motor.Enabled = true;
+            experimentLog.WriteToLog("Action", "Setting motor speed to 4.8");
+            motor.Velosity = 4.8;
+            experimentLog.WriteToLog("Action", "Setting motor position to 0.0");
+            motor.Position = 0.0;
+            experimentLog.WriteToLog("Action", "Disabling the motor");
+            motor.Enabled = false;
 
-            //if (motor != null)
-            //    motor.Disable();
-
-            //Thread.Sleep(5000);
+            experimentLog.WriteToLog("Event", "Status change: The measurement is done");
             onStatusChanged(new StatusEventArgs("The measurement is done!"));
         }
 
