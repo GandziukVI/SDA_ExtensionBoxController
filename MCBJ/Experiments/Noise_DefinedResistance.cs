@@ -806,13 +806,22 @@ namespace MCBJ.Experiments
         [HandleProcessCorruptedStateExceptions]
         public override void ToDo(object Arg)
         {
-            onStatusChanged(new StatusEventArgs("Measurement started."));
-            onProgressChanged(new ProgressEventArgs(0.0));
+            var experimentLog = new ExperimentLog();
 
+            experimentLog.FilePath = experimentSettings.FilePath;
+            experimentLog.FileName = "ExperimentLog.txt";
+
+            experimentLog.WriteToLog("Action", "Measurement started event: Status change.");
+            onStatusChanged(new StatusEventArgs("Measurement started."));
+            experimentLog.WriteToLog("Action", "Progress set to 0: Progress change.");
+            onProgressChanged(new ProgressEventArgs(0.0));            
+
+            experimentLog.WriteToLog("Action", "Reading experiment settings: Type conversion.");
             experimentSettings = (NoiseDefRSettingsControlModel)Arg;
 
-            #region Writing data to log files
+            #region Writing data to log files            
 
+            experimentLog.WriteToLog("Action", "Initializing noise measurement data log file: Variable init.");
             var noiseMeasLog = new NoiseMeasurementDataLog();
 
             var logFileName = string.Join("\\", experimentSettings.FilePath, "Noise", noiseMeasLog.DataLogFileName);
@@ -836,12 +845,19 @@ namespace MCBJ.Experiments
             {
                 var conductance = experimentSettings.SetConductanceCollection[i];
                 if (!IsRunning)
+                {
+                    experimentLog.WriteToLog("Status", "Experiment is no longer running.");
                     break;
+                }
                 for (int j = 0; j < experimentSettings.ScanningVoltageCollection.Length; )
                 {
+                    experimentLog.WriteToLog("Action", "Getting next scanning voltage from collection.");
                     var voltage = experimentSettings.ScanningVoltageCollection[j];
                     if (!IsRunning)
+                    {
+                        experimentLog.WriteToLog("Status", "Experiment is no longer running.");
                         break;
+                    }                        
 
                     #region Saving time traces to files
 
@@ -1016,6 +1032,7 @@ namespace MCBJ.Experiments
                     }
                     catch(Exception ex)
                     {
+                        experimentLog.WriteToLog("Error", ex.Message);
                         MessageBox.Show(ex.Message, "Error!", MessageBoxButton.OK, MessageBoxImage.Error);
 
                         if (experimentSettings.RecordTimeTraces == true)
