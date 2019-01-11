@@ -1931,7 +1931,7 @@
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:MCBJ_SetupProject"
         "ProductCode" = "8:{8C94BCF3-2E36-4DC9-9A77-37506099A280}"
-        "PackageCode" = "8:{97CC51B8-196C-47E4-859F-F601BBBB858A}"
+        "PackageCode" = "8:{3555F62A-4491-4447-AD43-7748BA690AC1}"
         "UpgradeCode" = "8:{04B71F8E-3AAA-4AC7-AD12-BCBCEAB6B7BC}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"
@@ -2051,7 +2051,7 @@
         }
         "Shortcut"
         {
-            "{970C0BB2-C7D0-45D7-ABFA-7EC378858BC0}:_B02DF5B92AEB4D6D881ACD90DAAF1701"
+            "{970C0BB2-C7D0-45D7-ABFA-7EC378858BC0}:_B7CDEBF795824212845C57D68319C64E"
             {
             "Name" = "8:MCBJ"
             "Arguments" = "8:"

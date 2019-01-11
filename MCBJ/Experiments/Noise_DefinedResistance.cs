@@ -907,10 +907,10 @@ namespace MCBJ.Experiments
                                 experimentSettings.NAveragesFast
                             );
 
-                            experimentLog.WriteToLog("Event", string.Format("Status change: Setting R -> {0}", (1.0 / conductance).ToString("0.0000", NumberFormatInfo.InvariantInfo)));
+                            experimentLog.WriteToLog("Event", string.Format("Status change: Setting R -> {0}", (1.0 / conductance / conductanceQuantum).ToString("0.0000", NumberFormatInfo.InvariantInfo)));
                             onStatusChanged(new StatusEventArgs(string.Format("Reaching resistance value R -> {0}", (1.0 / conductance).ToString("0.0000", NumberFormatInfo.InvariantInfo))));
 
-                            experimentLog.WriteToLog("Action", string.Format("Setting sample resistance: Setting R -> {0}", (1.0 / conductance).ToString("0.0000", NumberFormatInfo.InvariantInfo)));
+                            experimentLog.WriteToLog("Action", string.Format("Setting sample resistance: Setting R -> {0}", (1.0 / conductance / conductanceQuantum).ToString("0.0000", NumberFormatInfo.InvariantInfo)));
                             resistanceStabilizationState = setJunctionResistance(
                                 vdsMotorPotentiometer,
                                 voltage,

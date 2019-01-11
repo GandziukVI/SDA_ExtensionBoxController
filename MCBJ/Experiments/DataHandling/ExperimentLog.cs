@@ -20,12 +20,13 @@ namespace MCBJ.Experiments.DataHandling
                 FileName = "ExperimentLog.txt";
 
             var path = FilePath + "\\" + FileName;
+            var mode = FileMode.Append;
             if(!File.Exists(path))
-                File.Create(path);
+                mode = FileMode.Create;
 
-            using(var fs = new FileStream(path, FileMode.Append, FileAccess.Write))
+            using(var fs = new FileStream(path, mode, FileAccess.Write))
                 using(var sw = new StreamWriter(fs))
-                    sw.WriteLine(string.Format("%s\t%s", messageType, messageString));                            
+                    sw.WriteLine(string.Format("{0}\t{1}", messageType, messageString));                            
         }
     }
 }
