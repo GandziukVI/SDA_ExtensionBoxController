@@ -841,19 +841,28 @@ namespace MCBJ.Experiments
 
             for (int i = 0; i < experimentSettings.SetConductanceCollection.Length; i++)
             {
+                experimentLog.WriteToLog("Action", string.Format(
+                    "Working on Conductance -> {0} G0 at index -> {1} from conductances set",
+                    experimentSettings.SetConductanceCollection[i].ToString("0.0000", NumberFormatInfo.InvariantInfo),
+                    i.ToString(NumberFormatInfo.InvariantInfo)
+                    ));
                 var conductance = experimentSettings.SetConductanceCollection[i];
                 if (!IsRunning)
                 {
-                    experimentLog.WriteToLog("Status", "Experiment is no longer running");
+                    experimentLog.WriteToLog("Status", "IsRunning flag turned to \"false\" -> The experiment is no longer running");
                     break;
                 }
                 for (int j = 0; j < experimentSettings.ScanningVoltageCollection.Length; )
                 {
-                    experimentLog.WriteToLog("Action", "Getting next scanning voltage from collection");
+                    experimentLog.WriteToLog("Action", string.Format(
+                        "Working on Voltage -> {0} V at index -> {1} from scanning voltages set",
+                        experimentSettings.ScanningVoltageCollection[j].ToString("0.0000", NumberFormatInfo.InvariantInfo),
+                        j.ToString(NumberFormatInfo.InvariantInfo)
+                    ));
                     var voltage = experimentSettings.ScanningVoltageCollection[j];
                     if (!IsRunning)
                     {
-                        experimentLog.WriteToLog("Status", "Experiment is no longer running");
+                        experimentLog.WriteToLog("Status", "IsRunning flag turned to \"false\" -> The experiment is no longer running");
                         break;
                     }
 
@@ -872,10 +881,10 @@ namespace MCBJ.Experiments
                     {
                         using (boxController = new BoxController())
                         {
-                            experimentLog.WriteToLog("Action", "Agilent U2542A initialization");
+                            experimentLog.WriteToLog("Action", "Hardware driver initialization -> Agilent U2542A extension box");
                             var initResult = boxController.Init(experimentSettings.AgilentU2542AResName);
                             if (!initResult)
-                                throw new Exception("Cannot connect to the box");
+                                throw new Exception("Initialization Error -> Cannot connect to the Agilent U2542A extension box");
 
                             // Implementing voltage control for automatic applying
                             // Drain-Source voltage, as well as for automatic
@@ -886,7 +895,7 @@ namespace MCBJ.Experiments
                             var VdsEnableChannel = BOX_AnalogOutChannelsEnum.BOX_AOut_09;
                             var VdsRelayVlotage = -6.25;
 
-                            experimentLog.WriteToLog("Action", "Initialization of the Vds motor potentiometer");
+                            experimentLog.WriteToLog("Action", "Hardware driver initialization -> Inelta motor potentiometer Vds");
                             vdsMotorPotentiometer = new BS350_MotorPotentiometer(boxController, VdsMotorOutChannel);
 
                             // Enabling Vds DC measurement channel before measuring noise spectra
@@ -910,7 +919,7 @@ namespace MCBJ.Experiments
                             experimentLog.WriteToLog("Event", string.Format("Status change: Setting R -> {0}", (1.0 / conductance / conductanceQuantum).ToString("0.0000", NumberFormatInfo.InvariantInfo)));
                             onStatusChanged(new StatusEventArgs(string.Format("Reaching resistance value R -> {0}", (1.0 / conductance).ToString("0.0000", NumberFormatInfo.InvariantInfo))));
 
-                            experimentLog.WriteToLog("Action", string.Format("Setting sample resistance: Setting R -> {0}", (1.0 / conductance / conductanceQuantum).ToString("0.0000", NumberFormatInfo.InvariantInfo)));
+                            experimentLog.WriteToLog("Action", string.Format("Reaching resistance value R -> {0}", (1.0 / conductance / conductanceQuantum).ToString("0.0000", NumberFormatInfo.InvariantInfo)));
                             resistanceStabilizationState = setJunctionResistance(
                                 vdsMotorPotentiometer,
                                 voltage,
@@ -934,18 +943,18 @@ namespace MCBJ.Experiments
                                 break;
                             }
 
-                            experimentLog.WriteToLog("Action", string.Format("Setting sample voltage V = {0} after the resistance stabillization", voltage.ToString("0.0000", NumberFormatInfo.InvariantInfo)));
+                            experimentLog.WriteToLog("Action", string.Format("Adjusting sample voltage V -> {0} after the resistance stabillization", voltage.ToString("0.0000", NumberFormatInfo.InvariantInfo)));
                             preciseSetVoltage(vdsMotorPotentiometer, 3, voltage, experimentSettings.VoltageDeviation.RealValue, experimentSettings.NAveragesFast);
 
                             experimentLog.WriteToLog("Event", "Status change: Measuring sample DC characteristics before noise spectra measurement");
                             onStatusChanged(new StatusEventArgs("Measuring sample characteristics before noise spectra measurement."));
 
-                            experimentLog.WriteToLog("Action", "Measuring sample characteristics before noise spectra measurement");
+                            experimentLog.WriteToLog("Action", "Measuring sample DC characteristics before noise spectra measurement");
                             var voltagesBeforeNoiseMeasurement = boxController.VoltageMeasurement_AllChannels(experimentSettings.NAveragesSlow);
 
                             // Disabling motor controller in order to avoid huge noise
                             // coming from the motor controller through the connecting wires
-                            experimentLog.WriteToLog("Action", "Disabling motor controller in order to avoid huge noise pickups");
+                            experimentLog.WriteToLog("Action", "Disabling Faulhaber SA2036U012V minimotor in order to avoid huge noise pickups");
                             motor.Enabled = false;
 
                             // Disabling Vds DC measurement channel for measuring noise spectra
@@ -958,7 +967,7 @@ namespace MCBJ.Experiments
                             if (ACConfStatus == true)
                             {
                                 // Stabilization before noise spectra measurements
-                                experimentLog.WriteToLog("Event", "Progress change: Setting current progress to zero");
+                                experimentLog.WriteToLog("Event", "Progress change: Setting current progress to 0.0");
                                 onProgressChanged(new ProgressEventArgs(0.0));
                                 experimentLog.WriteToLog("Event", "Status change: Waiting for stabilization");
                                 onStatusChanged(new StatusEventArgs("Waiting for stabilization..."));
@@ -1077,7 +1086,6 @@ namespace MCBJ.Experiments
                     catch (Exception ex)
                     {
                         experimentLog.WriteToLog("Error", ex.Message);
-                        MessageBox.Show(ex.Message, "Error!", MessageBoxButton.OK, MessageBoxImage.Error);
 
                         if (experimentSettings.RecordTimeTraces == true)
                         {
