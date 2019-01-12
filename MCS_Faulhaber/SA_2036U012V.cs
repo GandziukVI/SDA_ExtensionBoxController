@@ -16,9 +16,7 @@ namespace MCS_Faulhaber
         public SA_2036U012V(IDeviceIO Driver)
         {
             Initialize(Driver);
-        }
-
-        Regex rgx = new Regex(@"[+\-]?(?:0|[1-9]\d*)(?:\.\d*)?(?:[eE][+\-]?\d+)?");
+        }        
 
         private double gear = 1526.0;
         public double Gear
@@ -62,27 +60,21 @@ namespace MCS_Faulhaber
         }
 
         private double prevPos = 0.0;
-        private char[] termChars = "\r\n".ToCharArray();
+        private readonly char[] termChars = "\r\npOK".ToCharArray();
         public override double GetPosition()
         {
-            var controllerResponse = driver.RequestQuery("pos").TrimEnd(termChars);
+            var controllerResponse = driver.RequestQuery("pos").Trim(termChars);
+            
+            var motorPosition = 0.0;
+            var conversionSuccess = double.TryParse(controllerResponse, out motorPosition);
 
-            var match = rgx.Match(controllerResponse);
-
-            if (match.Success == true)
+            if (conversionSuccess)
             {
-                double motorPosition;
-                var conversionSuccess = double.TryParse(controllerResponse, out motorPosition);
-                if (conversionSuccess)
-                {
-                    prevPos = motorPosition / Gear / StepsPerRevolution * MilimetersPerRevolution;
-                    return prevPos;
-                }
-                else
-                    throw new Exception("Error while reading the motor position!");
+                prevPos = motorPosition / Gear / StepsPerRevolution * MilimetersPerRevolution;
+                return prevPos;
             }
             else
-                return prevPos;
+                return prevPos;            
         }
 
         private double currentVelosity;
