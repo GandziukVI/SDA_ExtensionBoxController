@@ -173,7 +173,7 @@ namespace MCBJNoiseStarter
                     }
                 }
 
-                using (var driver = new SerialDevice("COM1", 115200, Parity.None, 8, StopBits.One) as IDeviceIO)
+                using (var driver = new SerialDevice("COM5", 115200, Parity.None, 8, StopBits.One) as IDeviceIO)
                 {
                     var motionController = new SA_2036U012V(driver) as IMotionController1D;
 

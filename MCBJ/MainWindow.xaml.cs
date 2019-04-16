@@ -229,7 +229,7 @@ namespace MCBJ
             var frequencyResponse = ReadCalibrationFile(frequencyResponseFilePath);
 
 
-            var motorDriver = new SerialDevice("COM1", 115200, Parity.None, 8, StopBits.One);
+            var motorDriver = new SerialDevice("COM5", 115200, Parity.None, 8, StopBits.One);
             IMotionController1D motor = new SA_2036U012V(motorDriver) as IMotionController1D;
 
             experiment = new Noise_DefinedResistance(((measurementInterface as Noise_at_DefinedResistance).DataContext as Noise_DefinedResistanceModel).ExperimentSettings.AgilentU2542AResName, motor, amplifierNoise, frequencyResponse);
