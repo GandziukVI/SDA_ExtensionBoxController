@@ -121,7 +121,7 @@ namespace MCBJ
 
             var smuDriver = new VisaDevice("GPIB0::26::INSTR") as IDeviceIO;
             var keithley = new Keithley26xxB<Keithley2602B>(smuDriver);
-            var smu = keithley[Keithley26xxB_Channels.Channel_B];
+            var smu = keithley[Keithley26xxB_Channels.Channel_A];
 
             var motorDriver = new SerialDevice("COM1", 115200, Parity.None, 8, StopBits.One);
             var motor = new SA_2036U012V(motorDriver) as IMotionController1D;

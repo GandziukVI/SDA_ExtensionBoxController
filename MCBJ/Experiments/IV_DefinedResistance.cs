@@ -104,7 +104,17 @@ namespace MCBJ.Experiments
                 if (!IsRunning)
                     break;
 
-                var scaledConductance = (1.0 / smu.MeasureResistance()) / ConductanceQuantum;
+                var measuredResistance = smu.MeasureResistance();
+                var scaledConductance = (1.0 / measuredResistance) / ConductanceQuantum;
+
+                var statusStr = string.Format(
+                    "Motor position is: {0}; the derired resistence is {1}; the current resistance is {2}",
+                    motor.Position.ToString("G4", NumberFormatInfo.InvariantInfo),
+                    settings.SetResistance.ToString("G4", NumberFormatInfo.InvariantInfo),
+                    measuredResistance.ToString("G4", NumberFormatInfo.InvariantInfo)
+                    );
+
+                onStatusChanged(new StatusEventArgs(statusStr));
 
                 var speed = minSpeed;
                 try
