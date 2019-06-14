@@ -73,7 +73,7 @@ namespace FET_Characterization.Experiments
                 range = RangesEnum.Range_10;
             else
                 range = RangesEnum.Range_10;
-                //throw new ArgumentException("The drain voltage is out of range.");
+            //throw new ArgumentException("The drain voltage is out of range.");
 
             return range;
         }
@@ -272,7 +272,23 @@ namespace FET_Characterization.Experiments
                     var currentVoltageReadingSign = getDifferenceSign(voltage, currentVoltage);
                     PotentiometerSpeed = speedFunc(currentVoltage);
 
-                    onStatusChanged(new StatusEventArgs(string.Format("Vs = {0} (=> {1} V), Vm = {2}, Speed = {3}", voltages[voltNumber].ToString("0.0000", NumberFormatInfo.InvariantInfo), voltage.ToString("0.0000", NumberFormatInfo.InvariantInfo), voltages[1].ToString("0.0000", NumberFormatInfo.InvariantInfo), PotentiometerSpeed)));
+                    var statusString = new List<string>()
+                    {
+                        "Vs = ",
+                        voltages[3].ToString("0.0000", NumberFormatInfo.InvariantInfo) + ", ",
+                        "Vm = ",
+                        voltages[1].ToString("0.0000", NumberFormatInfo.InvariantInfo) + ", ",
+                        "Vg = ",
+                        voltages[2].ToString("0.0000", NumberFormatInfo.InvariantInfo) + ", ",
+                        "Speed = ",
+                        PotentiometerSpeed.ToString()
+                    };
+
+                    var insertIndex = voltNumber == 3 ? 2 : 6;
+
+                    statusString.Insert(insertIndex, string.Format("(=> {0} V), ", voltage.ToString("0.0000", NumberFormatInfo.InvariantInfo)));
+
+                    onStatusChanged(new StatusEventArgs(string.Join("", statusString)));
 
                     if (Math.Abs(voltage - currentVoltage) <= Math.Abs(voltageDeviation))
                     {
@@ -439,7 +455,7 @@ namespace FET_Characterization.Experiments
 
         //        var speedCorrectionFactor = 1.0;
         //        var speed = (byte)(minSpeed + (maxSpeed - minSpeed) * multFactor(voltSet, voltageCurr, speedCorrectionFactor * voltageDeviation));
-                
+
         //        Func<bool> voltSetSuccess = () =>
         //            {
         //                return (voltageCurr >= Math.Abs(voltSet - voltageDeviation)) && (voltageCurr <= Math.Abs(voltSet + voltageDeviation));
@@ -509,7 +525,7 @@ namespace FET_Characterization.Experiments
         //                    break;
         //                }
         //            }
-                    
+
         //            if (voltageCurr > voltSet)
         //            {
         //                motorPotentiometer.StartMotion(speed, MotionDirection.cw);
@@ -754,7 +770,7 @@ namespace FET_Characterization.Experiments
                         {
                             var TTVoltageValues = (from item in timeTrace
                                                    select item.Y).ToArray();
-                            
+
                             var singleNoiseSpectrum = twoPartsFFT.GetTwoPartsFFT(TTVoltageValues, samplingFrequency, 1, 1.0, 1.0, 1600, 102400, 8, 6400, 10, 10);
 
                             if (noisePSD == null || noisePSD.Length == 0)
@@ -952,7 +968,7 @@ namespace FET_Characterization.Experiments
                             // Enabling Vds DC measurement channel before measuring noise spectra
                             // for measuring sample characteristics before noise measurement
                             boxController.AO_ChannelCollection.ApplyVoltageToChannel(VdsEnableChannel, -6.2);
-                            
+
                             if (experimentSettings.UseVoltageControl == true)
                             {
                                 VdsMotorPotentiometer = new BS350_MotorPotentiometer(boxController, VdsMotorOutChannel);
@@ -975,7 +991,7 @@ namespace FET_Characterization.Experiments
                             }
                             else
                                 IsRunning = false;
-                            
+
                             onStatusChanged(new StatusEventArgs("Measuring sample characteristics before noise spectra measurement."));
 
                             confAIChannelsForDC_Measurement();
@@ -1121,7 +1137,7 @@ namespace FET_Characterization.Experiments
             }
 
             onExpFinished(new FinishedEventArgs(0));
-            onStatusChanged(new StatusEventArgs("The measurement is done!"));            
+            onStatusChanged(new StatusEventArgs("The measurement is done!"));
         }
 
         #region File operations

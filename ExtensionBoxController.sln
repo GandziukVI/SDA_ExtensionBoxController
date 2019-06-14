@@ -71,6 +71,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "InstallerProjects", "Instal
 EndProject
 Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "MCBJ_SetupProject", "MCBJ_SetupProject\MCBJ_SetupProject.vdproj", "{86D10AFB-09FD-44B6-BF09-7CCD10CD91C7}"
 EndProject
+Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "FET_SetupProject", "FET_SetupProject\FET_SetupProject.vdproj", "{D05BD768-97B3-4D75-ADFB-3EA2DF410C6D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -452,6 +454,14 @@ Global
 		{86D10AFB-09FD-44B6-BF09-7CCD10CD91C7}.Release|Mixed Platforms.ActiveCfg = Release
 		{86D10AFB-09FD-44B6-BF09-7CCD10CD91C7}.Release|x64.ActiveCfg = Release
 		{86D10AFB-09FD-44B6-BF09-7CCD10CD91C7}.Release|x86.ActiveCfg = Release
+		{D05BD768-97B3-4D75-ADFB-3EA2DF410C6D}.Debug|Any CPU.ActiveCfg = Debug
+		{D05BD768-97B3-4D75-ADFB-3EA2DF410C6D}.Debug|Mixed Platforms.ActiveCfg = Debug
+		{D05BD768-97B3-4D75-ADFB-3EA2DF410C6D}.Debug|x64.ActiveCfg = Debug
+		{D05BD768-97B3-4D75-ADFB-3EA2DF410C6D}.Debug|x86.ActiveCfg = Debug
+		{D05BD768-97B3-4D75-ADFB-3EA2DF410C6D}.Release|Any CPU.ActiveCfg = Release
+		{D05BD768-97B3-4D75-ADFB-3EA2DF410C6D}.Release|Mixed Platforms.ActiveCfg = Release
+		{D05BD768-97B3-4D75-ADFB-3EA2DF410C6D}.Release|x64.ActiveCfg = Release
+		{D05BD768-97B3-4D75-ADFB-3EA2DF410C6D}.Release|x86.ActiveCfg = Release
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -483,5 +493,6 @@ Global
 		{0A642A08-707C-4937-975C-DC1B17667190} = {C97C7A42-DEF1-469A-9B57-C2DE42BCD133}
 		{CAC0DEA3-050E-4AE6-A0A6-62BBC63F74D9} = {C97C7A42-DEF1-469A-9B57-C2DE42BCD133}
 		{86D10AFB-09FD-44B6-BF09-7CCD10CD91C7} = {0B184041-FA94-498A-905C-8B1BBF5D08BB}
+		{D05BD768-97B3-4D75-ADFB-3EA2DF410C6D} = {0B184041-FA94-498A-905C-8B1BBF5D08BB}
 	EndGlobalSection
 EndGlobal
